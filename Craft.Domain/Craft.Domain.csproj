@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Craft.Domain</PackageId>
+    <Version>1.0.2</Version>
+    <Authors>Ebbe Melo Sørensen</Authors>
+    <Description>Basic domain class support for Craft</Description>
+    <RepositoryUrl>https://github.com/EbbeMeloSorensen/Craft</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+</Project>
