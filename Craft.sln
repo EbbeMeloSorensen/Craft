@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Domain", "Craft.Domai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Logging", "Craft.Logging\Craft.Logging.csproj", "{731271E0-0A6F-514D-0BCA-9A31A3E3FD24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Logging.Log4Net", "Craft.Logging.Log4Net\Craft.Logging.Log4Net.csproj", "{913D3C71-261B-0541-B7BB-8BB667D54002}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{731271E0-0A6F-514D-0BCA-9A31A3E3FD24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{731271E0-0A6F-514D-0BCA-9A31A3E3FD24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{731271E0-0A6F-514D-0BCA-9A31A3E3FD24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{913D3C71-261B-0541-B7BB-8BB667D54002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{913D3C71-261B-0541-B7BB-8BB667D54002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{913D3C71-261B-0541-B7BB-8BB667D54002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{913D3C71-261B-0541-B7BB-8BB667D54002}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

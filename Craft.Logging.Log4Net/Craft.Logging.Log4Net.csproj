@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net8.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <PackageId>Craft.Math</PackageId>
+	  <Version>1.0.2</Version>
+	  <Authors>Ebbe Melo Sørensen</Authors>
+	  <Description>Logging utilities based on Log4Net for Craft</Description>
+	  <RepositoryUrl>https://github.com/EbbeMeloSorensen/Craft</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Craft.Logging\Craft.Logging.csproj" />
+  </ItemGroup>
+
+</Project>
