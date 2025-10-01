@@ -5,7 +5,7 @@
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <PackageId>Craft.Math</PackageId>
+	  <PackageId>Craft.Logging.Log4Net</PackageId>
 	  <Version>1.0.2</Version>
 	  <Authors>Ebbe Melo Sørensen</Authors>
 	  <Description>Logging utilities based on Log4Net for Craft</Description>
