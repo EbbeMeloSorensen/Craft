@@ -1,0 +1,321 @@
+﻿<UserControl x:Class="Craft.UIElements.Geometry2D.ScrollFree.CoordinateSystemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:valueConverters="clr-namespace:Craft.UI.Utils.ValueConverters;assembly=Craft.UI.Utils"
+             xmlns:scrollFree="clr-namespace:Craft.ViewModels.Geometry2D.ScrollFree;assembly=Craft.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance scrollFree:CoordinateSystemViewModel}">
+
+    <UserControl.Resources>
+        <valueConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <local:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}"/>
+        <Canvas ClipToBounds="True">
+
+            <!-- Left margin -->
+            <Rectangle Fill="{Binding MarginBrush}" 
+                       Width="{Binding MarginLeft}" 
+                       Height="{Binding GeometryEditorViewModel.ViewPortSize.Height}">
+                <Rectangle.Visibility>
+                    <Binding Path="ShowMarginLeft" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Rectangle.Visibility>
+            </Rectangle>
+
+            <!-- Bottom margin -->
+            <Rectangle Fill="{Binding MarginBrush}" 
+                       Height="{Binding MarginBottom}" 
+                       Width="{Binding GeometryEditorViewModel.ViewPortSize.Width}"
+                       Canvas.Top="{Binding MarginBottomOffset}">
+                <Rectangle.Visibility>
+                    <Binding Path="ShowMarginBottom" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Rectangle.Visibility>
+            </Rectangle>
+
+            <!-- X Axis Tick Labels -->
+            <ItemsControl ItemsSource="{Binding XAxisTickLabelViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource LabelPositionConverter}">
+                                    <Binding Path="Point.X"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.WorldWindowUpperLeft.X" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.Scaling.Width" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="Width"/>
+                                    <Binding Path="Shift.X"/>
+                                    <Binding Path="FixedViewPortXCoordinate"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Canvas.Top">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource LabelPositionConverter}">
+                                    <Binding Path="Point.Y"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.WorldWindowUpperLeft.Y" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.Scaling.Height" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="Height"/>
+                                    <Binding Path="Shift.Y"/>
+                                    <Binding Path="FixedViewPortYCoordinate"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}"
+                                   Width="{Binding Width}" 
+                                   Height="{Binding Height}"
+                                   FontFamily="Segoe UI"
+                                   FontSize="12.3"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Y Axis Tick Labels -->
+            <ItemsControl ItemsSource="{Binding YAxisTickLabelViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource LabelPositionConverter}">
+                                    <Binding Path="Point.X"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.WorldWindowUpperLeft.X" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.Scaling.Width" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="Width"/>
+                                    <Binding Path="Shift.X"/>
+                                    <Binding Path="FixedViewPortXCoordinate"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Canvas.Top">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource LabelPositionConverter}">
+                                    <Binding Path="Point.Y"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.WorldWindowUpperLeft.Y" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="DataContext.GeometryEditorViewModel.Scaling.Height" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                    <Binding Path="Height"/>
+                                    <Binding Path="Shift.Y"/>
+                                    <Binding Path="FixedViewPortYCoordinate"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}"
+                                   Width="{Binding Width}" 
+                                   Height="{Binding Height}"
+                                   FontFamily="Segoe UI"
+                                   FontSize="12.3"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Overall labels for the x axis -->
+            <Grid Canvas.Left="{Binding MarginLeft}"
+                  Canvas.Top="{Binding MarginBottomOffset}"
+                  Height="{Binding MarginBottom}">
+                <TextBlock Background="Transparent"
+                           Width="{Binding GeometryEditorViewModel.ViewPortSize.Width}" 
+                           Height="20"
+                           Text="{Binding XAxisOverallLabel1}"
+                           TextAlignment="{Binding XAxisOverallLabel1Alignment}"
+                           VerticalAlignment="Bottom">
+                </TextBlock>
+                <TextBlock Background="Transparent"
+                           Width="{Binding GeometryEditorViewModel.ViewPortSize.Width}" 
+                           Height="20"
+                           Text="{Binding XAxisOverallLabel2}"
+                           TextAlignment="{Binding XAxisOverallLabel2Alignment}"
+                           VerticalAlignment="Bottom">
+                </TextBlock>
+            </Grid>
+
+            <!-- Little square to the lower right of origo that hides axis labels, thereby preventing them from overlapping -->
+            <Rectangle Fill="{Binding MarginBrush}"
+                       Canvas.Top="{Binding MarginBottomOffset}"
+                       Width="{Binding MarginLeft}" 
+                       Height="{Binding MarginBottom}">
+            </Rectangle>
+
+            <!-- Vertical line representing static x value -->
+            <Line Stroke="DarkOrange"
+                  StrokeThickness="1.5"
+                  X1="{Binding StaticXValueViewPort}"
+                  X2="{Binding StaticXValueViewPort}"
+                  Y1="0"
+                  Y2="{Binding MarginBottomOffset}">
+                <Line.Visibility>
+                    <Binding Path="ShowStaticXValue" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Line.Visibility>
+            </Line>
+
+            <!-- Vertical line representing dynamic x value when not tracking the value -->
+            <Line Stroke="Purple"
+                  StrokeThickness="1.5"
+                  X1="{Binding DynamicXValueViewPort}"
+                  X2="{Binding DynamicXValueViewPort}"
+                  Y1="0"
+                  Y2="{Binding MarginBottomOffset}">
+                <Line.Visibility>
+                    <Binding Path="ShowDynamicXValue" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Line.Visibility>
+            </Line>
+
+            <!-- Label for the above line  -->
+            <TextBlock Foreground="Purple" Margin="3, 0, 0, 0"
+                       Canvas.Left="{Binding DynamicXValueViewPort}"
+                       Text="{Binding LabelForDynamicXValue}" >
+                <TextBlock.Visibility>
+                    <Binding Path="ShowDynamicXValue" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </TextBlock.Visibility>
+            </TextBlock>
+
+            <!-- Vertical line representing dynamic x value when tracking the value (flickerfree) -->
+            <Line Stroke="Purple"
+                  StrokeThickness="1"
+                  X1="{Binding DynamicXValueViewPortWhenLocked}"
+                  X2="{Binding DynamicXValueViewPortWhenLocked}"
+                  Y1="0"
+                  Y2="{Binding MarginBottomOffset}">
+                <Line.Visibility>
+                    <Binding Path="LockWorldWindowOnDynamicXValue" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Line.Visibility>
+            </Line>
+
+            <!-- Label for the above line  --> 
+            <TextBlock Foreground="Purple" Margin="3, 0, 0, 0"
+                       Canvas.Left="{Binding DynamicXValueViewPortWhenLocked}"
+                       Text="{Binding LabelForDynamicXValue}" >
+                <TextBlock.Visibility>
+                    <Binding Path="LockWorldWindowOnDynamicXValue" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </TextBlock.Visibility>
+            </TextBlock>
+
+            <!-- Horizontal axis -->
+            <Line Stroke="Black"
+                StrokeThickness="1"
+                X1="{Binding MarginLeft}"
+                X2="{Binding GeometryEditorViewModel.ViewPortSize.Width}"
+                Y1="{Binding MarginBottomOffset}"
+                Y2="{Binding MarginBottomOffset}">
+            </Line>
+
+            <!-- Vertical axis -->
+            <Line Stroke="Black"
+                  StrokeThickness="1"
+                  X1="{Binding MarginLeft}"
+                  X2="{Binding MarginLeft}"
+                  Y1="0"
+                  Y2="{Binding MarginBottomOffset}">
+                <Line.Visibility>
+                    <Binding Path="ShowVerticalAxis" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Line.Visibility>
+            </Line>
+        </Canvas>
+
+        <Button Width="22" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" IsEnabled="True"
+                Command="{Binding PanLeftCommand}">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border Background="LightGray" BorderBrush="DimGray" BorderThickness="1" >
+                            <Path Fill="DimGray" Stretch="Uniform" Margin="0, 3, 3, 3" Data="M 0 0.5 L 0.5 0 L 0.5 1 Z"/>
+                        </Border>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+            <Button.Visibility>
+                <Binding Path="ShowPanningButtons" Converter="{StaticResource BooleanToVisibilityConverter}">
+                    <Binding.ConverterParameter>
+                        <system:Boolean>True</system:Boolean>
+                    </Binding.ConverterParameter>
+                </Binding>
+            </Button.Visibility>
+        </Button>
+
+        <Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5"
+                Command="{Binding PanRightCommand}">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border Background="LightGray" BorderBrush="DimGray" BorderThickness="1" >
+                            <Path Fill="DimGray" Stretch="Uniform" Margin="3, 3, 0, 3" Data="M 1 0.5 L 0.5 0 L 0.5 1 Z"/>
+                        </Border>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+            <Button.Visibility>
+                <Binding Path="ShowPanningButtons" Converter="{StaticResource BooleanToVisibilityConverter}">
+                    <Binding.ConverterParameter>
+                        <system:Boolean>True</system:Boolean>
+                    </Binding.ConverterParameter>
+                </Binding>
+            </Button.Visibility>
+        </Button>
+    </Grid>
+</UserControl>

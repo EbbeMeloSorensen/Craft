@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="Craft.UIElements.Logging.LogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Craft.UIElements.Logging"
+             xmlns:utils="clr-namespace:Craft.UI.Utils;assembly=Craft.UI.Utils"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="Log">
+            <ScrollViewer Margin="3" utils:Helpers.AutoScroll="{Binding LogUpdated}">
+                <TextBox Text="{Binding Log}"/>
+            </ScrollViewer>
+        </GroupBox>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button Content="Clear" Command="{Binding ClearLogsCommand}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

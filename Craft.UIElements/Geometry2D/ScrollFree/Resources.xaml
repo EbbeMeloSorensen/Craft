@@ -1,0 +1,107 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:valueConverters="clr-namespace:Craft.UI.Utils.ValueConverters;assembly=Craft.UI.Utils"
+                    xmlns:geometry2D="clr-namespace:Craft.ViewModels.Geometry2D;assembly=Craft.ViewModels"
+                    xmlns:scrollFree="clr-namespace:Craft.ViewModels.Geometry2D.ScrollFree;assembly=Craft.ViewModels">
+
+    <SolidColorBrush x:Key="BackgroundBrush" Color="NavajoWhite"/>
+    <valueConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <valueConverters:ImagePathConverter x:Key="ImagePathConverter"/>
+    <valueConverters:ShapePositionConverter x:Key="ShapePositionConverter"/>
+    <valueConverters:PointPositionConverter x:Key="PointPositionConverter"/>
+    <valueConverters:LabelPositionConverter x:Key="LabelPositionConverter"/>
+    <valueConverters:DoubleScaler x:Key="DoubleScaler"/>
+    <scrollFree:ShapeTemplateSelector x:Key="ShapeTemplateSelector"/>
+    <scrollFree:LabelTemplateSelector x:Key="LabelTemplateSelector"/>
+
+    <DataTemplate x:Key="Rectangle">
+        <Rectangle Fill="DarkSlateGray" Width="{Binding Width}" Height="{Binding Height}">
+            <Rectangle.RenderTransform>
+                <MatrixTransform Matrix="{Binding 
+                            Path=DataContext.TransformationMatrix, 
+                            RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </DataTemplate>
+
+    <DataTemplate x:Key="Ellipse">
+        <Canvas>
+            <Ellipse Fill="DarkSlateGray" Width="{Binding Width}" Height="{Binding Height}">
+                <Ellipse.RenderTransform>
+                    <MatrixTransform Matrix="{Binding 
+                            Path=DataContext.TransformationMatrix, 
+                            RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Ellipse.RenderTransform>
+            </Ellipse>
+        </Canvas>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RotatableRectangle">
+        <Canvas>
+            <Rectangle Fill="Orange" Width="{Binding Width}" Height="{Binding Height}">
+                <Rectangle.RenderTransform>
+                    <MatrixTransform Matrix="{Binding 
+                            Path=DataContext.TransformationMatrix, 
+                            RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </Canvas>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RotatableEllipse">
+        <Canvas>
+            <Ellipse Fill="Orange" Width="{Binding Width}" Height="{Binding Height}">
+                <Ellipse.RenderTransform>
+                    <MatrixTransform Matrix="{Binding 
+                            Path=DataContext.TransformationMatrix, 
+                            RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Ellipse.RenderTransform>
+            </Ellipse>
+            <Line Stroke="DarkRed" StrokeThickness="0.01"
+                  X2="{Binding Width}">
+                <Line.X1>
+                    <Binding Path="Width" Converter="{StaticResource DoubleScaler}">
+                        <Binding.ConverterParameter>
+                            <system:Double>0.5</system:Double>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Line.X1>
+                <Line.Y1>
+                    <Binding Path="Height" Converter="{StaticResource DoubleScaler}">
+                        <Binding.ConverterParameter>
+                            <system:Double>0.5</system:Double>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Line.Y1>
+                <Line.Y2>
+                    <Binding Path="Height" Converter="{StaticResource DoubleScaler}">
+                        <Binding.ConverterParameter>
+                            <system:Double>0.5</system:Double>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Line.Y2>
+                <Line.RenderTransform>
+                    <TransformGroup>
+                        <MatrixTransform Matrix="{Binding RotationMatrix}"/>
+                        <MatrixTransform Matrix="{Binding 
+                            Path=DataContext.TransformationMatrix, 
+                            RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    </TransformGroup>
+                </Line.RenderTransform>
+            </Line>
+        </Canvas>
+    </DataTemplate>
+
+    <DataTemplate x:Key="Label">
+        <TextBlock Text="{Binding Text}"
+                   Width="{Binding Width}" 
+                   Height="{Binding Height}"
+                   FontFamily="Segoe UI"
+                   FontSize="12.3"
+                   Foreground="Black"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"/>
+    </DataTemplate>
+
+</ResourceDictionary>

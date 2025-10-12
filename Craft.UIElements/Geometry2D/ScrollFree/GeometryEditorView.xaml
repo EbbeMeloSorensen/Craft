@@ -1,0 +1,332 @@
+﻿<UserControl x:Class="Craft.UIElements.Geometry2D.ScrollFree.GeometryEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:scrollFree="clr-namespace:Craft.ViewModels.Geometry2D.ScrollFree;assembly=Craft.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance scrollFree:GeometryEditorViewModel}">
+
+    <Canvas Name="Canvas" 
+            ClipToBounds="True"
+            SizeChanged="FrameworkElement_OnSizeChanged"
+            MouseLeftButtonDown="UIElement_OnMouseLeftButtonDown"
+            MouseLeftButtonUp="UIElement_OnMouseLeftButtonUp"
+            MouseRightButtonDown="UIElement_OnMouseRightButtonDown"
+            MouseRightButtonUp="UIElement_OnMouseRightButtonUp"
+            MouseMove="UIElement_OnMouseMove"
+            MouseWheel="UIElement_OnMouseWheel"
+            Background="{Binding BackgroundBrush}">
+
+        <Image Source="{Binding 
+            Path=ImagePath, 
+            UpdateSourceTrigger=PropertyChanged, 
+            Converter={StaticResource ImagePathConverter}}">
+            <Image.RenderTransform>
+                <MatrixTransform Matrix="{Binding TransformationMatrix}"/>
+            </Image.RenderTransform>
+        </Image>
+
+        <ItemsControl ItemsSource="{Binding PolygonViewModels}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Polygon
+                        Stroke="Black" 
+                        Fill="{Binding Brush}"
+                        StrokeThickness="{Binding Thickness}"
+                        Points="{Binding Points}">
+                        <Polygon.RenderTransform>
+                            <MatrixTransform Matrix="{Binding 
+                                Path=DataContext.TransformationMatrix, 
+                                RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        </Polygon.RenderTransform>
+                    </Polygon>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Dette er den gamle måde at tegne polylines på, hvor de bliver tykkere, når man zoomer ind (bemærk at det er hidden for nu) -->
+        <ItemsControl ItemsSource="{Binding PolylineViewModels}" Visibility="Hidden">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Polyline
+                        Stroke="{Binding Brush}"
+                        StrokeThickness="{Binding Thickness}"
+                        Points="{Binding Points}">
+                        <Polyline.RenderTransform>
+                            <MatrixTransform Matrix="{Binding 
+                                Path=DataContext.TransformationMatrix, 
+                                RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        </Polyline.RenderTransform>
+                    </Polyline>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Dette er den nye måde at tegne polylines på, hvor de bibeholder zoom leel uanset skalering -->
+        <ItemsControl ItemsSource="{Binding PolylineViewModels}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Polyline
+                        Stroke="{Binding Brush}"
+                        StrokeThickness="1"
+                        Points="{Binding Points2}">
+                        <Polyline.RenderTransform>
+                            <TranslateTransform 
+                                X="{Binding
+                                    Path=DataContext.TranslationX,
+                                    RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Y="{Binding
+                                    Path=DataContext.TranslationY,
+                                    RelativeSource={RelativeSource AncestorType=UserControl}}">
+                            </TranslateTransform>
+                        </Polyline.RenderTransform>
+                    </Polyline>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Dette er en måde at tegne linier på, hvor de skaleres med TransformationMatrix
+             og linierne bliver tykkere, når der zoomes ind -->
+        <ItemsControl ItemsSource="{Binding LineViewModels}" Visibility="Hidden">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Line Stroke="Black"
+                          StrokeThickness="{Binding Thickness}" 
+                          X1="{Binding Point1.X}" 
+                          Y1="{Binding Point1.Y}" 
+                          X2="{Binding Point2.X}" 
+                          Y2="{Binding Point2.Y}">
+                        <Line.RenderTransform>
+                            <MatrixTransform Matrix="{Binding 
+                                Path=DataContext.TransformationMatrix, 
+                                RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        </Line.RenderTransform>
+                    </Line>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!--Alternativ måde at tegne linier på, hvor de IKKE SKALERER, dvs hvor thickness gælder for VIEW og ikke WORLD-->
+        <ItemsControl ItemsSource="{Binding LineViewModels}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Line Stroke="{Binding Brush}"
+                          StrokeThickness="{Binding Thickness}">
+                        <Line.X1>
+                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
+                                <Binding Path="Point1.X"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.X" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Width" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Line.X1>
+                        <Line.Y1>
+                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
+                                <Binding Path="Point1.Y"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.Y" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Height" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Line.Y1>
+                        <Line.X2>
+                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
+                                <Binding Path="Point2.X"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.X" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Width" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Line.X2>
+                        <Line.Y2>
+                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
+                                <Binding Path="Point2.Y"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.Y" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Height" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Line.Y2>
+                    </Line>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{Binding ShapeViewModels}"
+                      ItemTemplateSelector="{StaticResource ShapeTemplateSelector}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource ShapePositionConverter}">
+                                <Binding Path="Point.X"/>
+                                <Binding Path="Width"/>
+                                <Binding Path="DataContext.Scaling.Width" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Canvas.Top">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource ShapePositionConverter}">
+                                <Binding Path="Point.Y"/>
+                                <Binding Path="Height"/>
+                                <Binding Path="DataContext.Scaling.Height" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{Binding PointViewModels}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
+                                <Binding Path="Point.X"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.X" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Width" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="Diameter"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Canvas.Top">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
+                                <Binding Path="Point.Y"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.Y" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Height" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="Diameter"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Fill="{Binding Brush}"
+                             Stroke="Black"
+                             Width="{Binding Diameter}" 
+                             Height="{Binding Diameter}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{Binding LabelViewModels}"
+                      ItemTemplateSelector="{StaticResource LabelTemplateSelector}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource LabelPositionConverter}">
+                                <Binding Path="Point.X"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.X" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Width" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="Width"/>
+                                <Binding Path="Shift.X"/>
+                                <Binding Path="FixedViewPortXCoordinate"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Canvas.Top">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource LabelPositionConverter}">
+                                <Binding Path="Point.Y"/>
+                                <Binding Path="DataContext.WorldWindowUpperLeft.Y" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.Scaling.Height" 
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="Height"/>
+                                <Binding Path="Shift.Y"/>
+                                <Binding Path="FixedViewPortYCoordinate"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+
+        <!-- Selected Region Window -->
+        <Rectangle Fill="DarkCyan"
+                   Opacity="0.2"
+                   Width="{Binding SelectedRegionWindow.Width}"
+                   Height="{Binding SelectedRegionWindow.Height}">
+            <Canvas.Left>
+                <MultiBinding Converter="{StaticResource ShapePositionConverter}">
+                    <Binding Path="SelectedRegionWindow.Point.X"/>
+                    <Binding Path="SelectedRegionWindow.Width"/>
+                    <Binding Path="DataContext.Scaling.Width" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                </MultiBinding>
+            </Canvas.Left>
+            <Canvas.Top>
+                <MultiBinding Converter="{StaticResource ShapePositionConverter}">
+                    <Binding Path="SelectedRegionWindow.Point.Y"/>
+                    <Binding Path="SelectedRegionWindow.Height"/>
+                    <Binding Path="DataContext.Scaling.Height" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                </MultiBinding>
+            </Canvas.Top>
+            <Rectangle.RenderTransform>
+                <MatrixTransform Matrix="{Binding 
+                            Path=DataContext.TransformationMatrix, 
+                            RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+            </Rectangle.RenderTransform>
+            <Rectangle.Visibility>
+                <Binding Path="SelectRegionPossible" Converter="{StaticResource BooleanToVisibilityConverter}"/>
+            </Rectangle.Visibility>
+        </Rectangle>
+
+    </Canvas>
+</UserControl>

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Craft.UIElements</PackageId>
+    <Version>1.0.2</Version>
+    <Authors>Ebbe Melo Sørensen</Authors>
+    <Description>General purpose UI elements for Craft</Description>
+    <RepositoryUrl>https://github.com/EbbeMeloSorensen/Craft</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Craft.UI.Utils\Craft.UI.Utils.csproj" />
+    <ProjectReference Include="..\Craft.ViewModels\Craft.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

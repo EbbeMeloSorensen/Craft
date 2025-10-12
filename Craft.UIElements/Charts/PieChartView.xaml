@@ -1,0 +1,120 @@
+﻿<UserControl x:Class="Craft.UIElements.Charts.PieChartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:Craft.UIElements.Charts"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   Text="{Binding Title}"/>
+
+        <Canvas Grid.Row="1" Background="LightGray" Width ="{Binding Width}" Height="{Binding Height}">
+
+            <ItemsControl ItemsSource="{Binding PieSliceViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Path Stroke="Black" 
+                              StrokeThickness="1"
+                              Fill="{Binding Brush}">
+                                <Path.Data>
+                                    <GeometryGroup>
+                                        <PathGeometry>
+                                            <PathGeometry.Figures>
+                                                <PathFigure StartPoint="{Binding CenterPoint}">
+                                                    <LineSegment Point="{Binding ArcStartPoint}"/>
+                                                    <ArcSegment Point="{Binding TopPoint}"
+                                                            Size="{Binding Size}"
+                                                            IsLargeArc="{Binding AngleBiggerThan180Degrees}"/>
+                                                    <LineSegment Point="{Binding CenterPoint}"/>
+                                                </PathFigure>
+                                            </PathGeometry.Figures>
+                                        </PathGeometry>
+                                    </GeometryGroup>
+                                </Path.Data>
+                                <Path.RenderTransform>
+                                    <RotateTransform CenterX="{Binding Radius}"
+                                                     CenterY="{Binding Radius}"
+                                                     Angle="{Binding StartAngle}"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Foreground="Black" Text="{Binding Tag}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform X="{Binding TagPoint.X}" 
+                                                        Y="{Binding TagPoint.Y}"/>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl ItemsSource="{Binding PieSliceDescriptionViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{Binding Width}"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle Grid.Column="0" Stroke="Black" StrokeThickness="1"
+                                       Width="{Binding Width}"
+                                       Height="{Binding Height}"
+                                       Fill="{Binding Brush}"/>
+                            <TextBlock Grid.Column="1" Margin="8, 0, 0, 0" VerticalAlignment="Center"
+                                       Text="{Binding Description}"/>
+                            <Grid.RenderTransform>
+                                <TranslateTransform X="{Binding PositionX}"
+                                                    Y="{Binding PositionY}"/>
+                            </Grid.RenderTransform>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Ellipse Width="{Binding Height}" 
+                     Height="{Binding Height}"
+                     Fill="{Binding PaletteColorForSinglePieSlice}">
+                <Ellipse.Visibility>
+                    <Binding Path="SinglePieSliceInChart" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </Ellipse.Visibility>
+            </Ellipse>
+
+            <TextBlock Canvas.Left="{Binding CenterPoint.X}" 
+                       Canvas.Top="{Binding CenterPoint.Y}"
+                       Text="{Binding FirstTag}">
+                <TextBlock.Visibility>
+                    <Binding Path="SinglePieSliceInChart" Converter="{StaticResource BooleanToVisibilityConverter}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </TextBlock.Visibility>
+            </TextBlock>
+
+        </Canvas>
+    </Grid>
+</UserControl>

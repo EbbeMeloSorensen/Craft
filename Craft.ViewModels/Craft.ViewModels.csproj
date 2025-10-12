@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Craft.ViewModels</PackageId>
+    <Version>1.0.2</Version>
+    <Authors>Ebbe Melo Sørensen</Authors>
+    <Description>General purpose view models for Craft</Description>
+    <RepositoryUrl>https://github.com/EbbeMeloSorensen/Craft</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Craft.DataStructures\Craft.DataStructures.csproj" />
+    <ProjectReference Include="..\Craft.Logging\Craft.Logging.csproj" />
+    <ProjectReference Include="..\Craft.Utils\Craft.Utils.csproj" />
+  </ItemGroup>
+
+</Project>
