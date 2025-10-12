@@ -1,0 +1,98 @@
+Done:
+* Gør det muligt at tegne polylines lige som polygon
+* Lav det sådan, at ScatterChartViewModel abonnerer på at world window ændrer sig, og når det sker,
+  så opdaterer den de punkter, der tegnes
+* ScatterChartViewModel skal ikke selv lave punkter men gøre brug af en callback
+* Der er en problematik i at ViewportSize først kendes et stykke inde i runtime, og det gør, at man ikke umiddelbart kan 
+  placere Uppef Left Corner for World Window, når man har at gøre med en matematisk view model.
+  Man kunne måske abonnere på ViewPortSize, og når så den skifter første gang og vel at mærke ikke er 0, 0, så
+  sætter man WorldWindow Size samt x- og y-skalering.
+  I øjeblikket så sætter du skalering samt initiel position af upper left corner of World Window i constructoren for view modellen.
+  Var det mon ikke lige så naturligt at sætte det VINDUE, som du gerne ville operere med i World Window...
+  .. Det burde i hvert fald være sådan at du sætter noget, der er uafhængigt af viewport size, som du jo principielt ikke kender.
+  For et ALMINDELIGT view, er det naturligt at sige, at origo skal være i øverste venstre hjørne, og for et MATEMATISK er det naturligt
+  at sige, at det skal være i NEDERSTE venstre hjørne.
+  Det er vel også naturligt at sætte magnification til 1, men det er vel LIGE så naturligt at sætte den ønskede World Window Placering
+  og så lade computeren beregne den skalering, der så passer...
+  I øvrigt - du kunne helt droppe at have en "matematisk" variant af viewet. I stedet kunne du give den et sæt af basisvektorer for 
+  koordinatsystemet, som pr default er (1, 0) og (0, 1). For det matematiske skulle basisvektorerne så være (1, 0) og (0, -1). På den måde 
+  kunne du også lade f.eks. 4. kvadrant være den, du tegnede ting i, selv om det sjældent vil være relevant i praksis
+* Der skal skelnes mellem minor og major updates af World Window. Minor haves for hver mouse move under panorering.
+  Major haves når man zommer ind eller ud eller slipper museknappen under panorering. Det er kun i forbindelse med
+  major updates, at man vil skulle hente data fra en datakilde.
+* Find ud af hvorfor du opdaterer PointViewModels hele tiden fremfor at transformere med magnification
+  - det sidste burde kunne lade sig gøre
+  -> Der burde jo ikke være stor forskel på ShapeViewModel og PointViewModel. Brugeroplevelsesmæssigt, så ændrer punkternes størrelse sig ikke
+     uanset scaling. Bemærk, at du bruger et væld af forskellige teknikker til positionering af forskellige ting:
+     - RenderTransform (med transformations-matricen) for polygoner, polylines, lines
+     - ShapePositionConverter for shapes (du vil gerne sætte Canvas.Left og Canvas.Top)
+     - PointPositionConverter for points
+* Labels på plads - dvs noget tekst, der lige som points bibeholder størrelse uanset skalering
+* Klikke på et punkt i et koordinatsystem og få information om, hvad der er klikket på
+
+In progress:
+* Man skal kunne sætte WorldWindow position (kan man ikke allerede det? - prøv i handleren for tick eventet at sætte World Window således at XValue Of Interest er i midten)
+* Vis en linie for en dynamisk X-værdi i CoordinateSystemView
+  - Der skal være 2 modes: 
+    1) hvor den er lige så fast som Y-aksen, dvs hvis den ændrer sig, så flyttes World Window
+    2) En, hvor den opdateres uafhængigt af World Window
+  - Man skal kunne sætte X-værdien og så skal den selv omregne til Viewport koordinater
+* Tilføj en ObservableObject for MouseWorldPosition - ovevej senere at erstatte Dependency propertyen
+* Klikke på et punkt i time series viewet og få vist det som en linie
+* Bedre granularitet, når man zoomer ind på en tidsakse
+* Det skal stadig se ordentligt ud, når man zoomer ud
+* Der skal stå noget meningsfyldt i bjælken under labels såsom dato, så man ikke er i tvivl om, hvilket tidsinterval man ser på
+* Tidskurven skal nok tegnes pænere, så man transformerer punkter og BAGEFTER tegner, fremfor at skalere sele kurven i vildskab
+* Det skal kunne slås fra at man tegner horisontale og/eller vertikale grid lines
+* Visualisering af samling af "timestamps of interest"
+* Mulighed for at "låse" WorldWindow til et interval på y-aksen, så det ikke ændres, når man panorerer eller zoomer
+* GeometryEditorViewModel skal publicere et event om at der klikkes et sted
+* Man skal kunne starte med et World Window, der fylder hele viewporten ud, hvor scaling X og scaling Y sættes hver for sig i stedet for at være ens
+* Grid lines og kurver skal have samme tykkelse uanset magnification
+* Lav CoordinateSystemViewModel sådan at WorldWindow starter ved koordinatakserne og ikke helt ude i kanten
+* Man skal kunne sætte World Window under runtime og ikke bare under opstart
+
+Todo:
+* Fix det med at man ikke kan zoome med ctrl+leftclick
+* Når cursoren forlader et område, skal der ikke længere stå noget
+* Der skal være et mode, hvor man kontinuert opdaterer zoom, som du har kunnet før og formentlig stadig kan med nogle kontroller
+* Leg med tegning af parameterfremstillinger
+* Leg med tegning af splines af forskellig art
+* Brug dte til et shoot em up spil
+* Saml WorldWindowSize og WorldWindowUpperLeft i en BoundingBox - så sker der ikke lige så mange opdateringer
+* Undgå at tegne ting, der ligger uden for World Window
+* Det kunne være fint, hvis man kunne bede GeometryEditorViewModellen om at beregne en bounding box og så sætte WorldWindow til det.
+* Der er en lille fejl, når man resizer Viewporten - så hopper World Window
+* Gør det muligt at tegne et koordinatsystem i MathematicalGeometryEditorViewModel
+  - Det må gerne udfylde den tilgængelige plads
+  - Hvis World Window ikke intersecter en akse, er det fint, hvis man somehow kan se den alligevel
+* Når man exporterer grafer, så skal der kun en label på noder, der faktisk har en label
+* Få gjort det færdigt med at have en label på en edge
+  o en edge skal ikke bare have en data property - den skal have en ArrayList property ligesom node allerede har (OK)
+* IGraph er lidt for bloated - det er f.eks. ikke hensigtsmæssigt, at den har metoderne GetNodeLabel og GetEdgeLabel. Det er sådan set heller ikke
+  optimalt, at den har metoden GetCost, da edges i en graf jo altså ikke behøver at have en cost.
+  Måske burde man konsekvent operere med, at f.eks. cost og labels hører til de nodes og edges, som kan hives ud af en graf.
+  Der skal i øvrigt gælde, at der kan være mere end 1 edge fra en node til en anden, f.eks. med forskellige labels.
+  Edges og nodes bør ikke nødvendigvis have ids.. eller hvad..
+  Når du skriver en graf til fil, så traverserer du nodes, og for hver node traverserer du Neighbor ids. Så var det nok bedre at traversere
+  "outgoing edges"
+  o Tilføj en mulighed for at hive outgoing edges for en node (OK)
+  o Lav Dijkstra-algoritmen om så den bruger den nye konstruktion (OK)
+  o Fjern GetCost fra IGraph (OK)
+  o Etabler et alternativ til IGraph.GetNodeLabel, så man kan få fat i noden og spørge DEN om dens label (OK)
+  o Sikr at du kan eksportere til graphml med den nye mekanisme (OK)
+  o Fjern GetNodeLabel fra IGraph.  (OK)
+
+Da du skiftede fra at tegne et antal liniestykker og til at tegne en polyline, vendte den tingene på hovedet uden at du lagde mærke til det
+
+Pt er der 2 måder at initializere sin GeometryEditor på:
+1) Man angiver x skalering og y-skalering 
+   (OG SÅ PLACERER DEN ORIGO I ENTEN NEDERSTE ELLER ØVERSTE VENSTRE HJØRNE)
+2) Man angiver et ønsket world window
+   (OG SÅ PLACERER DEN WORLD WINDOW SÅLEDES, AT DEN PASSER TIL DET, BORTSET FRA AT DET
+   I REGLEN ER LIDT STØRRE, FORDI ASPECT RATIO FOR VIEW PORTEN ER ANDERLEDES OG DER DERFOR ER PLADS TIL OVERS)
+
+Hvad er du i gang med nu?
+.. at erstatte initialWorldWindowUpperLeft med initialWorldWindowFOCUS - den skulle fint kunne bruges i forbindelse med
+   placering af et view på den måde, hvor man gerne vil SLIPPE for at angive skalering. Og derudover er det en fin
+   parameter, når man GERNE vil angive skalering
