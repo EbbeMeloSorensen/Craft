@@ -91,6 +91,17 @@ Done:
 * Margenerne skal tegnes foran de almindelige labels
 
 In progress:
+* Fix den bug, hvor rammer omkring husets vindue og dør (som tegnes med polylines) tegnes forkert.
+  Ideen i dit design er, at de punkter, der indgår i en polyline, transformeres FØR de renderes, så viewet bare skal rendere polylines
+  uden SELV at tænke på, hvordan de skal transformeres. Der er dog en klausul deri at det vil være for hidsigt at transformere punkter,
+  hver gang der håndteres et mousemove event i forbindelse med at brugeren panorerer rundt i viewet. Derfor laver viewet selv en translation
+  i henhold til TranslationX og TranslationY, som beskriver den vektor, der gør sig gældende for en igangværende panorering.
+  Det virker tilsyneladende fint, så længe man ikke er tæt på grænserne for det område, man må være i.
+  En meget konkret iagttagelse går på, at første view renderes korrekt, hvis man UDKOMMENTERER translationen i xaml-filen.
+  Det vidner om, at TranslationX og TranslationY IKKE opdateres korrekt - de skal jo altså gerne være 0, 0 når ikke brugeren dragger.
+  _translationXMin bliver sat til 466, men det duer jo ikke, da den jo altså skal være 0
+
+
 * Placer SelectedRegionWindow rigtigt.
   - den skal vel bruge transformationen ligesom de almindelige shapes. De bruger i øvrigt en ItemTemplate, men det skal selected region jo ikke gøre
     i og med at den ikke indgår i en collection (ok)
