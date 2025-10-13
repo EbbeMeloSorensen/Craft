@@ -76,7 +76,7 @@
         </ItemsControl>
 
         <!-- Dette er den nye måde at tegne polylines på, hvor de bibeholder zoom leel uanset skalering -->
-        <ItemsControl ItemsSource="{Binding PolylineViewModels}">
+        <ItemsControl ItemsSource="{Binding PolylineViewModels}" Visibility="Visible">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas/>
