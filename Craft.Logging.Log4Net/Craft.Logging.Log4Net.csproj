@@ -6,11 +6,7 @@
 	  <Nullable>enable</Nullable>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>Craft.Logging.Log4Net</PackageId>
-	  <Version>1.0.3</Version>
-	  <Authors>Ebbe Melo Sørensen</Authors>
 	  <Description>Logging utilities based on Log4Net for Craft</Description>
-	  <RepositoryUrl>https://github.com/EbbeMeloSorensen/Craft</RepositoryUrl>
-	  <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

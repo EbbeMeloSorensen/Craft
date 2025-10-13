@@ -1,0 +1,20 @@
+<Project>
+  <PropertyGroup>
+    <!-- Shared version number for all projects -->
+    <Version>1.0.4</Version>
+
+    <!-- Optional but nice-to-have metadata -->
+    <Authors>Ebbe Melo Sørensen</Authors>
+    <Product>Craft Libraries</Product>
+
+    <!-- Ensure all packages go to the same output folder -->
+    <PackageOutputPath>$(SolutionDir)artifacts\packages</PackageOutputPath>
+
+    <!-- Common settings -->
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/EbbeMeloSorensen/Craft</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+</Project>

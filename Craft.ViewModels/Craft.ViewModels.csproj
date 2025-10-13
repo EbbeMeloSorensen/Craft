@@ -7,11 +7,7 @@
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Craft.ViewModels</PackageId>
-    <Version>1.0.3</Version>
-    <Authors>Ebbe Melo Sørensen</Authors>
     <Description>General purpose view models for Craft</Description>
-    <RepositoryUrl>https://github.com/EbbeMeloSorensen/Craft</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
