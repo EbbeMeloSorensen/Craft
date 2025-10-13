@@ -1,0 +1,17 @@
+﻿<Application x:Class="Craft.UIElements.GuiTest.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Craft.UIElements.GuiTest"
+             StartupUri="MainWindow.xaml">
+    <!--Here, we pull in the resources from the Craft.UIElements assembly, and then we override the DataTemplateSelector,
+        with one we declare in the MainSkin of this application-->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Craft.UIElements;component/Charts/Resources.xaml"/>
+                <ResourceDictionary Source="/Craft.UIElements;component/Geometry2D/ScrollFree/Resources.xaml"/>
+                <ResourceDictionary Source="Skins/MainSkin.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

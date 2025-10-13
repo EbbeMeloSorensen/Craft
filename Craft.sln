@@ -49,6 +49,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.DataStructures.IO.UI.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.DataStructures.UnitTest", "Craft.DataStructures.UnitTest\Craft.DataStructures.UnitTest.csproj", "{DE507357-1204-017D-F211-80D15C6DFE86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.GeometryEditor3D.ViewModel", "Craft.GeometryEditor3D.ViewModel\Craft.GeometryEditor3D.ViewModel.csproj", "{9F76A3ED-49E1-1282-FCBA-28BE7CB9D81F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.GeometryEditor3D.UI.WPF", "Craft.GeometryEditor3D.UI.WPF\Craft.GeometryEditor3D.UI.WPF.csproj", "{04B6A593-0B3F-0A88-7F8B-3079BA1EA0DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Math.UnitTest", "Craft.Math.UnitTest\Craft.Math.UnitTest.csproj", "{7607F200-F145-0CAD-6EA3-35D13C7245C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Utils.UnitTest", "Craft.Utils.UnitTest\Craft.Utils.UnitTest.csproj", "{73FE73C1-8E0A-EA1C-73AD-AC0981091EFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.UIElements.GuiTest", "Craft.UIElements.GuiTest\Craft.UIElements.GuiTest.csproj", "{CC9AA3AF-00E1-0AD0-F1A6-2807528CDAFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +145,26 @@ Global
 		{DE507357-1204-017D-F211-80D15C6DFE86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE507357-1204-017D-F211-80D15C6DFE86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE507357-1204-017D-F211-80D15C6DFE86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F76A3ED-49E1-1282-FCBA-28BE7CB9D81F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F76A3ED-49E1-1282-FCBA-28BE7CB9D81F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F76A3ED-49E1-1282-FCBA-28BE7CB9D81F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F76A3ED-49E1-1282-FCBA-28BE7CB9D81F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04B6A593-0B3F-0A88-7F8B-3079BA1EA0DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B6A593-0B3F-0A88-7F8B-3079BA1EA0DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04B6A593-0B3F-0A88-7F8B-3079BA1EA0DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04B6A593-0B3F-0A88-7F8B-3079BA1EA0DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7607F200-F145-0CAD-6EA3-35D13C7245C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7607F200-F145-0CAD-6EA3-35D13C7245C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7607F200-F145-0CAD-6EA3-35D13C7245C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7607F200-F145-0CAD-6EA3-35D13C7245C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73FE73C1-8E0A-EA1C-73AD-AC0981091EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73FE73C1-8E0A-EA1C-73AD-AC0981091EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73FE73C1-8E0A-EA1C-73AD-AC0981091EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73FE73C1-8E0A-EA1C-73AD-AC0981091EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC9AA3AF-00E1-0AD0-F1A6-2807528CDAFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC9AA3AF-00E1-0AD0-F1A6-2807528CDAFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC9AA3AF-00E1-0AD0-F1A6-2807528CDAFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC9AA3AF-00E1-0AD0-F1A6-2807528CDAFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

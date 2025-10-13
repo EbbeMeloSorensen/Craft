@@ -1,0 +1,32 @@
+﻿<Window x:Class="Craft.UIElements.GuiTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Craft.UIElements.GuiTest"
+        xmlns:tab1="clr-namespace:Craft.UIElements.GuiTest.Tab1"
+        xmlns:tab2="clr-namespace:Craft.UIElements.GuiTest.Tab2"
+        xmlns:tab3="clr-namespace:Craft.UIElements.GuiTest.Tab3"
+        xmlns:tab4="clr-namespace:Craft.UIElements.GuiTest.Tab4"
+        xmlns:tab5="clr-namespace:Craft.UIElements.GuiTest.Tab5"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="1200"
+        WindowState="Normal">
+    <TabControl SelectedIndex="3">
+        <TabItem Header="Traffic Light">
+            <tab1:Tab1View DataContext="{Binding Tab1ViewModel}"/>
+        </TabItem>
+        <TabItem Header="PieChart">
+            <tab2:Tab2View DataContext="{Binding Tab2ViewModel}"/>
+        </TabItem>
+        <TabItem Header="Geometry 2D">
+            <tab3:Tab3View DataContext="{Binding Tab3ViewModel}"/>
+        </TabItem>
+        <TabItem Header="Basic">
+            <tab4:Tab4View DataContext="{Binding Tab4ViewModel}"/>
+        </TabItem>
+        <TabItem Header="Graph">
+            <tab5:Tab5View DataContext="{Binding Tab5ViewModel}"/>
+        </TabItem>
+    </TabControl>
+</Window>

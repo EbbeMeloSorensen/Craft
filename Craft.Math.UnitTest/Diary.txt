@@ -1,0 +1,53 @@
+﻿Todo:
+* Make a heap where, when you insert an item, you need to tag it with an index. Such as Insert(item: 7, index: 5)
+  Then, later, you can change the value of some item, by using the index - ChangeValue(index: 5, newItem: 9).
+  And then the heap needs to increase the key.
+  Internally, this heap needs to maintain a data structure that tracks, where the individual items can be found in the heap
+  (This turned out to be unnecessary - you don't need to care about anything else than the primary vertex,
+   because if you find a better estimate, you simple add a new item to the heap and then ignore the one representing
+   the first estimate, when you come around to it)
+
+Scenario:
+1) Insert(item: 7, index: 3)
+     heap: [7]
+     map:  [3:1] (the item with index 3 can be found at heap index: 1)
+
+2) Insert(item 9: index: 4)
+     heap: [7, 9]
+     map:  [3:1] (the item with index 3 can be found at heap index: 1)
+	       [4:2] (the item with index 4 can be found at heap index: 2)
+	 map2: [0, 0, 0, 1, 2]
+
+     Increase key =>
+     heap: [9, 7]
+     map:  [3:2] (the item with index 3 can be found at heap index: 2)
+	       [4:1] (the item with index 4 can be found at heap index: 1)
+	 map2: [0, 0, 0, 2, 1]
+
+	 i.e. whenever an object changes position in the heap, the map is updated
+3) RaiseValueOfObject(index: 3, newValue: 13) + IncreaseKey
+     heap: [13, 9]
+	 map: [3:1]
+	      [4:2]
+
+It would seem that most implementations you come across on the internet operate with having PAIRS in the heap, where the first element is the value
+and the second one is the label. During the relaxation step, if you realize that a computed distance is shorter than the current distance estimate
+for the target vertex, you DONT identify the vertex in the heap and change its value. Rather, you simply add a new pair to the heap.
+
+Heap: [(0, s)] .. (Man smider vel ikke noget i heapen, som har inf som værdi)
+
+iteration 1: Tag (0, s) ud, marker den som final og relaxer udgående edges (2 stk). 
+Så kommer heapen til at se sådan her ud:
+Heap: [(5, x), (10, u)]
+
+iteration 2: Tag (5, x) ud, marker den som final og relaxer udgående edges (1 stk). Nu finder vi ud af, at vejen fra s til u er kortest via x,
+så vi SMIDER ENDNU ET ELEMENT I HEAPEN, selv om den jo allerede er der
+Så kommer heapen til at se sådan her ud:
+Heap: [(8, u), (10, u)]
+
+iteration 3: Tag (8, u) ud og marker den som final.
+Så kommer heapen til at se sådan her ud:
+Heap: [(10, u)]
+
+iteration 4: Tag (10, u) ud. Den er allerede markeret som final, så vi shitcanner den bare, og så er vi færdige
+

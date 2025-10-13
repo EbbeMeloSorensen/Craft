@@ -1,0 +1,445 @@
+﻿<UserControl x:Class="Craft.UIElements.GuiTest.Tab3.Tab3View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
+             xmlns:scrolling="clr-namespace:Craft.UIElements.Geometry2D.Scrolling;assembly=Craft.UIElements"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:valueConverters="clr-namespace:Craft.UI.Utils.ValueConverters;assembly=Craft.UI.Utils"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <valueConverters:DoubleAdder x:Key="DoubleAdder"/>
+        <valueConverters:DoubleScaler x:Key="DoubleScaler"/>
+    </UserControl.Resources>
+
+    <TabControl SelectedIndex="0">
+        <TabItem Header="ScrollFree">
+            <TabControl SelectedIndex="6">
+                <TabItem Header="Basic">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <scrollFree:GeometryEditorView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                                       DataContext="{Binding GeometryEditorViewModel1}"/>
+                        <StackPanel Grid.Row="1" Grid.Column="0">
+                            <CheckBox Content="Windmill rotates" 
+                                      IsChecked="{Binding WindMillInHouseDrawingsRotates}"/>
+                            <CheckBox Content="Allow ROI selection"
+                                      IsChecked="{Binding AllowROISelectionForGeometryEditorViewModel1}"/>
+                            <Grid Margin="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="ROI, X"/>
+                                <TextBox Grid.Row="0" Margin="10,0,0,0" Grid.Column="1" IsReadOnly="True" Text="{Binding ROIXAsText}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="ROI, Y"/>
+                                <TextBox Grid.Row="1" Margin="10,0,0,0" Grid.Column="1" IsReadOnly="True" Text="{Binding ROIYAsText}"/>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="2" Margin="10">
+                            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75"
+                                    Command="{Binding ZoomInForGeometryEditor1Command}" >Zoom In</Button>
+                            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" 
+                                    Command="{Binding ZoomOutForGeometryEditor1Command}" >Zoom Out</Button>
+                            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" 
+                                    Command="{Binding SetSelectedRegionForGeometryEditor1Command}">Set ROI</Button>
+                            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" 
+                                    Command="{Binding SetWorldWindowForGeometryEditor1Command}">Set WW</Button>
+                        </StackPanel>
+                        <Grid Grid.Row="1" Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Margin="0, 0, 0, 0" 
+                                       HorizontalAlignment="Center" Text="Min"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Margin="0, 0, 0, 0" 
+                                       HorizontalAlignment="Center" Text="Max"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0, 0, 10, 0" 
+                                       HorizontalAlignment="Center" Text="X"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitLeftForGeometryEditorViewModel1}"/>
+                            <TextBox Grid.Row="1" Grid.Column="2" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitRightForGeometryEditorViewModel1}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0, 0, 10, 0" 
+                                       HorizontalAlignment="Center" Text="Y"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitTopForGeometryEditorViewModel1}"/>
+                            <TextBox Grid.Row="2" Grid.Column="2" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitBottomForGeometryEditorViewModel1}"/>
+                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" Margin="3, 3, 0, 0"
+                                    Content="Apply" Command="{Binding ApplyWorldWindowLimitsForGeometryEditor1Command}"/>
+                        </Grid>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap">
+                            Here, we have a basic GeometryEditorView with an underlying GeometryEditorViewModel where Scaling is 
+                            initialized to Sx = 1 and Sy = 1, and where the Y axis points downwards.
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Inverted">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <scrollFree:GeometryEditorView Grid.Row="0" DataContext="{Binding GeometryEditorViewModel2}"/>
+                        <CheckBox Grid.Row="1" Content="Windmill rotates" IsChecked="{Binding WindMillInHouseDrawingsRotates}"/>
+                        <StackPanel Grid.Row="1" Margin="10">
+                            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75"
+                                    Command="{Binding ZoomInForGeometryEditor2Command}" >Zoom In</Button>
+                            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" 
+                                    Command="{Binding ZoomOutForGeometryEditor2Command}" >Zoom Out</Button>
+                        </StackPanel>
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                            Here, we again have a basic GeometryEditorView with an underlying GeometryEditorViewModel where Scaling is 
+                            initialized to Sx = 1 and Sy = 1, but here, the Y axis points upwards as is common for a mathematical
+                            coordinate system
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Function Curve I">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <scrollFree:GeometryEditorView Grid.Row="0" DataContext="{Binding GeometryEditorViewModel3}"/>
+                        <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" Grid.Row="0" Margin="3" Text="Scaling, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="0" Margin="1" 
+                                     Text="{Binding GeometryEditorViewModel3.Scaling.Width, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="1" Margin="3" Text="Scaling, Y:"/>
+                            <TextBox Grid.Column="1" Grid.Row="1" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel3.Scaling.Height, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="2" Margin="3" Text="World Window Upper Left, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel3.WorldWindowUpperLeft.X, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="3" Margin="3" Text="World Window Upper Left, Y:"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel3.WorldWindowUpperLeft.Y, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="4" Margin="3" Text="World Window Width, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="4" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel3.WorldWindowSize.Width, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="5" Margin="3" Text="World Window Height, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="5" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel3.WorldWindowSize.Height, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="3" Grid.Row="0" Margin="3" Text="Cursor Position:"/>
+                            <TextBox Grid.Column="4" Grid.Row="0" Margin="1" IsReadOnly="True" Width="100"
+                                     Text="{Binding CursorPositionForGeometryEditorViewModel3AsText, Mode=OneWay}"/>
+                            <CheckBox Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="2" Content="Lock X Axis"
+                                      IsChecked="{Binding GeometryEditorViewModel3.XAxisLocked}"/>
+                            <CheckBox Grid.Column="3" Grid.Row="2" Grid.ColumnSpan="2" Content="Lock Y Axis"
+                                      IsChecked="{Binding GeometryEditorViewModel3.YAxisLocked}"/>
+                            <CheckBox Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="2" Content="Lock Aspect Ratio"
+                                      IsChecked="{Binding GeometryEditorViewModel3.AspectRatioLocked}"/>
+                        </Grid>
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                            Here, we again have a basic GeometryEditorView with an underlying GeometryEditorViewModel where the Y axis 
+                            points upwards as is common for a mathematical coordinate system. Instead of setting the scaling directly,
+                            it is done by initializing a world window (x = [-3; 4], y=[-1;1]) which must be fully visible in the viewport.
+                            The coordinate system and curve in this view is drawn just as the house in the first two views, i.e. there 
+                            is no functionality for adjusting the coordinate axes to the position of the World Window. The curve is
+                            redrawn at every major update of the World Window (e.g. after a resize and at the end of a panning operation)
+                            using the part of the x axis that lies within the bounds of the World Window.
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Function Curve II">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel4}"/>
+                            <Canvas>
+                                <Line Stroke="Black"
+                                      StrokeThickness="1"
+                                      X1="20"
+                                      X2="20"
+                                      Y1="0">
+                                    <Line.Y2>
+                                        <Binding Path="GeometryEditorViewModel4.ViewPortSize.Height"
+                                                 Converter="{StaticResource DoubleAdder}">
+                                            <Binding.ConverterParameter>
+                                                <system:Double>-20</system:Double>
+                                            </Binding.ConverterParameter>
+                                        </Binding>
+                                    </Line.Y2>
+                                </Line>
+                                <Line Stroke="Black"
+                                      StrokeThickness="1"
+                                      X1="20"
+                                      X2="{Binding GeometryEditorViewModel4.ViewPortSize.Width}">
+                                    <Line.Y1>
+                                        <Binding Path="GeometryEditorViewModel4.ViewPortSize.Height"
+                                                 Converter="{StaticResource DoubleAdder}">
+                                            <Binding.ConverterParameter>
+                                                <system:Double>-20</system:Double>
+                                            </Binding.ConverterParameter>
+                                        </Binding>
+                                    </Line.Y1>
+                                    <Line.Y2>
+                                        <Binding Path="GeometryEditorViewModel4.ViewPortSize.Height"
+                                                 Converter="{StaticResource DoubleAdder}">
+                                            <Binding.ConverterParameter>
+                                                <system:Double>-20</system:Double>
+                                            </Binding.ConverterParameter>
+                                        </Binding>
+                                    </Line.Y2>
+                                </Line>
+                            </Canvas>
+                        </Grid>
+                        <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" Grid.Row="0" Margin="3" Text="Scaling, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="0" Margin="1" 
+                                     Text="{Binding GeometryEditorViewModel4.Scaling.Width, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="1" Margin="3" Text="Scaling, Y:"/>
+                            <TextBox Grid.Column="1" Grid.Row="1" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel4.Scaling.Height, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="2" Margin="3" Text="World Window Upper Left, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel4.WorldWindowUpperLeft.X, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="3" Margin="3" Text="World Window Upper Left, Y:"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel4.WorldWindowUpperLeft.Y, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="4" Margin="3" Text="World Window Width, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="4" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel4.WorldWindowSize.Width, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="5" Margin="3" Text="World Window Height, X:"/>
+                            <TextBox Grid.Column="1" Grid.Row="5" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel4.WorldWindowSize.Height, Mode=OneWay, StringFormat=N3}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="6" Margin="3" Text="World Window Updates:"/>
+                            <TextBox Grid.Column="1" Grid.Row="6" Margin="1"
+                                     Text="{Binding WorldWindowUpdateCountForGeometryEditorViewModel4, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="7" Margin="3" Text="World Window Major Updates:"/>
+                            <TextBox Grid.Column="1" Grid.Row="7" Margin="1"
+                                     Text="{Binding WorldWindowMajorUpdateCountForGeometryEditorViewModel4, Mode=OneWay}"/>
+                        </Grid>
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                            Here, we again have a basic GeometryEditorView with an underlying GeometryEditorViewModel where the Y axis 
+                            points upwards as is common for a mathematical coordinate system. The World Window is initialized in the same way
+                            as for the previous view, and the curve is also redrawn when a major update of the World Window occurs.
+                            However, here, the coordinate system axes including ticks and labels as well as grid lines are ALSO redrawn 
+                            when a major update of the World Window occurs. The logic for updating the coordinate system is placed in a 
+                            method that is called from the handler of the major world window update event, i.e. this logic is not reusable. 
+                            The view in the xaml file also includes a Canvas for drawing the coordinate system axes instead of letting the 
+                            GeometryEditor view draw them.
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Function Curve III">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <scrollFree:CoordinateSystemView Grid.Row="0" DataContext="{Binding CoordinateSystemViewModel1}" />
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Row="0" Grid.Column="0" Content="Show horizontal grid lines"
+                                      IsChecked="{Binding CoordinateSystemViewModel1.ShowHorizontalGridLines}"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" Content="Show vertical grid lines"
+                                      IsChecked="{Binding CoordinateSystemViewModel1.ShowVerticalGridLines}"/>
+                            <CheckBox Grid.Row="2" Grid.Column="0" Content="Show x axis labels"
+                                      IsChecked="{Binding CoordinateSystemViewModel1.ShowXAxisLabels}"/>
+                            <CheckBox Grid.Row="3" Grid.Column="0" Content="Show y axis labels"
+                                      IsChecked="{Binding CoordinateSystemViewModel1.ShowYAxisLabels}"/>
+                            <CheckBox Grid.Row="4" Grid.Column="0" Content="Focus on x value of interest"
+                                      IsChecked="{Binding CoordinateSystemViewModel1.LockWorldWindowOnDynamicXValue}"/>
+                            <CheckBox Grid.Row="0" Grid.Column="2" Content="Lock X Axis"
+                                      IsChecked="{Binding CoordinateSystemViewModel1.GeometryEditorViewModel.XAxisLocked}"/>
+                            <CheckBox Grid.Row="1" Grid.Column="2" Content="Lock Y Axis"
+                                      IsChecked="{Binding CoordinateSystemViewModel1.GeometryEditorViewModel.YAxisLocked}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="4" Text="World Window Updates:"/>
+                            <TextBox Grid.Row="0" Grid.Column="5" 
+                                     Text="{Binding WorldWindowUpdateCountForCoordinateSystemViewModel, Mode=OneWay}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="4" Text="World Window Major Updates:"/>
+                            <TextBox Grid.Row="1" Grid.Column="5" 
+                                     Text="{Binding WorldWindowMajorUpdateCountForCoordinateSystemViewModel, Mode=OneWay}"/>
+                        </Grid>
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                            Here, we have a CoordinateSystemView with an underlying CoordinateSystemViewModel, where the
+                            logic for drawing the coordinate system and grid lines is a part of the viewmodel and view,
+                            so that it is reusable.
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Time Series I">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <scrollFree:CoordinateSystemView Grid.Row="0" DataContext="{Binding TimeSeriesViewModel1}" />
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Margin="3" Text="Time:"/>
+                            <TextBox Grid.Column="1" Margin="1" IsReadOnly="True"
+                                     Text="{Binding TimeAtMousePositionAsText1}"/>
+                        </Grid>
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                            Here, we have a CoordinateSystemView with an underlying TimeSerieViewModel that resembles
+                            the CoordinateSystemViewModel from the previous view, except for the way it draws ticks and
+                            labels for the x axis as well as vertical grid lines. The time interval is initialized so
+                            it goes from current time to 7 days back. When a major update of the World Window position 
+                            occurs, the ViewModel hosting the TimeSerieViewModel clears the PolyLines collection of the 
+                            GeometryEditorViewModel (owned by the TimeSeriesViewModel) and then adds a new Polyline 
+                            representing a dummy time series
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Time Series II">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <scrollFree:CoordinateSystemView Grid.Row="0" DataContext="{Binding TimeSeriesViewModel2}" />
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" Text="Time:"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="1" IsReadOnly="True"
+                                     Text="{Binding TimeAtMousePositionAsText2}"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Focus on current time"
+                                      IsChecked="{Binding TimeSeriesViewModel2.LockWorldWindowOnDynamicXValue}"/>
+                        </Grid>
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                            Here, we have a CoordinateSystemView with an underlying TimeSerieViewModel initialized
+                            with a time interval that goes from current time to 1 minute into the future. When a major update of
+                            the World Window position occurs, the ViewModel hosting the TimeSerieViewModel clears
+                            the Lines collection of the GeometryEditorViewModel (owned by the TimeSeriesViewModel)
+                            and then adds a number of lines representing timestamps of interest
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Time Series III">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <scrollFree:CoordinateSystemView Grid.Row="0" DataContext="{Binding TimeSeriesViewModel3}" />
+                        <!--<Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" Text="Time:"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="1" IsReadOnly="True"
+                                     Text="{Binding TimeAtMousePositionAsText2}"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Focus on current time"
+                                      IsChecked="{Binding TimeSeriesViewModel2.LockWorldWindowOnDynamicXValue}"/>
+                        </Grid>-->
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap">
+                            Here, we have a CoordinateSystemView with an underlying TimeSerieViewModel initialized
+                            with a time interval that goes from current time to 7 hour back. When a major update of
+                            the World Window position occurs, the ViewModel hosting the TimeSerieViewModel clears
+                            the Lines collection of the GeometryEditorViewModel (owned by the TimeSeriesViewModel)
+                            and then adds a number of lines representing timestamps of interest
+                        </TextBlock>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </TabItem>
+        <TabItem Header="Scrolling">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <scrolling:ImageEditorView Grid.Row="0" DataContext="{Binding ImageEditorViewModel}"/>
+                <TextBlock Grid.Row="1" HorizontalAlignment="Stretch"
+                           Text="{Binding CursorPositionForImageEditorViewModelAsText}"/>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

@@ -1,0 +1,127 @@
+﻿<Window x:Class="Craft.GeometryEditor3D.UI.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Craft.GeometryEditor3D.UI.WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        DataContext="{Binding Path=MainWindowViewModel, Source={StaticResource BootStrapper}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <local:GeometryEditorView Grid.Row="0" Grid.Column="0" DataContext="{Binding GeometryEditorViewModel}"/>
+
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="3,3,3,3" Text="VRC.X:"/>
+            <TextBox Grid.Row="0" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VRP.X, Mode=OneWay}"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="3,3,3,3" Text="VRC.Y:"/>
+            <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VRP.Y, Mode=OneWay}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="3,3,3,3" Text="VRC.Z:"/>
+            <TextBox Grid.Row="2" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VRP.Z, Mode=OneWay}"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="3,3,3,3" Text="VPN.X:"/>
+            <TextBox Grid.Row="3" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VPN.X, Mode=OneWay}"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Margin="3,3,3,3" Text="VPN.Y:"/>
+            <TextBox Grid.Row="4" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VPN.Y, Mode=OneWay}"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Margin="3,3,3,3" Text="VPN.Z:"/>
+            <TextBox Grid.Row="5" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VPN.Z, Mode=OneWay}"/>
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="3,3,3,3" Text="VUP.X:"/>
+            <TextBox Grid.Row="6" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VUP.X, Mode=OneWay}"/>
+            <TextBlock Grid.Row="7" Grid.Column="0" Margin="3,3,3,3" Text="VUP.Y:"/>
+            <TextBox Grid.Row="7" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VUP.Y, Mode=OneWay}"/>
+            <TextBlock Grid.Row="8" Grid.Column="0" Margin="3,3,3,3" Text="VUP.Z:"/>
+            <TextBox Grid.Row="8" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.VUP.Z, Mode=OneWay}"/>
+            <TextBlock Grid.Row="9" Grid.Column="0" Margin="3,3,3,3" Text="PRP.X:"/>
+            <TextBox Grid.Row="9" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.PRP.X, Mode=OneWay}"/>
+            <TextBlock Grid.Row="10" Grid.Column="0" Margin="3,3,3,3" Text="PRP.Y:"/>
+            <TextBox Grid.Row="10" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.PRP.Y, Mode=OneWay}"/>
+            <TextBlock Grid.Row="11" Grid.Column="0" Margin="3,3,3,3" Text="PRP.Z:"/>
+            <TextBox Grid.Row="11" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.PRP.Z, Mode=OneWay}"/>
+            <TextBlock Grid.Row="12" Grid.Column="0" Margin="3,3,3,3" Text="B:"/>
+            <TextBox Grid.Row="12" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.B}"/>
+            <TextBlock Grid.Row="13" Grid.Column="0" Margin="3,3,3,3" Text="F:"/>
+            <TextBox Grid.Row="13" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.F}"/>
+            <TextBlock Grid.Row="14" Grid.Column="0" Margin="3,3,3,3" Text="Umin:"/>
+            <TextBox Grid.Row="14" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.Umin}"/>
+            <TextBlock Grid.Row="15" Grid.Column="0" Margin="3,3,3,3" Text="Umax:"/>
+            <TextBox Grid.Row="15" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.Umax}"/>
+            <TextBlock Grid.Row="16" Grid.Column="0" Margin="3,3,3,3" Text="Vmin:"/>
+            <TextBox Grid.Row="16" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.Vmin}"/>
+            <TextBlock Grid.Row="17" Grid.Column="0" Margin="3,3,3,3" Text="Vmax:"/>
+            <TextBox Grid.Row="17" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.Vmax}"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="3,3,3,3" Text="Magnification:"/>
+            <TextBox Grid.Row="0" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.Magnification}"/>
+            <Slider Grid.Row="0" Grid.Column="2" Minimum="0.1" Maximum="20" Value="{Binding GeometryEditorViewModel.Magnification}"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="3,3,3,3" Text="Horizontal View Angle:"/>
+            <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.HorizontalViewAngle}"/>
+            <Slider Grid.Row="1" Grid.Column="2" Minimum="0" Maximum="3.141592" Value="{Binding GeometryEditorViewModel.HorizontalViewAngle}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="3,3,3,3" Text="Camera.X:"/>
+            <TextBox Grid.Row="2" Grid.Column="1" IsReadOnly="True" Text="{Binding CameraX}"/>
+            <Slider Grid.Row="2" Grid.Column="2" Minimum="-1500" Maximum="1500" Value="{Binding CameraX}"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="3,3,3,3" Text="Camera.Y:"/>
+            <TextBox Grid.Row="3" Grid.Column="1" IsReadOnly="True" Text="{Binding CameraY}"/>
+            <Slider Grid.Row="3" Grid.Column="2" Minimum="-1500" Maximum="1500" Value="{Binding CameraY}"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Margin="3,3,3,3" Text="Camera.Z:"/>
+            <TextBox Grid.Row="4" Grid.Column="1" IsReadOnly="True" Text="{Binding CameraZ}"/>
+            <Slider Grid.Row="4" Grid.Column="2" Minimum="-1500" Maximum="1500" Value="{Binding CameraZ}"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Margin="3,3,3,3" Text="Camera Rotation.Angle Left/Right:"/>
+            <TextBox Grid.Row="5" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.CameraRotation.Y, Mode=OneWay}"/>
+            <Slider Grid.Row="5" Grid.Column="2" Minimum="-3.14" Maximum="3.14" Value="{Binding CameraRotationY}"/>
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="3,3,3,3" Text="Camera Rotation.Angle Up/Down"/>
+            <TextBox Grid.Row="6" Grid.Column="1" IsReadOnly="True" Text="{Binding GeometryEditorViewModel.CameraRotation.X, Mode=OneWay}"/>
+            <Slider Grid.Row="6" Grid.Column="2" Minimum="-1.57" Maximum="1.57" Value="{Binding CameraRotationX}"/>
+        </Grid>
+    </Grid>
+</Window>
