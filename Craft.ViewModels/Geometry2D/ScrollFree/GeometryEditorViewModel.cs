@@ -672,9 +672,13 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
 
             _translationXMax = (WorldWindowUpperLeft.X - WorldWindowUpperLeftLimit.X) * Scaling.Width;
             _translationXMin = (WorldWindowUpperLeft.X + WorldWindowSize.Width - WorldWindowBottomRightLimit.X) * Scaling.Width;
+            _translationXMax = Math.Max(0, _translationXMax);
+            _translationXMin = Math.Min(0, _translationXMin);
 
             _translationYMax = (WorldWindowUpperLeft.Y - WorldWindowUpperLeftLimit.Y) * Scaling.Height;
             _translationYMin = (WorldWindowUpperLeft.Y + WorldWindowSize.Height - WorldWindowBottomRightLimit.Y) * Scaling.Height;
+            _translationYMax = Math.Max(0, _translationYMax);
+            _translationYMin = Math.Min(0, _translationYMin);
 
             foreach (var polylineViewModel in PolylineViewModels)
             {
