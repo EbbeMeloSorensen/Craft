@@ -682,7 +682,12 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
 
             foreach (var polylineViewModel in PolylineViewModels)
             {
-                polylineViewModel.Update(Scaling, WorldWindowUpperLeft);
+                polylineViewModel.UpdateViewportCoordinates(Scaling, WorldWindowUpperLeft);
+            }
+
+            foreach (var lineViewModel in LineViewModels)
+            {
+                lineViewModel.UpdateViewportCoordinates(Scaling, WorldWindowUpperLeft);
             }
         }
 
@@ -753,8 +758,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
             var polyLineViewModel = new PolylineViewModel(
                 points.Select(p => new PointD(p.X, _yAxisFactor * p.Y)), thickness, brush);
 
-            polyLineViewModel.Update(Scaling, WorldWindowUpperLeft);
-
+            polyLineViewModel.UpdateViewportCoordinates(Scaling, WorldWindowUpperLeft);
             PolylineViewModels.Add(polyLineViewModel);
         }
 

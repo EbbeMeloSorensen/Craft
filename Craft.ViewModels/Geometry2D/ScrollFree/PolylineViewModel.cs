@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using Craft.Utils;
@@ -10,17 +7,15 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree;
 
 public class PolylineViewModel : ViewModelBase
 {
-    private IEnumerable<PointD> _points;
-    private string _points2;
+    private IEnumerable<PointD> _pointsInWorldCoordinates;
+    private PointCollection _pointsInViewportCoordinates;
 
-    public string Points { get; }
-
-    public string Points2
+    public PointCollection PointsInViewportCoordinates
     {
-        get => _points2;
+        get => _pointsInViewportCoordinates;
         private set
         {
-            _points2 = value;
+            _pointsInViewportCoordinates = value;
             RaisePropertyChanged();
         }
     }
@@ -33,19 +28,17 @@ public class PolylineViewModel : ViewModelBase
         double thickness,
         Brush brush)
     {
-        _points = points;
+        _pointsInWorldCoordinates = points;
         Thickness = thickness;
         Brush = brush;
-
-        Points = string.Join(" ", points.Select(
-            point => $"{string.Format(CultureInfo.InvariantCulture, "{0}", point.X)},{string.Format(CultureInfo.InvariantCulture, "{0}", point.Y)}"));
     }
 
-    public void Update(
+    public void UpdateViewportCoordinates(
         Size scaling,
         Point worldWindowUpperLeft)
     {
-        Points2 = string.Join(" ", _points
-            .Select(point => $"{string.Format(CultureInfo.InvariantCulture, "{0}", (point.X - worldWindowUpperLeft.X) * scaling.Width)},{string.Format(CultureInfo.InvariantCulture, "{0}", (point.Y - worldWindowUpperLeft.Y) * scaling.Height)}"));
+        PointsInViewportCoordinates = new PointCollection(_pointsInWorldCoordinates.Select(_ => new Point(
+            (_.X - worldWindowUpperLeft.X) * scaling.Width,
+            (_.Y - worldWindowUpperLeft.Y) * scaling.Height)));
     }
 }

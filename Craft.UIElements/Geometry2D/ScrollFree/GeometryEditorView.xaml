@@ -52,31 +52,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <!-- Dette er den gamle måde at tegne polylines på, hvor de bliver tykkere, når man zoomer ind (bemærk at det er hidden for nu) -->
-        <ItemsControl ItemsSource="{Binding PolylineViewModels}" Visibility="Hidden">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Polyline
-                        Stroke="{Binding Brush}"
-                        StrokeThickness="{Binding Thickness}"
-                        Points="{Binding Points}">
-                        <Polyline.RenderTransform>
-                            <MatrixTransform Matrix="{Binding 
-                                Path=DataContext.TransformationMatrix, 
-                                RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                        </Polyline.RenderTransform>
-                    </Polyline>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <!-- Dette er den nye måde at tegne polylines på, hvor de bibeholder zoom leel uanset skalering -->
-        <ItemsControl ItemsSource="{Binding PolylineViewModels}" Visibility="Visible">
+        <ItemsControl ItemsSource="{Binding PolylineViewModels}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas/>
@@ -87,7 +63,7 @@
                     <Polyline
                         Stroke="{Binding Brush}"
                         StrokeThickness="1"
-                        Points="{Binding Points2}">
+                        Points="{Binding PointsInViewportCoordinates}">
                         <Polyline.RenderTransform>
                             <TranslateTransform 
                                 X="{Binding
@@ -103,33 +79,6 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <!-- Dette er en måde at tegne linier på, hvor de skaleres med TransformationMatrix
-             og linierne bliver tykkere, når der zoomes ind -->
-        <ItemsControl ItemsSource="{Binding LineViewModels}" Visibility="Hidden">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Line Stroke="Black"
-                          StrokeThickness="{Binding Thickness}" 
-                          X1="{Binding Point1.X}" 
-                          Y1="{Binding Point1.Y}" 
-                          X2="{Binding Point2.X}" 
-                          Y2="{Binding Point2.Y}">
-                        <Line.RenderTransform>
-                            <MatrixTransform Matrix="{Binding 
-                                Path=DataContext.TransformationMatrix, 
-                                RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                        </Line.RenderTransform>
-                    </Line>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <!--Alternativ måde at tegne linier på, hvor de IKKE SKALERER, dvs hvor thickness gælder for VIEW og ikke WORLD-->
         <ItemsControl ItemsSource="{Binding LineViewModels}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -139,43 +88,21 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Line Stroke="{Binding Brush}"
-                          StrokeThickness="{Binding Thickness}">
-                        <Line.X1>
-                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
-                                <Binding Path="Point1.X"/>
-                                <Binding Path="DataContext.WorldWindowUpperLeft.X" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                                <Binding Path="DataContext.Scaling.Width" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                            </MultiBinding>
-                        </Line.X1>
-                        <Line.Y1>
-                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
-                                <Binding Path="Point1.Y"/>
-                                <Binding Path="DataContext.WorldWindowUpperLeft.Y" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                                <Binding Path="DataContext.Scaling.Height" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                            </MultiBinding>
-                        </Line.Y1>
-                        <Line.X2>
-                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
-                                <Binding Path="Point2.X"/>
-                                <Binding Path="DataContext.WorldWindowUpperLeft.X" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                                <Binding Path="DataContext.Scaling.Width" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                            </MultiBinding>
-                        </Line.X2>
-                        <Line.Y2>
-                            <MultiBinding Converter="{StaticResource PointPositionConverter}">
-                                <Binding Path="Point2.Y"/>
-                                <Binding Path="DataContext.WorldWindowUpperLeft.Y" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                                <Binding Path="DataContext.Scaling.Height" 
-                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                            </MultiBinding>
-                        </Line.Y2>
+                          StrokeThickness="{Binding Thickness}"
+                          X1="{Binding Point1InViewportCoordinates.X}"
+                          Y1="{Binding Point1InViewportCoordinates.Y}"
+                          X2="{Binding Point2InViewportCoordinates.X}"
+                          Y2="{Binding Point2InViewportCoordinates.Y}">
+                        <Line.RenderTransform>
+                            <TranslateTransform 
+                                X="{Binding
+                                    Path=DataContext.TranslationX,
+                                    RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Y="{Binding
+                                    Path=DataContext.TranslationY,
+                                    RelativeSource={RelativeSource AncestorType=UserControl}}">
+                            </TranslateTransform>
+                        </Line.RenderTransform>
                     </Line>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
