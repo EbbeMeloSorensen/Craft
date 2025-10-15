@@ -10,6 +10,7 @@
     <valueConverters:ImagePathConverter x:Key="ImagePathConverter"/>
     <valueConverters:ShapePositionConverter x:Key="ShapePositionConverter"/>
     <valueConverters:PointPositionConverter x:Key="PointPositionConverter"/>
+    <valueConverters:StrokeThicknessConverter x:Key="StrokeThicknessConverter"/>
     <valueConverters:LabelPositionConverter x:Key="LabelPositionConverter"/>
     <valueConverters:DoubleScaler x:Key="DoubleScaler"/>
     <scrollFree:ShapeTemplateSelector x:Key="ShapeTemplateSelector"/>

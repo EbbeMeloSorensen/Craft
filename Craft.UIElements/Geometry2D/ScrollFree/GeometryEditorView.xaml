@@ -40,8 +40,16 @@
                     <Polygon
                         Stroke="Black" 
                         Fill="{Binding Brush}"
-                        StrokeThickness="{Binding Thickness}"
                         Points="{Binding Points}">
+                        <Polygon.StrokeThickness>
+                            <MultiBinding Converter="{StaticResource StrokeThicknessConverter}">
+                                <Binding Path="Thickness"/>
+                                <Binding Path="DataContext.TransformationMatrix.M11"
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.TransformationMatrix.M22"
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Polygon.StrokeThickness>
                         <Polygon.RenderTransform>
                             <MatrixTransform Matrix="{Binding 
                                 Path=DataContext.TransformationMatrix, 
@@ -81,7 +89,7 @@
 
         <!-- Dette er en måde at tegne linier på, hvor de skaleres med TransformationMatrix
              og linierne bliver tykkere, når der zoomes ind -->
-        <ItemsControl ItemsSource="{Binding LineViewModels}" Visibility="Hidden">
+        <ItemsControl ItemsSource="{Binding LineViewModels}" Visibility="Visible">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas/>
@@ -89,12 +97,20 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Line Stroke="Black"
-                          StrokeThickness="{Binding Thickness}" 
+                    <Line Stroke="{Binding Brush}"
                           X1="{Binding Point1.X}" 
                           Y1="{Binding Point1.Y}" 
                           X2="{Binding Point2.X}" 
                           Y2="{Binding Point2.Y}">
+                        <Line.StrokeThickness>
+                            <MultiBinding Converter="{StaticResource StrokeThicknessConverter}">
+                                <Binding Path="Thickness"/>
+                                <Binding Path="DataContext.TransformationMatrix.M11"
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                <Binding Path="DataContext.TransformationMatrix.M22"
+                                         RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                            </MultiBinding>
+                        </Line.StrokeThickness>
                         <Line.RenderTransform>
                             <MatrixTransform Matrix="{Binding 
                                 Path=DataContext.TransformationMatrix, 
@@ -107,7 +123,7 @@
 
         <!--Alternativ måde at tegne linier på, hvor de IKKE SKALERER, dvs hvor thickness gælder for VIEW og ikke WORLD-->
         <!--(Her forsvinder linierne, når man zoomer langt ind..)-->
-        <ItemsControl ItemsSource="{Binding LineViewModels}" Visibility="Visible">
+        <ItemsControl ItemsSource="{Binding LineViewModels}" Visibility="Hidden">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas/>
