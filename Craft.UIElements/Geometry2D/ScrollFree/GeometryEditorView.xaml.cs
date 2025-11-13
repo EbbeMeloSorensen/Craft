@@ -198,10 +198,10 @@ namespace Craft.UIElements.Geometry2D.ScrollFree
 
                 if (_alternativeDraggingMode)
                 {
-                    ViewModel.SelectedRegionWindow.Width = 2 * Math.Abs(mouseOffsetViewPort.X) / ViewModel.Scaling.Width;
+                    ViewModel.SelectedRegionWindow.Width = 2 * System.Math.Abs(mouseOffsetViewPort.X) / ViewModel.Scaling.Width;
 
                     ViewModel.SelectedRegionWindow.Height = ViewModel.SelectedRegionLimitedVertically
-                        ? 2 * Math.Abs(mouseOffsetViewPort.Y) / ViewModel.Scaling.Height
+                        ? 2 * System.Math.Abs(mouseOffsetViewPort.Y) / ViewModel.Scaling.Height
                         : 2000;
                 }
                 else

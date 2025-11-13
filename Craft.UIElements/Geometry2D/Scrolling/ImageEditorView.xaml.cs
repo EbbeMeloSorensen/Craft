@@ -50,8 +50,8 @@ namespace Craft.UIElements.Geometry2D.Scrolling
             ScrollChangedEventArgs e)
         {
             // Is the scroll change caused by a change in the size of the embedded Canvas?
-            if (Math.Abs(e.ExtentWidthChange) > 0.0000001 ||
-                Math.Abs(e.ExtentHeightChange) > 0.0000001)
+            if (System.Math.Abs(e.ExtentWidthChange) > 0.0000001 ||
+                System.Math.Abs(e.ExtentHeightChange) > 0.0000001)
             {
                 ViewModel.ScrollableOffset = new PointD(
                     ScrollViewer.ScrollableWidth,
@@ -97,8 +97,8 @@ namespace Craft.UIElements.Geometry2D.Scrolling
                 var offset = mouseClientPosition - _mouseDownViewport;
 
                 ViewModel.ScrollOffset = new PointD(
-                    Math.Min(Math.Max(0, _initialScrollOffset.X - offset.X), ViewModel.ScrollableOffset.X),
-                    Math.Min(Math.Max(0, _initialScrollOffset.Y - offset.Y), ViewModel.ScrollableOffset.Y));
+                    System.Math.Min(System.Math.Max(0, _initialScrollOffset.X - offset.X), ViewModel.ScrollableOffset.X),
+                    System.Math.Min(System.Math.Max(0, _initialScrollOffset.Y - offset.Y), ViewModel.ScrollableOffset.Y));
             }
             else
             {

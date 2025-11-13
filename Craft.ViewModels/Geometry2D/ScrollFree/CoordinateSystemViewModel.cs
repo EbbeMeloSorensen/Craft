@@ -546,7 +546,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
             // 1: Find ud af spacing af vertikale grid lines
             var lineSpacingX_ViewPort_Min = 75.0;
             var lineSpacingX_World_Min = lineSpacingX_ViewPort_Min / GeometryEditorViewModel.Scaling.Width;
-            var lineSpacingX_World = Math.Pow(10, Math.Ceiling(Math.Log10(lineSpacingX_World_Min)));
+            var lineSpacingX_World = System.Math.Pow(10, System.Math.Ceiling(System.Math.Log10(lineSpacingX_World_Min)));
 
             // Her er lineSpacingX_World f.eks. 0.01, 0.1, 1, 10, 100 eller 1000
 
@@ -568,10 +568,10 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
 
             // Hvor mange decimaler er der generelt på et tick?
             // (Det skal vi bruge for at kompensere for afrundingsfejl, så der ikke f.eks. kommer til at stå 0.60000000000012)
-            var labelDecimals = (int) Math.Max(0, Math.Ceiling(-Math.Log10(lineSpacingX_World)));
+            var labelDecimals = (int) System.Math.Max(0, System.Math.Ceiling(-System.Math.Log10(lineSpacingX_World)));
 
             // Find ud af første x-værdi
-            var x = Math.Floor(_expandedWorldWindowUpperLeft.X / lineSpacingX_World) * lineSpacingX_World;
+            var x = System.Math.Floor(_expandedWorldWindowUpperLeft.X / lineSpacingX_World) * lineSpacingX_World;
 
             var y0 = -GeometryEditorViewModel.WorldWindowUpperLeft.Y - GeometryEditorViewModel.WorldWindowSize.Height;
             var dy = MarginBottom / GeometryEditorViewModel.Scaling.Height;
@@ -592,7 +592,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
                 {
                     var labelViewModel = new LabelViewModel
                     {
-                        Text = Math.Round(x, labelDecimals).ToString(CultureInfo.InvariantCulture),
+                        Text = System.Math.Round(x, labelDecimals).ToString(CultureInfo.InvariantCulture),
                         Point = new PointD(x, GeometryEditorViewModel._yAxisFactor * y),
                         Width = labelWidth,
                         Height = labelHeight,
@@ -649,7 +649,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
             // 1: Find ud af spacing af horisontale grid lines
             var lineSpacingY_ViewPort_Min = 75.0;
             var lineSpacingY_World_Min = lineSpacingY_ViewPort_Min / GeometryEditorViewModel.Scaling.Height;
-            var lineSpacingY_World = Math.Pow(10, Math.Ceiling(Math.Log10(lineSpacingY_World_Min)));
+            var lineSpacingY_World = System.Math.Pow(10, System.Math.Ceiling(System.Math.Log10(lineSpacingY_World_Min)));
 
             // Her er lineSpacingX_World f.eks. 0.01, 0.1, 1, 10, 100 eller 1000
 
@@ -666,10 +666,10 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
 
             // Hvor mange decimaler er der generelt på et tick?
             // (Det skal vi bruge for at kompensere for afrundingsfejl, så der ikke f.eks. kommer til at stå 0.60000000000012)
-            var labelDecimals = (int)Math.Max(0, Math.Ceiling(-Math.Log10(lineSpacingY_World)));
+            var labelDecimals = (int)System.Math.Max(0, System.Math.Ceiling(-System.Math.Log10(lineSpacingY_World)));
 
             // Find ud af første y-værdi
-            var y = Math.Floor(_expandedWorldWindowUpperLeft.Y / lineSpacingY_World) * lineSpacingY_World;
+            var y = System.Math.Floor(_expandedWorldWindowUpperLeft.Y / lineSpacingY_World) * lineSpacingY_World;
 
             while (y < _expandedWorldWindowUpperLeft.Y + _expandedWorldWindowSize.Height)
             {
@@ -686,7 +686,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
                 {
                     var labelViewModel = new LabelViewModel
                     {
-                        Text = Math.Round(y, labelDecimals).ToString(CultureInfo.InvariantCulture),
+                        Text = System.Math.Round(y, labelDecimals).ToString(CultureInfo.InvariantCulture),
                         Point = new PointD(0, GeometryEditorViewModel._yAxisFactor * y),
                         Width = MarginLeft,
                         Height = 20,

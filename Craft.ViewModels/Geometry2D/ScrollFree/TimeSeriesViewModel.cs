@@ -323,7 +323,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
             var labelHeight = 20.0;
 
             // Find den største værdi for x, der ligger til venstre for World Window, og som repræsenterer en grid line
-            var x = Math.Floor(x0ext / lineSpacingX_World) * lineSpacingX_World;
+            var x = System.Math.Floor(x0ext / lineSpacingX_World) * lineSpacingX_World;
 
             var labelCount = 0;
 
@@ -567,7 +567,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
         // Det er for at kompensere for afrundingsfejl i forbindelse med konvertering fra x-værdier på x-aksen og tidspunkter
         private static TimeSpan RoundSeconds(TimeSpan span)
         {
-            return TimeSpan.FromSeconds(Math.Round(span.TotalSeconds));
+            return TimeSpan.FromSeconds(System.Math.Round(span.TotalSeconds));
         }
     }
 }

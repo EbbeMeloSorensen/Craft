@@ -672,13 +672,13 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
 
             _translationXMax = (WorldWindowUpperLeft.X - WorldWindowUpperLeftLimit.X) * Scaling.Width;
             _translationXMin = (WorldWindowUpperLeft.X + WorldWindowSize.Width - WorldWindowBottomRightLimit.X) * Scaling.Width;
-            _translationXMax = Math.Max(0, _translationXMax);
-            _translationXMin = Math.Min(0, _translationXMin);
+            _translationXMax = System.Math.Max(0, _translationXMax);
+            _translationXMin = System.Math.Min(0, _translationXMin);
 
             _translationYMax = (WorldWindowUpperLeft.Y - WorldWindowUpperLeftLimit.Y) * Scaling.Height;
             _translationYMin = (WorldWindowUpperLeft.Y + WorldWindowSize.Height - WorldWindowBottomRightLimit.Y) * Scaling.Height;
-            _translationYMax = Math.Max(0, _translationYMax);
-            _translationYMin = Math.Min(0, _translationYMin);
+            _translationYMax = System.Math.Max(0, _translationYMax);
+            _translationYMin = System.Math.Min(0, _translationYMin);
 
             foreach (var polylineViewModel in PolylineViewModels)
             {
@@ -876,8 +876,8 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
                 shiftY = maxDy + dy;
             }
 
-            if (Math.Abs(shiftX) > 0.001 ||
-                Math.Abs(shiftY) > 0.001)
+            if (System.Math.Abs(shiftX) > 0.001 ||
+                System.Math.Abs(shiftY) > 0.001)
             {
                 WorldWindowUpperLeft = new Point(
                     WorldWindowUpperLeft.X + shiftX,
@@ -1013,10 +1013,10 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
             }
 
             // Push the World Window to the right if it exceeds the limit to the left
-            _worldWindowUpperLeft.X = Math.Max(_worldWindowUpperLeft.X, WorldWindowUpperLeftLimit.X);
+            _worldWindowUpperLeft.X = System.Math.Max(_worldWindowUpperLeft.X, WorldWindowUpperLeftLimit.X);
 
             // Push the World Window down if it exceeds the bottom limit
-            _worldWindowUpperLeft.Y = Math.Max(_worldWindowUpperLeft.Y, WorldWindowUpperLeftLimit.Y);
+            _worldWindowUpperLeft.Y = System.Math.Max(_worldWindowUpperLeft.Y, WorldWindowUpperLeftLimit.Y);
         }
 
         private void UpdateWorldWindowPositionOverrides()

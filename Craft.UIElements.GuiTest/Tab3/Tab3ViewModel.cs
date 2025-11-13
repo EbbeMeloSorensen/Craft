@@ -470,7 +470,7 @@ namespace Craft.UIElements.GuiTest.Tab3
                 Point = new PointD(500, 250),
                 Width = 100.0,
                 Height = 10.0,
-                Orientation = Math.PI / 4,
+                Orientation = System.Math.PI / 4,
             });
 
             // Make the windmill rotate
@@ -483,7 +483,7 @@ namespace Craft.UIElements.GuiTest.Tab3
 
                 var now = DateTime.Now;
                 var fraction = now.Millisecond / 1000.0;
-                var orientation = 2 * Math.PI * fraction;
+                var orientation = 2 * System.Math.PI * fraction;
 
                 geometryEditorViewModel.ShapeViewModels
                     .Where(_ => _ is RotatableEllipseViewModel)
@@ -604,7 +604,7 @@ namespace Craft.UIElements.GuiTest.Tab3
             var labelHeight = 20.0;
 
             // Find ud af første x-værdi
-            var x = Math.Floor(x0 / spacingX) * spacingX;
+            var x = System.Math.Floor(x0 / spacingX) * spacingX;
 
             while (x < x1)
             {
@@ -646,7 +646,7 @@ namespace Craft.UIElements.GuiTest.Tab3
             var spacingY = 1.0;
 
             // Find ud af første y-værdi
-            var y = Math.Floor(y0 / spacingY) * spacingY;
+            var y = System.Math.Floor(y0 / spacingY) * spacingY;
 
             while (y < y1)
             {
@@ -744,8 +744,8 @@ namespace Craft.UIElements.GuiTest.Tab3
 
             GeometryEditorViewModel3.WorldWindowMajorUpdateOccured += (s, e) =>
             {
-                var x0 = Math.Floor(e.WorldWindowUpperLeft.X);
-                var x1 = Math.Ceiling(x0 + e.WorldWindowSize.Width);
+                var x0 = System.Math.Floor(e.WorldWindowUpperLeft.X);
+                var x1 = System.Math.Ceiling(x0 + e.WorldWindowSize.Width);
 
                 var points = new List<PointD>();
                 for (var x = x0; x <= x1; x += 0.1)
@@ -761,7 +761,7 @@ namespace Craft.UIElements.GuiTest.Tab3
                     //points.Add(new PointD(x, Math.Abs(x)));                                               // y = |x|
                     //points.Add(new PointD(x, -x * x));                                                    // y = -x^2
                     //points.Add(new PointD(x, Math.Pow(x - 2, 2) - 3));                                    // y = (x - 2)^2 - 3 = x^2 - 4x + 1
-                    points.Add(new PointD(x, Math.Pow(x, 3) / 4 + 3 * Math.Pow(x, 2) / 4 - 3 * x / 2 - 2)); // y = 0.25x^3 + 0.75x^2 - 1.5x - 2
+                    points.Add(new PointD(x, System.Math.Pow(x, 3) / 4 + 3 * System.Math.Pow(x, 2) / 4 - 3 * x / 2 - 2)); // y = 0.25x^3 + 0.75x^2 - 1.5x - 2
                                                                                                             //points.Add(new PointD(x, Math.Sin(x)));                                               // y = sin(x)
                 }
 
@@ -809,14 +809,14 @@ namespace Craft.UIElements.GuiTest.Tab3
                     -e.WorldWindowUpperLeft.Y - e.WorldWindowSize.Height,
                     -e.WorldWindowUpperLeft.Y);
 
-                var x0 = Math.Floor(e.WorldWindowUpperLeft.X);
-                var x1 = Math.Ceiling(e.WorldWindowUpperLeft.X + e.WorldWindowSize.Width);
+                var x0 = System.Math.Floor(e.WorldWindowUpperLeft.X);
+                var x1 = System.Math.Ceiling(e.WorldWindowUpperLeft.X + e.WorldWindowSize.Width);
 
                 var points = new List<PointD>();
                 for (var x = x0; x <= x1; x += 0.1)
                 {
                     //points.Add(new PointD(x, Math.Pow(x, 3) / 4 + 3 * Math.Pow(x, 2) / 4 - 3 * x / 2 - 2)); // y = 0.25x^3 + 0.75x^2 - 1.5x - 2
-                    points.Add(new PointD(x, Math.Exp(-0.01 * x * x) * Math.Sin(3 * x))); // (gaussian and sinus)
+                    points.Add(new PointD(x, System.Math.Exp(-0.01 * x * x) * System.Math.Sin(3 * x))); // (gaussian and sinus)
                 }
 
                 GeometryEditorViewModel4.ClearPolylines();
@@ -865,7 +865,7 @@ namespace Craft.UIElements.GuiTest.Tab3
                 for (var x = x0; x <= x1; x += 0.1)
                 {
                     //points.Add(new PointD(x, Math.Exp(-0.01 * x * x) * Math.Sin(3 * x))); // (gaussian and sinus)
-                    points.Add(new PointD(x, Math.Sin(0.1 * x) * Math.Sin(3 * x))); // (high frequency sinus enveloped by low frequency sinus)
+                    points.Add(new PointD(x, System.Math.Sin(0.1 * x) * System.Math.Sin(3 * x))); // (high frequency sinus enveloped by low frequency sinus)
                 }
 
                 CoordinateSystemViewModel1.GeometryEditorViewModel.ClearPolylines();
@@ -930,13 +930,13 @@ namespace Craft.UIElements.GuiTest.Tab3
 
             TimeSeriesViewModel1.GeometryEditorViewModel.WorldWindowMajorUpdateOccured += (s, e) =>
             {
-                var x0 = Math.Floor(e.WorldWindowUpperLeft.X);
-                var x1 = Math.Ceiling(e.WorldWindowUpperLeft.X + e.WorldWindowSize.Width);
+                var x0 = System.Math.Floor(e.WorldWindowUpperLeft.X);
+                var x1 = System.Math.Ceiling(e.WorldWindowUpperLeft.X + e.WorldWindowSize.Width);
 
                 var points = new List<PointD>();
                 for (var x = x0; x <= x1; x += 0.05)
                 {
-                    points.Add(new PointD(x, -Math.Cos(x * Math.PI * 2))); // (cosinus curve with a frequency of one cycle pr day)
+                    points.Add(new PointD(x, -System.Math.Cos(x * System.Math.PI * 2))); // (cosinus curve with a frequency of one cycle pr day)
                 }
 
                 TimeSeriesViewModel1.GeometryEditorViewModel.ClearPolylines();
@@ -1178,8 +1178,8 @@ namespace Craft.UIElements.GuiTest.Tab3
 
             ImageEditorViewModel.MousePositionWorld.PropertyChanged += (s, e) =>
             {
-                var x = (int)Math.Round(ImageEditorViewModel.MousePositionWorld.Object.X);
-                var y = (int)Math.Round(ImageEditorViewModel.MousePositionWorld.Object.Y);
+                var x = (int)System.Math.Round(ImageEditorViewModel.MousePositionWorld.Object.X);
+                var y = (int)System.Math.Round(ImageEditorViewModel.MousePositionWorld.Object.Y);
 
                 CursorPositionForImageEditorViewModelAsText = ImageEditorViewModel.MousePositionWorld.Object != null
                     ? $"({x}, {y})"
