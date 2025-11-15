@@ -72,7 +72,12 @@ namespace Craft.ViewModels.Simulation
             _engine = engine;
             _geometryEditorViewModel = geometryEditorViewModel;
 
-            _engine.CurrentStateChangedCallback = UpdateScene;
+            //_engine.CurrentStateChangedCallback = UpdateScene;
+
+            _engine.CurrentStateChanged += (s, e) =>
+            {
+                UpdateScene(e.State);
+            };
 
             ShapeSelectorCallback = shapeSelectorCallback;
             ShapeUpdateCallback = shapeUpdateCallback;

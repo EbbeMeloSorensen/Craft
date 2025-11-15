@@ -4,9 +4,6 @@ using Craft.Math;
 
 namespace Craft.Simulation.Engine
 {
-    public delegate void CurrentStateChangedCallback(
-        State currentState);
-
     // En Engine HAR en StateMachine, som egentlig bare ER en graf
     // En Engine HAR desuden en observable ApplicationState
     // Engine objektets host kan spørge om, hvilke udveje der er fra den aktuelle state
@@ -35,14 +32,13 @@ namespace Craft.Simulation.Engine
         public bool AnimationRunning { get; private set; }
         public bool AnimationComplete { get; private set; }
 
-        public CurrentStateChangedCallback CurrentStateChangedCallback { get; set; }
-
         public bool CanStartOrResumeAnimation => EngineCore.Scene != null && !AnimationRunning && !AnimationComplete;
 
         public bool CanPauseAnimation => EngineCore.Scene != null && AnimationRunning;
 
         public bool CanResetAnimation => AnimationLaunched;
 
+        public event EventHandler<CurrentStateChangedEventArgs> CurrentStateChanged;
         public event EventHandler<KeyEventArgs> KeyEventOccured;
         public event EventHandler AnimationCompleted;
 
@@ -174,7 +170,7 @@ namespace Craft.Simulation.Engine
                     // eller at der skal ske et eller andet specielt.
                     // Husk også på, at det skal være GENERELT, da Engine jo deles mellem forskellige spil
 
-                    CurrentStateChangedCallback?.Invoke(currentState);
+                    OnCurrenStateChanged(currentState);
 
                     LastIndexConsumed = currentState.Index;
                     TimeElapsedAtLastRefresh = secondsElapsed;
@@ -237,6 +233,18 @@ namespace Craft.Simulation.Engine
 
             // Det skal vi så omregne til et index, og det skal vi bruge deltaT for scenen til
             return (int)System.Math.Round(secondsElapsedInScene / EngineCore.Scene.DeltaT);
+        }
+
+        private void OnCurrenStateChanged(
+            State state)
+        {
+            var handler = CurrentStateChanged;
+
+            // Event will be null if there are no subscribers
+            if (handler != null)
+            {
+                handler(this, new CurrentStateChangedEventArgs(state));
+            }
         }
 
         private void OnKeyEventOccured(
