@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Craft.Logging\Craft.Logging.csproj" />
+    <ProjectReference Include="..\Craft.UIElements\Craft.UIElements.csproj" />
+    <ProjectReference Include="..\Craft.ViewModels\Craft.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

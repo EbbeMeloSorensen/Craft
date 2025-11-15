@@ -33,7 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.ViewModel.Utils", "Cr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
-		Backlog.txt = Backlog.txt
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
@@ -60,6 +59,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.UIElements.GuiTest", "Craft.UIElements.GuiTest\Craft.UIElements.GuiTest.csproj", "{CC9AA3AF-00E1-0AD0-F1A6-2807528CDAFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Simulation", "Craft.Simulation\Craft.Simulation.csproj", "{8D240979-3466-458F-AF25-07C075B74427}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Simulation.GuiTest", "Craft.Simulation.GuiTest\Craft.Simulation.GuiTest.csproj", "{1CE1C124-2F3A-438C-82D5-36AFB6DD6A6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +172,10 @@ Global
 		{8D240979-3466-458F-AF25-07C075B74427}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D240979-3466-458F-AF25-07C075B74427}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D240979-3466-458F-AF25-07C075B74427}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CE1C124-2F3A-438C-82D5-36AFB6DD6A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CE1C124-2F3A-438C-82D5-36AFB6DD6A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CE1C124-2F3A-438C-82D5-36AFB6DD6A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CE1C124-2F3A-438C-82D5-36AFB6DD6A6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

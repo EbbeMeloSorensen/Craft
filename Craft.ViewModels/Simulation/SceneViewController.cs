@@ -1,5 +1,4 @@
-﻿using System.DirectoryServices.ActiveDirectory;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using Craft.Simulation;
 using Craft.Simulation.Bodies;
@@ -8,9 +7,8 @@ using Craft.Simulation.Boundaries;
 using Craft.Simulation.Props;
 using Craft.Utils;
 using Craft.ViewModels.Geometry2D.ScrollFree;
-using Craft.ViewModels.Simulation;
 
-namespace Simulator.ViewModel
+namespace Craft.ViewModels.Simulation
 {
     public delegate ShapeViewModel ShapeSelectorCallback(
         BodyState bodyState);
