@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!-- Shared version number for all projects -->
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
 
     <!-- Optional but nice-to-have metadata -->
     <Authors>Ebbe Melo Sørensen</Authors>

@@ -271,6 +271,11 @@ namespace Craft.UIElements.Geometry2D.ScrollFree
             object sender,
             System.Windows.Input.MouseEventArgs e)
         {
+            if (ViewModel == null)
+            {
+                return;
+            }
+
             ViewModel.MousePositionWorld.Object = null;
         }
 
