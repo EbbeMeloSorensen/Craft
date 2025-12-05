@@ -24,11 +24,11 @@ namespace Craft.Simulation.Engine
 
         private class AssignOutcomeToAnimation : PotentialEvent
         {
-            public string Outcome { get; }
+            public object? Outcome { get; }
 
             public AssignOutcomeToAnimation(
                 int stateIndex,
-                string outcome)
+                object? outcome)
             {
                 StateIndex = stateIndex;
                 Outcome = outcome;
@@ -68,7 +68,7 @@ namespace Craft.Simulation.Engine
         private ILogger _logger;
 
         public Scene Scene { get; set; }
-        public string Outcome { get; set; }
+        public object? Outcome { get; set; }
         public string PreviousScene { get; set; }
 
         public EngineCore(
@@ -147,7 +147,7 @@ namespace Craft.Simulation.Engine
                             }
                         case AssignOutcomeToAnimation assignOutcomeToAnimation:
                             {
-                                if (string.IsNullOrEmpty(Outcome))
+                                if (Outcome == null)
                                 {
                                     Outcome = assignOutcomeToAnimation.Outcome;
                                 }
@@ -366,7 +366,7 @@ namespace Craft.Simulation.Engine
                             _lastIndexGenerated, response.IndexOfLastState.Value));
                     }
 
-                    if (response != null && !string.IsNullOrEmpty(response.Outcome))
+                    if (response != null && response.Outcome != null)
                     {
                         _potentialEvents.Enqueue(new AssignOutcomeToAnimation(
                             _lastIndexGenerated, response.Outcome));
