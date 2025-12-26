@@ -542,6 +542,11 @@ namespace Craft.Simulation.Engine
 
             foreach (var kvp in propagatedBodyStateMap)
             {
+                if (!kvp.Key.Body.AffectedByBoundaries)
+                {
+                    continue;
+                }
+
                 var bsBefore = kvp.Value;
                 var bsAfter = kvp.Key;
 
@@ -591,11 +596,11 @@ namespace Craft.Simulation.Engine
                             // Todo: Undersøg om det kan gøres polymorfisk frem for at bruge en switch case ladder
                             switch (bsAfter.Body)
                             {
-                                case CircularBody body:
+                                case CircularBody circularBody:
                                     {
                                         var vPointOnLineToBodyCenter = bsAfter.Position - lineSegment.Point1;
                                         var distanceFromBodyCenterToLineForLineSegment = System.Math.Abs(Vector2D.DotProduct(lineSegment.SurfaceNormal, vPointOnLineToBodyCenter));
-                                        t = (body.Radius + buffer - distanceFromBodyCenterToLineForLineSegment) / velocityComponentTowardsBoundary;
+                                        t = (circularBody.Radius + buffer - distanceFromBodyCenterToLineForLineSegment) / velocityComponentTowardsBoundary;
 
                                         // Nu regner vi så lige ud, hvor kuglens centrum ville være, hvis vi førte den tilbage med dette t
                                         var backtrackedPosition = bsAfter.Position - effectiveVelocity * t;
@@ -619,7 +624,7 @@ namespace Craft.Simulation.Engine
                                         }
                                         break;
                                     }
-                                case RectangularBody body:
+                                case RectangularBody rectangularBody:
                                     {
                                         // Lige som for en cirkulær body skal vi her føre rektanglet tilbage indtil det tangerer den linie, der definerer liniestykket.
                                         // Hvis der efterfølgende gælder, at den stadig rører liniestykket, så har den ramt SIDEN af liniestykket, og ellers har den
@@ -636,8 +641,8 @@ namespace Craft.Simulation.Engine
                                         {
                                             case HorizontalLineSegment horizontalLineSegment:
                                                 {
-                                                    var x0 = backtrackedPosition.X - body.Width / 2;
-                                                    var x1 = backtrackedPosition.X + body.Width / 2;
+                                                    var x0 = backtrackedPosition.X - rectangularBody.Width / 2;
+                                                    var x1 = backtrackedPosition.X + rectangularBody.Width / 2;
 
                                                     if (x1 < horizontalLineSegment.X0)
                                                     {
@@ -660,8 +665,8 @@ namespace Craft.Simulation.Engine
                                                 }
                                             case VerticalLineSegment verticalLineSegment:
                                                 {
-                                                    var y0 = backtrackedPosition.Y - body.Height / 2;
-                                                    var y1 = backtrackedPosition.Y + body.Height / 2;
+                                                    var y0 = backtrackedPosition.Y - rectangularBody.Height / 2;
+                                                    var y1 = backtrackedPosition.Y + rectangularBody.Height / 2;
 
                                                     if (y1 < verticalLineSegment.Y0)
                                                     {
@@ -701,24 +706,24 @@ namespace Craft.Simulation.Engine
                             // Todo: Undersøg om det kan gøres polymorfisk frem for at bruge en switch case ladder
                             switch (bsAfter.Body)
                             {
-                                case CircularBody body:
+                                case CircularBody circularBody:
                                     {
-                                        t = CalculateTimeSinceIntersection(bsAfter.Position, body.Radius,
+                                        t = CalculateTimeSinceIntersection(bsAfter.Position, circularBody.Radius,
                                             lineSegmentEndPointInvolvedInCollisionForCurrentBoundary,
                                             effectiveVelocity, buffer, out effectiveSurfaceNormalForCurrentBoundary);
 
                                         break;
                                     }
-                                case RectangularBody body:
+                                case RectangularBody rectangularBody:
                                     {
                                         // Du skal vist ca gøre det samme som når du regner på kollision mellem rectangular body og punkt
 
                                         var x = lineSegmentEndPointInvolvedInCollisionForCurrentBoundary.X;
                                         var y = lineSegmentEndPointInvolvedInCollisionForCurrentBoundary.Y;
-                                        var x0 = bsAfter.Position.X - body.Width / 2;
-                                        var x1 = bsAfter.Position.X + body.Width / 2;
-                                        var y0 = bsAfter.Position.Y - body.Height / 2;
-                                        var y1 = bsAfter.Position.Y + body.Height / 2;
+                                        var x0 = bsAfter.Position.X - rectangularBody.Width / 2;
+                                        var x1 = bsAfter.Position.X + rectangularBody.Width / 2;
+                                        var y0 = bsAfter.Position.Y - rectangularBody.Height / 2;
+                                        var y1 = bsAfter.Position.Y + rectangularBody.Height / 2;
 
                                         // Hvor lang tid siden er det at punktet intersektede med en af de lodrette akser?
                                         var vx = bsBefore.Velocity.X;

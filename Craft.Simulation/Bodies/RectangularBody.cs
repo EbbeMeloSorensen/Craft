@@ -10,7 +10,8 @@
             double width,
             double height,
             double mass,
-            bool affectedByGravity) : base(id, mass, affectedByGravity)
+            bool affectedByGravity,
+            bool affectedByBoundaries = true) : base(id, mass, affectedByGravity, affectedByBoundaries)
         {
             Width = width;
             Height = height;

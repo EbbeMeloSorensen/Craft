@@ -73,9 +73,13 @@ namespace Craft.Simulation.GuiTest.Tab1
             var ballRadius = 0.125;
             var initialBallPosition = new Vector2D(1, -0.125);
             var initialBallVelocity = new Vector2D(2, 0);
+            var affectedByGravity = true;
+            var affectedByBoundaries = true;
 
             var initialState = new State();
-            initialState.AddBodyState(new BodyState(new CircularBody(1, ballRadius, 1, true), initialBallPosition) { NaturalVelocity = initialBallVelocity });
+
+            var ball = new CircularBody(1, ballRadius, 1, affectedByGravity, affectedByBoundaries);
+            initialState.AddBodyState(new BodyState(ball, initialBallPosition) { NaturalVelocity = initialBallVelocity });
 
             var name = "Simple Game";
             var standardGravity = 9.82;
