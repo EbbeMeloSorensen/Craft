@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Craft.Simulation.GuiTest.Tab1.Tab1View"
+﻿<UserControl x:Class="Craft.Simulation.GuiTest.BouncingBall.BouncingBallView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Craft.Simulation.GuiTest.Tab1"
              xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance local:Tab1ViewModel}">
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance local:BouncingBallViewModel}">
     <Grid>
         <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}"/>
 

@@ -9,7 +9,7 @@ using GalaSoft.MvvmLight.Command;
 
 namespace Craft.Simulation.GuiTest.Tab1
 {
-    public class Tab1ViewModel : ViewModelBase
+    public class BouncingBallViewModel : ViewModelBase
     {
         private SceneViewController _sceneViewController;
         private RelayCommand _startAnimationCommand;
@@ -46,7 +46,7 @@ namespace Craft.Simulation.GuiTest.Tab1
             }
         }
 
-        public Tab1ViewModel()
+        public BouncingBallViewModel()
         {
             Engine = new Engine.Engine(null);
 

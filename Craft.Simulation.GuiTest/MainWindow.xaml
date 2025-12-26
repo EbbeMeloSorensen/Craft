@@ -4,13 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Craft.Simulation.GuiTest"
-        xmlns:tab1="clr-namespace:Craft.Simulation.GuiTest.Tab1"
+        xmlns:bouncingBall="clr-namespace:Craft.Simulation.GuiTest.BouncingBall"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Closing="MainWindow_OnClosing">
     <TabControl>
         <TabItem Header="Bouncing Ball">
-            <tab1:Tab1View DataContext="{Binding Tab1ViewModel}"/>
+            <bouncingBall:BouncingBallView DataContext="{Binding BouncingBallViewModel}"/>
         </TabItem>
     </TabControl>
 </Window>

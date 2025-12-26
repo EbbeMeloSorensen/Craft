@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Craft.Simulation.GuiTest.Tab1
+namespace Craft.Simulation.GuiTest.BouncingBall
 {
     /// <summary>
-    /// Interaction logic for Tab1View.xaml
+    /// Interaction logic for BouncingBallView.xaml
     /// </summary>
-    public partial class Tab1View : UserControl
+    public partial class BouncingBallView : UserControl
     {
-        public Tab1View()
+        public BouncingBallView()
         {
             InitializeComponent();
         }

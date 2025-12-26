@@ -21,7 +21,7 @@ namespace Craft.Simulation.GuiTest
             object sender,
             CancelEventArgs e)
         {
-            ViewModel.Tab1ViewModel.Engine.HandleClosing();
+            ViewModel.BouncingBallViewModel.Engine.HandleClosing();
         }
     }
 }
