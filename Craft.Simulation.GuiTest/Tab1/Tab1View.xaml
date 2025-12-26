@@ -7,5 +7,17 @@
              xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance local:Tab1ViewModel}">
-    <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}"/>
+    <Grid>
+        <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}"/>
+
+        <StackPanel>
+            <Button Content="{Binding StartResumeButtonText}"
+                    Width="60" Height="20" Margin="10"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Command="{Binding StartAnimationCommand}"/>
+            <Button Content="Pause" Width="60" Height="20" Margin="10, 0, 10, 10"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Command="{Binding PauseAnimationCommand}"/>
+        </StackPanel>
+    </Grid>
 </UserControl>
