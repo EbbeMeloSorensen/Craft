@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using Craft.Utils;
 using Craft.ViewModels.Graph;
 using GalaSoft.MvvmLight;
@@ -9,8 +8,6 @@ namespace Craft.UIElements.GuiTest.Tab5
     public class Tab5ViewModel : ViewModelBase
     {
         private bool _allowMovingVertices;
-        //private int _selectedVertexCanvasPositionLeft;
-        //private int _selectedVertexCanvasPositionTop;
         private PointD _selectedVertexCanvasPosition;
 
         private readonly Brush _northAmericaBrush = new SolidColorBrush(Colors.Yellow);
