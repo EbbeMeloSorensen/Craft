@@ -8,8 +8,6 @@ namespace Craft.UIElements.GuiTest.Tab5
     public class Tab5ViewModel : ViewModelBase
     {
         private bool _allowMovingVertices;
-        //private int _selectedVertexCanvasPositionLeft;
-        //private int _selectedVertexCanvasPositionTop;
         private PointD _selectedVertexCanvasPosition;
 
         private readonly Brush _northAmericaBrush = new SolidColorBrush(Colors.Yellow);
