@@ -33,6 +33,10 @@ namespace Craft.DataStructures.Graph
             }
         }
 
+        public GraphAdjacencyList() : this(false)
+        {
+        }
+
         public GraphAdjacencyList(
             bool directed)
         {

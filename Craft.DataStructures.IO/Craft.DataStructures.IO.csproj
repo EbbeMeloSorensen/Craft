@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Craft.DataStructures\Craft.DataStructures.csproj" />
+    <ProjectReference Include="..\Craft.IO.Utils\Craft.IO.Utils.csproj" />
     <ProjectReference Include="..\Craft.Utils\Craft.Utils.csproj" />
   </ItemGroup>
 

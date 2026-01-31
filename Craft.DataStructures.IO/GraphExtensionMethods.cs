@@ -1,11 +1,14 @@
 ﻿using Craft.DataStructures.Graph;
+using Craft.IO.Utils;
+using Newtonsoft.Json;
 
 namespace Craft.DataStructures.IO
 {
     public enum Format
     {
         Dot,
-        GraphML
+        GraphML,
+        JSON
     }
 
     public static class GraphExtensionMethods
@@ -47,6 +50,28 @@ namespace Craft.DataStructures.IO
         {
             switch (format)
             {
+                case Format.JSON:
+                {
+                    // Work in progress...
+                    var jsonResolver = new ContractResolver();
+
+                    var settings = new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        ContractResolver = jsonResolver
+                    };
+
+                    var json = JsonConvert.SerializeObject(
+                        graph,
+                        Formatting.Indented,
+                        settings);
+
+                    using var sw = new StreamWriter(outputFile);
+
+                    sw.WriteLine(json);
+
+                    break;
+                }
                 case Format.Dot:
                     using (var streamWriter = new StreamWriter(outputFile))
                     {

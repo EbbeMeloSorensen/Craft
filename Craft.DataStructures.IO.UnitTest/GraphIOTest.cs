@@ -1,7 +1,10 @@
-using Xunit;
 using Craft.DataStructures.Graph;
 using Craft.DataStructures.IO.graphml;
+using Newtonsoft.Json;
+using System.Xml.Linq;
 using System.Xml.Serialization;
+using FluentAssertions;
+using Xunit;
 
 namespace Craft.DataStructures.IO.UnitTest
 {
@@ -70,6 +73,43 @@ namespace Craft.DataStructures.IO.UnitTest
             // Act
             graph.WriteToFile(outputFile, Format.GraphML);
         }
+
+
+        // Work in progress
+        [Fact]
+        public void WriteGraphAdjacencyListToJSONFile_EmptyVertexAndEmptyEdgeDirected()
+        {
+            // Arrange
+            var vertices = Enumerable.Repeat(0, 5).Select(_ => new EmptyVertex());
+
+            var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, true);
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 3);
+            graph.AddEdge(3, 4);
+            graph.AddEdge(4, 0);
+
+            var outputFile = @"C:\Temp\GraphAdjacencyList_directed.json";
+
+            // Act
+            graph.WriteToFile(outputFile, Format.JSON);
+        }
+
+        // Work in progress
+        [Fact]
+        public void ReadGraphAdjacencyListFromJSONFile_EmptyVertexAndEmptyEdgeDirected()
+        {
+            var inputFile = @"C:\Temp\GraphAdjacencyList_directed.json";
+            using var streamReader = new StreamReader(inputFile);
+            var json = streamReader.ReadToEnd();
+
+            // Act
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<EmptyVertex, EmptyEdge>>(json);
+
+            // Assert
+            graph.VertexCount.Should().Be(5);
+        }
+
 
         [Fact]
         public void WriteGraphAdjacencyListToGraphMLFile_EmptyVertexAndEmptyEdgeDirected()
