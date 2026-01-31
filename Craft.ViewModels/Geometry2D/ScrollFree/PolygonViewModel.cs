@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using Craft.Utils;

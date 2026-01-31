@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Craft.ViewModel.Utils
+﻿namespace Craft.ViewModel.Utils
 {
     public static class TaskUtilities
     {

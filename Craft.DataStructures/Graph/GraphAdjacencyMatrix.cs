@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Craft.DataStructures.Graph
+﻿namespace Craft.DataStructures.Graph
 {
     // This is a simple graph class that represents either a directed or an undirected graph.
     // It stores the graph info as a matrix where a matrix entry indicates the "cost" of getting

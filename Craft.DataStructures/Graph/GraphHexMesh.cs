@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Craft.DataStructures.Graph
+﻿namespace Craft.DataStructures.Graph
 {
     public class GraphHexMesh : IGraph
     {

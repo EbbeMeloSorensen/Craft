@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.ViewModels.Common
+﻿namespace Craft.ViewModels.Common
 {
     public class ElementClickedEventArgs : EventArgs
     {

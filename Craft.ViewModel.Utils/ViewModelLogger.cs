@@ -1,5 +1,4 @@
 ﻿using Craft.Logging;
-using System;
 
 namespace Craft.ViewModel.Utils
 {

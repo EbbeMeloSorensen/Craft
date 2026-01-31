@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Craft.DataStructures.Graph
+﻿namespace Craft.DataStructures.Graph
 {
     // A state machine is a graph that has a node which is currently active.
     public class StateMachine : GraphAdjacencyList<State, EmptyEdge>

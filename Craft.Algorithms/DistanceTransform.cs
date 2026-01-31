@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.Algorithms
+﻿namespace Craft.Algorithms
 {
     // Algorithm described here: https://perso.ensta-paris.fr/~manzaner/Download/IAD/Shih_Wu_04.pdf
     // The algorithm operates by passing the 4 different structuring elements illustrated below over the

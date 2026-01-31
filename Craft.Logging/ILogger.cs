@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.Logging
+﻿namespace Craft.Logging
 {
     public enum LogMessageCategory
     {

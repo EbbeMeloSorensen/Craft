@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.DataStructures.UnitTest.Helpers
+﻿namespace Craft.DataStructures.UnitTest.Helpers
 {
     /// <summary>
     /// The sole purpose of this class is to act as a heap element in the testing of the Heap class

@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
 using Craft.Utils;
 using Craft.DataStructures.Graph;
 using Craft.ViewModels.Common;
 using Craft.ViewModels.Geometry2D.Scrolling;
-using System;
 
 namespace Craft.ViewModels.Graph
 {

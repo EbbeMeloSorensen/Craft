@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using FluentAssertions;
 
 namespace Craft.Algorithms.UnitTest
 {

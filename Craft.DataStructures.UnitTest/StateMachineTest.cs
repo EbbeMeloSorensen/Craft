@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Xunit;
+﻿using Xunit;
 using FluentAssertions;
 using Craft.DataStructures.Graph;
 

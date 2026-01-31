@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.Math
+﻿namespace Craft.Math
 {
     public class Vector2D
     {

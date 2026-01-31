@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.Domain
+﻿namespace Craft.Domain
 {
     public interface IObjectWithGuidID
     {

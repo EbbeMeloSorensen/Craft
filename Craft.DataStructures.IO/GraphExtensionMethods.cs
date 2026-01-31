@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections;
-using Craft.DataStructures.Graph;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Craft.DataStructures.IO.graphml;
-using System.Xml.Serialization;
-using Craft.DataStructures.IO.graphml.x;
-using Craft.DataStructures.IO.graphml.y;
-using Craft.DataStructures.IO.graphml.yjs;
+﻿using Craft.DataStructures.Graph;
 
 namespace Craft.DataStructures.IO
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using Craft.UIElements.GuiTest.Tab3;
 using Craft.ViewModels.Geometry2D.ScrollFree;

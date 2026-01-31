@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-namespace Craft.DataStructures.Graph
+﻿namespace Craft.DataStructures.Graph
 {
     public class EmptyVertex : IVertex
     {

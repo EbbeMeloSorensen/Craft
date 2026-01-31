@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.Algorithms
+﻿namespace Craft.Algorithms
 {
     public class HeapElement : IComparable
     {

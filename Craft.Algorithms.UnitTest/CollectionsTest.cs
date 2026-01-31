@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using Xunit;
+﻿using Xunit;
 using FluentAssertions;
 
 namespace Craft.Algorithms.UnitTest

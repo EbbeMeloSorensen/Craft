@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Craft.DataStructures.Graph
+﻿namespace Craft.DataStructures.Graph
 {
     public class GraphMatrix8Connectivity : IGraph
     {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Craft.Utils.Linq;
+﻿using Craft.Utils.Linq;
 
 namespace Craft.Math
 {

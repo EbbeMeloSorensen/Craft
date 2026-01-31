@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Craft.Math
+﻿namespace Craft.Math
 {
     public class Matrix
     {

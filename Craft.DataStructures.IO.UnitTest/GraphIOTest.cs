@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using Craft.DataStructures.Graph;
 using Craft.DataStructures.IO.graphml;
 using System.Xml.Serialization;
-using System.IO;
 
 namespace Craft.DataStructures.IO.UnitTest
 {

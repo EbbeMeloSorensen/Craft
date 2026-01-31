@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Craft.ViewModels.Charts;
+﻿using Craft.ViewModels.Charts;
 using GalaSoft.MvvmLight;
 
 namespace Craft.UIElements.GuiTest.Tab2

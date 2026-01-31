@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using Craft.Utils;
 using Craft.ViewModels.Graph;
 using GalaSoft.MvvmLight;

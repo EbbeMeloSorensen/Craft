@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.Utils
+﻿namespace Craft.Utils
 {
     public static class DateTimeExtensions
     {

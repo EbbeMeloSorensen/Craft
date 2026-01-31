@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Craft.ViewModel.Utils
+﻿namespace Craft.ViewModel.Utils
 {
     public interface IErrorHandler
     {

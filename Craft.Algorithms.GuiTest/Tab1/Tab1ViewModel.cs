@@ -5,7 +5,6 @@ using GalaSoft.MvvmLight;
 using Craft.Utils;
 using Craft.DataStructures.Graph;
 using Craft.ViewModels.Common;
-using Craft.Algorithms.GuiTest.Common;
 
 namespace Craft.Algorithms.GuiTest.Tab1
 {

@@ -1,5 +1,3 @@
-using System;
-
 namespace Craft.Domain
 {
     public interface IObjectWithValidTime : IVersionedObject

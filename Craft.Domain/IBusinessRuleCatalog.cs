@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Craft.Domain
 {
     public interface IBusinessRuleCatalog

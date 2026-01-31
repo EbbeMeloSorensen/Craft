@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-namespace Craft.ViewModel.Utils
+﻿namespace Craft.ViewModel.Utils
 {
     //public class ObservableObject<T> : INotifyPropertyChanged
     //{

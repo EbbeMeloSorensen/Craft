@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Craft.DataStructures.IO.gml
+﻿namespace Craft.DataStructures.IO.gml
 {
     public class MultiLineString : AbstractGeometricPrimitive
     {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Craft.DataStructures;
+﻿using Craft.DataStructures;
 using Craft.DataStructures.Graph;
 
 namespace Craft.Algorithms

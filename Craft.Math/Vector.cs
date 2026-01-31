@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Craft.Math
+﻿namespace Craft.Math
 {
     public class Vector
     {

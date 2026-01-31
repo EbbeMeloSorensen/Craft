@@ -1,5 +1,4 @@
-﻿using System;
-using Craft.DataStructures.IO.graphml;
+﻿using Craft.DataStructures.IO.graphml;
 using Craft.DataStructures.IO.graphml.x;
 using Craft.DataStructures.IO.graphml.y;
 using Craft.DataStructures.IO.graphml.yjs;

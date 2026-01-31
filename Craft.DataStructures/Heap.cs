@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Craft.DataStructures
+﻿namespace Craft.DataStructures
 {
     public class Heap<T> where T : IComparable
     {
