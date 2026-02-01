@@ -1,6 +1,7 @@
 ﻿using Craft.DataStructures.Graph;
 using Craft.IO.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Craft.DataStructures.IO
 {
@@ -9,6 +10,18 @@ namespace Craft.DataStructures.IO
         Dot,
         GraphML,
         JSON
+    }
+
+    public class IgnoreVertexCountResolver : DefaultContractResolver
+    {
+        protected override IList<JsonProperty> CreateProperties(
+            Type type,
+            MemberSerialization memberSerialization)
+        {
+            return base.CreateProperties(type, memberSerialization)
+                .Where(p => p.PropertyName != "VertexCount")
+                .ToList();
+        }
     }
 
     public static class GraphExtensionMethods
@@ -53,7 +66,7 @@ namespace Craft.DataStructures.IO
                 case Format.JSON:
                 {
                     // Work in progress...
-                    var jsonResolver = new ContractResolver();
+                    var jsonResolver = new IgnoreVertexCountResolver();
 
                     var settings = new JsonSerializerSettings
                     {

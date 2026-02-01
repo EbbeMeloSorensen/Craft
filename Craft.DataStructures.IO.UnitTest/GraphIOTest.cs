@@ -74,8 +74,6 @@ namespace Craft.DataStructures.IO.UnitTest
             graph.WriteToFile(outputFile, Format.GraphML);
         }
 
-
-        // Work in progress
         [Fact]
         public void WriteGraphAdjacencyListToJSONFile_EmptyVertexAndEmptyEdgeDirected()
         {
@@ -95,7 +93,6 @@ namespace Craft.DataStructures.IO.UnitTest
             graph.WriteToFile(outputFile, Format.JSON);
         }
 
-        // Work in progress
         [Fact]
         public void ReadGraphAdjacencyListFromJSONFile_EmptyVertexAndEmptyEdgeDirected()
         {
@@ -108,8 +105,121 @@ namespace Craft.DataStructures.IO.UnitTest
 
             // Assert
             graph.VertexCount.Should().Be(5);
+            graph.Vertices.Count(_ => _.Id == 0).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 1).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 2).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 3).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 0 && _.VertexId2 == 1).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 1 && _.VertexId2 == 2).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 2 && _.VertexId2 == 3).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 3 && _.VertexId2 == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 4 && _.VertexId2 == 0).Should().Be(1);
+
+            graph.OutgoingEdges(0).Count().Should().Be(1);
         }
 
+        [Fact]
+        public void WriteGraphAdjacencyListToJSONFile_LabelledVertexAndEmptyEdgeDirected()
+        {
+            // Arrange
+            var vertices = Enumerable.Range(0, 5).Select(_ => new LabelledVertex(_.ToString()));
+
+            var graph = new GraphAdjacencyList<LabelledVertex, EmptyEdge>(vertices, true);
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 3);
+            graph.AddEdge(3, 4);
+            graph.AddEdge(4, 0);
+
+            var outputFile = @"C:\Temp\GraphAdjacencyList_directed_2.json";
+
+            // Act
+            graph.WriteToFile(outputFile, Format.JSON);
+        }
+
+        [Fact]
+        public void ReadGraphAdjacencyListFromJSONFile_LabelledVertexAndEmptyEdgeDirected()
+        {
+            var inputFile = @"C:\Temp\GraphAdjacencyList_directed_2.json";
+            using var streamReader = new StreamReader(inputFile);
+            var json = streamReader.ReadToEnd();
+
+            // Act
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, EmptyEdge>>(json);
+
+            // Assert
+            graph.VertexCount.Should().Be(5);
+            graph.Vertices.Count(_ => _.Id == 0).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 1).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 2).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 3).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 0 && _.VertexId2 == 1).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 1 && _.VertexId2 == 2).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 2 && _.VertexId2 == 3).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 3 && _.VertexId2 == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 4 && _.VertexId2 == 0).Should().Be(1);
+            (graph.GetVertex(0) as LabelledVertex)!.Label.Should().Be("0");
+            (graph.GetVertex(1) as LabelledVertex)!.Label.Should().Be("1");
+            (graph.GetVertex(2) as LabelledVertex)!.Label.Should().Be("2");
+            (graph.GetVertex(3) as LabelledVertex)!.Label.Should().Be("3");
+            (graph.GetVertex(4) as LabelledVertex)!.Label.Should().Be("4");
+        }
+
+        [Fact]
+        public void WriteGraphAdjacencyListToJSONFile_LabelledVertexAndLabelledEdgeDirected()
+        {
+            // Arrange
+            var vertices = Enumerable.Range(0, 5).Select(_ => new LabelledVertex(_.ToString()));
+
+            var graph = new GraphAdjacencyList<LabelledVertex, LabelledEdge>(vertices, true);
+
+            graph.AddEdge(new LabelledEdge(0, 1, "A"));
+            graph.AddEdge(new LabelledEdge(1, 2, "B"));
+            graph.AddEdge(new LabelledEdge(2, 3, "C"));
+            graph.AddEdge(new LabelledEdge(3, 4, "D"));
+            graph.AddEdge(new LabelledEdge(4, 0, "E"));
+
+            var outputFile = @"C:\Temp\GraphAdjacencyList_directed_3.json";
+
+            // Act
+            graph.WriteToFile(outputFile, Format.JSON);
+        }
+
+        [Fact]
+        public void ReadGraphAdjacencyListFromJSONFile_LabelledVertexAndLabelledEdgeDirected()
+        {
+            var inputFile = @"C:\Temp\GraphAdjacencyList_directed_3.json";
+            using var streamReader = new StreamReader(inputFile);
+            var json = streamReader.ReadToEnd();
+
+            // Act
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, EmptyEdge>>(json);
+
+            // Assert
+            graph.VertexCount.Should().Be(5);
+            graph.Vertices.Count(_ => _.Id == 0).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 1).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 2).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 3).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 0 && _.VertexId2 == 1).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 1 && _.VertexId2 == 2).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 2 && _.VertexId2 == 3).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 3 && _.VertexId2 == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 4 && _.VertexId2 == 0).Should().Be(1);
+            (graph.GetVertex(0) as LabelledVertex)!.Label.Should().Be("0");
+            (graph.GetVertex(1) as LabelledVertex)!.Label.Should().Be("1");
+            (graph.GetVertex(2) as LabelledVertex)!.Label.Should().Be("2");
+            (graph.GetVertex(3) as LabelledVertex)!.Label.Should().Be("3");
+            (graph.GetVertex(4) as LabelledVertex)!.Label.Should().Be("4");
+
+            //var oe = graph.OutgoingEdges(0).ToList();
+
+            //graph.OutgoingEdges(0).Single(_ => (_ as LabelledEdge).Label == "A").Should().NotBeNull();
+
+        }
 
         [Fact]
         public void WriteGraphAdjacencyListToGraphMLFile_EmptyVertexAndEmptyEdgeDirected()

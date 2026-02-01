@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Craft.DataStructures.Graph
 {
@@ -106,13 +107,7 @@ namespace Craft.DataStructures.Graph
             TE edge)
         {
             Edges.Add(edge);
-
-            if (_adjacencyList[edge.VertexId1] == null)
-            {
-                _adjacencyList[edge.VertexId1] = new List<Tuple<int, TE>>();
-            }
-
-            _adjacencyList[edge.VertexId1].Add(new Tuple<int, TE>(edge.VertexId2, edge));
+            AddEdgeToAdjacencyList(edge);
         }
 
         public void RemoveEdges(
@@ -176,6 +171,29 @@ namespace Craft.DataStructures.Graph
         {
             return GetAdjacentEdges(vertexId)
                 .Select(_ => _.VertexId1 == vertexId ? _.VertexId2 : _.VertexId1);
+        }
+
+        [OnDeserialized]
+        internal void OnDeserialized(StreamingContext context)
+        {
+            RebuildInternalState();
+        }
+
+        private void AddEdgeToAdjacencyList(
+            TE edge)
+        {
+            if (_adjacencyList[edge.VertexId1] == null)
+            {
+                _adjacencyList[edge.VertexId1] = new List<Tuple<int, TE>>();
+            }
+
+            _adjacencyList[edge.VertexId1].Add(new Tuple<int, TE>(edge.VertexId2, edge));
+        }
+
+        private void RebuildInternalState()
+        {
+            _vertexCount = Vertices.Count;
+            Edges.ForEach(AddEdgeToAdjacencyList);
         }
     }
 }
