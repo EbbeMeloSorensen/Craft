@@ -124,18 +124,18 @@ namespace Craft.Algorithms.GuiTest.Tab3
 
             // Den her skal vi bruge til at identificere nabo-punkterne
             _graph = new GraphAdjacencyList<Point2DVertex, EmptyEdge>(vertices, false);
-            _graph.AddEdge(0, 1);
-            _graph.AddEdge(1, 2);
-            _graph.AddEdge(2, 3);
-            _graph.AddEdge(3, 0);
-            _graph.AddEdge(4, 5);
-            _graph.AddEdge(5, 6);
-            _graph.AddEdge(6, 7);
-            _graph.AddEdge(7, 4);
-            _graph.AddEdge(8, 9);
-            _graph.AddEdge(9, 10);
-            _graph.AddEdge(10, 11);
-            _graph.AddEdge(11, 8);
+            _graph.AddEdge(new EmptyEdge(0, 1));
+            _graph.AddEdge(new EmptyEdge(1, 2));
+            _graph.AddEdge(new EmptyEdge(2, 3));
+            _graph.AddEdge(new EmptyEdge(3, 0));
+            _graph.AddEdge(new EmptyEdge(4, 5));
+            _graph.AddEdge(new EmptyEdge(5, 6));
+            _graph.AddEdge(new EmptyEdge(6, 7));
+            _graph.AddEdge(new EmptyEdge(7, 4));
+            _graph.AddEdge(new EmptyEdge(8, 9));
+            _graph.AddEdge(new EmptyEdge(9, 10));
+            _graph.AddEdge(new EmptyEdge(10, 11));
+            _graph.AddEdge(new EmptyEdge(11, 8));
 
             _vertexViewModels = new ObservableCollection<PointViewModel>();
 

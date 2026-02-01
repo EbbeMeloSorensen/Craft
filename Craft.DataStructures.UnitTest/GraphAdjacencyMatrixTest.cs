@@ -27,9 +27,9 @@ namespace Craft.DataStructures.Graph.UnitTest
 
             // Act
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, false);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 2);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 2));
+            graph.AddEdge(new EmptyEdge(1, 2));
 
             // Assert
             graph.VertexCount.Should().Be(3);
@@ -49,9 +49,9 @@ namespace Craft.DataStructures.Graph.UnitTest
 
             // Act
             var graph = new GraphAdjacencyList<Point2DVertex, EmptyEdge>(vertices, false);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 2);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 2));
+            graph.AddEdge(new EmptyEdge(1, 2));
 
             // Assert
             graph.VertexCount.Should().Be(3);
@@ -84,9 +84,9 @@ namespace Craft.DataStructures.Graph.UnitTest
             // Arrange
             var vertices = Enumerable.Repeat(new EmptyVertex(), 3);
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, true);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 2);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 2));
+            graph.AddEdge(new EmptyEdge(1, 2));
 
             // Act
             var edges = graph.Edges.ToList();
@@ -107,9 +107,9 @@ namespace Craft.DataStructures.Graph.UnitTest
             // Arrange
             var vertices = Enumerable.Repeat(new EmptyVertex(), 3);
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, false);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 2);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 2));
+            graph.AddEdge(new EmptyEdge(1, 2));
 
             // Act
             var edges = graph.Edges.ToList();
@@ -124,9 +124,9 @@ namespace Craft.DataStructures.Graph.UnitTest
             // Arrange
             var vertices = Enumerable.Repeat(new EmptyVertex(), 3);
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, false);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 2);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 2));
+            graph.AddEdge(new EmptyEdge(1, 2));
 
             // Act
             var edges1 = graph.Edges.ToList();
@@ -142,9 +142,9 @@ namespace Craft.DataStructures.Graph.UnitTest
             // Arrange
             var vertices = Enumerable.Repeat(new EmptyVertex(), 3);
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, false);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 2);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 2));
+            graph.AddEdge(new EmptyEdge(1, 2));
 
             // Act
             var edges = graph.GetAdjacentEdges(2);

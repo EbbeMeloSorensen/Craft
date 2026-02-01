@@ -1,14 +1,10 @@
-﻿namespace Craft.DataStructures.Graph
+﻿using System.Text.Json.Serialization;
+
+namespace Craft.DataStructures.Graph
 {
     public class LabelledEdge : EmptyEdge
     {
         public string Label { get; }
-
-        public LabelledEdge(
-            int vertexId1,
-            int vertexId2) : base(vertexId1, vertexId2)
-        {
-        }
 
         public LabelledEdge(
             int vertexId1,

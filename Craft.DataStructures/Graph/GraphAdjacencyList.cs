@@ -11,7 +11,6 @@ namespace Craft.DataStructures.Graph
         where TV : IVertex
         where TE : IEdge
     {
-        private static readonly ConstructorInfo _edgeConstructorInfo;
         private List<Tuple<int, TE>>[] _adjacencyList; // Todo: Udfordr lige dit rationale for at gøre det sådan her i stedet for at bruge et dictionary
                                                        // Bemærk, at den altså ER et array (af lister) - du har nok tænkt, at det har en god performance..
         private int _vertexCount;
@@ -23,16 +22,6 @@ namespace Craft.DataStructures.Graph
         public List<TV> Vertices { get; private set; }
 
         public List<TE> Edges { get; private set; }
-
-        static GraphAdjacencyList()
-        {
-            _edgeConstructorInfo = typeof(TE).GetConstructor(new[] { typeof(int), typeof(int) });
-
-            if (_edgeConstructorInfo == null)
-            {
-                throw new InvalidOperationException("Edge class doesn't have a constructor that takes two integer arguments");
-            }
-        }
 
         public GraphAdjacencyList() : this(false)
         {
@@ -74,33 +63,6 @@ namespace Craft.DataStructures.Graph
 
             // I og med at _adjacencyList er et array, er dette næppe særligt hensigtsmæssigt
             _adjacencyList = _adjacencyList.Append(new List<Tuple<int, TE>>()).ToArray();
-        }
-
-        public void AddEdge(
-            int vertexId1,
-            int vertexId2)
-        {
-            var edge = (TE) _edgeConstructorInfo.Invoke(new object[] { vertexId1, vertexId2 });
-            Edges.Add(edge);
-
-            if (_adjacencyList[vertexId1] == null)
-            {
-                _adjacencyList[vertexId1] = new List<Tuple<int, TE>>();
-            }
-
-            _adjacencyList[vertexId1].Add(new Tuple<int, TE>(vertexId2, edge));
-
-            if (IsDirected)
-            {
-                return;
-            }
-
-            if (_adjacencyList[vertexId2] == null)
-            {
-                _adjacencyList[vertexId2] = new List<Tuple<int, TE>>();
-            }
-
-            _adjacencyList[vertexId2].Add(new Tuple<int, TE>(vertexId1, edge));
         }
 
         public void AddEdge(
@@ -188,11 +150,22 @@ namespace Craft.DataStructures.Graph
             }
 
             _adjacencyList[edge.VertexId1].Add(new Tuple<int, TE>(edge.VertexId2, edge));
+
+            if (IsDirected) return;
+
+            if (_adjacencyList[edge.VertexId2] == null)
+            {
+                _adjacencyList[edge.VertexId2] = new List<Tuple<int, TE>>();
+            }
+
+            _adjacencyList[edge.VertexId2].Add(new Tuple<int, TE>(edge.VertexId1, edge));
         }
 
         private void RebuildInternalState()
         {
             _vertexCount = Vertices.Count;
+            _adjacencyList = new List<Tuple<int, TE>>[_vertexCount];
+
             Edges.ForEach(AddEdgeToAdjacencyList);
         }
     }

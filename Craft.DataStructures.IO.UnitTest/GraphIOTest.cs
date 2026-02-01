@@ -1,7 +1,6 @@
 using Craft.DataStructures.Graph;
 using Craft.DataStructures.IO.graphml;
 using Newtonsoft.Json;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using FluentAssertions;
 using Xunit;
@@ -81,11 +80,12 @@ namespace Craft.DataStructures.IO.UnitTest
             var vertices = Enumerable.Repeat(0, 5).Select(_ => new EmptyVertex());
 
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, true);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 3);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(4, 0);
+
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(1, 2));
+            graph.AddEdge(new EmptyEdge(2, 3));
+            graph.AddEdge(new EmptyEdge(3, 4));
+            graph.AddEdge(new EmptyEdge(4, 0));
 
             var outputFile = @"C:\Temp\GraphAdjacencyList_directed.json";
 
@@ -115,8 +115,16 @@ namespace Craft.DataStructures.IO.UnitTest
             graph.Edges.Count(_ => _.VertexId1 == 2 && _.VertexId2 == 3).Should().Be(1);
             graph.Edges.Count(_ => _.VertexId1 == 3 && _.VertexId2 == 4).Should().Be(1);
             graph.Edges.Count(_ => _.VertexId1 == 4 && _.VertexId2 == 0).Should().Be(1);
-
-            graph.OutgoingEdges(0).Count().Should().Be(1);
+            var outgoingEdgeFromVertex0 = graph.OutgoingEdges(0).SingleOrDefault();
+            var outgoingEdgeFromVertex1 = graph.OutgoingEdges(1).SingleOrDefault();
+            var outgoingEdgeFromVertex2 = graph.OutgoingEdges(2).SingleOrDefault();
+            var outgoingEdgeFromVertex3 = graph.OutgoingEdges(3).SingleOrDefault();
+            var outgoingEdgeFromVertex4 = graph.OutgoingEdges(4).SingleOrDefault();
+            outgoingEdgeFromVertex0.Should().NotBeNull();
+            outgoingEdgeFromVertex1.Should().NotBeNull();
+            outgoingEdgeFromVertex2.Should().NotBeNull();
+            outgoingEdgeFromVertex3.Should().NotBeNull();
+            outgoingEdgeFromVertex4.Should().NotBeNull();
         }
 
         [Fact]
@@ -126,11 +134,11 @@ namespace Craft.DataStructures.IO.UnitTest
             var vertices = Enumerable.Range(0, 5).Select(_ => new LabelledVertex(_.ToString()));
 
             var graph = new GraphAdjacencyList<LabelledVertex, EmptyEdge>(vertices, true);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 3);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(4, 0);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(1, 2));
+            graph.AddEdge(new EmptyEdge(2, 3));
+            graph.AddEdge(new EmptyEdge(3, 4));
+            graph.AddEdge(new EmptyEdge(4, 0));
 
             var outputFile = @"C:\Temp\GraphAdjacencyList_directed_2.json";
 
@@ -165,6 +173,16 @@ namespace Craft.DataStructures.IO.UnitTest
             (graph.GetVertex(2) as LabelledVertex)!.Label.Should().Be("2");
             (graph.GetVertex(3) as LabelledVertex)!.Label.Should().Be("3");
             (graph.GetVertex(4) as LabelledVertex)!.Label.Should().Be("4");
+            var outgoingEdgeFromVertex0 = graph.OutgoingEdges(0).SingleOrDefault();
+            var outgoingEdgeFromVertex1 = graph.OutgoingEdges(1).SingleOrDefault();
+            var outgoingEdgeFromVertex2 = graph.OutgoingEdges(2).SingleOrDefault();
+            var outgoingEdgeFromVertex3 = graph.OutgoingEdges(3).SingleOrDefault();
+            var outgoingEdgeFromVertex4 = graph.OutgoingEdges(4).SingleOrDefault();
+            outgoingEdgeFromVertex0.Should().NotBeNull();
+            outgoingEdgeFromVertex1.Should().NotBeNull();
+            outgoingEdgeFromVertex2.Should().NotBeNull();
+            outgoingEdgeFromVertex3.Should().NotBeNull();
+            outgoingEdgeFromVertex4.Should().NotBeNull();
         }
 
         [Fact]
@@ -195,7 +213,7 @@ namespace Craft.DataStructures.IO.UnitTest
             var json = streamReader.ReadToEnd();
 
             // Act
-            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, EmptyEdge>>(json);
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, LabelledEdge>>(json);
 
             // Assert
             graph.VertexCount.Should().Be(5);
@@ -214,11 +232,21 @@ namespace Craft.DataStructures.IO.UnitTest
             (graph.GetVertex(2) as LabelledVertex)!.Label.Should().Be("2");
             (graph.GetVertex(3) as LabelledVertex)!.Label.Should().Be("3");
             (graph.GetVertex(4) as LabelledVertex)!.Label.Should().Be("4");
-
-            //var oe = graph.OutgoingEdges(0).ToList();
-
-            //graph.OutgoingEdges(0).Single(_ => (_ as LabelledEdge).Label == "A").Should().NotBeNull();
-
+            var outgoingEdgeFromVertex0 = graph.OutgoingEdges(0).SingleOrDefault();
+            var outgoingEdgeFromVertex1 = graph.OutgoingEdges(1).SingleOrDefault();
+            var outgoingEdgeFromVertex2 = graph.OutgoingEdges(2).SingleOrDefault();
+            var outgoingEdgeFromVertex3 = graph.OutgoingEdges(3).SingleOrDefault();
+            var outgoingEdgeFromVertex4 = graph.OutgoingEdges(4).SingleOrDefault();
+            outgoingEdgeFromVertex0.Should().NotBeNull();
+            outgoingEdgeFromVertex1.Should().NotBeNull();
+            outgoingEdgeFromVertex2.Should().NotBeNull();
+            outgoingEdgeFromVertex3.Should().NotBeNull();
+            outgoingEdgeFromVertex4.Should().NotBeNull();
+            (outgoingEdgeFromVertex0 as LabelledEdge)?.Label.Should().Be("A");
+            (outgoingEdgeFromVertex1 as LabelledEdge)?.Label.Should().Be("B");
+            (outgoingEdgeFromVertex2 as LabelledEdge)?.Label.Should().Be("C");
+            (outgoingEdgeFromVertex3 as LabelledEdge)?.Label.Should().Be("D");
+            (outgoingEdgeFromVertex4 as LabelledEdge)?.Label.Should().Be("E");
         }
 
         [Fact]
@@ -228,11 +256,11 @@ namespace Craft.DataStructures.IO.UnitTest
             var vertices = Enumerable.Repeat(0, 5).Select(_ => new EmptyVertex());
 
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, true);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 3);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(4, 0);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(1, 2));
+            graph.AddEdge(new EmptyEdge(2, 3));
+            graph.AddEdge(new EmptyEdge(3, 4));
+            graph.AddEdge(new EmptyEdge(4, 0));
 
             var outputFile = @"C:\Temp\GraphAdjacencyList_directed.graphml";
 
@@ -247,11 +275,11 @@ namespace Craft.DataStructures.IO.UnitTest
             var vertices = Enumerable.Repeat(0, 5).Select(_ => new EmptyVertex());
 
             var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, false);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 3);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(4, 0);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(1, 2));
+            graph.AddEdge(new EmptyEdge(2, 3));
+            graph.AddEdge(new EmptyEdge(3, 4));
+            graph.AddEdge(new EmptyEdge(4, 0));
 
             var outputFile = @"C:\Temp\GraphAdjacencyList_undirected.graphml";
 
@@ -286,33 +314,33 @@ namespace Craft.DataStructures.IO.UnitTest
             };
 
             var graph = new GraphAdjacencyList<LabelledVertex, EmptyEdge>(vertices, false);
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 3);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(1, 10);
-            graph.AddEdge(2, 10);
-            graph.AddEdge(3, 6);
-            graph.AddEdge(3, 7);
-            graph.AddEdge(3, 8);
-            graph.AddEdge(3, 9);
-            graph.AddEdge(3, 14);
-            graph.AddEdge(3, 15);
-            graph.AddEdge(3, 16);
-            graph.AddEdge(3, 17);
-            graph.AddEdge(4, 5);
-            graph.AddEdge(6, 7);
-            graph.AddEdge(7, 8);
-            graph.AddEdge(7, 9);
-            graph.AddEdge(8, 9);
-            graph.AddEdge(8, 11);
-            graph.AddEdge(8, 13);
-            graph.AddEdge(8, 14);
-            graph.AddEdge(11, 12);
-            graph.AddEdge(13, 14);
-            graph.AddEdge(13, 15);
-            graph.AddEdge(14, 15);
-            graph.AddEdge(15, 16);
-            graph.AddEdge(16, 17);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 3));
+            graph.AddEdge(new EmptyEdge(1, 2));
+            graph.AddEdge(new EmptyEdge(1, 10));
+            graph.AddEdge(new EmptyEdge(2, 10));
+            graph.AddEdge(new EmptyEdge(3, 6));
+            graph.AddEdge(new EmptyEdge(3, 7));
+            graph.AddEdge(new EmptyEdge(3, 8));
+            graph.AddEdge(new EmptyEdge(3, 9));
+            graph.AddEdge(new EmptyEdge(3, 14));
+            graph.AddEdge(new EmptyEdge(3, 15));
+            graph.AddEdge(new EmptyEdge(3, 16));
+            graph.AddEdge(new EmptyEdge(3, 17));
+            graph.AddEdge(new EmptyEdge(4, 5));
+            graph.AddEdge(new EmptyEdge(6, 7));
+            graph.AddEdge(new EmptyEdge(7, 8));
+            graph.AddEdge(new EmptyEdge(7, 9));
+            graph.AddEdge(new EmptyEdge(8, 9));
+            graph.AddEdge(new EmptyEdge(8, 11));
+            graph.AddEdge(new EmptyEdge(8, 13));
+            graph.AddEdge(new EmptyEdge(8, 14));
+            graph.AddEdge(new EmptyEdge(11, 12));
+            graph.AddEdge(new EmptyEdge(13, 14));
+            graph.AddEdge(new EmptyEdge(13, 15));
+            graph.AddEdge(new EmptyEdge(14, 15));
+            graph.AddEdge(new EmptyEdge(15, 16));
+            graph.AddEdge(new EmptyEdge(16, 17));
 
             var outputFile = @"C:\Temp\GraphAdjacencyList_labelledVertices.graphml";
 
@@ -346,28 +374,28 @@ namespace Craft.DataStructures.IO.UnitTest
 
             var graph = new GraphAdjacencyList<LabelledVertex, EmptyEdge>(vertices, false);
 
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 3);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(1, 3);
-            graph.AddEdge(1, 4);
-            graph.AddEdge(2, 4);
-            graph.AddEdge(2, 5);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(3, 6);
-            graph.AddEdge(4, 5);
-            graph.AddEdge(4, 6);
-            graph.AddEdge(4, 7);
-            graph.AddEdge(5, 7);
-            graph.AddEdge(6, 7);
-            graph.AddEdge(6, 8);
-            graph.AddEdge(7, 8);
-            graph.AddEdge(8, 9);
-            graph.AddEdge(9, 10);
-            graph.AddEdge(9, 12);
-            graph.AddEdge(10, 11);
-            graph.AddEdge(10, 12);
-            graph.AddEdge(11, 12);
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(0, 3));
+            graph.AddEdge(new EmptyEdge(1, 2));
+            graph.AddEdge(new EmptyEdge(1, 3));
+            graph.AddEdge(new EmptyEdge(1, 4));
+            graph.AddEdge(new EmptyEdge(2, 4));
+            graph.AddEdge(new EmptyEdge(2, 5));
+            graph.AddEdge(new EmptyEdge(3, 4));
+            graph.AddEdge(new EmptyEdge(3, 6));
+            graph.AddEdge(new EmptyEdge(4, 5));
+            graph.AddEdge(new EmptyEdge(4, 6));
+            graph.AddEdge(new EmptyEdge(4, 7));
+            graph.AddEdge(new EmptyEdge(5, 7));
+            graph.AddEdge(new EmptyEdge(6, 7));
+            graph.AddEdge(new EmptyEdge(6, 8));
+            graph.AddEdge(new EmptyEdge(7, 8));
+            graph.AddEdge(new EmptyEdge(8, 9));
+            graph.AddEdge(new EmptyEdge(9, 10));
+            graph.AddEdge(new EmptyEdge(9, 12));
+            graph.AddEdge(new EmptyEdge(10, 11));
+            graph.AddEdge(new EmptyEdge(10, 12));
+            graph.AddEdge(new EmptyEdge(11, 12));
 
             var outputFile = @"C:\Temp\RISK_BoardGame.graphml";
 
@@ -411,25 +439,26 @@ namespace Craft.DataStructures.IO.UnitTest
             };
 
             var graph = new GraphAdjacencyList<LabelledVertex, EmptyEdge>(vertices, true);
-            graph.AddEdge(15, 0);
-            graph.AddEdge(8, 2);
-            graph.AddEdge(9, 2);
-            graph.AddEdge(15, 2);
-            graph.AddEdge(18, 2);
-            graph.AddEdge(21, 2);
-            graph.AddEdge(13, 3);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(16, 5);
-            graph.AddEdge(16, 6);
-            graph.AddEdge(22, 7);
-            graph.AddEdge(11, 10);
-            graph.AddEdge(17, 12);
-            graph.AddEdge(1, 19);
-            graph.AddEdge(14, 20);
-            graph.AddEdge(22, 20);
-            graph.AddEdge(20, 23);
-            graph.AddEdge(0, 24);
-            graph.AddEdge(26, 25);
+            graph.AddEdge(new EmptyEdge(15, 0));
+            graph.AddEdge(new EmptyEdge(8, 2));
+            graph.AddEdge(new EmptyEdge(9, 2));
+            graph.AddEdge(new EmptyEdge(15, 2));
+            graph.AddEdge(new EmptyEdge(18, 2));
+            graph.AddEdge(new EmptyEdge(21, 2));
+            graph.AddEdge(new EmptyEdge(13, 3));
+            graph.AddEdge(new EmptyEdge(3, 4));
+            graph.AddEdge(new EmptyEdge(16, 5));
+            graph.AddEdge(new EmptyEdge(16, 6));
+            graph.AddEdge(new EmptyEdge(22, 7));
+            graph.AddEdge(new EmptyEdge(11, 10));
+            graph.AddEdge(new EmptyEdge(17, 12));
+            graph.AddEdge(new EmptyEdge(1, 19));
+            graph.AddEdge(new EmptyEdge(14, 20));
+            graph.AddEdge(new EmptyEdge(22, 20));
+            graph.AddEdge(new EmptyEdge(20, 23));
+            graph.AddEdge(new EmptyEdge(0, 24));
+            graph.AddEdge(new EmptyEdge(26, 25));
+
             var outputFile = @"C:\Temp\SystemDependencies.graphml";
 
             // Act

@@ -44,7 +44,7 @@ void ParseDotFile(
         var idOfSourceVertex = dictionary[sourceNodeName];
         var idOfTargetVertex = dictionary[targetNodeName];
 
-        graph.AddEdge(idOfSourceVertex, idOfTargetVertex);
+        graph.AddEdge(new EmptyEdge(idOfSourceVertex, idOfTargetVertex));
     }
 }
 
@@ -173,7 +173,7 @@ foreach (var item in edgeData)
         Console.WriteLine($"    WARNING: {item.Item1} apparently connects to itself...");
     }
 
-    graph.AddEdge(vertexId1, vertexId2);
+    graph.AddEdge((new EmptyEdge(vertexId1, vertexId2)));
 }
 
 // Kollaps grafen i en mindre graf, hvor man bare ser relationer mellem ACI-navne
