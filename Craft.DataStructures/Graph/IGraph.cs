@@ -19,7 +19,7 @@
     // The 'out' keyword indicates that a type parameter is declared as covariant,
     // which is apparently recommended when possible. In this case, TE cannot be covariant,
     // since it constitutes an input parameter in a method of the class
-    public interface IGraph<TV, TE> : IGraph 
+    public interface IGraph<TV, TE> : IGraph, IGraphInternal
         where TV : IVertex 
         where TE : IEdge 
     {

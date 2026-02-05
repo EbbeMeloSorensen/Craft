@@ -1,9 +1,9 @@
+using System.Xml.Serialization;
+using Newtonsoft.Json;
+using Xunit;
+using FluentAssertions;
 using Craft.DataStructures.Graph;
 using Craft.DataStructures.IO.graphml;
-using Newtonsoft.Json;
-using System.Xml.Serialization;
-using FluentAssertions;
-using Xunit;
 
 namespace Craft.DataStructures.IO.UnitTest
 {
@@ -74,6 +74,64 @@ namespace Craft.DataStructures.IO.UnitTest
         }
 
         [Fact]
+        public void WriteGraphAdjacencyListToJSONFile_EmptyVertexAndEmptyEdgeUndirected()
+        {
+            // Arrange
+            var vertices = Enumerable.Repeat(0, 5).Select(_ => new EmptyVertex());
+
+            var graph = new GraphAdjacencyList<EmptyVertex, EmptyEdge>(vertices, false);
+
+            graph.AddEdge(new EmptyEdge(0, 1));
+            graph.AddEdge(new EmptyEdge(1, 2));
+            graph.AddEdge(new EmptyEdge(2, 3));
+            graph.AddEdge(new EmptyEdge(3, 4));
+            graph.AddEdge(new EmptyEdge(4, 0));
+
+            var outputFile = @"C:\Temp\GraphAdjacencyList_undirected.json";
+
+            // Act
+            graph.WriteToFile(outputFile, Format.JSON);
+        }
+
+        [Fact]
+        public void ReadGraphAdjacencyListFromJSONFile_EmptyVertexAndEmptyEdgeUndirected()
+        {
+            var inputFile = @"C:\Temp\GraphAdjacencyList_undirected.json";
+            using var streamReader = new StreamReader(inputFile);
+            var json = streamReader.ReadToEnd();
+
+            var settings = new JsonSerializerSettings
+            {
+                Converters =
+                {
+                    new GraphJsonConverter()
+                }
+            };
+
+            // Act
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<EmptyVertex, EmptyEdge>>(json, settings);
+
+            // Assert
+            graph.IsDirected.Should().BeFalse();
+            graph.VertexCount.Should().Be(5);
+            graph.Vertices.Count(_ => _.Id == 0).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 1).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 2).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 3).Should().Be(1);
+            graph.Vertices.Count(_ => _.Id == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 0 && _.VertexId2 == 1).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 1 && _.VertexId2 == 2).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 2 && _.VertexId2 == 3).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 3 && _.VertexId2 == 4).Should().Be(1);
+            graph.Edges.Count(_ => _.VertexId1 == 4 && _.VertexId2 == 0).Should().Be(1);
+            graph.OutgoingEdges(0).Count().Should().Be(2);
+            graph.OutgoingEdges(1).Count().Should().Be(2);
+            graph.OutgoingEdges(2).Count().Should().Be(2);
+            graph.OutgoingEdges(3).Count().Should().Be(2);
+            graph.OutgoingEdges(4).Count().Should().Be(2);
+        }
+
+        [Fact]
         public void WriteGraphAdjacencyListToJSONFile_EmptyVertexAndEmptyEdgeDirected()
         {
             // Arrange
@@ -100,10 +158,19 @@ namespace Craft.DataStructures.IO.UnitTest
             using var streamReader = new StreamReader(inputFile);
             var json = streamReader.ReadToEnd();
 
+            var settings = new JsonSerializerSettings
+            {
+                Converters =
+                {
+                    new GraphJsonConverter()
+                }
+            };
+
             // Act
-            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<EmptyVertex, EmptyEdge>>(json);
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<EmptyVertex, EmptyEdge>>(json, settings);
 
             // Assert
+            graph.IsDirected.Should().BeTrue();
             graph.VertexCount.Should().Be(5);
             graph.Vertices.Count(_ => _.Id == 0).Should().Be(1);
             graph.Vertices.Count(_ => _.Id == 1).Should().Be(1);
@@ -153,10 +220,19 @@ namespace Craft.DataStructures.IO.UnitTest
             using var streamReader = new StreamReader(inputFile);
             var json = streamReader.ReadToEnd();
 
+            var settings = new JsonSerializerSettings
+            {
+                Converters =
+                {
+                    new GraphJsonConverter()
+                }
+            };
+
             // Act
-            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, EmptyEdge>>(json);
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, EmptyEdge>>(json, settings);
 
             // Assert
+            graph.IsDirected.Should().BeTrue();
             graph.VertexCount.Should().Be(5);
             graph.Vertices.Count(_ => _.Id == 0).Should().Be(1);
             graph.Vertices.Count(_ => _.Id == 1).Should().Be(1);
@@ -212,10 +288,19 @@ namespace Craft.DataStructures.IO.UnitTest
             using var streamReader = new StreamReader(inputFile);
             var json = streamReader.ReadToEnd();
 
+            var settings = new JsonSerializerSettings
+            {
+                Converters =
+                {
+                    new GraphJsonConverter()
+                }
+            };
+
             // Act
-            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, LabelledEdge>>(json);
+            var graph = JsonConvert.DeserializeObject<GraphAdjacencyList<LabelledVertex, LabelledEdge>>(json, settings);
 
             // Assert
+            graph.IsDirected.Should().BeTrue();
             graph.VertexCount.Should().Be(5);
             graph.Vertices.Count(_ => _.Id == 0).Should().Be(1);
             graph.Vertices.Count(_ => _.Id == 1).Should().Be(1);

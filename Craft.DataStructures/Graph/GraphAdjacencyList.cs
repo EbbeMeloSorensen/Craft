@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.Serialization;
-
-namespace Craft.DataStructures.Graph
+﻿namespace Craft.DataStructures.Graph
 {
     // This is a template class for representing graphs where we want to associate some information
     // with vertices and/or edges such as a location of a vertex.
@@ -23,14 +20,10 @@ namespace Craft.DataStructures.Graph
 
         public List<TE> Edges { get; private set; }
 
-        public GraphAdjacencyList() : this(false)
-        {
-        }
-
         public GraphAdjacencyList(
-            bool directed)
+            bool isDirected)
         {
-            IsDirected = directed;
+            IsDirected = isDirected;
             Vertices = new List<TV>();
             Edges = new List<TE>();
 
@@ -113,7 +106,14 @@ namespace Craft.DataStructures.Graph
                 return new List<IEdge>();
             }
 
-            return (IEnumerable<IEdge>)_adjacencyList[vertexId].Select(_ => _.Item2).Where(_ => _.VertexId1 == vertexId);
+            var edges = _adjacencyList[vertexId].Select(_ => _.Item2);
+
+            if (IsDirected)
+            {
+                return (IEnumerable<IEdge>)edges.Where(_ => _.VertexId1 == vertexId);
+            }
+
+            return (IEnumerable<IEdge>)edges;
         }
 
         // Returns the edges that go to or from a given vertex
@@ -133,12 +133,6 @@ namespace Craft.DataStructures.Graph
         {
             return GetAdjacentEdges(vertexId)
                 .Select(_ => _.VertexId1 == vertexId ? _.VertexId2 : _.VertexId1);
-        }
-
-        [OnDeserialized]
-        internal void OnDeserialized(StreamingContext context)
-        {
-            RebuildInternalState();
         }
 
         private void AddEdgeToAdjacencyList(
@@ -161,7 +155,7 @@ namespace Craft.DataStructures.Graph
             _adjacencyList[edge.VertexId2].Add(new Tuple<int, TE>(edge.VertexId1, edge));
         }
 
-        private void RebuildInternalState()
+        public void RebuildInternalState()
         {
             _vertexCount = Vertices.Count;
             _adjacencyList = new List<Tuple<int, TE>>[_vertexCount];
