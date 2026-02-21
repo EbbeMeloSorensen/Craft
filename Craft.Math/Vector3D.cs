@@ -8,10 +8,6 @@
         public double Y { get; }
         public double Z { get; }
 
-        public Vector3D()
-        {
-        }
-
         public Vector3D(double x, double y, double z)
         {
             X = x;
