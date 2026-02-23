@@ -7,9 +7,9 @@ using Craft.ViewModels.Simulation;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace Craft.Simulation.GuiTest.BouncingBall
+namespace Craft.Simulation.GuiTest.VanishingBoundaries
 {
-    public class BouncingBallViewModel : ViewModelBase
+    public class VanishingBoundariesViewModel : ViewModelBase
     {
         private SceneViewController _sceneViewController;
         private RelayCommand _startAnimationCommand;
@@ -46,7 +46,7 @@ namespace Craft.Simulation.GuiTest.BouncingBall
             }
         }
 
-        public BouncingBallViewModel()
+        public VanishingBoundariesViewModel()
         {
             Engine = new Engine.Engine(null);
 
@@ -104,6 +104,22 @@ namespace Craft.Simulation.GuiTest.BouncingBall
                 deltaT);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+
+            scene.PostPropagationCallBack = (propagatedState, boundaryCollisionReports, bodyCollisionReports) =>
+            {
+                if (boundaryCollisionReports.Any())
+                {
+                    var boundary = boundaryCollisionReports.First().Boundary;
+                    if (scene.Boundaries.Contains(boundary))
+                    {
+                        scene.Boundaries.Remove(boundary);
+                    }
+                }
+
+                var response = new PostPropagationResponse();
+
+                return response;
+            };
 
             scene.AddBoundary(new HalfPlane(new Vector2D(3, -0.3), new Vector2D(-1, 0)));
             scene.AddBoundary(new HalfPlane(new Vector2D(3, 1), new Vector2D(0, -1)));

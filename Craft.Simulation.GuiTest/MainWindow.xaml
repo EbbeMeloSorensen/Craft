@@ -5,12 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Craft.Simulation.GuiTest"
         xmlns:bouncingBall="clr-namespace:Craft.Simulation.GuiTest.BouncingBall"
+        xmlns:vanishingBoundaries="clr-namespace:Craft.Simulation.GuiTest.VanishingBoundaries"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Closing="MainWindow_OnClosing">
     <TabControl>
         <TabItem Header="Bouncing Ball">
             <bouncingBall:BouncingBallView DataContext="{Binding BouncingBallViewModel}"/>
+        </TabItem>
+        <TabItem Header="Vanishing Boundaries">
+            <vanishingBoundaries:VanishingBoundariesView DataContext="{Binding VanishingBoundariesViewModel}"/>
         </TabItem>
     </TabControl>
 </Window>

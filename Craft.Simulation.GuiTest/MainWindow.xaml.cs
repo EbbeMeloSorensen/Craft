@@ -22,6 +22,7 @@ namespace Craft.Simulation.GuiTest
             CancelEventArgs e)
         {
             ViewModel.BouncingBallViewModel.Engine.HandleClosing();
+            ViewModel.VanishingBoundariesViewModel.Engine.HandleClosing();
         }
     }
 }
