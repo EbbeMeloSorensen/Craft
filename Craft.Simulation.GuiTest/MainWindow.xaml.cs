@@ -23,6 +23,7 @@ namespace Craft.Simulation.GuiTest
         {
             ViewModel.BouncingBallViewModel.Engine.HandleClosing();
             ViewModel.VanishingBoundariesViewModel.Engine.HandleClosing();
+            ViewModel.PushingBallsViewModel.Engine.HandleClosing();
         }
     }
 }

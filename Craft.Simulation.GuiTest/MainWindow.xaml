@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Craft.Simulation.GuiTest"
         xmlns:bouncingBall="clr-namespace:Craft.Simulation.GuiTest.BouncingBall"
         xmlns:vanishingBoundaries="clr-namespace:Craft.Simulation.GuiTest.VanishingBoundaries"
+        xmlns:pushingBalls="clr-namespace:Craft.Simulation.GuiTest.PushingBalls"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Closing="MainWindow_OnClosing">
@@ -15,6 +16,9 @@
         </TabItem>
         <TabItem Header="Vanishing Boundaries">
             <vanishingBoundaries:VanishingBoundariesView DataContext="{Binding VanishingBoundariesViewModel}"/>
+        </TabItem>
+        <TabItem Header="Pushing Balls">
+            <pushingBalls:PushingBallsView DataContext="{Binding PushingBallsViewModel}"/>
         </TabItem>
     </TabControl>
 </Window>
