@@ -89,6 +89,20 @@ Done:
     .. det kunne være fint, hvis man lige holdt styr på, hvor langt den var kravlet og så "emulerede", at den laver en major update med jævne mellemrum
 * Tilføj en ObservableObject for MouseWorldPosition - ovevej senere at erstatte Dependency propertyen
 * Margenerne skal tegnes foran de almindelige labels
+* Fix den bug, der gør at kurven ikke følger med, når man fokuserer på x point of interest
+  - I Function Curve III kan man klikke på en checkbox, der gør, at vinduet hele tiden fokuserer på et givet punkt på x-aksen.
+  Observation: Når du panorerre rundt i viewet, så virker det, men ikke når den selv flytter world window.
+  Question: Når man panorerer rundt, hvad er det så, der gør, at kurven flytter sig?
+  -> Det må være det samme som det, der gør, at vindue og dør flytter sig med i de simple views
+  Question: Hvad er det, der styrer placering af PolylineViewModels?
+  -> Det gør TranslationX og TranslationY, og de opdateres i forbindelse med mouse move events
+  Observation: I viewet binder PolylineViewModels til "PointsInViewportCoordinates", så bemærk, at du opererer stadig med at regne de koordinater ud. Så vidt jeg husker, så er den primære årsag, at det var den eneste måde, hvorpå du kunne tegne linierne med den tykkelse, du ville have. Du snakkede også med ChatGpt om det.
+  Løsning: Du skal vel bruge samme princip, som når du panorerer med musen, hvor mouse down gør at man sætter TranslationX og TranslationY til 0,
+           og I MouseMove events opdaterer man så TranslationX og TranslationY i henhold til mouse offset.
+           Et såkaldt "Major World Window Update" sker, når man f.eks. SÆTTER World Window, og det FORANLEDIGER, at Viewport koordinater for polylines genberegnes
+           SAMT at TranslationX og TranslationY sættest til 0. Du kan så passende GEMME placeringen af World Window, som den gør sig gældende ved Major Update.
+           Det gør du vist allerede, da du jo allerede opererer med det der expandede World Window, som jo i øvrigt bruges til at afgøre, hvornår du IGEN skal lave
+           en Major update i forbindelse med at man løbende flytter World Window.
 
 In progress:
 * Fix den bug, hvor rammer omkring husets vindue og dør (som tegnes med polylines) tegnes forkert.
@@ -101,7 +115,8 @@ In progress:
   Det vidner om, at TranslationX og TranslationY IKKE opdateres korrekt - de skal jo altså gerne være 0, 0 når ikke brugeren dragger.
   _translationXMin bliver sat til 466, men det duer jo ikke, da den jo altså skal være 0-
   Der er stadig problemer med den funktionalitet, der handler om at world window slider afsted - og hvad skulle det egentlig bruges til?
-  - det var fra dengang du arbejdede med hydro eller dfos - du ville gerne lave noget simulation af et dobbeltpendul..
+  - det var fra dengang du arbejdede med hydro eller dfos eller dmi data studio - og du ville gerne lave noget simulation af et dobbeltpendul..
+
 
 
 * Placer SelectedRegionWindow rigtigt.

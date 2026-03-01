@@ -47,7 +47,9 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
         private string _xAxisOverallLabel2;
         private string _xAxisOverallLabel2Alignment;
         protected double _worldWindowExpansionFactor;
-        protected Point _expandedWorldWindowUpperLeft;
+        protected Point _initialWorldWindowUpperLeft; // updated at each major world window update
+        protected Size _initialWorldWindowSize;
+        protected Point _expandedWorldWindowUpperLeft; // in relation to initial world window
         protected Size _expandedWorldWindowSize;
         private RelayCommand _panLeftCommand;
         private RelayCommand _panRightCommand;
@@ -212,6 +214,13 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
                         GeometryEditorViewModel.WorldWindowUpperLeft = new Point(
                             DynamicXValue.Value - Fraction * GeometryEditorViewModel.WorldWindowSize.Width,
                             GeometryEditorViewModel.WorldWindowUpperLeft.Y);
+
+                        // Update Translation like when panning with the mouse
+                        GeometryEditorViewModel.TranslationX =
+                            (_initialWorldWindowUpperLeft.X - GeometryEditorViewModel.WorldWindowUpperLeft.X) * GeometryEditorViewModel.Scaling.Width;
+
+                        GeometryEditorViewModel.TranslationY =
+                            (_initialWorldWindowUpperLeft.Y - GeometryEditorViewModel.WorldWindowUpperLeft.Y) * GeometryEditorViewModel.Scaling.Height;
                     }
                     else
                     {
@@ -515,6 +524,9 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
             var x1 = GeometryEditorViewModel.WorldWindowUpperLeft.X + GeometryEditorViewModel.WorldWindowSize.Width;
             var y0 = -GeometryEditorViewModel.WorldWindowUpperLeft.Y - GeometryEditorViewModel.WorldWindowSize.Height;
             var y1 = -GeometryEditorViewModel.WorldWindowUpperLeft.Y;
+
+            _initialWorldWindowUpperLeft = GeometryEditorViewModel.WorldWindowUpperLeft;
+            _initialWorldWindowSize = GeometryEditorViewModel.WorldWindowSize;
 
             _expandedWorldWindowUpperLeft = new Point(
                 x0 - _worldWindowExpansionFactor * (x1 - x0),

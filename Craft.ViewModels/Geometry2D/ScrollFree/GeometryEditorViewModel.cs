@@ -662,6 +662,7 @@ namespace Craft.ViewModels.Geometry2D.ScrollFree
             OnWorldWindowMajorUpdateOccured();
         }
 
+        // Det sker i forbindelse med Major World Window Update, som f.eks. når man sætter World Window Position
         public void UpdatePoints()
         {
             TranslationX = 0;
