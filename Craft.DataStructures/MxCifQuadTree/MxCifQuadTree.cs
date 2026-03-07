@@ -1,0 +1,100 @@
+﻿namespace Craft.DataStructures.MxCifQuadTree;
+
+public enum QUADRANT
+{
+    NW,
+    NE,
+    SW,
+    SE
+}
+
+public enum DIRECTION
+{
+    LEFT,
+    RIGHT,
+    BOTH
+}
+
+public enum AXIS
+{
+    XA,
+    YA
+}
+
+public class MxCifQuadTree
+{
+    public static readonly int[] g_XF = [-1, 1, -1, 1];
+    public static readonly int[] g_YF = [-1, -1, 1, 1];
+
+    private Rectangle _p;
+    private QuadNode _root;
+
+    public MxCifQuadTree(
+        Rectangle rectangle)
+    {
+        _p = rectangle;
+    }
+
+    public void Insert(
+        Rectangle rectangle)
+    {
+        if (_root == null)
+        {
+            _root = new QuadNode();
+        }
+
+        var quadNode = _root;
+        var cx = _p.CenterX;
+        var cy = _p.CenterY;
+        var lx = _p.Width;
+        var ly = _p.Height;
+
+        var dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
+        var dy = rectangle.BIN_COMPARE(cy, AXIS.YA);
+
+        while (dx != DIRECTION.BOTH && dy != DIRECTION.BOTH)
+        {
+            var q = (int)rectangle.CIF_COMPARE(cx, cy);
+
+            quadNode._child[q] ??= new QuadNode();
+            quadNode = quadNode._child[q];
+            lx /= 2;
+            ly /= 2;
+            cx += lx * g_XF[q];
+            cy += ly * g_YF[q];
+            dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
+            dy = rectangle.BIN_COMPARE(cy, AXIS.YA);
+        }
+
+        if (dx == DIRECTION.BOTH)
+        {
+            quadNode.InsertOnAxis(rectangle, cy, ly, AXIS.YA);
+        }
+        else
+        {
+            quadNode.InsertOnAxis(rectangle, cx, lx, AXIS.XA);
+        }
+    }
+
+    public void Remove(
+        Rectangle rectangle)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Intersects(
+        Rectangle rectangle)
+    {
+        if (_root == null)
+        {
+            return false;
+        }
+
+        return rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, _p.Width, _p.Height);
+    }
+
+    public bool Clear()
+    {
+        throw new NotImplementedException();
+    }
+}
