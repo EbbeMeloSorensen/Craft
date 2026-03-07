@@ -1,5 +1,6 @@
 ﻿using Craft.DataStructures.MxCifQuadTree;
 using Xunit;
+using FluentAssertions;
 
 namespace Craft.DataStructures.IO.UnitTest;
 
@@ -22,6 +23,7 @@ public class MxCifQuadTreeTest
         var rectangle11 = new Rectangle(75.0, 75.0, 5.0, 5.0);
         var rectangle12 = new Rectangle(87.5, 93.75, 2.0, 2.0);
 
+        // Act
         var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50));
 
         mxCifQuadTree1.Insert(rectangle1);
@@ -39,29 +41,42 @@ public class MxCifQuadTreeTest
 
         var rectangleQ = new Rectangle(50.0, 75.0, 5.0, 5.0);
 
-        var a = rectangleQ.Intersects(rectangle1);
-        var b = rectangleQ.Intersects(rectangle2);
-        var c = rectangleQ.Intersects(rectangle3);
-        var d = rectangleQ.Intersects(rectangle4);
-        var e = rectangleQ.Intersects(rectangle5);
-        var f = rectangleQ.Intersects(rectangle6);
-        var g = rectangleQ.Intersects(rectangle7);
-        var h = rectangleQ.Intersects(rectangle8);
-        var i = rectangleQ.Intersects(rectangle9);
-        var j = rectangleQ.Intersects(rectangle10);
-        var k = rectangleQ.Intersects(rectangle11);
-        var l = rectangleQ.Intersects(rectangle12);
-
-        if (mxCifQuadTree1.Intersects(rectangleQ))
-        {
-            var x = 0;
-        }
-        else
-        {
-            var x = 0;
-        }
+        // Assert
+        mxCifQuadTree1.Intersects(rectangleQ).Should().BeTrue(); // It intersects rectangle 10
 
         // Act
-        // Assert
+        //mxCifQuadTree1.Remove(rectangle3); (Det venter vi lige med)
+    }
+
+    [Fact]
+    public void Test2()
+    {
+        var dx = 10.0;
+        var random = new Random();
+
+        var rectangles = Enumerable.Repeat(0, 200).Select(_ =>
+        {
+            var fracX = random.NextDouble();
+            var fracY = random.NextDouble();
+            var centerX = fracX * (100 - dx) + 0.5 * dx;
+            var centerY = fracY * (100 - dx) + 0.5 * dx;
+
+            return new Rectangle(centerX, centerY, dx / 2, dx / 2 );
+        }).ToList();
+
+        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50));
+
+        using var sw = new StreamWriter(@"C:\Temp\rectangles.svg");
+        var magnification = 8.0;
+        sw.WriteLine($"<svg width=\"{100.0 * magnification}\" height=\"{100.0 * magnification}\" xmlns=\"http://www.w3.org/2000/svg\">");
+        sw.WriteLine($"  <rect width=\"{100 * magnification}\" height=\"{100 * magnification}\" x=\"{magnification}\" y=\"{magnification}\" fill=\"gray\" />");
+        foreach(var rectangle in rectangles)
+        {
+            if (mxCifQuadTree1.Intersects(rectangle)) continue;
+
+            mxCifQuadTree1.Insert(rectangle);
+            sw.WriteLine($"  <rect width=\"{dx * magnification}\" height=\"{dx * magnification}\" x=\"{(rectangle.CenterX - dx / 2) * magnification}\" y=\"{(rectangle.CenterY - dx / 2) * magnification}\" fill=\"black\" />");
+        };
+        sw.WriteLine("</svg>");
     }
 }

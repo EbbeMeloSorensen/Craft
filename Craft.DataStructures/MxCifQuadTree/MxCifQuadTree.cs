@@ -79,7 +79,53 @@ public class MxCifQuadTree
     public void Remove(
         Rectangle rectangle)
     {
-        throw new NotImplementedException();
+        if (_root == null)
+        {
+            return;
+        }
+
+        var T = _root;
+        QuadNode FT = null;
+
+        var CX = _p.CenterX;
+        var CY = _p.CenterY;
+        var LX = _p.Width;
+        var LY = _p.Height;
+        AXIS V = AXIS.XA;
+        QUADRANT Q, QF;
+        DIRECTION D, DF;
+
+        while (rectangle.BIN_COMPARE(CX, AXIS.XA) != DIRECTION.BOTH &&
+               rectangle.BIN_COMPARE(CY, AXIS.YA) != DIRECTION.BOTH)
+        {
+            Q = rectangle.CIF_COMPARE(CX, CY);
+
+            if (T._child[(int)Q] == null)
+            {
+                // The rectangle is not int the tree
+                return;
+            }
+
+            if (T._axis[0] != null ||
+                T._axis[1] != null ||
+                T._child[(int)Q.OPQUAD()] != null ||
+                T._child[(int)Q.CQUAD()] != null ||
+                T._child[(int)Q.CCQUAD()] != null)
+            {
+                FT = T;
+                QF = Q;
+            }
+
+            T = T._child[(int)Q];
+            LX /= 2;
+            LY /= 2;
+            CX += LX * g_XF[(int)Q];
+            CY += LY * g_YF[(int)Q];
+        }
+
+        V = V.OTHERAXIS();
+
+        throw new NotImplementedException("Det er en større sag, det her. I øvrigt er det lidt af en edge use case");
     }
 
     public bool Intersects(

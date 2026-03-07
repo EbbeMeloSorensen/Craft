@@ -1,6 +1,6 @@
 ﻿namespace Craft.DataStructures.MxCifQuadTree;
 
-public static class RectangleExtensions
+public static class Helpers
 {
     public static readonly int[] g_XF = [-1, 1, -1, 1];
     public static readonly int[] g_YF = [-1, -1, 1, 1];
@@ -146,4 +146,54 @@ public static class RectangleExtensions
         return false;
     }
 
+    public static QUADRANT OPQUAD(
+        this QUADRANT quadrant)
+    {
+        return quadrant switch
+        {
+            QUADRANT.NW => QUADRANT.SE,
+            QUADRANT.NE => QUADRANT.SW,
+            QUADRANT.SW => QUADRANT.NE,
+            QUADRANT.SE => QUADRANT.NW,
+            _ => throw new ArgumentOutOfRangeException(nameof(quadrant), quadrant, null)
+        };
+    }
+
+    public static QUADRANT CQUAD(
+        this QUADRANT quadrant)
+    {
+        return quadrant switch
+        {
+            QUADRANT.NW => QUADRANT.NE,
+            QUADRANT.NE => QUADRANT.SE,
+            QUADRANT.SW => QUADRANT.NW,
+            QUADRANT.SE => QUADRANT.SW,
+            _ => throw new ArgumentOutOfRangeException(nameof(quadrant), quadrant, null)
+        };
+    }
+
+    public static QUADRANT CCQUAD(
+        this QUADRANT quadrant)
+    {
+        return quadrant switch
+        {
+            QUADRANT.NW => QUADRANT.SW,
+            QUADRANT.NE => QUADRANT.NW,
+            QUADRANT.SW => QUADRANT.SE,
+            QUADRANT.SE => QUADRANT.NE,
+            _ => throw new ArgumentOutOfRangeException(nameof(quadrant), quadrant, null)
+        };
+    }
+
+    public static DIRECTION OPDIR(
+        this DIRECTION direction)
+    {
+        return direction == DIRECTION.LEFT ? DIRECTION.RIGHT : DIRECTION.LEFT;
+    }
+
+    public static AXIS OTHERAXIS(
+        this AXIS axis)
+    {
+        return axis == AXIS.XA ? AXIS.YA : AXIS.XA;
+    }
 }
