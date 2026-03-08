@@ -46,8 +46,8 @@ public class MxCifQuadTree
         var quadNode = _root;
         var cx = _p.CenterX;
         var cy = _p.CenterY;
-        var lx = _p.Width;
-        var ly = _p.Height;
+        var lx = _p.HalfWidth;
+        var ly = _p.HalfHeight;
 
         var dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
         var dy = rectangle.BIN_COMPARE(cy, AXIS.YA);
@@ -89,8 +89,8 @@ public class MxCifQuadTree
 
         var CX = _p.CenterX;
         var CY = _p.CenterY;
-        var LX = _p.Width;
-        var LY = _p.Height;
+        var LX = _p.HalfWidth;
+        var LY = _p.HalfHeight;
         AXIS V = AXIS.XA;
         QUADRANT Q, QF;
         DIRECTION D, DF;
@@ -136,7 +136,7 @@ public class MxCifQuadTree
             return false;
         }
 
-        return rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, _p.Width, _p.Height);
+        return rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, _p.HalfWidth, _p.HalfHeight);
     }
 
     public bool Clear()

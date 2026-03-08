@@ -1,8 +1,9 @@
-﻿using Craft.DataStructures.MxCifQuadTree;
-using Xunit;
+﻿using System.Globalization;
+using Craft.DataStructures.MxCifQuadTree;
 using FluentAssertions;
+using Xunit;
 
-namespace Craft.DataStructures.IO.UnitTest;
+namespace Craft.DataStructures.UnitTest;
 
 public class MxCifQuadTreeTest
 {
@@ -51,6 +52,8 @@ public class MxCifQuadTreeTest
     [Fact]
     public void Test2()
     {
+        // Kinda broken
+
         var dx = 10.0;
         var random = new Random();
 
@@ -61,7 +64,7 @@ public class MxCifQuadTreeTest
             var centerX = fracX * (100 - dx) + 0.5 * dx;
             var centerY = fracY * (100 - dx) + 0.5 * dx;
 
-            return new Rectangle(centerX, centerY, dx / 2, dx / 2 );
+            return new Rectangle(centerX, centerY, dx / 2, dx / 2);
         }).ToList();
 
         var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50));
@@ -70,13 +73,68 @@ public class MxCifQuadTreeTest
         var magnification = 8.0;
         sw.WriteLine($"<svg width=\"{100.0 * magnification}\" height=\"{100.0 * magnification}\" xmlns=\"http://www.w3.org/2000/svg\">");
         sw.WriteLine($"  <rect width=\"{100 * magnification}\" height=\"{100 * magnification}\" x=\"{magnification}\" y=\"{magnification}\" fill=\"gray\" />");
-        foreach(var rectangle in rectangles)
+        foreach (var rectangle in rectangles)
         {
             if (mxCifQuadTree1.Intersects(rectangle)) continue;
 
             mxCifQuadTree1.Insert(rectangle);
             sw.WriteLine($"  <rect width=\"{dx * magnification}\" height=\"{dx * magnification}\" x=\"{(rectangle.CenterX - dx / 2) * magnification}\" y=\"{(rectangle.CenterY - dx / 2) * magnification}\" fill=\"black\" />");
-        };
+        }
+        ;
+        sw.WriteLine("</svg>");
+    }
+
+    [Fact]
+    public void Test3_Replicate_TheCPPImplementation()
+    {
+        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50));
+
+        var lines = File.ReadAllLines(@"C:\Temp\all_rectangles.txt");
+
+        using var sw = new StreamWriter(@"C:\Temp\replication_test.svg");
+        sw.WriteLine("<svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">");
+        sw.WriteLine("  <rect width=\"100\" height=\"100\" x=\"0\" y=\"0\" fill=\"gray\" />");
+
+        var count = 0;
+
+        foreach (var line in lines)
+        {
+            count++;
+
+            var temp = line.Split(',');
+            var centerX = double.Parse(temp[0].Trim(), CultureInfo.InvariantCulture);
+            var centerY = double.Parse(temp[1].Trim(), CultureInfo.InvariantCulture);
+            var halfWidth = double.Parse(temp[2].Trim(), CultureInfo.InvariantCulture);
+            var halfHeight = double.Parse(temp[3].Trim(), CultureInfo.InvariantCulture);
+            var intersecting = temp[4].Trim() == "0";
+
+            var rectangle = new Rectangle(centerX, centerY, halfWidth, halfHeight);
+
+            if (mxCifQuadTree.Intersects(rectangle))
+            {
+                if (!intersecting)
+                {
+                    // Something wrong - this was not expected
+                    var test = mxCifQuadTree.Intersects(rectangle);
+                }
+            }
+            else
+            {
+                if (intersecting)
+                {
+                    // Something wrong - this was not expected
+                    // (this happens for the 14th rectangle - since it intersects, but without the algorithm identifying it)
+                    // (notice that 5 previous intersecting rectangles were handled correctly...)
+                    var test = mxCifQuadTree.Intersects(rectangle);
+                    sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"red\" />");
+                    break;
+                }
+
+                sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"black\" />");
+                mxCifQuadTree.Insert(rectangle);
+            }
+        }
+
         sw.WriteLine("</svg>");
     }
 }

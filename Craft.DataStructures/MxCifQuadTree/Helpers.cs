@@ -10,20 +10,20 @@ public static class Helpers
         this Rectangle rectangle,
         double CV,
         AXIS V)
-    {
+    {   
         if (V == AXIS.XA)
         {
-            if (rectangle.CenterX - rectangle.Width <= CV &&
-                CV <= rectangle.CenterX + rectangle.Width)
-            {
+            if (rectangle.CenterX - rectangle.HalfWidth <= CV &&
+                CV <= rectangle.CenterX + rectangle.HalfWidth)
+            {   
                 return DIRECTION.BOTH;
             }
 
             return CV > rectangle.CenterX ? DIRECTION.LEFT : DIRECTION.RIGHT;
         }
 
-        if (rectangle.CenterY - rectangle.Height <= CV &&
-            CV <= rectangle.CenterY + rectangle.Height)
+        if (rectangle.CenterY - rectangle.HalfHeight <= CV &&
+            CV <= rectangle.CenterY + rectangle.HalfHeight)
         {
             return DIRECTION.BOTH;
         }
