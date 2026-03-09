@@ -1,4 +1,6 @@
-﻿namespace Craft.DataStructures.MxCifQuadTree;
+﻿using Craft.Logging;
+
+namespace Craft.DataStructures.MxCifQuadTree;
 
 public enum QUADRANT
 {
@@ -28,11 +30,16 @@ public class MxCifQuadTree
 
     private Rectangle _p;
     private QuadNode _root;
+    private ILogger _logger;
 
     public MxCifQuadTree(
-        Rectangle rectangle)
+        Rectangle rectangle,
+        ILogger logger = null)
     {
         _p = rectangle;
+        _logger = logger;
+
+        _logger?.WriteLine(LogMessageCategory.Information, "Instantiating CMxCifQuadTree");
     }
 
     public void Insert(
@@ -40,7 +47,7 @@ public class MxCifQuadTree
     {
         if (_root == null)
         {
-            _root = new QuadNode();
+            _root = new QuadNode(_logger);
         }
 
         var quadNode = _root;
@@ -49,29 +56,39 @@ public class MxCifQuadTree
         var lx = _p.HalfWidth;
         var ly = _p.HalfHeight;
 
+        _logger?.WriteLine(LogMessageCategory.Information, $"Inserting rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+
         var dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
         var dy = rectangle.BIN_COMPARE(cy, AXIS.YA);
 
+        var quadNodeLevel = 1;
+
         while (dx != DIRECTION.BOTH && dy != DIRECTION.BOTH)
         {
-            var q = (int)rectangle.CIF_COMPARE(cx, cy);
+            var q = rectangle.CIF_COMPARE(cx, cy);
+            var index = (int)q;
 
-            quadNode._child[q] ??= new QuadNode();
-            quadNode = quadNode._child[q];
+            quadNode._child[index] ??= new QuadNode(_logger);
+            quadNode = quadNode._child[index];
             lx /= 2;
             ly /= 2;
-            cx += lx * g_XF[q];
-            cy += ly * g_YF[q];
+            cx += lx * g_XF[index];
+            cy += ly * g_YF[index];
             dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
             dy = rectangle.BIN_COMPARE(cy, AXIS.YA);
+
+            _logger?.WriteLine(LogMessageCategory.Information, $"  No intersection at quad node level {quadNodeLevel} => Navigating to the {q}, where quad node is centered at (x, y) = ({cx}, {cy})");
+            quadNodeLevel++;
         }
 
         if (dx == DIRECTION.BOTH)
         {
+            _logger?.WriteLine(LogMessageCategory.Information, $"    Intersection with x axis on quad level {quadNodeLevel}");
             quadNode.InsertOnAxis(rectangle, cy, ly, AXIS.YA);
         }
         else
         {
+            _logger?.WriteLine(LogMessageCategory.Information, $"    Intersection with y axis on quad level {quadNodeLevel}");
             quadNode.InsertOnAxis(rectangle, cx, lx, AXIS.XA);
         }
     }

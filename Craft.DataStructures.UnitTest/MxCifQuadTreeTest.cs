@@ -87,7 +87,9 @@ public class MxCifQuadTreeTest
     [Fact]
     public void Test3_Replicate_TheCPPImplementation()
     {
-        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50));
+        var logger = new TestLogger();
+
+        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
 
         var lines = File.ReadAllLines(@"C:\Temp\all_rectangles.txt");
 
@@ -127,7 +129,7 @@ public class MxCifQuadTreeTest
                     // (notice that 5 previous intersecting rectangles were handled correctly...)
                     var test = mxCifQuadTree.Intersects(rectangle);
                     sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"red\" />");
-                    break;
+                    //break;
                 }
 
                 sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"black\" />");
@@ -136,5 +138,6 @@ public class MxCifQuadTreeTest
         }
 
         sw.WriteLine("</svg>");
+        logger.Complete();
     }
 }

@@ -1,16 +1,22 @@
-﻿namespace Craft.DataStructures.MxCifQuadTree;
+﻿using Craft.Logging;
+
+namespace Craft.DataStructures.MxCifQuadTree;
 
 public class QuadNode
 {
+    private ILogger _logger;
+
     public static readonly int[] g_VF = [-1, 1];
 
     public BinNode[] _axis;
     public QuadNode[] _child;
 
-    public QuadNode()
+    public QuadNode(
+        ILogger logger)
     {
         _axis = new BinNode[2];
         _child = new QuadNode[4];
+        _logger = logger;
     }
 
     public void InsertOnAxis(
@@ -24,16 +30,23 @@ public class QuadNode
         var binNode = _axis[(int)v];
         var d = rectangle.BIN_COMPARE(cv, v);
 
+        var binNodeLevel = 1;
+
         while (d != DIRECTION.BOTH)
         {
-            binNode.Child[(int)d] ??= new BinNode();
-
-            binNode = binNode.Child[(int)d];
+            var index = (int)d;
+            binNode.Child[index] ??= new BinNode();
+            binNode = binNode.Child[index];
             lv /= 2;
-            cv += lv * g_VF[(int)d];
+            cv += lv * g_VF[index];
+
+            _logger?.WriteLine(LogMessageCategory.Information, $"      No intersection at bin node level {binNodeLevel} => Navigating to the {d}, where bin node is centered at x = {cv}");
+
             d = rectangle.BIN_COMPARE(cv, v);
+            binNodeLevel++;
         }
 
+        _logger?.WriteLine(LogMessageCategory.Information, $"        Intersecting at bin node level {binNodeLevel} => inserting rectangle in bin node");
         binNode.Insert(rectangle);
     }
 }

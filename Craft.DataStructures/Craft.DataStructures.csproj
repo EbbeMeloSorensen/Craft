@@ -9,4 +9,8 @@
     <Description>General purpose data structures for Craft</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Craft.Logging\Craft.Logging.csproj" />
+  </ItemGroup>
+
 </Project>
