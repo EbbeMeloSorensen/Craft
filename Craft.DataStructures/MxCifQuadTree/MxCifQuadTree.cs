@@ -153,7 +153,14 @@ public class MxCifQuadTree
             return false;
         }
 
-        return rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, _p.HalfWidth, _p.HalfHeight);
+        var intersection = rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, _p.HalfWidth, _p.HalfHeight);
+
+        if (intersection)
+        {
+            _logger?.WriteLine(LogMessageCategory.Information, $"Rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.HalfWidth * 2}, {rectangle.HalfHeight * 2}) intersects existing rectangles and is therefore rejected");
+        }
+
+        return intersection;
     }
 
     public bool Clear()

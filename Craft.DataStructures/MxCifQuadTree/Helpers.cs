@@ -72,7 +72,7 @@ public static class Helpers
                    rectangle.CROSS_AXIS(binNode.Child[1], cv + lv, lv, v);
         }
 
-        return rectangle.CROSS_AXIS(binNode.Child[(int)d], cv + g_VF[(int)d], lv, v);
+        return rectangle.CROSS_AXIS(binNode.Child[(int)d], cv + g_VF[(int)d] * lv, lv, v);
     }
 
     public static bool CIF_SEARCH(

@@ -87,6 +87,9 @@ public class MxCifQuadTreeTest
     [Fact]
     public void Test3_Replicate_TheCPPImplementation()
     {
+        // In this test, we verify that we get the same result as in the C++ implementation,
+        // When trying to add a the same range of rectangles to an mxcifquadtree and rejecting those that overlap with already inserted rectangles.
+
         var logger = new TestLogger();
 
         var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
@@ -103,38 +106,24 @@ public class MxCifQuadTreeTest
         {
             count++;
 
+            // Read the next rectangle in the range
             var temp = line.Split(',');
             var centerX = double.Parse(temp[0].Trim(), CultureInfo.InvariantCulture);
             var centerY = double.Parse(temp[1].Trim(), CultureInfo.InvariantCulture);
             var halfWidth = double.Parse(temp[2].Trim(), CultureInfo.InvariantCulture);
             var halfHeight = double.Parse(temp[3].Trim(), CultureInfo.InvariantCulture);
-            var intersecting = temp[4].Trim() == "0";
+            var intersectingInCppImplementation = temp[4].Trim() == "0";
 
             var rectangle = new Rectangle(centerX, centerY, halfWidth, halfHeight);
 
-            if (mxCifQuadTree.Intersects(rectangle))
-            {
-                if (!intersecting)
-                {
-                    // Something wrong - this was not expected
-                    var test = mxCifQuadTree.Intersects(rectangle);
-                }
-            }
-            else
-            {
-                if (intersecting)
-                {
-                    // Something wrong - this was not expected
-                    // (this happens for the 14th rectangle - since it intersects, but without the algorithm identifying it)
-                    // (notice that 5 previous intersecting rectangles were handled correctly...)
-                    var test = mxCifQuadTree.Intersects(rectangle);
-                    sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"red\" />");
-                    //break;
-                }
+            var intersectsPreviouslyInsertedRectangles = mxCifQuadTree.Intersects(rectangle);
 
-                sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"black\" />");
-                mxCifQuadTree.Insert(rectangle);
-            }
+            intersectsPreviouslyInsertedRectangles.Should().Be(intersectingInCppImplementation);
+
+            if (intersectsPreviouslyInsertedRectangles) continue;
+
+            sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"black\" />");
+            mxCifQuadTree.Insert(rectangle);
         }
 
         sw.WriteLine("</svg>");
