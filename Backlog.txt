@@ -105,6 +105,13 @@ Done:
            en Major update i forbindelse med at man løbende flytter World Window.
 
 In progress:
+* For MxCifQuadTree - Lav rectangle sådan at den kan slæbe rundt på et objekt.
+* For MxCifQuadTree - Som bruger af et MxCifQuadTree skal man gerne kunne abstrahere fra, at der er sådan et træ
+* For MxCifQuadTree - Implementer det med at man også kan FJERNE rektangler igen i CS-implementationen
+* For MxCifQuadTree - kør noget timing
+* For MxCifQuadTree - operer med noget max-dybde (så ikke det går amok det med at opdatere)
+* For MxCifQuadTree - Lav en mulighed for at man kan opdatere et objekt og efterfølgende dets position i træet
+
 * Fix den bug, hvor rammer omkring husets vindue og dør (som tegnes med polylines) tegnes forkert.
   Ideen i dit design er, at de punkter, der indgår i en polyline, transformeres FØR de renderes, så viewet bare skal rendere polylines
   uden SELV at tænke på, hvordan de skal transformeres. Der er dog en klausul deri at det vil være for hidsigt at transformere punkter,
