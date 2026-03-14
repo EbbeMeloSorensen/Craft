@@ -163,6 +163,14 @@ public class MxCifQuadTree
         return intersection;
     }
 
+    public IEnumerable<Rectangle> GetAllIntersecting(
+        Rectangle rectangle)
+    {
+        return _root == null 
+            ? Enumerable.Empty<Rectangle>() 
+            : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, _p.HalfWidth, _p.HalfHeight);
+    }
+
     public bool Clear()
     {
         throw new NotImplementedException();

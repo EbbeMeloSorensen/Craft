@@ -93,12 +93,15 @@ public class MxCifQuadTreeTest
         var logger = new TestLogger();
 
         var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
+        var areaOfIntereset = new Rectangle(60.0, 40.0, 20.0, 20.0);
 
         var lines = File.ReadAllLines(@"C:\Temp\all_rectangles.txt");
 
         using var sw = new StreamWriter(@"C:\Temp\replication_test.svg");
         sw.WriteLine("<svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">");
         sw.WriteLine("  <rect width=\"100\" height=\"100\" x=\"0\" y=\"0\" fill=\"gray\" />");
+
+        sw.WriteLine($"  <rect width=\"{areaOfIntereset.HalfWidth * 2}\" height=\"{areaOfIntereset.HalfHeight * 2}\" x=\"{areaOfIntereset.CenterX - areaOfIntereset.HalfWidth}\" y=\"{areaOfIntereset.CenterY - areaOfIntereset.HalfHeight}\" fill=\"black\" />");
 
         var count = 0;
 
@@ -122,8 +125,17 @@ public class MxCifQuadTreeTest
 
             if (intersectsPreviouslyInsertedRectangles) continue;
 
-            sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"black\" />");
+            sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"green\" />");
             mxCifQuadTree.Insert(rectangle);
+        }
+
+        var intersectingRectangles = mxCifQuadTree
+            .GetAllIntersecting(areaOfIntereset)
+            .ToList();
+
+        foreach (var rect in intersectingRectangles)
+        {
+            sw.WriteLine($"  <rect width=\"{rect.HalfWidth * 2}\" height=\"{rect.HalfHeight * 2}\" x=\"{rect.CenterX - rect.HalfWidth}\" y=\"{rect.CenterY - rect.HalfHeight}\" fill=\"yellow\" />");
         }
 
         sw.WriteLine("</svg>");
