@@ -1,4 +1,5 @@
-﻿using Craft.DataStructures.MxCifQuadTree;
+﻿using System.Diagnostics;
+using Craft.DataStructures.MxCifQuadTree;
 using FluentAssertions;
 using System.Globalization;
 using Xunit;
@@ -163,16 +164,19 @@ public class MxCifQuadTreeTest
     [Fact]
     public void Test4_TimingTest()
     {
+        var stopWatch = new Stopwatch();
         var logger = new TestLogger();
-        logger.IsEnabled = true;
+        logger.IsEnabled = false;
 
         var random = new Random(0);
-        var rectanglesInTotal = 100;
-        var maxNumberOfRectanglesInTree = 20;
+        var rectanglesInTotal = 1000000;
+        var maxNumberOfRectanglesInTree = 100000;
         var rectangleQueue = new Queue<Rectangle>();
         var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50.0, 50.0, 50.0, 50.0), logger);
         var controlList = new List<int>();
         var rectanglesInMxCifQuadTree = 0;
+
+        stopWatch.Start();
 
         for (var i = 0; i < rectanglesInTotal + maxNumberOfRectanglesInTree; i++)
         {
@@ -198,6 +202,9 @@ public class MxCifQuadTreeTest
 
             controlList.Add(rectanglesInMxCifQuadTree);
         }
+
+        stopWatch.Stop();
+        var elapsed = stopWatch.Elapsed;
 
         logger.Complete();
     }
