@@ -11,7 +11,7 @@ public class MxCifQuadTreeTest
     public void Test1_Insert12Rectangles_And_CheckForIntersectionWithAnother()
     {
         // Arrange
-        var rectangle1 = new Rectangle(25, 25, 5, 5);
+        var rectangle1 = new Rectangle(12.5, 25, 5, 5);
         var rectangle2 = new Rectangle(50, 6.25, 1, 1);
         var rectangle3 = new Rectangle(53.125, 12.5, 2.0, 2.0);
         var rectangle4 = new Rectangle(62.5, 12.5, 3.0, 3.0);
@@ -50,27 +50,55 @@ public class MxCifQuadTreeTest
     }
 
     [Fact]
-    public void Test2_InsertARectangle_ThenRemoveItAgain()
+    public void Test2_InsertSomeRectangles_ThenRemoveThemAgain()
     {
+        var logger = new TestLogger();
+
         // Arrange
-        var rectangle1 = new Rectangle(25, 25, 5, 5);
+        var rectangle1 = new Rectangle(12.5, 25, 5, 5);
         var rectangle2 = new Rectangle(50, 6.25, 1, 1);
         var rectangle3 = new Rectangle(53.125, 12.5, 2.0, 2.0);
         var rectangle4 = new Rectangle(62.5, 12.5, 3.0, 3.0);
+        var rectangle5 = new Rectangle(71.875, 12.5, 2.0, 2.0);
+        var rectangle6 = new Rectangle(50.0, 37.5, 3.0, 3.0);
+        var rectangle7 = new Rectangle(18.75, 50.0, 3.0, 3.0);
+        var rectangle8 = new Rectangle(50.0, 50.0, 5.0, 5.0);
+        var rectangle9 = new Rectangle(75.0, 50.0, 5.0, 5.0);
+        var rectangle10 = new Rectangle(50.0, 75.0, 5.0, 5.0);
+        var rectangle11 = new Rectangle(75.0, 75.0, 5.0, 5.0);
+        var rectangle12 = new Rectangle(87.5, 93.75, 2.0, 2.0);
 
         // Act
-        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50));
+        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
 
         mxCifQuadTree1.Insert(rectangle1);
         mxCifQuadTree1.Insert(rectangle2);
         mxCifQuadTree1.Insert(rectangle3);
         mxCifQuadTree1.Insert(rectangle4);
+        mxCifQuadTree1.Insert(rectangle5);
+        mxCifQuadTree1.Insert(rectangle6);
+        mxCifQuadTree1.Insert(rectangle7);
+        mxCifQuadTree1.Insert(rectangle8);
+        mxCifQuadTree1.Insert(rectangle9);
+        mxCifQuadTree1.Insert(rectangle10);
+        mxCifQuadTree1.Insert(rectangle11);
+        mxCifQuadTree1.Insert(rectangle12);
 
         // Act
         mxCifQuadTree1.Remove(rectangle1);
         mxCifQuadTree1.Remove(rectangle2);
         mxCifQuadTree1.Remove(rectangle3);
         mxCifQuadTree1.Remove(rectangle4);
+        mxCifQuadTree1.Remove(rectangle5);
+        mxCifQuadTree1.Remove(rectangle6);
+        mxCifQuadTree1.Remove(rectangle7);
+        mxCifQuadTree1.Remove(rectangle8);
+        mxCifQuadTree1.Remove(rectangle9);
+        mxCifQuadTree1.Remove(rectangle10);
+        mxCifQuadTree1.Remove(rectangle11);
+        mxCifQuadTree1.Remove(rectangle12);
+
+        logger.Complete();
     }
 
     [Fact]

@@ -97,6 +97,8 @@ public class MxCifQuadTree
     public void Remove(
         Rectangle rectangle)
     {
+        _logger?.WriteLine(LogMessageCategory.Information, $"Removing rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+
         if (_root == null)
         {
             return;
@@ -153,6 +155,10 @@ public class MxCifQuadTree
             CY += LY * g_YF[(int)Q];
         }
 
+        var axis = V == AXIS.XA ? "Y" : "X";
+        _logger?.WriteLine(LogMessageCategory.Information, $"  Rectangle resides in {axis} axis of quad node centered at (x, y) = ({CX}, {CY})");
+
+
         V = V.OTHERAXIS();
         B = T._axis[(int)V];
         FB = null;
@@ -169,10 +175,11 @@ public class MxCifQuadTree
         }
 
         D = rectangle.BIN_COMPARE(CV, V);
+        var binLevel = 1;
 
         while (B != null && D != DIRECTION.BOTH)
         {
-            if (B.Child[(int)D.OPDIR()] != null || !B.Rectangles.Any())
+            if (B.Child[(int)D.OPDIR()] != null || B.Rectangles.Any())
             {
                 FB = B;
                 DF = D;
@@ -182,7 +189,10 @@ public class MxCifQuadTree
             LV /= 2;
             CV += LV * g_VF[(int)D];
             D = rectangle.BIN_COMPARE(CV, V);
+            binLevel++;
         }
+
+        _logger?.WriteLine(LogMessageCategory.Information, $"    Specifically, rectangle resides in bin tree level {binLevel} in bin node centered at v = {CV}");
 
         if (B == null)
         {
@@ -191,11 +201,14 @@ public class MxCifQuadTree
 
         if (B.Child[0] != null || B.Child[1] != null)
         {
+            _logger?.WriteLine(LogMessageCategory.Information, "      No collapsing possible, so just removing rectangle from bin node");
             // No collapsing is possible, so just remove the rectangle from the bin
             B.Rectangles.Remove(rectangle);
         }
         else
         {
+            _logger?.WriteLine(LogMessageCategory.Information, "      Attempting to collapse bin nodes");
+
             // Attempt to collapse bin nodes
 
             // Get a link to the oldest dismissable bin node
@@ -217,8 +230,11 @@ public class MxCifQuadTree
 
                 // Detach in order to avoid premature destruction of children
                 TB.Child[(int)D] = null;
+                _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing bin node");
                 TB = TEMPB;
             }
+
+            _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing bin node");
 
             if (FB != null)
             {
@@ -235,8 +251,12 @@ public class MxCifQuadTree
                     T._child[2] != null ||
                     T._child[3] != null)
                 {
+                    _logger?.WriteLine(LogMessageCategory.Information, "      No furher collapsing possible");
+
                     return;
                 }
+
+                _logger?.WriteLine(LogMessageCategory.Information, "      Attempting to collapse quad nodes");
 
                 // Attempt to collapse quad nodes
 
@@ -260,10 +280,13 @@ public class MxCifQuadTree
 
                     // Detach in order to avoid premature destruction of children
                     TT._child[(int)Q] = null;
+                    _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing quad node");
 
                     // Proceed to the QuadNode child
                     TT = TEMPC;
                 }
+
+                _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing quad node");
 
                 // Set pointer to oldest destroyed QuadNode to NULL
                 if (FT != null)
@@ -272,11 +295,11 @@ public class MxCifQuadTree
                 }
                 else
                 {
+                    _logger?.WriteLine(LogMessageCategory.Information, "          (MxCifTree is empty at this point)");
                     _root = null;
                 }
             }
         }
-
     }
 
     public bool Intersects(
