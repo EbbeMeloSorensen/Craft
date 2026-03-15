@@ -96,7 +96,12 @@ namespace Craft.Simulation.Engine
 
             _stateSequenceMutex.WaitOne();
 
-            _logger?.WriteLine(LogMessageCategory.Debug, $"  Main thread: Requesting state with index {stateIndex}", "state_sequence");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    $"  Main thread: Requesting state with index {stateIndex}", "state_sequence");
+            }
 
             stateIndex = System.Math.Min(stateIndex, _finalStateIndex);
             var effectiveCurrentIndex = stateIndex - _disposedStates;
@@ -189,7 +194,13 @@ namespace Craft.Simulation.Engine
             DisposeOfHistoricStates(lastIndexRequested - _disposedStates);
             var lead = _stateSequenceCount + _disposedStates - lastIndexRequested;
             _stateSequenceMutex.ReleaseMutex();
-            _logger?.WriteLine(LogMessageCategory.Debug, $"  Checking if we should continue animation, lead is currently {lead} ({_stateSequenceCount} + {_disposedStates} - {lastIndexRequested})", "state_sequence");
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    $"  Checking if we should continue animation, lead is currently {lead} ({_stateSequenceCount} + {_disposedStates} - {lastIndexRequested})", "state_sequence");
+            }
 
             //_logger?.WriteLine(LogMessageCategory.Debug, $"  Main thread: Signaling State producer thread to proceed (after having checked for resume of animation)", "state_sequence");
             _proWaitEvent.Set();
@@ -219,9 +230,19 @@ namespace Craft.Simulation.Engine
             _stateSequenceCount = 1;
             _stateSequenceMutex.ReleaseMutex();
 
-            _logger?.WriteLine(LogMessageCategory.Debug, "Spawning new thread", "state_sequence");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    "Spawning new thread",
+                    "state_sequence");
 
-            _logger?.WriteLine(LogMessageCategory.Debug, "State 0:", "propagation");
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    "State 0:",
+                    "propagation");
+            }
+
             Calculator.LogState(Scene.InitialState, _logger);
 
             _pro = new Thread(Producer);
@@ -256,7 +277,14 @@ namespace Craft.Simulation.Engine
             _pro.Join();
             _pro = null;
             _exit = false;
-            _logger?.WriteLine(LogMessageCategory.Debug, "Thread should have exited by now", "state_sequence");
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    "Thread should have exited by now",
+                    "state_sequence");
+            }
         }
 
         private void DisposeOfHistoricStates(
@@ -270,7 +298,13 @@ namespace Craft.Simulation.Engine
             _stateSequenceCount -= nDisposableStates;
             _disposedStates += nDisposableStates;
 
-            _logger?.WriteLine(LogMessageCategory.Debug, $"  Main thread: Disposed of {nDisposableStates} historical states. Buffer size: {_stateSequenceCount}", "state_sequence");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    $"  Main thread: Disposed of {nDisposableStates} historical states. Buffer size: {_stateSequenceCount}",
+                    "state_sequence");
+            }
         }
 
         private void InvalidateFutureStates(
@@ -287,12 +321,26 @@ namespace Craft.Simulation.Engine
 
             if (disposableStates <= 0) return;
 
-            _logger?.WriteLine(LogMessageCategory.Debug, $"Gonna invalidate states later than index {stateIndex} ({disposableStates} states in total)", "state_sequence");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    $"Gonna invalidate states later than index {stateIndex} ({disposableStates} states in total)",
+                    "state_sequence");
+            }
+
             var remainingStates = effectiveCurrentIndex + 1;
             _stateSequence = _stateSequence.Take(remainingStates).ToList();
             _stateSequenceCount = remainingStates;
             _lastIndexGenerated -= disposableStates;
-            _logger?.WriteLine(LogMessageCategory.Debug, $"Done - length of state sequence is now {_stateSequenceCount}, and Last index generated is {_lastIndexGenerated})", "state_sequence");
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    $"Done - length of state sequence is now {_stateSequenceCount}, and Last index generated is {_lastIndexGenerated})",
+                    "state_sequence");
+            }
         }
 
         // Denne skal hele tiden tage den seneste og propagere den
@@ -320,7 +368,14 @@ namespace Craft.Simulation.Engine
 
                     if (_exit)
                     {
-                        _logger?.WriteLine(LogMessageCategory.Debug, "State producer thread: Got signal to exit", "state_sequence");
+                        if (_logger.IsEnabled)
+                        {
+                            _logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                "State producer thread: Got signal to exit",
+                                "state_sequence");
+                        }
+
                         return;
                     }
 
@@ -377,24 +432,35 @@ namespace Craft.Simulation.Engine
                     _stateSequenceCount++;
                     _lastIndexGenerated++;
 
-                    var message = $"State producer thread: Produced state {_lastIndexGenerated}. Buffer size: {_stateSequenceCount}. Bodies: {propagatedState.BodyStates.Count}";
-
-                    if (_stateSequenceCount == QueueMaxSize)
+                    if (_logger.IsEnabled)
                     {
-                        message += " (full)";
-                    }
+                        var message = $"State producer thread: Produced state {_lastIndexGenerated}. Buffer size: {_stateSequenceCount}. Bodies: {propagatedState.BodyStates.Count}";
 
-                    if (_lastIndexGenerated == _finalStateIndex)
-                    {
-                        message += " (done)";
-                    }
+                        if (_stateSequenceCount == QueueMaxSize)
+                        {
+                            message += " (full)";
+                        }
 
-                    _logger?.WriteLine(LogMessageCategory.Debug, message, "state_sequence");
+                        if (_lastIndexGenerated == _finalStateIndex)
+                        {
+                            message += " (done)";
+                        }
+
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Debug,
+                            message,
+                            "state_sequence");
+                    }
                 }
                 else
                 {
-                    // If we are here, then some of the latest states were invalidated
-                    _logger?.WriteLine(LogMessageCategory.Debug, $"State producer thread: Newly produced state with index {lastIndexGeneratedBeforePropagation + 1} has to be discarded", "state_sequence");
+                    if (_logger.IsEnabled)
+                    {
+                        // If we are here, then some of the latest states were invalidated
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Debug,
+                            $"State producer thread: Newly produced state with index {lastIndexGeneratedBeforePropagation + 1} has to be discarded", "state_sequence");
+                    }
                 }
 
                 // Slip køen, så andre kan tage noget fra den

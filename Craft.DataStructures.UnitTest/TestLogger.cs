@@ -6,12 +6,14 @@ namespace Craft.DataStructures.UnitTest
     {
         private StreamWriter _streamWriter;
 
+        public bool IsEnabled { get; set; }
+
         public TestLogger()
         {
             _streamWriter = new StreamWriter(@"C:\Temp\CS_Log.txt");
         }
 
-        public string WriteLine(
+        public string WriteLineGoddammit(
             LogMessageCategory category,
             string message,
             string aspect = "general",

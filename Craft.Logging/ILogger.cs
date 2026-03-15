@@ -11,7 +11,9 @@
 
     public interface ILogger
     {
-        string WriteLine(
+        bool IsEnabled { get; set; }
+
+        string WriteLineGoddammit(
             LogMessageCategory category,
             string message,
             string aspect = "general",

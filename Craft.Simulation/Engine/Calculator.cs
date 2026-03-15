@@ -44,7 +44,12 @@ namespace Craft.Simulation.Engine
             var handledCollisions = new HashSet<Tuple<int, int>>();
             var indexOfInputState = state.Index;
 
-            logger?.WriteLine(LogMessageCategory.Debug, $"Propagating state {indexOfInputState}:", "propagation");
+            if (logger.IsEnabled)
+            {
+                logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    $"Propagating state {indexOfInputState}:", "propagation");
+            }
 
             var iteration = 1;
             while (timeLeftInCurrentIncrement > 1E-12)
@@ -122,9 +127,20 @@ namespace Craft.Simulation.Engine
                     case StateEvent.None:
                         state = new State(propagatedBodyStateMap.Keys.ToList());
                         timeLeftInCurrentIncrement = 0.0;
-                        logger?.WriteLine(LogMessageCategory.Debug, $"  Iteration {iteration}, progress: 100%", "propagation");
-                        logger?.WriteLine(LogMessageCategory.Debug, "    Result:", "propagation");
-                        LogState(state, logger);
+
+                        if (logger.IsEnabled)
+                        {
+                            logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                $"  Iteration {iteration}, progress: 100%", "propagation");
+
+                            logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                "    Result:", "propagation");
+
+                            LogState(state, logger);
+                        }
+
                         break;
                     case StateEvent.CollisionWithBoundary:
                         PropagateStatePartly(propagatedBodyStateMap, timeUntilCollisionWithBoundary, timeLeftInCurrentIncrement);
@@ -163,10 +179,24 @@ namespace Craft.Simulation.Engine
 
                         timeElapsed = timeUntilCollisionWithBoundary;
                         timeLeftInCurrentIncrement -= timeElapsed;
-                        logger?.WriteLine(LogMessageCategory.Debug, $"  Body{bodyState.Body.Id} collided with boundary after {timeUntilCollisionWithBoundary} seconds. Time Left: {timeLeftInCurrentIncrement} seconds", "propagation");
-                        logger?.WriteLine(LogMessageCategory.Debug, $"  Iteration {iteration} progress: {100 * (deltaT - timeLeftInCurrentIncrement) / deltaT:F5}%", "propagation");
-                        logger?.WriteLine(LogMessageCategory.Debug, "    Result:", "propagation");
-                        LogState(state, logger);
+
+                        if (logger.IsEnabled)
+                        {
+                            logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                $"  Body{bodyState.Body.Id} collided with boundary after {timeUntilCollisionWithBoundary} seconds. Time Left: {timeLeftInCurrentIncrement} seconds", "propagation");
+
+                            logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                $"  Iteration {iteration} progress: {100 * (deltaT - timeLeftInCurrentIncrement) / deltaT:F5}%", "propagation");
+
+                            logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                "    Result:", "propagation");
+
+                            LogState(state, logger);
+                        }
+
                         break;
                     case StateEvent.CollisionBetweenBodies:
                         PropagateStatePartly(propagatedBodyStateMap, timeUntilCollisionBetweenBodies, timeLeftInCurrentIncrement);
@@ -220,15 +250,18 @@ namespace Craft.Simulation.Engine
 
                         timeElapsed = timeUntilCollisionBetweenBodies;
                         timeLeftInCurrentIncrement -= timeElapsed;
-                        logger?.WriteLine(LogMessageCategory.Debug, $"  Body{bodyState1.Body.Id} and Body{bodyState2.Body.Id} collided after {timeUntilCollisionBetweenBodies} seconds. Time Left: {timeLeftInCurrentIncrement} seconds", "propagation");
-                        logger?.WriteLine(LogMessageCategory.Debug, $"  Iteration {iteration} progress: {100 * (deltaT - timeLeftInCurrentIncrement) / deltaT:F5}%", "propagation");
 
-                        if (timeUntilCollisionBetweenBodies < -0.001)
+                        if (logger.IsEnabled)
                         {
-                            //var a = 0;
+                            logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                $"  Body{bodyState1.Body.Id} and Body{bodyState2.Body.Id} collided after {timeUntilCollisionBetweenBodies} seconds. Time Left: {timeLeftInCurrentIncrement} seconds", "propagation");
+
+                            logger.WriteLineGoddammit(
+                                LogMessageCategory.Debug,
+                                $"  Iteration {iteration} progress: {100 * (deltaT - timeLeftInCurrentIncrement) / deltaT:F5}%", "propagation");
                         }
 
-                        //LogState(state, logger);
                         break;
                     default:
                         throw new ArgumentException("Invalid state event");
@@ -251,17 +284,21 @@ namespace Craft.Simulation.Engine
             State state,
             ILogger logger)
         {
-            if (logger == null)
-            {
-                return;
-            }
+            if (!logger.IsEnabled) return;
 
-            logger.WriteLine(LogMessageCategory.Debug, $"      Energy: {state.CalculateTotalEnergy(10.0)}", "propagation");
-            logger.WriteLine(LogMessageCategory.Debug, $"      Bodies:", "propagation");
+            logger.WriteLineGoddammit(
+                LogMessageCategory.Debug,
+                $"      Energy: {state.CalculateTotalEnergy(10.0)}", "propagation");
+
+            logger.WriteLineGoddammit(
+                LogMessageCategory.Debug,
+                "      Bodies:", "propagation");
 
             state.BodyStates.ForEach(bs =>
             {
-                logger.WriteLine(LogMessageCategory.Debug, $"        Body{bs.Body.Id}: Position: ({bs.Position.X}, {bs.Position.Y}, Natural Velocity: ({bs.NaturalVelocity.X}, {bs.NaturalVelocity.Y}))", "propagation");
+                logger.WriteLineGoddammit(
+                    LogMessageCategory.Debug,
+                    $"        Body{bs.Body.Id}: Position: ({bs.Position.X}, {bs.Position.Y}, Natural Velocity: ({bs.NaturalVelocity.X}, {bs.NaturalVelocity.Y}))", "propagation");
             });
         }
 

@@ -1,4 +1,5 @@
-﻿using Craft.Math;
+﻿using Craft.Logging;
+using Craft.Math;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
@@ -48,7 +49,7 @@ namespace Craft.Simulation.GuiTest.PushingBalls
 
         public PushingBallsViewModel()
         {
-            Engine = new Engine.Engine(null);
+            Engine = new Engine.Engine(new DummyLogger());
 
             GeometryEditorViewModel = new GeometryEditorViewModel(1)
             {

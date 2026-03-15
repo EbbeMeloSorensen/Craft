@@ -40,7 +40,10 @@ public class MxCifQuadTree
         _p = rectangle;
         _logger = logger;
 
-        _logger?.WriteLine(LogMessageCategory.Information, "Instantiating CMxCifQuadTree");
+        if (_logger.IsEnabled)
+        {
+            _logger.WriteLineGoddammit(LogMessageCategory.Information, "Instantiating CMxCifQuadTree");
+        }
     }
 
     public void Insert(
@@ -57,7 +60,12 @@ public class MxCifQuadTree
         var lx = _p.HalfWidth;
         var ly = _p.HalfHeight;
 
-        _logger?.WriteLine(LogMessageCategory.Information, $"Inserting rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+        if (_logger.IsEnabled)
+        {
+            _logger.WriteLineGoddammit(
+                LogMessageCategory.Information,
+                $"Inserting rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+        }
 
         var dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
         var dy = rectangle.BIN_COMPARE(cy, AXIS.YA);
@@ -78,18 +86,36 @@ public class MxCifQuadTree
             dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
             dy = rectangle.BIN_COMPARE(cy, AXIS.YA);
 
-            _logger?.WriteLine(LogMessageCategory.Information, $"  No intersection at quad node level {quadNodeLevel} => Navigating to the {q}, where quad node is centered at (x, y) = ({cx}, {cy})");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"  No intersection at quad node level {quadNodeLevel} => Navigating to the {q}, where quad node is centered at (x, y) = ({cx}, {cy})");
+            }
+
             quadNodeLevel++;
         }
 
         if (dx == DIRECTION.BOTH)
         {
-            _logger?.WriteLine(LogMessageCategory.Information, $"    Intersection with x axis on quad level {quadNodeLevel}");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"    Intersection with x axis on quad level {quadNodeLevel}");
+            }
+
             quadNode.InsertOnAxis(rectangle, cy, ly, AXIS.YA);
         }
         else
         {
-            _logger?.WriteLine(LogMessageCategory.Information, $"    Intersection with y axis on quad level {quadNodeLevel}");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"    Intersection with y axis on quad level {quadNodeLevel}");
+            }
+
             quadNode.InsertOnAxis(rectangle, cx, lx, AXIS.XA);
         }
     }
@@ -97,7 +123,12 @@ public class MxCifQuadTree
     public void Remove(
         Rectangle rectangle)
     {
-        _logger?.WriteLine(LogMessageCategory.Information, $"Removing rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+        if (_logger.IsEnabled)
+        {
+            _logger.WriteLineGoddammit(
+                LogMessageCategory.Information,
+                $"Removing rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+        }
 
         if (_root == null)
         {
@@ -156,8 +187,13 @@ public class MxCifQuadTree
         }
 
         var axis = V == AXIS.XA ? "Y" : "X";
-        _logger?.WriteLine(LogMessageCategory.Information, $"  Rectangle resides in {axis} axis of quad node centered at (x, y) = ({CX}, {CY})");
 
+        if (_logger.IsEnabled)
+        {
+            _logger.WriteLineGoddammit(
+                LogMessageCategory.Information,
+                $"  Rectangle resides in {axis} axis of quad node centered at (x, y) = ({CX}, {CY})");
+        }
 
         V = V.OTHERAXIS();
         B = T._axis[(int)V];
@@ -192,7 +228,12 @@ public class MxCifQuadTree
             binLevel++;
         }
 
-        _logger?.WriteLine(LogMessageCategory.Information, $"    Specifically, rectangle resides in bin tree level {binLevel} in bin node centered at v = {CV}");
+        if (_logger.IsEnabled)
+        {
+            _logger.WriteLineGoddammit(
+                LogMessageCategory.Information,
+                $"    Specifically, rectangle resides in bin tree level {binLevel} in bin node centered at v = {CV}");
+        }
 
         if (B == null)
         {
@@ -201,13 +242,24 @@ public class MxCifQuadTree
 
         if (B.Child[0] != null || B.Child[1] != null)
         {
-            _logger?.WriteLine(LogMessageCategory.Information, "      No collapsing possible, so just removing rectangle from bin node");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    "      No collapsing possible, so just removing rectangle from bin node");
+            }
+
             // No collapsing is possible, so just remove the rectangle from the bin
             B.Rectangles.Remove(rectangle);
         }
         else
         {
-            _logger?.WriteLine(LogMessageCategory.Information, "      Attempting to collapse bin nodes");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    "      Attempting to collapse bin nodes");
+            }
 
             // Attempt to collapse bin nodes
 
@@ -230,11 +282,23 @@ public class MxCifQuadTree
 
                 // Detach in order to avoid premature destruction of children
                 TB.Child[(int)D] = null;
-                _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing bin node");
+
+                if (_logger.IsEnabled)
+                {
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "        Collapsing bin node");
+                }
+
                 TB = TEMPB;
             }
 
-            _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing bin node");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    "        Collapsing bin node");
+            }
 
             if (FB != null)
             {
@@ -251,12 +315,22 @@ public class MxCifQuadTree
                     T._child[2] != null ||
                     T._child[3] != null)
                 {
-                    _logger?.WriteLine(LogMessageCategory.Information, "      No furher collapsing possible");
+                    if (_logger.IsEnabled)
+                    {
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Information,
+                            "      No furher collapsing possible");
+                    }
 
                     return;
                 }
 
-                _logger?.WriteLine(LogMessageCategory.Information, "      Attempting to collapse quad nodes");
+                if (_logger.IsEnabled)
+                {
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "      Attempting to collapse quad nodes");
+                }
 
                 // Attempt to collapse quad nodes
 
@@ -280,13 +354,24 @@ public class MxCifQuadTree
 
                     // Detach in order to avoid premature destruction of children
                     TT._child[(int)Q] = null;
-                    _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing quad node");
+
+                    if (_logger.IsEnabled)
+                    {
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Information,
+                            "        Collapsing quad node");
+                    }
 
                     // Proceed to the QuadNode child
                     TT = TEMPC;
                 }
 
-                _logger?.WriteLine(LogMessageCategory.Information, "        Collapsing quad node");
+                if (_logger.IsEnabled)
+                {
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "        Collapsing quad node");
+                }
 
                 // Set pointer to oldest destroyed QuadNode to NULL
                 if (FT != null)
@@ -295,7 +380,13 @@ public class MxCifQuadTree
                 }
                 else
                 {
-                    _logger?.WriteLine(LogMessageCategory.Information, "          (MxCifTree is empty at this point)");
+                    if (_logger.IsEnabled)
+                    {
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Information,
+                            "          (MxCifTree is empty at this point)");
+                    }
+
                     _root = null;
                 }
             }
@@ -312,9 +403,11 @@ public class MxCifQuadTree
 
         var intersection = rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, _p.HalfWidth, _p.HalfHeight);
 
-        if (intersection)
+        if (_logger.IsEnabled && intersection)
         {
-            _logger?.WriteLine(LogMessageCategory.Information, $"Rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.HalfWidth * 2}, {rectangle.HalfHeight * 2}) intersects existing rectangles and is therefore rejected");
+            _logger.WriteLineGoddammit(
+                LogMessageCategory.Information,
+                $"Rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.HalfWidth * 2}, {rectangle.HalfHeight * 2}) intersects existing rectangles and is therefore rejected");
         }
 
         return intersection;

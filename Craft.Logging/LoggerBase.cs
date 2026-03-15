@@ -2,6 +2,24 @@
 
 namespace Craft.Logging
 {
+    public class DummyLogger : ILogger
+    {
+        public bool IsEnabled
+        {
+            get => false;
+            set => throw new InvalidOperationException();
+        }
+
+        public string WriteLineGoddammit(
+            LogMessageCategory category,
+            string message,
+            string aspect = "general",
+            bool startStopwatch = false)
+        {
+            throw new InvalidOperationException("This method should never be called");
+        }
+    }
+
     public abstract class LoggerBase : ILogger
     {
         private Stopwatch _stopwatch;
@@ -16,7 +34,9 @@ namespace Craft.Logging
             _stopwatch = new Stopwatch();
         }
 
-        public virtual string WriteLine(
+        public bool IsEnabled { get; set; }
+
+        public virtual string WriteLineGoddammit(
             LogMessageCategory category,
             string message,
             string aspect,

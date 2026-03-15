@@ -40,13 +40,24 @@ public class QuadNode
             lv /= 2;
             cv += lv * g_VF[index];
 
-            _logger?.WriteLine(LogMessageCategory.Information, $"      No intersection at bin node level {binNodeLevel} => Navigating to the {d}, where bin node is centered at x = {cv}");
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"      No intersection at bin node level {binNodeLevel} => Navigating to the {d}, where bin node is centered at x = {cv}");
+            }
 
             d = rectangle.BIN_COMPARE(cv, v);
             binNodeLevel++;
         }
 
-        _logger?.WriteLine(LogMessageCategory.Information, $"        Intersecting at bin node level {binNodeLevel} => inserting rectangle in bin node");
+        if (_logger.IsEnabled)
+        {
+            _logger.WriteLineGoddammit(
+                LogMessageCategory.Information,
+                $"        Intersecting at bin node level {binNodeLevel} => inserting rectangle in bin node");
+        }
+
         binNode.Insert(rectangle);
     }
 }

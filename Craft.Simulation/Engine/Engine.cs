@@ -175,18 +175,28 @@ namespace Craft.Simulation.Engine
                     LastIndexConsumed = currentState.Index;
                     TimeElapsedAtLastRefresh = secondsElapsed;
 
-                    var message = $"  Main thread: Refreshed view using state {LastIndexConsumed}";
-
                     if (LastIndexConsumed < LastIndexRequested)
                     {
-                        message += " (final state)";
                         EngineCore.Reset();
                         StopAnimation();
                     }
 
                     MouseClickPosition = null; // Lad nu ff være med at hacke sådan.. (det virker tilsyneladende, men det er ikke videre elegant)
 
-                    _logger?.WriteLine(LogMessageCategory.Debug, message, "state_sequence");
+                    if (_logger.IsEnabled)
+                    {
+                        var message = $"  Main thread: Refreshed view using state {LastIndexConsumed}";
+
+                        if (LastIndexConsumed < LastIndexRequested)
+                        {
+                            message += " (final state)";
+                        }
+
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Debug,
+                            message,
+                            "state_sequence");
+                    }
                 }
                 else
                 {
@@ -194,7 +204,13 @@ namespace Craft.Simulation.Engine
                     Stopwatch.Stop();
 
                     FrameSkipCount++;
-                    _logger?.WriteLine(LogMessageCategory.Debug, "  Main thread: State producer fell behind by ? indexes - pausing state consumption", "state_sequence");
+
+                    if (_logger.IsEnabled)
+                    {
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Debug,
+                            "  Main thread: State producer fell behind by ? indexes - pausing state consumption", "state_sequence");
+                    }
                 }
             }
             else
@@ -203,7 +219,13 @@ namespace Craft.Simulation.Engine
 
                 if (!EngineCore.IsLeadSufficientlyLargeForResumingAnimation(LastIndexRequested)) return;
 
-                _logger?.WriteLine(LogMessageCategory.Debug, "  Main thread: Resuming state consumption", "state_sequence");
+                if (_logger.IsEnabled)
+                {
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Debug,
+                        "  Main thread: Resuming state consumption", "state_sequence");
+                }
+
                 Stopwatch.Start();
             }
         }
