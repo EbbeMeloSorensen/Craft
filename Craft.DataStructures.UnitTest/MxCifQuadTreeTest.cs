@@ -53,6 +53,7 @@ public class MxCifQuadTreeTest
     public void Test2_InsertSomeRectangles_ThenRemoveThemAgain()
     {
         var logger = new TestLogger();
+        logger.IsEnabled = true;
 
         // Arrange
         var rectangle1 = new Rectangle(12.5, 25, 5, 5);
@@ -156,6 +157,48 @@ public class MxCifQuadTreeTest
         }
 
         sw.WriteLine("</svg>");
+        logger.Complete();
+    }
+
+    [Fact]
+    public void Test4_TimingTest()
+    {
+        var logger = new TestLogger();
+        logger.IsEnabled = true;
+
+        var random = new Random(0);
+        var rectanglesInTotal = 100;
+        var maxNumberOfRectanglesInTree = 20;
+        var rectangleQueue = new Queue<Rectangle>();
+        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50.0, 50.0, 50.0, 50.0), logger);
+        var controlList = new List<int>();
+        var rectanglesInMxCifQuadTree = 0;
+
+        for (var i = 0; i < rectanglesInTotal + maxNumberOfRectanglesInTree; i++)
+        {
+            var width = 10.0;
+            var height = 10.0;
+            var cx = random.NextDouble() * (100 - width) + 0.5 * width;
+            var cy = random.NextDouble() * (100 - height) + 0.5 * height;
+
+            if (i < rectanglesInTotal)
+            {
+                var rectangle = new Rectangle(cx, cy, width * 0.5, height * 0.5);
+                mxCifQuadTree.Insert(rectangle);
+                rectanglesInMxCifQuadTree++;
+                rectangleQueue.Enqueue(rectangle);
+            }
+
+            if (i >= maxNumberOfRectanglesInTree && rectangleQueue.Count > 0)
+            {
+                var rectangleFromQueue = rectangleQueue.Dequeue();
+                mxCifQuadTree.Remove(rectangleFromQueue);
+                rectanglesInMxCifQuadTree--;
+            }
+
+            controlList.Add(rectanglesInMxCifQuadTree);
+        }
+
         logger.Complete();
     }
 }
