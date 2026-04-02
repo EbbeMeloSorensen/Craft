@@ -331,6 +331,7 @@ namespace Craft.UIElements.GuiTest.Tab3
         {
             var wwLimitBrush = new SolidColorBrush(Colors.BlanchedAlmond);
 
+            // 5 tiles illustrating world window limits
             geometryEditorViewModel.AddPolygon(new List<PointD>
                 {
                     new PointD(-100, -100),
