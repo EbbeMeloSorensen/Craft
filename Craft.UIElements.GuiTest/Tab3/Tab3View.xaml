@@ -6,14 +6,8 @@
              xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
              xmlns:scrolling="clr-namespace:Craft.UIElements.Geometry2D.Scrolling;assembly=Craft.UIElements"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:valueConverters="clr-namespace:Craft.UI.Utils.ValueConverters;assembly=Craft.UI.Utils"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
-    <UserControl.Resources>
-        <valueConverters:DoubleAdder x:Key="DoubleAdder"/>
-        <valueConverters:DoubleScaler x:Key="DoubleScaler"/>
-    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
