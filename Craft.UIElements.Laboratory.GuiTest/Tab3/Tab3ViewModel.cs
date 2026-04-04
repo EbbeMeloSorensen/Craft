@@ -1,21 +1,21 @@
-﻿using System.Globalization;
-using System.Windows;
-using System.Windows.Media;
-using System.Diagnostics;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using Craft.Utils;
+﻿using Craft.Utils;
 using Craft.ViewModels.Geometry2D.ScrollFree;
 using Craft.ViewModels.Geometry2D.Scrolling;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using System.Diagnostics;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Media;
 
-namespace Craft.UIElements.GuiTest.Tab3
+namespace Craft.UIElements.Laboratory.GuiTest.Tab3
 {
     public class Tab3ViewModel : ViewModelBase
     {
         private bool _includeGrid = true;
         private bool _includeTicks = false;
         private Brush _coordinateSystemBrush = new SolidColorBrush(Colors.Gray);
-        private Brush _gridBrush = new SolidColorBrush(Colors.Gray) {Opacity = 0.25};
+        private Brush _gridBrush = new SolidColorBrush(Colors.Gray) { Opacity = 0.25 };
         private Brush _curveBrush = new SolidColorBrush(Colors.Black);
 
         // Initielt World Window (afgrænset højre og venstre)
@@ -616,8 +616,8 @@ namespace Craft.UIElements.GuiTest.Tab3
                             1.0,
                             _gridBrush);
                     }
-                    
-                    if(_includeTicks)
+
+                    if (_includeTicks)
                     {
                         GeometryEditorViewModel4.AddLine(
                             new PointD(x, y0 + dy * 0.8),
@@ -703,7 +703,7 @@ namespace Craft.UIElements.GuiTest.Tab3
                 WorldWindowLimitTopForGeometryEditorViewModel1);
 
             GeometryEditorViewModel1.WorldWindowBottomRightLimit = new Point(
-                WorldWindowLimitRightForGeometryEditorViewModel1, 
+                WorldWindowLimitRightForGeometryEditorViewModel1,
                 WorldWindowLimitBottomForGeometryEditorViewModel1);
 
             GeometryEditorViewModel1.SelectedRegion.PropertyChanged += (s, e) =>
@@ -760,7 +760,7 @@ namespace Craft.UIElements.GuiTest.Tab3
                     //points.Add(new PointD(x, -x * x));                                                    // y = -x^2
                     //points.Add(new PointD(x, Math.Pow(x - 2, 2) - 3));                                    // y = (x - 2)^2 - 3 = x^2 - 4x + 1
                     points.Add(new PointD(x, System.Math.Pow(x, 3) / 4 + 3 * System.Math.Pow(x, 2) / 4 - 3 * x / 2 - 2)); // y = 0.25x^3 + 0.75x^2 - 1.5x - 2
-                                                                                                            //points.Add(new PointD(x, Math.Sin(x)));                                               // y = sin(x)
+                                                                                                                          //points.Add(new PointD(x, Math.Sin(x)));                                               // y = sin(x)
                 }
 
                 GeometryEditorViewModel3.ClearPolylines();
@@ -789,13 +789,13 @@ namespace Craft.UIElements.GuiTest.Tab3
                 worldWindowSize,
                 false);
 
-            GeometryEditorViewModel4.WorldWindowUpdateOccured += (s, e) => 
+            GeometryEditorViewModel4.WorldWindowUpdateOccured += (s, e) =>
             {
                 WorldWindowUpdateCountForGeometryEditorViewModel4++;
                 GeometryEditorViewModel4.ClearLabels();
             };
 
-            GeometryEditorViewModel4.WorldWindowMajorUpdateOccured += (s, e) => 
+            GeometryEditorViewModel4.WorldWindowMajorUpdateOccured += (s, e) =>
             {
                 WorldWindowMajorUpdateCountForGeometryEditorViewModel4++;
 
@@ -946,7 +946,7 @@ namespace Craft.UIElements.GuiTest.Tab3
         private void InitializeTimeSeriesViewModel2()
         {
             //var timeSpan = TimeSpan.FromMinutes(1); // Specificer, hvor langt et tidsinterval, den synlige del af x-aksen skal strække sig over
-            var timeSpan = TimeSpan.FromDays(15 * 365.25); 
+            var timeSpan = TimeSpan.FromDays(15 * 365.25);
             //var tFocus = DateTime.UtcNow + timeSpan / 2; // Specificer, hvilken x-værdi vi skal fokusere på. Bemærk, at dette er i fremtiden, da vi gerne vil vise en streg for current time
             var tFocus = DateTime.UtcNow - timeSpan / 2;
             var xFocus = TimeSeriesViewModel.ConvertDateTimeToXValue(tFocus);
