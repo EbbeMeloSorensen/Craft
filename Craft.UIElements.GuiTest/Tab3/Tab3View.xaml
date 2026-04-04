@@ -463,16 +463,5 @@
                 </TabItem>
             </TabControl>
         </TabItem>
-        <TabItem Header="Scrolling">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <scrolling:ImageEditorView Grid.Row="0" DataContext="{Binding ImageEditorViewModel}"/>
-                <TextBlock Grid.Row="1" HorizontalAlignment="Stretch"
-                           Text="{Binding CursorPositionForImageEditorViewModelAsText}"/>
-            </Grid>
-        </TabItem>
     </TabControl>
 </UserControl>

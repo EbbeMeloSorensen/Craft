@@ -69,17 +69,4 @@
         </Canvas>
     </DataTemplate>
 
-    <DataTemplate x:Key="YellowBar">
-        <Canvas>
-            <Rectangle Fill="Yellow" 
-                       Width="{Binding Width}" 
-                       Height="{Binding Height}">
-                <Rectangle.RenderTransform>
-                    <MatrixTransform Matrix="{Binding 
-                            Path=DataContext.TransformationMatrix, 
-                            RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                </Rectangle.RenderTransform>
-            </Rectangle>
-        </Canvas>
-    </DataTemplate>
 </ResourceDictionary>

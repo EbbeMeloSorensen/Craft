@@ -17,7 +17,6 @@ namespace Craft.UIElements.GuiTest
             return item switch
             {
                 RotatableRectangleViewModel => element.FindResource("RotatableRectangle") as DataTemplate,
-                YellowBar => element.FindResource("YellowBar") as DataTemplate,
                 RectangleViewModel => element.FindResource("DoorAndWindow") as DataTemplate,
                 RotatableEllipseViewModel => element.FindResource("RotatableEllipse") as DataTemplate,
                 EllipseViewModel => element.FindResource("Sun") as DataTemplate,
