@@ -14,9 +14,6 @@ namespace Craft.UIElements.GuiTest.Tab3
     {
         private bool _includeGrid = true;
         private bool _includeTicks = false;
-        private Brush _coordinateSystemBrush = new SolidColorBrush(Colors.Gray);
-        private Brush _gridBrush = new SolidColorBrush(Colors.Gray) {Opacity = 0.25};
-        private Brush _curveBrush = new SolidColorBrush(Colors.Black);
 
         // Initielt World Window (afgrænset højre og venstre)
         private double _x0 = -3.0;
@@ -30,14 +27,6 @@ namespace Craft.UIElements.GuiTest.Tab3
         private double _worldWindowLimitRightForGeometryEditorViewModel1;
         private double _worldWindowLimitTopForGeometryEditorViewModel1;
         private double _worldWindowLimitBottomForGeometryEditorViewModel1;
-        private int _worldWindowUpdateCountForGeometryEditorViewModel4;
-        private int _worldWindowMajorUpdateCountForGeometryEditorViewModel4;
-        private int _worldWindowUpdateCountForCoordinateSystemViewModel;
-        private int _worldWindowMajorUpdateCountForCoordinateSystemViewModel;
-        private string _cursorPositionForGeometryEditorViewModel3AsText;
-        private string _cursorPositionForImageEditorViewModelAsText;
-        private string _timeAtMousePositionAsText1;
-        private string _timeAtMousePositionAsText2;
         private Stopwatch _stopwatch;
         private string _roiXAsText;
         private string _roiYAsText;
@@ -47,8 +36,6 @@ namespace Craft.UIElements.GuiTest.Tab3
         private RelayCommand _zoomOutForGeometryEditor1Command;
         private RelayCommand _setSelectedRegionForGeometryEditor1Command;
         private RelayCommand _setWorldWindowForGeometryEditor1Command;
-        private RelayCommand _zoomInForGeometryEditor2Command;
-        private RelayCommand _zoomOutForGeometryEditor2Command;
 
         public string ROIXAsText
         {
