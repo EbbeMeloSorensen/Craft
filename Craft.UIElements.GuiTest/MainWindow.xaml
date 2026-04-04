@@ -3,13 +3,122 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:tab3="clr-namespace:Craft.UIElements.GuiTest.Tab3"
+        xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1200"
         WindowState="Normal">
-    <TabControl SelectedIndex="2">
-        <TabItem Header="Geometry 2D">
-            <tab3:Tab3View DataContext="{Binding Tab3ViewModel}"/>
-        </TabItem>
-    </TabControl>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <scrollFree:GeometryEditorView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
+                                                       DataContext="{Binding GeometryEditorViewModel1}"/>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" Margin="3" Text="Scaling, X:"/>
+            <TextBox Grid.Column="1" Grid.Row="0" Margin="1" 
+                                     Text="{Binding GeometryEditorViewModel1.Scaling.Width, Mode=OneWay, StringFormat=N3}"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" Margin="3" Text="Scaling, Y:"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Margin="1" 
+                                     Text="{Binding GeometryEditorViewModel1.Scaling.Height, Mode=OneWay, StringFormat=N3}"/>
+            <TextBlock Grid.Column="0" Grid.Row="2" Margin="3" Text="World Window Upper Left, X:"/>
+            <TextBox Grid.Column="1" Grid.Row="2" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel1.WorldWindowUpperLeft.X, Mode=OneWay, StringFormat=N3}"/>
+            <TextBlock Grid.Column="0" Grid.Row="3" Margin="3" Text="World Window Upper Left, Y:"/>
+            <TextBox Grid.Column="1" Grid.Row="3" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel1.WorldWindowUpperLeft.Y, Mode=OneWay, StringFormat=N3}"/>
+            <TextBlock Grid.Column="0" Grid.Row="4" Margin="3" Text="World Window Width, X:"/>
+            <TextBox Grid.Column="1" Grid.Row="4" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel1.WorldWindowSize.Width, Mode=OneWay, StringFormat=N3}"/>
+            <TextBlock Grid.Column="0" Grid.Row="5" Margin="3" Text="World Window Height, X:"/>
+            <TextBox Grid.Column="1" Grid.Row="5" Margin="1"
+                                     Text="{Binding GeometryEditorViewModel1.WorldWindowSize.Height, Mode=OneWay, StringFormat=N3}"/>
+        </Grid>
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <CheckBox Content="Windmill rotates" 
+                                      IsChecked="{Binding WindMillInHouseDrawingsRotates}"/>
+            <CheckBox Content="Allow ROI selection"
+                                      IsChecked="{Binding AllowROISelectionForGeometryEditorViewModel1}"/>
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="ROI, X"/>
+                <TextBox Grid.Row="0" Margin="10,0,0,0" Grid.Column="1" IsReadOnly="True" Text="{Binding ROIXAsText}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="ROI, Y"/>
+                <TextBox Grid.Row="1" Margin="10,0,0,0" Grid.Column="1" IsReadOnly="True" Text="{Binding ROIYAsText}"/>
+            </Grid>
+        </StackPanel>
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="1" Margin="0, 0, 0, 0" 
+                                       HorizontalAlignment="Center" Text="Min"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Margin="0, 0, 0, 0" 
+                                       HorizontalAlignment="Center" Text="Max"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0, 0, 10, 0" 
+                                       HorizontalAlignment="Center" Text="X"/>
+            <TextBox Grid.Row="1" Grid.Column="1" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitLeftForGeometryEditorViewModel1}"/>
+            <TextBox Grid.Row="1" Grid.Column="2" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitRightForGeometryEditorViewModel1}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0, 0, 10, 0" 
+                                       HorizontalAlignment="Center" Text="Y"/>
+            <TextBox Grid.Row="2" Grid.Column="1" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitTopForGeometryEditorViewModel1}"/>
+            <TextBox Grid.Row="2" Grid.Column="2" TextAlignment="Center"
+                                     Text="{Binding WorldWindowLimitBottomForGeometryEditorViewModel1}"/>
+            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" Margin="3, 3, 0, 0"
+                                    Content="Apply" Command="{Binding ApplyWorldWindowLimitsForGeometryEditor1Command}"/>
+        </Grid>
+        <StackPanel Grid.Row="1" Grid.Column="3" Margin="10">
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75"
+                                    Command="{Binding ZoomInForGeometryEditor1Command}" >Zoom In</Button>
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" 
+                                    Command="{Binding ZoomOutForGeometryEditor1Command}" >Zoom Out</Button>
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" 
+                                    Command="{Binding SetSelectedRegionForGeometryEditor1Command}">Set ROI</Button>
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" 
+                                    Command="{Binding SetWorldWindowForGeometryEditor1Command}">Set WW</Button>
+        </StackPanel>
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" TextWrapping="Wrap">
+                            Here, we have a basic GeometryEditorView with an underlying GeometryEditorViewModel where Scaling is 
+                            initialized to Sx = 1 and Sy = 1, and where the Y axis points downwards.
+        </TextBlock>
+    </Grid>
+
 </Window>
