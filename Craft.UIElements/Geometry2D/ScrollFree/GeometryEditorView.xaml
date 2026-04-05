@@ -87,8 +87,8 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <!-- Dette er en måde at tegne linier på, hvor de skaleres med TransformationMatrix
-             og linierne bliver tykkere, når der zoomes ind -->
+        <!-- Dette er en måde at tegne linier på, hvor de skaleres med TransformationMatrix.
+             Liniernes tykkelse justeres med en value converter -->
         <ItemsControl ItemsSource="{Binding LineViewModels}" Visibility="Visible">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>

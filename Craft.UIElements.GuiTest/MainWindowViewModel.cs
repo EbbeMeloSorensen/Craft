@@ -10,15 +10,6 @@ namespace Craft.UIElements.GuiTest
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private bool _includeGrid = true;
-        private bool _includeTicks = false;
-
-        // Initielt World Window (afgrænset højre og venstre)
-        private double _x0 = -3.0;
-        private double _x1 = 4.0;
-        private double _y0 = -1.0;
-        private double _y1 = 1.0;
-
         private bool _windMillInHouseDrawingsRotates;
         private bool _allowROISelectionForGeometryEditorViewModel1;
         private double _worldWindowLimitLeftForGeometryEditorViewModel1;
