@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36429.23 d17.14
+VisualStudioVersion = 17.14.36429.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Utils", "Craft.Utils\Craft.Utils.csproj", "{6B618B8E-CB34-4F83-9BAE-82C609771744}"
 EndProject
@@ -64,6 +64,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Simulation.GuiTest", "Craft.Simulation.GuiTest\Craft.Simulation.GuiTest.csproj", "{1CE1C124-2F3A-438C-82D5-36AFB6DD6A6F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.UIElements.Laboratory.GuiTest", "Craft.UIElements.Laboratory.GuiTest\Craft.UIElements.Laboratory.GuiTest.csproj", "{15EE24F2-D1D4-4497-901C-5120846591D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.UIElements.Reborn.GuiTest", "Craft.UIElements.Reborn.GuiTest\Craft.UIElements.Reborn.GuiTest.csproj", "{361FF015-C421-43AB-BA12-3A37E572A476}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,6 +185,10 @@ Global
 		{15EE24F2-D1D4-4497-901C-5120846591D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15EE24F2-D1D4-4497-901C-5120846591D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15EE24F2-D1D4-4497-901C-5120846591D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{361FF015-C421-43AB-BA12-3A37E572A476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{361FF015-C421-43AB-BA12-3A37E572A476}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{361FF015-C421-43AB-BA12-3A37E572A476}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{361FF015-C421-43AB-BA12-3A37E572A476}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
