@@ -19,6 +19,8 @@ namespace Craft.UIElements.Reborn.GuiTest
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new MainWindowViewModel();
         }
     }
 }

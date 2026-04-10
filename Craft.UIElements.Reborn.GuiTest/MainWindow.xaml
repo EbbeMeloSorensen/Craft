@@ -4,9 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Craft.UIElements.Reborn.GuiTest"
+        xmlns:reborn="clr-namespace:Craft.UIElements.Geometry2D.Reborn;assembly=Craft.UIElements"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Craft.UIElements.Reborn.GuiTest" Height="450" Width="800">
     <Grid>
+        <reborn:GeometryCanvas Grid.Column="0" ClipToBounds="True"
+                              Items="{Binding Lines}"
+                              CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
+                              Scaling="{Binding Scaling, Mode=OneWayToSource}"/>
 
     </Grid>
 </Window>
