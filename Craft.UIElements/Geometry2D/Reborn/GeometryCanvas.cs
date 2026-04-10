@@ -117,8 +117,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
 
             DrawGrid(dc);
-            DrawAxes(dc);
-            DrawAxisTicks(dc);
+            //DrawAxes(dc);
+            //DrawAxisTicks(dc);
             DrawGridLabels(dc);
 
             var worldWindow = ComputeWorldWindow();
