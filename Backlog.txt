@@ -105,6 +105,17 @@ Done:
            en Major update i forbindelse med at man løbende flytter World Window.
 
 In progress:
+* Try out codex - should be possible to integrate in visual studio or vs code..
+* For reborn - lock x axis
+* For reborn - lock y axis
+* For reborn - lock aspect ratio
+* For reborn - minor/major updates
+* For reborn - Focus on x value of interest
+* For reborn - Place World window
+* For reborn - ROI selection
+* For reborn - time series views
+* For reborn - panning by "paging"
+
 * For MxCifQuadTree - Lav rectangle sådan at den kan slæbe rundt på et objekt.
 * For MxCifQuadTree - Som bruger af et MxCifQuadTree skal man gerne kunne abstrahere fra, at der er sådan et træ
 * For MxCifQuadTree - Implementer det med at man også kan FJERNE rektangler igen i CS-implementationen
