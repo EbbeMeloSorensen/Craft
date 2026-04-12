@@ -2,6 +2,7 @@
 using Craft.DataStructures.MxCifQuadTree;
 using FluentAssertions;
 using System.Globalization;
+using Craft.Logging;
 using Xunit;
 
 namespace Craft.DataStructures.UnitTest;
@@ -12,6 +13,8 @@ public class MxCifQuadTreeTest
     public void Test1_Insert12Rectangles_And_CheckForIntersectionWithAnother()
     {
         // Arrange
+        var logger = new DummyLogger();
+
         var rectangle1 = new Rectangle(12.5, 25, 5, 5);
         var rectangle2 = new Rectangle(50, 6.25, 1, 1);
         var rectangle3 = new Rectangle(53.125, 12.5, 2.0, 2.0);
@@ -26,7 +29,7 @@ public class MxCifQuadTreeTest
         var rectangle12 = new Rectangle(87.5, 93.75, 2.0, 2.0);
 
         // Act
-        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50));
+        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
 
         mxCifQuadTree1.Insert(rectangle1);
         mxCifQuadTree1.Insert(rectangle2);

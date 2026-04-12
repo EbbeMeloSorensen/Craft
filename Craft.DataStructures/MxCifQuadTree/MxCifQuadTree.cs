@@ -35,7 +35,7 @@ public class MxCifQuadTree
 
     public MxCifQuadTree(
         Rectangle rectangle,
-        ILogger logger = null)
+        ILogger logger)
     {
         _p = rectangle;
         _logger = logger;
