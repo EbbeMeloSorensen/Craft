@@ -117,7 +117,7 @@ public class MxCifQuadTreeTest
         var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
         var areaOfIntereset = new Rectangle(60.0, 40.0, 20.0, 20.0);
 
-        var lines = File.ReadAllLines(@"C:\Temp\all_rectangles.txt");
+        var lines = File.ReadAllLines(".//Data//all_rectangles.txt");
 
         using var sw = new StreamWriter(@"C:\Temp\replication_test.svg");
         sw.WriteLine("<svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">");
