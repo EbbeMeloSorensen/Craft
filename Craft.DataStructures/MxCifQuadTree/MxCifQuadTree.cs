@@ -1,4 +1,5 @@
-﻿using Craft.Logging;
+﻿using Craft.DataStructures.Geometry;
+using Craft.Logging;
 
 namespace Craft.DataStructures.MxCifQuadTree;
 

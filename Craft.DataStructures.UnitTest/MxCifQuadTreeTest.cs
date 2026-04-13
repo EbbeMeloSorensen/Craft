@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using Craft.DataStructures.MxCifQuadTree;
 using FluentAssertions;
 using System.Globalization;
 using Craft.Logging;
 using Xunit;
+using Craft.DataStructures.Geometry;
 
 namespace Craft.DataStructures.UnitTest;
 

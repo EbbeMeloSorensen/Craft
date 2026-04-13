@@ -1,4 +1,6 @@
-﻿namespace Craft.DataStructures.MxCifQuadTree;
+﻿using Craft.DataStructures.Geometry;
+
+namespace Craft.DataStructures.MxCifQuadTree;
 
 public static class Helpers
 {

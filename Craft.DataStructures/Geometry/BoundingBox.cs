@@ -1,4 +1,4 @@
-﻿namespace Craft.DataStructures.MxCifQuadTree;
+﻿namespace Craft.DataStructures.Geometry;
 
 public class BoundingBox
 {
@@ -31,8 +31,8 @@ public class BoundingBox
         var v1b = boundingBox.MaxX;
 
         // Test for overlap on the X axis
-        if ((v0a <= v0b && v0b <= v1a) ||
-            (v0b <= v0a && v0a <= v1b))
+        if (v0a <= v0b && v0b <= v1a ||
+            v0b <= v0a && v0a <= v1b)
         {
             v0a = MinY;
             v1a = MaxY;
@@ -40,8 +40,8 @@ public class BoundingBox
             v1b = boundingBox.MaxY;
 
             // Test for overlap on the Y axis
-            if ((v0a <= v0b && v0b <= v1a) ||
-                (v0b <= v0a && v0a <= v1b))
+            if (v0a <= v0b && v0b <= v1a ||
+                v0b <= v0a && v0a <= v1b)
             {
                 return true;
             }
