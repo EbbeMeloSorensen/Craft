@@ -2,6 +2,22 @@
 
 public class BoundingBox
 {
+    public static BoundingBox FromCenter(
+        double centerX,
+        double centerY,
+        double width,
+        double height)
+    {
+        var halfW = width / 2;
+        var halfH = height / 2;
+
+        return new BoundingBox(
+            centerX - halfW,
+            centerX + halfW,
+            centerY - halfH,
+            centerY + halfH);
+    }
+
     public double MinX { get; }
     public double MaxX { get; }
     public double MinY { get; }
@@ -9,6 +25,8 @@ public class BoundingBox
 
     public double CenterX => (MinX + MaxX) / 2;
     public double CenterY => (MinY + MaxY) / 2;
+    public double Width => MaxX - MinX;
+    public double Height => MaxY - MinY;
 
     public BoundingBox(
         double minX,
