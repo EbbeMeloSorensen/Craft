@@ -2,7 +2,7 @@
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
-    public class BoundingBox
+    //public class BoundingBox (Not here)
 
     public class WorldWindowLimiter
     {
