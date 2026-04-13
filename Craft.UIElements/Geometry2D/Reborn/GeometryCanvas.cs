@@ -4,6 +4,8 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Craft.DataStructures.Geometry;
+using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -319,7 +321,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var width = ActualWidth / Scaling.Width;
             var height = ActualHeight / Scaling.Height;
 
-            return new Rect(WorldOrigin.X, WorldOrigin.Y, width, height);
+            var worldWindow =
+                new BoundingBox(WorldOrigin.X, WorldOrigin.X + width, WorldOrigin.Y, WorldOrigin.Y + height);
+
+            //var limiter = new WorldWindowLimiter(new BoundingBox(0, 1000, 0, 1000));
+            //worldWindow = limiter.Limit(worldWindow);
+
+            return new Rect(
+                worldWindow.MinX,
+                worldWindow.MinY,
+                worldWindow.Width,
+                worldWindow.Height);
         }
 
         private void DrawGrid(DrawingContext dc)

@@ -7,7 +7,8 @@ public class WorldWindowLimiter
 {
     private readonly BoundingBox _bounds;
 
-    public WorldWindowLimiter(BoundingBox bounds)
+    public WorldWindowLimiter(
+        BoundingBox bounds)
     {
         _bounds = bounds;
     }
@@ -15,7 +16,8 @@ public class WorldWindowLimiter
     /// <summary>
     /// Enforces both zoom and pan constraints.
     /// </summary>
-    public BoundingBox Limit(BoundingBox worldWindow)
+    public BoundingBox Limit(
+        BoundingBox worldWindow)
     {
         // Step 1: Enforce minimum zoom (fit inside bounds)
         var fitted = EnforceMinimumZoom(worldWindow);
