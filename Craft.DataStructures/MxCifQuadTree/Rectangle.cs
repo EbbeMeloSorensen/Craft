@@ -1,6 +1,6 @@
 ﻿namespace Craft.DataStructures.MxCifQuadTree;
 
-public class Rectangle
+public class BoundingBox
 {
     public double MinX { get; }
     public double MaxX { get; }
@@ -10,7 +10,7 @@ public class Rectangle
     public double CenterX => (MinX + MaxX) / 2;
     public double CenterY => (MinY + MaxY) / 2;
 
-    public Rectangle(
+    public BoundingBox(
         double minX,
         double maxX,
         double minY,
@@ -23,12 +23,12 @@ public class Rectangle
     }
 
     public bool Intersects(
-        Rectangle rectangle)
+        BoundingBox boundingBox)
     {
         var v0a = MinX;
         var v1a = MaxX;
-        var v0b = rectangle.MinX;
-        var v1b = rectangle.MaxX;
+        var v0b = boundingBox.MinX;
+        var v1b = boundingBox.MaxX;
 
         // Test for overlap on the X axis
         if ((v0a <= v0b && v0b <= v1a) ||
@@ -36,8 +36,8 @@ public class Rectangle
         {
             v0a = MinY;
             v1a = MaxY;
-            v0b = rectangle.MinY;
-            v1b = rectangle.MaxY;
+            v0b = boundingBox.MinY;
+            v1b = boundingBox.MaxY;
 
             // Test for overlap on the Y axis
             if ((v0a <= v0b && v0b <= v1a) ||

@@ -29,12 +29,12 @@ public class MxCifQuadTree
     public static readonly int[] g_YF = [-1, -1, 1, 1];
     public static readonly int[] g_VF = [-1, 1];
 
-    private Rectangle _p;
+    private BoundingBox _p;
     private QuadNode _root;
     private ILogger _logger;
 
     public MxCifQuadTree(
-        Rectangle rectangle,
+        BoundingBox rectangle,
         ILogger logger)
     {
         _p = rectangle;
@@ -47,7 +47,7 @@ public class MxCifQuadTree
     }
 
     public void Insert(
-        Rectangle rectangle)
+        BoundingBox rectangle)
     {
         if (_root == null)
         {
@@ -121,7 +121,7 @@ public class MxCifQuadTree
     }
 
     public void Remove(
-        Rectangle rectangle)
+        BoundingBox rectangle)
     {
         if (_logger.IsEnabled)
         {
@@ -394,7 +394,7 @@ public class MxCifQuadTree
     }
 
     public bool Intersects(
-        Rectangle rectangle)
+        BoundingBox rectangle)
     {
         if (_root == null)
         {
@@ -413,11 +413,11 @@ public class MxCifQuadTree
         return intersection;
     }
 
-    public IEnumerable<Rectangle> GetAllIntersecting(
-        Rectangle rectangle)
+    public IEnumerable<BoundingBox> GetAllIntersecting(
+        BoundingBox rectangle)
     {
         return _root == null 
-            ? Enumerable.Empty<Rectangle>() 
+            ? Enumerable.Empty<BoundingBox>() 
             : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
     }
 

@@ -20,7 +20,7 @@ public class QuadNode
     }
 
     public void InsertOnAxis(
-        Rectangle rectangle,
+        BoundingBox rectangle,
         double cv,
         double lv,
         AXIS v)

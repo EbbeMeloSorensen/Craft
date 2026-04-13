@@ -4,28 +4,28 @@ public class BinNode
 {
     public BinNode[] Child;
 
-    public List<Rectangle> Rectangles { get; }
+    public List<BoundingBox> Rectangles { get; }
 
     public BinNode()
     {
         Child = new BinNode[2];
-        Rectangles = new List<Rectangle>();
+        Rectangles = new List<BoundingBox>();
     }
 
     public void Insert(
-        Rectangle rectangle)
+        BoundingBox rectangle)
     {
         Rectangles.Add(rectangle);
     }
 
     public void Holds(
-        Rectangle rectangle)
+        BoundingBox rectangle)
     {
         throw new NotImplementedException();
     }
 
     public void Remove(
-        Rectangle rectangle)
+        BoundingBox rectangle)
     {
         throw new NotImplementedException();
     }

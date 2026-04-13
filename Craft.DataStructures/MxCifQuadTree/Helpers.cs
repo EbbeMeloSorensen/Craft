@@ -7,7 +7,7 @@ public static class Helpers
     public static readonly int[] g_VF = [-1, 1];
 
     public static DIRECTION BIN_COMPARE(
-        this Rectangle rectangle,
+        this BoundingBox rectangle,
         double CV,
         AXIS V)
     {   
@@ -32,7 +32,7 @@ public static class Helpers
     }
 
     public static QUADRANT CIF_COMPARE(
-        this Rectangle rectangle,
+        this BoundingBox rectangle,
         double cx,
         double cy)
     {
@@ -45,7 +45,7 @@ public static class Helpers
     }
 
     public static bool CROSS_AXIS(
-        this Rectangle rectangle,
+        this BoundingBox rectangle,
         BinNode binNode,
         double cv,
         double lv,
@@ -76,7 +76,7 @@ public static class Helpers
     }
 
     public static bool CIF_SEARCH(
-        this Rectangle rectangle,
+        this BoundingBox rectangle,
         QuadNode quadNode,
         double cx,
         double cy,
@@ -90,7 +90,7 @@ public static class Helpers
         }
 
         // Is rectangle outside the rectangle of the very quadnode
-        if (!rectangle.Intersects(new Rectangle(cx - lx, cx + lx, cy - ly, cy + ly)))
+        if (!rectangle.Intersects(new BoundingBox(cx - lx, cx + lx, cy - ly, cy + ly)))
         {
             return false;
         }
@@ -146,8 +146,8 @@ public static class Helpers
         return false;
     }
 
-    public static IEnumerable<Rectangle> CIF_SEARCH_ALL(
-        this Rectangle rectangle,
+    public static IEnumerable<BoundingBox> CIF_SEARCH_ALL(
+        this BoundingBox rectangle,
         QuadNode quadNode,
         double cx,
         double cy,
@@ -167,7 +167,7 @@ public static class Helpers
         //}
 
         if (quadNode != null &&
-            rectangle.Intersects(new Rectangle(cx - lx, cx + lx, cy - ly, cy + ly)))
+            rectangle.Intersects(new BoundingBox(cx - lx, cx + lx, cy - ly, cy + ly)))
         {
             foreach (var rect in rectangle.CROSS_AXIS_ALL(quadNode._axis[1], cy, ly, AXIS.YA))
             {
@@ -232,8 +232,8 @@ public static class Helpers
         */
     }
 
-    public static IEnumerable<Rectangle> CROSS_AXIS_ALL(
-        this Rectangle rectangle,
+    public static IEnumerable<BoundingBox> CROSS_AXIS_ALL(
+        this BoundingBox rectangle,
         BinNode binNode,
         double cv,
         double lv,
