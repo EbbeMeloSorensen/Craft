@@ -13,8 +13,8 @@ public static class Helpers
     {   
         if (V == AXIS.XA)
         {
-            if (rectangle.CenterX - rectangle.HalfWidth <= CV &&
-                CV <= rectangle.CenterX + rectangle.HalfWidth)
+            if (rectangle.MinX <= CV &&
+                CV <= rectangle.MaxX)
             {   
                 return DIRECTION.BOTH;
             }
@@ -22,8 +22,8 @@ public static class Helpers
             return CV > rectangle.CenterX ? DIRECTION.LEFT : DIRECTION.RIGHT;
         }
 
-        if (rectangle.CenterY - rectangle.HalfHeight <= CV &&
-            CV <= rectangle.CenterY + rectangle.HalfHeight)
+        if (rectangle.MinY <= CV &&
+            CV <= rectangle.MaxY)
         {
             return DIRECTION.BOTH;
         }
@@ -90,7 +90,7 @@ public static class Helpers
         }
 
         // Is rectangle outside the rectangle of the very quadnode
-        if (!rectangle.Intersects(new Rectangle(cx, cy, lx, ly)))
+        if (!rectangle.Intersects(new Rectangle(cx - lx, cx + lx, cy - ly, cy + ly)))
         {
             return false;
         }
@@ -167,7 +167,7 @@ public static class Helpers
         //}
 
         if (quadNode != null &&
-            rectangle.Intersects(new Rectangle(cx, cy, lx, ly)))
+            rectangle.Intersects(new Rectangle(cx - lx, cx + lx, cy - ly, cy + ly)))
         {
             foreach (var rect in rectangle.CROSS_AXIS_ALL(quadNode._axis[1], cy, ly, AXIS.YA))
             {

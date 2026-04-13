@@ -10,19 +10,16 @@ public class Rectangle
     public double CenterX => (MinX + MaxX) / 2;
     public double CenterY => (MinY + MaxY) / 2;
 
-    public double HalfWidth => (MaxX - MinX) / 2;
-    public double HalfHeight => (MaxY - MinY) / 2;
-
     public Rectangle(
-        double centerX,
-        double centerY,
-        double halfWidth,
-        double halfHeight)
+        double minX,
+        double maxX,
+        double minY,
+        double maxY)
     {
-        MinX = centerX - halfWidth;
-        MaxX = centerX + halfWidth;
-        MinY = centerY - halfHeight;
-        MaxY = centerY + halfHeight;
+        MinX = minX;
+        MaxX = maxX;
+        MinY = minY;
+        MaxY = maxY;
     }
 
     public bool Intersects(

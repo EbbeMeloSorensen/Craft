@@ -15,21 +15,21 @@ public class MxCifQuadTreeTest
         // Arrange
         var logger = new DummyLogger();
 
-        var rectangle1 = new Rectangle(12.5, 25, 5, 5);
-        var rectangle2 = new Rectangle(50, 6.25, 1, 1);
-        var rectangle3 = new Rectangle(53.125, 12.5, 2.0, 2.0);
-        var rectangle4 = new Rectangle(62.5, 12.5, 3.0, 3.0);
-        var rectangle5 = new Rectangle(71.875, 12.5, 2.0, 2.0);
-        var rectangle6 = new Rectangle(50.0, 37.5, 3.0, 3.0);
-        var rectangle7 = new Rectangle(18.75, 50.0, 3.0, 3.0);
-        var rectangle8 = new Rectangle(50.0, 50.0, 5.0, 5.0);
-        var rectangle9 = new Rectangle(75.0, 50.0, 5.0, 5.0);
-        var rectangle10 = new Rectangle(50.0, 75.0, 5.0, 5.0);
-        var rectangle11 = new Rectangle(75.0, 75.0, 5.0, 5.0);
-        var rectangle12 = new Rectangle(87.5, 93.75, 2.0, 2.0);
+        var rectangle1 = new Rectangle(7.5, 17.5, 20, 30);
+        var rectangle2 = new Rectangle(49, 51, 5.25, 7.25);
+        var rectangle3 = new Rectangle(51.125, 55.125, 10.5, 14.5);
+        var rectangle4 = new Rectangle(59.5, 65.5, 9.5, 15.5);
+        var rectangle5 = new Rectangle(69.875, 73.875, 10.5, 14.5);
+        var rectangle6 = new Rectangle(47, 53, 34.5, 40.5);
+        var rectangle7 = new Rectangle(15.75, 21.75, 47, 53);
+        var rectangle8 = new Rectangle(45, 55, 45, 55);
+        var rectangle9 = new Rectangle(0, 80, 45, 55);
+        var rectangle10 = new Rectangle(45, 55, 70, 80);
+        var rectangle11 = new Rectangle(70, 80, 70, 80);
+        var rectangle12 = new Rectangle(85.5, 89.5, 91.75, 95.75);
 
         // Act
-        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
+        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(0, 100, 0, 100), logger);
 
         mxCifQuadTree1.Insert(rectangle1);
         mxCifQuadTree1.Insert(rectangle2);
@@ -44,7 +44,7 @@ public class MxCifQuadTreeTest
         mxCifQuadTree1.Insert(rectangle11);
         mxCifQuadTree1.Insert(rectangle12);
 
-        var rectangleQ = new Rectangle(50.0, 75.0, 5.0, 5.0);
+        var rectangleQ = new Rectangle(45, 55, 70, 80);
 
         // Assert
         mxCifQuadTree1.Intersects(rectangleQ).Should().BeTrue(); // It intersects rectangle 10
@@ -60,21 +60,21 @@ public class MxCifQuadTreeTest
         logger.IsEnabled = true;
 
         // Arrange
-        var rectangle1 = new Rectangle(12.5, 25, 5, 5);
-        var rectangle2 = new Rectangle(50, 6.25, 1, 1);
-        var rectangle3 = new Rectangle(53.125, 12.5, 2.0, 2.0);
-        var rectangle4 = new Rectangle(62.5, 12.5, 3.0, 3.0);
-        var rectangle5 = new Rectangle(71.875, 12.5, 2.0, 2.0);
-        var rectangle6 = new Rectangle(50.0, 37.5, 3.0, 3.0);
-        var rectangle7 = new Rectangle(18.75, 50.0, 3.0, 3.0);
-        var rectangle8 = new Rectangle(50.0, 50.0, 5.0, 5.0);
-        var rectangle9 = new Rectangle(75.0, 50.0, 5.0, 5.0);
-        var rectangle10 = new Rectangle(50.0, 75.0, 5.0, 5.0);
-        var rectangle11 = new Rectangle(75.0, 75.0, 5.0, 5.0);
-        var rectangle12 = new Rectangle(87.5, 93.75, 2.0, 2.0);
+        var rectangle1 = new Rectangle(7.5, 17.5, 20, 30);
+        var rectangle2 = new Rectangle(49, 51, 5.25, 7.25);
+        var rectangle3 = new Rectangle(51.125, 55.125, 10.5, 14.5);
+        var rectangle4 = new Rectangle(59.5, 65.5, 9.5, 15.5);
+        var rectangle5 = new Rectangle(69.875, 73.875, 10.5, 14.5);
+        var rectangle6 = new Rectangle(47, 53, 34.5, 40.5);
+        var rectangle7 = new Rectangle(15.75, 21.75, 47, 53);
+        var rectangle8 = new Rectangle(45, 55, 45, 55);
+        var rectangle9 = new Rectangle(0, 80, 45, 55);
+        var rectangle10 = new Rectangle(45, 55, 70, 80);
+        var rectangle11 = new Rectangle(70, 80, 70, 80);
+        var rectangle12 = new Rectangle(85.5, 89.5, 91.75, 95.75);
 
         // Act
-        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
+        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new Rectangle(0 ,100, 0, 100), logger);
 
         mxCifQuadTree1.Insert(rectangle1);
         mxCifQuadTree1.Insert(rectangle2);
@@ -114,8 +114,8 @@ public class MxCifQuadTreeTest
 
         var logger = new TestLogger();
 
-        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50, 50, 50, 50), logger);
-        var areaOfIntereset = new Rectangle(60.0, 40.0, 20.0, 20.0);
+        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(0, 100, 0, 100), logger);
+        var areaOfIntereset = new Rectangle(40, 80, 20, 60);
 
         var lines = File.ReadAllLines(".//Data//all_rectangles.txt");
 
@@ -123,7 +123,7 @@ public class MxCifQuadTreeTest
         sw.WriteLine("<svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">");
         sw.WriteLine("  <rect width=\"100\" height=\"100\" x=\"0\" y=\"0\" fill=\"gray\" />");
 
-        sw.WriteLine($"  <rect width=\"{areaOfIntereset.HalfWidth * 2}\" height=\"{areaOfIntereset.HalfHeight * 2}\" x=\"{areaOfIntereset.CenterX - areaOfIntereset.HalfWidth}\" y=\"{areaOfIntereset.CenterY - areaOfIntereset.HalfHeight}\" fill=\"black\" />");
+        sw.WriteLine($"  <rect width=\"{areaOfIntereset.MaxX - areaOfIntereset.MinX}\" height=\"{areaOfIntereset.MaxY - areaOfIntereset.MinY}\" x=\"{areaOfIntereset.MinX}\" y=\"{areaOfIntereset.MinY}\" fill=\"black\" />");
 
         var count = 0;
 
@@ -139,7 +139,7 @@ public class MxCifQuadTreeTest
             var halfHeight = double.Parse(temp[3].Trim(), CultureInfo.InvariantCulture);
             var intersectingInCppImplementation = temp[4].Trim() == "0";
 
-            var rectangle = new Rectangle(centerX, centerY, halfWidth, halfHeight);
+            var rectangle = new Rectangle(centerX - halfWidth, centerX + halfWidth, centerY - halfHeight, centerY + halfHeight);
 
             var intersectsPreviouslyInsertedRectangles = mxCifQuadTree.Intersects(rectangle);
 
@@ -157,7 +157,7 @@ public class MxCifQuadTreeTest
 
         foreach (var rect in intersectingRectangles)
         {
-            sw.WriteLine($"  <rect width=\"{rect.HalfWidth * 2}\" height=\"{rect.HalfHeight * 2}\" x=\"{rect.CenterX - rect.HalfWidth}\" y=\"{rect.CenterY - rect.HalfHeight}\" fill=\"yellow\" />");
+            sw.WriteLine($"  <rect width=\"{rect.MaxX - rect.MinX}\" height=\"{rect.MaxY - rect.MinY}\" x=\"{rect.MinX}\" y=\"{rect.MinY}\" fill=\"yellow\" />");
         }
 
         sw.WriteLine("</svg>");
@@ -175,7 +175,7 @@ public class MxCifQuadTreeTest
         var rectanglesInTotal = 1000000;
         var maxNumberOfRectanglesInTree = 100000;
         var rectangleQueue = new Queue<Rectangle>();
-        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(50.0, 50.0, 50.0, 50.0), logger);
+        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new Rectangle(0, 100, 0, 100), logger);
         var controlList = new List<int>();
         var rectanglesInMxCifQuadTree = 0;
 
@@ -190,7 +190,7 @@ public class MxCifQuadTreeTest
 
             if (i < rectanglesInTotal)
             {
-                var rectangle = new Rectangle(cx, cy, width * 0.5, height * 0.5);
+                var rectangle = new Rectangle(cx - 0.5 * width, cx + 0.5 * width, cy - 0.5 * height, cy + 0.5 * height);
                 mxCifQuadTree.Insert(rectangle);
                 rectanglesInMxCifQuadTree++;
                 rectangleQueue.Enqueue(rectangle);

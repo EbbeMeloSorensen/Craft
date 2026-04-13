@@ -57,14 +57,14 @@ public class MxCifQuadTree
         var quadNode = _root;
         var cx = _p.CenterX;
         var cy = _p.CenterY;
-        var lx = _p.HalfWidth;
-        var ly = _p.HalfHeight;
+        var lx = (_p.MaxX - _p.MinX) / 2;
+        var ly = (_p.MaxY - _p.MinY) / 2;
 
         if (_logger.IsEnabled)
         {
             _logger.WriteLineGoddammit(
                 LogMessageCategory.Information,
-                $"Inserting rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+                $"Inserting rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.MaxX - rectangle.MinX}, {rectangle.MaxY - rectangle.MinY})");
         }
 
         var dx = rectangle.BIN_COMPARE(cx, AXIS.XA);
@@ -127,7 +127,7 @@ public class MxCifQuadTree
         {
             _logger.WriteLineGoddammit(
                 LogMessageCategory.Information,
-                $"Removing rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({2 * rectangle.HalfWidth}, {2 * rectangle.HalfHeight})");
+                $"Removing rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.MaxX - rectangle.MinX}, {rectangle.MaxY - rectangle.MinY})");
         }
 
         if (_root == null)
@@ -137,8 +137,8 @@ public class MxCifQuadTree
 
         var CX = _p.CenterX;
         var CY = _p.CenterY;
-        var LX = _p.HalfWidth;
-        var LY = _p.HalfHeight;
+        var LX = (_p.MaxX - _p.MinX) / 2;
+        var LY = (_p.MaxY - _p.MinY) / 2;
         double CV;
         double LV;
 
@@ -401,13 +401,13 @@ public class MxCifQuadTree
             return false;
         }
 
-        var intersection = rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, _p.HalfWidth, _p.HalfHeight);
+        var intersection = rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
 
         if (_logger.IsEnabled && intersection)
         {
             _logger.WriteLineGoddammit(
                 LogMessageCategory.Information,
-                $"Rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.HalfWidth * 2}, {rectangle.HalfHeight * 2}) intersects existing rectangles and is therefore rejected");
+                $"Rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.MaxX - rectangle.MinX}, {rectangle.MaxY - rectangle.MinY}) intersects existing rectangles and is therefore rejected");
         }
 
         return intersection;
@@ -418,7 +418,7 @@ public class MxCifQuadTree
     {
         return _root == null 
             ? Enumerable.Empty<Rectangle>() 
-            : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, _p.HalfWidth, _p.HalfHeight);
+            : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
     }
 
     public bool Clear()
