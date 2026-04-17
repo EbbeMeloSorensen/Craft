@@ -8,6 +8,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
     public class GeometryViewModel : INotifyPropertyChanged
     {
         private ViewState _viewState;
+        private BoundingBox _worldWindow;
         private System.Windows.Point? _cursorWorldPosition;
         private bool _lockAspectRatio;
         private bool _lockXAxis;
@@ -19,6 +20,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _viewState = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public BoundingBox WorldWindow
+        {
+            get => _worldWindow;
+            set
+            {
+                _worldWindow = value;
                 OnPropertyChanged();
             }
         }

@@ -107,6 +107,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false));
 
+        public BoundingBox WorldWindow
+        {
+            get => (BoundingBox)GetValue(WorldWindowProperty);
+            set => SetValue(WorldWindowProperty, value);
+        }
+
+        public static readonly DependencyProperty WorldWindowProperty =
+            DependencyProperty.Register(
+                nameof(WorldWindow),
+                typeof(BoundingBox),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(default(BoundingBox)));
+
         public GeometryCanvas()
         {
             _worldWindowBounds = new BoundingBox(-100, 1000, -100, 500);
@@ -454,6 +467,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
 
             var newWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SetCurrentValue(WorldWindowProperty, newWorldWindow);
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
+
             var newScalingX = ActualWidth / newWorldWindow.Width;
             var newScalingY = ActualHeight / newWorldWindow.Height;
 

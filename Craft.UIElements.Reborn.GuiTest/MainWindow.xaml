@@ -17,6 +17,7 @@
             <reborn:GeometryCanvas ClipToBounds="True"
                                    Items="{Binding Lines}"
                                    ViewState="{Binding ViewState, Mode=OneWayToSource}"
+                                   WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
                                    CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
                                    LockAspectRatio="{Binding LockAspectRatio}"
                                    LockXAxis="{Binding LockXAxis}"
@@ -68,7 +69,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow.MinX, StringFormat=N2}"/>
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow.MinY, StringFormat=N2}"/>
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
