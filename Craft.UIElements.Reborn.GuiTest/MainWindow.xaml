@@ -11,7 +11,6 @@
         <reborn:GeometryCanvas Grid.Column="0" ClipToBounds="True"
                               Items="{Binding Lines}"
                               CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
-                              Scaling="{Binding Scaling, Mode=OneWayToSource}"
                               DataContext="{Binding GeometryViewModel}"/>
 
     </Grid>

@@ -38,19 +38,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(null, OnItemsChanged));
 
-        // =============================
-        // WorldWindow (camera)
-        // =============================
-        public Point WorldOrigin
+        public ViewState ViewState
         {
-            get => (Point)GetValue(WorldOriginProperty);
-            set => SetValue(WorldOriginProperty, value);
-        }
-
-        public Size Scaling
-        {
-            get => (Size)GetValue(ScalingProperty);
-            set => SetValue(ScalingProperty, value);
+            get => (ViewState)GetValue(ViewStateProperty);
+            set => SetValue(ViewStateProperty, value);
         }
 
         public Point? CursorWorldPosition
@@ -59,19 +50,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
             set => SetValue(CursorWorldPositionProperty, value);
         }
 
-        public static readonly DependencyProperty WorldOriginProperty =
+        public static readonly DependencyProperty ViewStateProperty =
             DependencyProperty.Register(
-                nameof(WorldOrigin),
-                typeof(Point),
+                nameof(ViewState),
+                typeof(ViewState),
                 typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(new Point(0, 0), FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public static readonly DependencyProperty ScalingProperty =
-            DependencyProperty.Register(
-                nameof(Scaling),
-                typeof(Size),
-                typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(new Size(1, 1), FrameworkPropertyMetadataOptions.AffectsRender));
+                new FrameworkPropertyMetadata(
+                    new ViewState(new Point(0, 0), new Size(1, 1)), FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty CursorWorldPositionProperty =
             DependencyProperty.Register(
@@ -154,7 +139,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 Mouse.OverrideCursor = Cursors.Hand;
                 _isPanning = true;
                 _panStartMouse = e.GetPosition(this);
-                _panStartWorldOrigin = WorldOrigin;
+                _panStartWorldOrigin = ViewState.WorldOrigin;
 
                 CaptureMouse();
             }
@@ -179,18 +164,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 var worldCurrent = inverse.Transform(mousePos);
                 var deltaWorld = worldStart - worldCurrent;
 
-                WorldOrigin = new Point(
-                    _panStartWorldOrigin.X + deltaWorld.X,
-                    _panStartWorldOrigin.Y + deltaWorld.Y);
+                ViewState = new ViewState(
+                    new Point(
+                        _panStartWorldOrigin.X + deltaWorld.X,
+                        _panStartWorldOrigin.Y + deltaWorld.Y),
+                    ViewState.Scaling);
             }
             else
             {
                 if (IsMouseOver)
                 {
-                    var scaleX = Scaling.Width;
-                    var scaleY = Scaling.Height;
-                    var worldX = WorldOrigin.X + mousePos.X / scaleX;
-                    var worldY = WorldOrigin.Y + mousePos.Y / scaleY;
+                    var scaleX = ViewState.Scaling.Width;
+                    var scaleY = ViewState.Scaling.Height;
+                    var worldX = ViewState.WorldOrigin.X + mousePos.X / scaleX;
+                    var worldY = ViewState.WorldOrigin.Y + mousePos.Y / scaleY;
                     CursorWorldPosition = new Point(worldX, worldY);
                 }
                 else
@@ -296,8 +283,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var newOriginY = worldBefore.Y - mousePos.Y / newScaling.Height;
 
             // 4. Apply
-            Scaling = newScaling;
-            WorldOrigin = new Point(newOriginX, newOriginY);
+            ViewState = new ViewState(new Point(newOriginX, newOriginY), newScaling);
         }
 
         // =============================
@@ -318,11 +304,15 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         private Rect ComputeWorldWindow()
         {
-            var width = ActualWidth / Scaling.Width;
-            var height = ActualHeight / Scaling.Height;
+            var width = ActualWidth / ViewState.Scaling.Width;
+            var height = ActualHeight / ViewState.Scaling.Height;
 
             var worldWindow =
-                new BoundingBox(WorldOrigin.X, WorldOrigin.X + width, WorldOrigin.Y, WorldOrigin.Y + height);
+                new BoundingBox(
+                    ViewState.WorldOrigin.X,
+                    ViewState.WorldOrigin.X + width,
+                    ViewState.WorldOrigin.Y,
+                    ViewState.WorldOrigin.Y + height);
 
             //var limiter = new WorldWindowLimiter(new BoundingBox(0, 1000, 0, 1000));
             //worldWindow = limiter.Limit(worldWindow);
@@ -339,8 +329,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             if (ActualWidth == 0 || ActualHeight == 0)
                 return;
 
-            var scaleX = Scaling.Width;
-            var scaleY = Scaling.Height;
+            var scaleX = ViewState.Scaling.Width;
+            var scaleY = ViewState.Scaling.Height;
 
             var stepX = GetNiceStep(scaleX);
             var stepY = GetNiceStep(scaleY);
@@ -352,7 +342,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             // Vertical lines
             for (var x = System.Math.Floor(world.X / stepX) * stepX; x < world.Right; x += stepX)
             {
-                var screenX = (x - WorldOrigin.X) * scaleX;
+                var screenX = (x - ViewState.WorldOrigin.X) * scaleX;
 
                 dc.DrawLine(
                     pen,
@@ -363,7 +353,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             // Horizontal lines
             for (var y = System.Math.Floor(world.Y / stepY) * stepY; y < world.Bottom; y += stepY)
             {
-                var screenY = (y - WorldOrigin.Y) * scaleY;
+                var screenY = (y - ViewState.WorldOrigin.Y) * scaleY;
 
                 dc.DrawLine(
                     pen,
@@ -393,12 +383,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         private double WorldToScreenX(double worldX)
         {
-            return (worldX - WorldOrigin.X) * Scaling.Width;
+            return (worldX - ViewState.WorldOrigin.X) * ViewState.Scaling.Width;
         }
 
         private double WorldToScreenY(double worldY)
         {
-            return (worldY - WorldOrigin.Y) * Scaling.Height;
+            return (worldY - ViewState.WorldOrigin.Y) * ViewState.Scaling.Height;
         }
 
         private void DrawAxes(DrawingContext dc)
@@ -432,8 +422,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         private void DrawAxisTicks(DrawingContext dc)
         {
-            double scaleX = Scaling.Width;
-            double scaleY = Scaling.Height;
+            double scaleX = ViewState.Scaling.Width;
+            double scaleY = ViewState.Scaling.Height;
 
             double stepX = GetNiceStep(scaleX);
             double stepY = GetNiceStep(scaleY);
@@ -479,8 +469,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         private void DrawGridLabels(DrawingContext dc)
         {
-            var scaleX = Scaling.Width;
-            var scaleY = Scaling.Height;
+            var scaleX = ViewState.Scaling.Width;
+            var scaleY = ViewState.Scaling.Height;
 
             var stepX = GetNiceStep(scaleX);
             var stepY = GetNiceStep(scaleY);
