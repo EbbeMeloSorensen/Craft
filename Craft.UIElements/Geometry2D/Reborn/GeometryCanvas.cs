@@ -2,10 +2,10 @@
 using Craft.ViewModels.Geometry2D.Reborn;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Printing;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -21,6 +21,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private bool _isPanning;
         private System.Windows.Point _panStartMouse;
         private System.Windows.Point _panStartWorldOrigin;
+        private bool _updateWorldWindowPending;
 
         private BoundingBox _worldWindowBounds;
         private WorldWindowLimiter _worldWindowLimiter;
@@ -468,10 +469,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             var newWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
 
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SetCurrentValue(WorldWindowProperty, newWorldWindow);
-            }), System.Windows.Threading.DispatcherPriority.Loaded);
+            UpdateWorldWindowDeferred();
 
             var newScalingX = ActualWidth / newWorldWindow.Width;
             var newScalingY = ActualHeight / newWorldWindow.Height;
@@ -700,6 +698,21 @@ namespace Craft.UIElements.Geometry2D.Reborn
             double worldY)
         {
             return (worldY - ViewState.WorldOrigin.Y) * ViewState.Scaling.Height;
+        }
+
+        private void UpdateWorldWindowDeferred()
+        {
+            if (_updateWorldWindowPending)
+                return;
+
+            _updateWorldWindowPending = true;
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                _updateWorldWindowPending = false;
+                var worldWindow = ComputeWorldWindow();
+                SetCurrentValue(WorldWindowProperty, worldWindow);
+            }), DispatcherPriority.Loaded);
         }
     }
 }
