@@ -81,6 +81,32 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false));
 
+        public bool LockXAxis
+        {
+            get => (bool)GetValue(LockXAxisProperty);
+            set => SetValue(LockXAxisProperty, value);
+        }
+
+        public static readonly DependencyProperty LockXAxisProperty =
+            DependencyProperty.Register(
+                nameof(LockXAxis),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false));
+
+        public bool LockYAxis
+        {
+            get => (bool)GetValue(LockYAxisProperty);
+            set => SetValue(LockYAxisProperty, value);
+        }
+
+        public static readonly DependencyProperty LockYAxisProperty =
+            DependencyProperty.Register(
+                nameof(LockYAxis),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false));
+
         public GeometryCanvas()
         {
             _worldWindowBounds = new BoundingBox(-100, 1000, -100, 500);
@@ -406,15 +432,30 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void UpdateViewState(
             BoundingBox proposedWorldWindow)
         {
-            // Just accept it for now
-            //var possiblyConstrainedWorldWindow = proposedWorldWindow;
+            var worldWindow = ComputeWorldWindow();
+
+            if (LockXAxis)
+            {
+                proposedWorldWindow = new BoundingBox(
+                    worldWindow.MinX,
+                    worldWindow.MaxX,
+                    proposedWorldWindow.MinY,
+                    proposedWorldWindow.MaxY);
+            }
+
+            if (LockYAxis)
+            {
+                proposedWorldWindow = new BoundingBox(
+                    proposedWorldWindow.MinX,
+                    proposedWorldWindow.MaxX,
+                    worldWindow.MinY,
+                    worldWindow.MaxY);
+            }
 
             var possiblyConstrainedWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
-
             var newScalingX = ActualWidth / proposedWorldWindow.Width;
             var newScalingY = ActualHeight / proposedWorldWindow.Height;
 
-            // Vi transformerer tilbage fra det World Window, vi kunne få
             ViewState = new ViewState(
                 new System.Windows.Point(
                     possiblyConstrainedWorldWindow.MinX,
@@ -567,7 +608,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         continue;
 
                     var text = new FormattedText(
-                        x.ToString("G"),
+                        $"{x / 1:G}",
                         System.Globalization.CultureInfo.InvariantCulture,
                         FlowDirection.LeftToRight,
                         typeface,
@@ -594,7 +635,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         continue;
 
                     var text = new FormattedText(
-                        y.ToString("G"),
+                        $"{y / 1:G}",
                         System.Globalization.CultureInfo.InvariantCulture,
                         FlowDirection.LeftToRight,
                         typeface,

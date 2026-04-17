@@ -9,6 +9,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private ViewState _viewState;
         private System.Windows.Point? _cursorWorldPosition;
         private bool _lockAspectRatio;
+        private bool _lockXAxis;
+        private bool _lockYAxis;
 
         public ViewState ViewState
         {
@@ -36,6 +38,26 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _lockAspectRatio = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool LockXAxis
+        {
+            get => _lockXAxis;
+            set
+            {
+                _lockXAxis = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool LockYAxis
+        {
+            get => _lockYAxis;
+            set
+            {
+                _lockYAxis = value;
                 OnPropertyChanged();
             }
         }
