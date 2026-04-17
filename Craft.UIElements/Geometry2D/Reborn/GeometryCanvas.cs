@@ -70,7 +70,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         public GeometryCanvas()
         {
-            _worldWindowBounds = new BoundingBox(0, 1000, 0, 500);
+            _worldWindowBounds = new BoundingBox(-100, 1000, -100, 500);
             _worldWindowLimiter = new WorldWindowLimiter(_worldWindowBounds);
         }
 
@@ -110,13 +110,16 @@ namespace Craft.UIElements.Geometry2D.Reborn
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
 
             DrawGrid(dc, true, true);
+            DrawAxes(dc, true, true);
+            DrawAxisTicks(dc, true, true);
+            DrawGridLabels(dc, true, true);
             
             if (Items == null /*|| worldWindow.IsEmpty*/)
                 return;
 
             var worldWindow = ComputeWorldWindow();
             var transform = CreateWorldToViewportTransform(worldWindow, RenderSize);
-            var pen = new Pen(Brushes.Black, 1); // always 1 pixel
+            var pen = new Pen(Brushes.IndianRed, 3); // always 2 pixels
 
             foreach (var item in Items)
             {
@@ -452,6 +455,148 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
+        private void DrawAxes(
+            DrawingContext dc,
+            bool horizontalAxis,
+            bool verticalAxis)
+        {
+            var pen = new Pen(Brushes.Black, 2);
+            var world = ComputeWorldWindow();
+
+            if (verticalAxis && world.MinX <= 0 && world.MaxX >= 0)
+            {
+                var screenX = WorldToScreenX(0);
+
+                dc.DrawLine(
+                    pen,
+                    new System.Windows.Point(screenX, 0),
+                    new System.Windows.Point(screenX, ActualHeight));
+            }
+
+            if (horizontalAxis && world.MinY <= 0 && world.MaxY >= 0)
+            {
+                var screenY = WorldToScreenY(0);
+
+                dc.DrawLine(
+                    pen,
+                    new System.Windows.Point(0, screenY),
+                    new System.Windows.Point(ActualWidth, screenY));
+            }
+        }
+
+        private void DrawAxisTicks(
+            DrawingContext dc,
+            bool horizontalAxisTicks,
+            bool verticalAxisTicks)
+        {
+            var scaleX = ViewState.Scaling.Width;
+            var scaleY = ViewState.Scaling.Height;
+            var stepX = GetNiceStep(scaleX);
+            var stepY = GetNiceStep(scaleY);
+            var world = ComputeWorldWindow();
+            var pen = new Pen(Brushes.Black, 1);
+            var tickSize = 5;
+
+            if (horizontalAxisTicks && world.MinY <= 0 && world.MaxY >= 0)
+            {
+                var y = WorldToScreenY(0);
+
+                for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
+                {
+                    var sx = WorldToScreenX(x);
+
+                    dc.DrawLine(
+                        pen,
+                        new System.Windows.Point(sx, y - tickSize),
+                        new System.Windows.Point(sx, y + tickSize));
+                }
+            }
+
+            if (verticalAxisTicks && world.MinX <= 0 && world.MaxX >= 0)
+            {
+                var x = WorldToScreenX(0);
+
+                for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
+                {
+                    var sy = WorldToScreenY(y);
+
+                    dc.DrawLine(
+                        pen,
+                        new System.Windows.Point(x - tickSize, sy),
+                        new System.Windows.Point(x + tickSize, sy));
+                }
+            }
+        }
+
+        private void DrawGridLabels(
+            DrawingContext dc,
+            bool horizontalAxisLabels,
+            bool verticalAxisLabels)
+        {
+            var scaleX = ViewState.Scaling.Width;
+            var scaleY = ViewState.Scaling.Height;
+            var stepX = GetNiceStep(scaleX);
+            var stepY = GetNiceStep(scaleY);
+            var world = ComputeWorldWindow();
+            var typeface = new Typeface("Segoe UI");
+            double fontSize = 10;
+            double margin = 4;
+
+            if (horizontalAxisLabels)
+            {
+                var yScreen = ActualHeight - margin;
+
+                for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
+                {
+                    var sx = WorldToScreenX(x);
+
+                    // Skip if outside screen (safety)
+                    if (sx < 0 || sx > ActualWidth)
+                        continue;
+
+                    var text = new FormattedText(
+                        x.ToString("G"),
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        FlowDirection.LeftToRight,
+                        typeface,
+                        fontSize,
+                        Brushes.Black,
+                        1.0);
+
+                    // Center text under grid line
+                    dc.DrawText(
+                        text,
+                        new System.Windows.Point(sx - text.Width / 2, yScreen - text.Height));
+                }
+            }
+
+            if (verticalAxisLabels)
+            {
+                var xScreen = margin;
+
+                for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
+                {
+                    var sy = WorldToScreenY(y);
+
+                    if (sy < 0 || sy > ActualHeight)
+                        continue;
+
+                    var text = new FormattedText(
+                        y.ToString("G"),
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        FlowDirection.LeftToRight,
+                        typeface,
+                        fontSize,
+                        Brushes.Black,
+                        1.0);
+
+                    dc.DrawText(
+                        text,
+                        new System.Windows.Point(xScreen, sy - text.Height / 2));
+                }
+            }
+        }
+
         private double GetNiceStep(
             double scaling)
         {
@@ -470,6 +615,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
             else nice = 10;
 
             return nice * magnitude;
+        }
+
+        private double WorldToScreenX(
+            double worldX)
+        {
+            return (worldX - ViewState.WorldOrigin.X) * ViewState.Scaling.Width;
+        }
+
+        private double WorldToScreenY(
+            double worldY)
+        {
+            return (worldY - ViewState.WorldOrigin.Y) * ViewState.Scaling.Height;
         }
     }
 }
