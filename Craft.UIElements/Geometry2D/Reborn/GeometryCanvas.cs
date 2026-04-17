@@ -358,12 +358,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void UpdateViewState(
             BoundingBox proposedWorldWindow)
         {
-            //var worldWindowBounds = new BoundingBox(0, 1000, 0, 500);
-            //var limiter = new WorldWindowLimiter(worldWindowBounds);
-            //var possiblyConstrainedWorldWindow = limiter.Limit(proposedWorldWindow);
-
             // Just accept it for now
-            var possiblyConstrainedWorldWindow = proposedWorldWindow;
+            //var possiblyConstrainedWorldWindow = proposedWorldWindow;
+
+            var possiblyConstrainedWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
 
             var newScalingX = ActualWidth / proposedWorldWindow.Width;
             var newScalingY = ActualHeight / proposedWorldWindow.Height;
