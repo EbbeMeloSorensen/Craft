@@ -1,11 +1,10 @@
-﻿using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Point = System.Windows.Point;
+using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -19,8 +18,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private int _zoomLevelY;
 
         private bool _isPanning;
-        private Point _panStartMouse;
-        private Point _panStartWorldOrigin;
+        private System.Windows.Point _panStartMouse;
+        private System.Windows.Point _panStartWorldOrigin;
+
+        private BoundingBox _worldWindowBounds;
+        private WorldWindowLimiter _worldWindowLimiter;
 
         // =============================
         // Items (your geometries)
@@ -44,9 +46,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
             set => SetValue(ViewStateProperty, value);
         }
 
-        public Point? CursorWorldPosition
+        public System.Windows.Point? CursorWorldPosition
         {
-            get => (Point)GetValue(CursorWorldPositionProperty);
+            get => (System.Windows.Point)GetValue(CursorWorldPositionProperty);
             set => SetValue(CursorWorldPositionProperty, value);
         }
 
@@ -56,19 +58,27 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(ViewState),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(
-                    new ViewState(new Point(0, 0), new Size(1, 1)), FrameworkPropertyMetadataOptions.AffectsRender));
+                    new ViewState(new System.Windows.Point(0, 0), new Size(1, 1)), FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty CursorWorldPositionProperty =
             DependencyProperty.Register(
                 nameof(CursorWorldPosition),
-                typeof(Point?),
+                typeof(System.Windows.Point?),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(null));
+
+        public GeometryCanvas()
+        {
+            _worldWindowBounds = new BoundingBox(0, 1000, 0, 500);
+            _worldWindowLimiter = new WorldWindowLimiter(_worldWindowBounds);
+        }
 
         // =============================
         // Handle collection changes
         // =============================
-        private static void OnItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnItemsChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
         {
             var canvas = (GeometryCanvas)d;
 
@@ -81,7 +91,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
             canvas.InvalidateVisual();
         }
 
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(
+            object sender,
+            NotifyCollectionChangedEventArgs e)
         {
             InvalidateVisual();
         }
@@ -89,7 +101,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
         // =============================
         // Rendering
         // =============================
-        protected override void OnRender(DrawingContext dc)
+        protected override void OnRender(
+            DrawingContext dc)
         {
             base.OnRender(dc);
 
@@ -122,7 +135,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
         //    InvalidateVisual();
         //}
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseDown(
+            MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
 
@@ -137,7 +151,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(
+            MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
@@ -169,7 +184,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     var scaleY = ViewState.Scaling.Height;
                     var worldX = ViewState.WorldOrigin.X + mousePos.X / scaleX;
                     var worldY = ViewState.WorldOrigin.Y + mousePos.Y / scaleY;
-                    CursorWorldPosition = new Point(worldX, worldY);
+                    CursorWorldPosition = new System.Windows.Point(worldX, worldY);
                 }
                 else
                 {
@@ -178,7 +193,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
-        protected override void OnMouseUp(MouseButtonEventArgs e)
+        protected override void OnMouseUp(
+            MouseButtonEventArgs e)
         {
             base.OnMouseUp(e);
 
@@ -190,7 +206,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
-        protected override void OnMouseLeave(MouseEventArgs e)
+        protected override void OnMouseLeave(
+            MouseEventArgs e)
         {
             base.OnMouseLeave(e);
 
@@ -200,7 +217,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
-        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        protected override void OnMouseWheel(
+            MouseWheelEventArgs e)
         {
             base.OnMouseWheel(e);
 
@@ -224,57 +242,57 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var ctrl = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
             var alt = (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
 
+            var proposedZoomLevelX = _zoomLevelX;
+            var proposedZoomLevelY = _zoomLevelY;
+
+            // Determine new desired zoom level
             if (ctrl)
             {
                 // X only
-                _zoomLevelX += steps;
+                proposedZoomLevelX += steps;
             }
             else if (alt)
             {
                 // Y only
-                _zoomLevelY += steps;
+                proposedZoomLevelY += steps;
             }
             else
             {
                 // uniform
-                _zoomLevelX += steps;
-                _zoomLevelY += steps;
+                proposedZoomLevelX += steps;
+                proposedZoomLevelY += steps;
             }
 
-            if (_zoomLevelX > _maxZoomLevel)
-            {
-                _zoomLevelX = _maxZoomLevel;
-            }
-            else if (_zoomLevelX < _minZoomLevel)
-            {
-                _zoomLevelX = _minZoomLevel;
-            }
+            UpdateZoomLevels(
+                proposedZoomLevelX,
+                proposedZoomLevelY);
 
-            if (_zoomLevelY > _maxZoomLevel)
-            {
-                _zoomLevelY = _maxZoomLevel;
-            }
-            else if (_zoomLevelY < _minZoomLevel)
-            {
-                _zoomLevelY = _minZoomLevel;
-            }
-
-            var newScaling = new Size(
+            var scaling = new Size(
                 System.Math.Pow(_zoomBase, _zoomLevelX),
                 System.Math.Pow(_zoomBase, _zoomLevelY));
 
             // 3. Compute new origin so cursor stays fixed
-            var newOriginX = worldBefore.X - mousePos.X / newScaling.Width;
-            var newOriginY = worldBefore.Y - mousePos.Y / newScaling.Height;
+            var proposedOriginX = worldBefore.X - mousePos.X / scaling.Width;
+            var proposedOriginY = worldBefore.Y - mousePos.Y / scaling.Height;
 
             // 4. Apply
             var proposedWorldWindow = new BoundingBox(
-                newOriginX,
-                newOriginX + ActualWidth / newScaling.Width,
-                newOriginY,
-                newOriginY + ActualHeight / newScaling.Height);
+                proposedOriginX,
+                proposedOriginX + ActualWidth / scaling.Width,
+                proposedOriginY,
+                proposedOriginY + ActualHeight / scaling.Height);
 
             UpdateViewState(proposedWorldWindow);
+        }
+
+        private BoundingBox ComputeWorldWindow()
+        {
+            // This is BY DEFINITION the world window, i.e it is derived by the parameters: origin, scaling, and viewport size
+            return new BoundingBox(
+                ViewState.WorldOrigin.X,
+                ViewState.WorldOrigin.X + ActualWidth / ViewState.Scaling.Width,
+                ViewState.WorldOrigin.Y,
+                ViewState.WorldOrigin.Y + ActualHeight / ViewState.Scaling.Height);
         }
 
         // =============================
@@ -295,20 +313,56 @@ namespace Craft.UIElements.Geometry2D.Reborn
             return m;
         }
 
-        private BoundingBox ComputeWorldWindow()
+        private void UpdateZoomLevels(
+            int proposedZoomLevelX,
+            int proposedZoomLevelY)
         {
-            return new BoundingBox(
-                    ViewState.WorldOrigin.X,
-                    ViewState.WorldOrigin.X + ActualWidth / ViewState.Scaling.Width,
-                    ViewState.WorldOrigin.Y,
-                    ViewState.WorldOrigin.Y + ActualHeight / ViewState.Scaling.Height);
+            // Make sure zoom level is within bounds
+            if (proposedZoomLevelX > _maxZoomLevel)
+            {
+                proposedZoomLevelX = _maxZoomLevel;
+            }
+            else if (proposedZoomLevelX < _minZoomLevel)
+            {
+                proposedZoomLevelX = _minZoomLevel;
+            }
+
+            if (proposedZoomLevelY > _maxZoomLevel)
+            {
+                proposedZoomLevelY = _maxZoomLevel;
+            }
+            else if (proposedZoomLevelY < _minZoomLevel)
+            {
+                proposedZoomLevelY = _minZoomLevel;
+            }
+
+            var worldWindowBounds = new BoundingBox(0, 1000, 0, 500);
+
+            // Make sure the zoom levels are adequately large to ensure the constrained world window covers the viewport
+            while (System.Math.Pow(_zoomBase, proposedZoomLevelX) * worldWindowBounds.Width < ActualWidth &&
+                   proposedZoomLevelX < _maxZoomLevel)
+            {
+                proposedZoomLevelX++;
+            }
+
+            while (System.Math.Pow(_zoomBase, proposedZoomLevelY) * worldWindowBounds.Height < ActualHeight &&
+                   proposedZoomLevelY < _maxZoomLevel)
+            {
+                proposedZoomLevelY++;
+            }
+
+            _zoomLevelX = proposedZoomLevelX;
+            _zoomLevelY = proposedZoomLevelY;
         }
 
         private void UpdateViewState(
             BoundingBox proposedWorldWindow)
         {
-            var limiter = new WorldWindowLimiter(new BoundingBox(0, 1000, 0, 500));
+            //var worldWindowBounds = new BoundingBox(0, 1000, 0, 500);
+            //var limiter = new WorldWindowLimiter(worldWindowBounds);
             //var possiblyConstrainedWorldWindow = limiter.Limit(proposedWorldWindow);
+
+            // Just accept it for now
             var possiblyConstrainedWorldWindow = proposedWorldWindow;
 
             var newScalingX = ActualWidth / proposedWorldWindow.Width;
@@ -316,7 +370,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             // Vi transformerer tilbage fra det World Window, vi kunne få
             ViewState = new ViewState(
-                new Point(
+                new System.Windows.Point(
                     possiblyConstrainedWorldWindow.MinX,
                     possiblyConstrainedWorldWindow.MinY),
                 new Size(
