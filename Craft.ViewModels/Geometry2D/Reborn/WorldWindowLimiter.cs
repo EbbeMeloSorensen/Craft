@@ -1,7 +1,6 @@
 ﻿using Craft.DataStructures.Geometry;
-using System.Windows;
 
-namespace Craft.UIElements.Geometry2D.Reborn;
+namespace Craft.ViewModels.Geometry2D.Reborn;
 
 public class WorldWindowLimiter
 {
@@ -96,4 +95,3 @@ public class WorldWindowLimiter
         return new BoundingBox(minX, maxX, minY, maxY);
     }
 }
-

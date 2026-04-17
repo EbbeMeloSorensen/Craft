@@ -8,10 +8,38 @@
         mc:Ignorable="d"
         Title="Craft.UIElements.Reborn.GuiTest" Height="450" Width="800">
     <Grid>
-        <reborn:GeometryCanvas Grid.Column="0" ClipToBounds="True"
-                              Items="{Binding Lines}"
-                              CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
-                              DataContext="{Binding GeometryViewModel}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
+        <reborn:GeometryCanvas Grid.Column="0" ClipToBounds="True"
+                               Items="{Binding Lines}"
+                               CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
+                               ViewState="{Binding ViewState, Mode=OneWayToSource}"
+                               DataContext="{Binding GeometryViewModel}"/>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="X:" Margin="0, 0, 10, 0"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GeometryViewModel.CursorWorldPosition.X, StringFormat=N2}"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Y:" Margin="0, 0, 10, 0"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GeometryViewModel.CursorWorldPosition.Y, StringFormat=N2}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="X scaling:" Margin="0, 0, 10, 0"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GeometryViewModel.ViewState.Scaling.Width, StringFormat=N2}"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Y scaling:" Margin="0, 0, 10, 0"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.ViewState.Scaling.Height, StringFormat=N2}"/>
+        </Grid>
     </Grid>
 </Window>

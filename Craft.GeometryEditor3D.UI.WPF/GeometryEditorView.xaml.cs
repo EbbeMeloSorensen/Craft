@@ -3,7 +3,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Craft.GeometryEditor3D.ViewModel;
 using Craft.Math;
-using Point = System.Windows.Point;
 
 namespace Craft.GeometryEditor3D.UI.WPF
 {

@@ -1,26 +1,25 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {
     public class GeometryViewModel : INotifyPropertyChanged
     {
-        private Size _scaling;
-        private Point? _cursorWorldPosition;
+        private ViewState _viewState;
+        private System.Windows.Point? _cursorWorldPosition;
 
-        public Size Scaling
+        public ViewState ViewState
         {
-            get => _scaling;
+            get => _viewState;
             set
             {
-                _scaling = value;
+                _viewState = value;
                 OnPropertyChanged();
             }
         }
 
-        public Point? CursorWorldPosition
+        public System.Windows.Point? CursorWorldPosition
         {
             get => _cursorWorldPosition;
             set
