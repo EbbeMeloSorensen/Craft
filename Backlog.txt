@@ -103,15 +103,17 @@ Done:
            SAMT at TranslationX og TranslationY sættest til 0. Du kan så passende GEMME placeringen af World Window, som den gør sig gældende ved Major Update.
            Det gør du vist allerede, da du jo allerede opererer med det der expandede World Window, som jo i øvrigt bruges til at afgøre, hvornår du IGEN skal lave
            en Major update i forbindelse med at man løbende flytter World Window.
-
-In progress:
-* Try out codex - should be possible to integrate in visual studio or vs code..
 * For reborn - lock x axis
 * For reborn - lock y axis
 * For reborn - lock aspect ratio
+
+In progress:
+* For reborn - Place World window
+* For reborn - window zooming
+* For reborn - Zoom in/out by clicking a button
+* Try out codex - should be possible to integrate in visual studio or vs code..
 * For reborn - minor/major updates
 * For reborn - Focus on x value of interest
-* For reborn - Place World window
 * For reborn - ROI selection
 * For reborn - time series views
 * For reborn - panning by "paging"

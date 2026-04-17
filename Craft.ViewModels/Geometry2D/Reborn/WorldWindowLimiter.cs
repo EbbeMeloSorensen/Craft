@@ -19,10 +19,10 @@ public class WorldWindowLimiter
         BoundingBox worldWindow)
     {
         // Step 1: Enforce minimum zoom (fit inside bounds)
-        var fitted = EnforceMinimumZoom(worldWindow);
+        //var fitted = EnforceMinimumZoom(worldWindow); // Not neccessary - we did this earlier...
 
         // Step 2: Clamp position (panning)
-        var clamped = ClampToBounds(fitted);
+        var clamped = ClampToBounds(worldWindow);
 
         return clamped;
     }

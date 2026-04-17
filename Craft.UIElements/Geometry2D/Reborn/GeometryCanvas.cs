@@ -452,14 +452,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     worldWindow.MaxY);
             }
 
-            var possiblyConstrainedWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
-            var newScalingX = ActualWidth / proposedWorldWindow.Width;
-            var newScalingY = ActualHeight / proposedWorldWindow.Height;
+            var newWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
+            var newScalingX = ActualWidth / newWorldWindow.Width;
+            var newScalingY = ActualHeight / newWorldWindow.Height;
 
             ViewState = new ViewState(
                 new System.Windows.Point(
-                    possiblyConstrainedWorldWindow.MinX,
-                    possiblyConstrainedWorldWindow.MinY),
+                    newWorldWindow.MinX,
+                    newWorldWindow.MinY),
                 new Size(
                     newScalingX,
                     newScalingY

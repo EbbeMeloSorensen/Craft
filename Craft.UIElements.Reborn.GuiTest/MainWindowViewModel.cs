@@ -13,10 +13,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         public MainWindowViewModel()
         {
-            GeometryViewModel = new GeometryViewModel
-            {
-                LockAspectRatio = true
-            };
+            GeometryViewModel = new GeometryViewModel();
 
             DrawAHouse();
         }

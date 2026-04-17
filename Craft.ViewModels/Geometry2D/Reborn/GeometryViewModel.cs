@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Craft.DataStructures.Geometry;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {
@@ -66,6 +67,11 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             = new ObservableCollection<LineModel>();
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public GeometryViewModel()
+        {
+            LockAspectRatio = true;
+        }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

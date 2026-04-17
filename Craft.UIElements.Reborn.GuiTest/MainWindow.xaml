@@ -13,17 +13,20 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <reborn:GeometryCanvas Grid.Column="0" ClipToBounds="True"
-                               Items="{Binding Lines}"
-                               ViewState="{Binding ViewState, Mode=OneWayToSource}"
-                               CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
-                               LockAspectRatio="{Binding LockAspectRatio}"
-                               LockXAxis="{Binding LockXAxis}"
-                               LockYAxis="{Binding LockYAxis}"
-                               DataContext="{Binding GeometryViewModel}"/>
+        <Border Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">
+            <reborn:GeometryCanvas ClipToBounds="True"
+                                   Items="{Binding Lines}"
+                                   ViewState="{Binding ViewState, Mode=OneWayToSource}"
+                                   CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
+                                   LockAspectRatio="{Binding LockAspectRatio}"
+                                   LockXAxis="{Binding LockXAxis}"
+                                   LockYAxis="{Binding LockYAxis}"
+                                   DataContext="{Binding GeometryViewModel}"/>
+        </Border>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -35,7 +38,7 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="75"/>
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="X:" Margin="0, 0, 10, 0"/>
@@ -52,6 +55,28 @@
             <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockXAxis}" />
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Lock y axis:" Margin="0, 0, 10, 0"/>
             <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockYAxis}" />
+            <GroupBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow.MinY, StringFormat=N2}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow.MaxX, StringFormat=N2}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Y max:" Margin="0, 0, 10, 0"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow.MaxY, StringFormat=N2}"/>
+                </Grid>
+            </GroupBox>
         </Grid>
     </Grid>
 </Window>
