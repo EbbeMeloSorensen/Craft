@@ -11,13 +11,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
 {
     public class GeometryCanvas : FrameworkElement
     {
-        private const double _zoomBase = 1.2;
-        private const int _minZoomLevel = -20;
-        private const int _maxZoomLevel = 20;
-
-        private int _zoomLevelX;
-        private int _zoomLevelY;
-
         private bool _isPanning;
         private Point _panStartMouse;
         private Point _panStartWorldOrigin;
@@ -98,7 +91,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             var worldWindow = ComputeWorldWindow();
 
-            if (Items == null || worldWindow.IsEmpty)
+            if (Items == null /*|| worldWindow.IsEmpty*/)
                 return;
 
             var transform = CreateWorldToViewportTransform(worldWindow, RenderSize);
@@ -152,6 +145,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     deltaPixel.X / ViewState.Scaling.Width,
                     deltaPixel.Y / ViewState.Scaling.Height);
 
+                // Det her kan vi ikke bare gøre - da det muligvis violater constraints
+
                 ViewState = new ViewState(
                     new Point(
                         _panStartWorldOrigin.X + deltaWorld.X,
@@ -200,39 +195,32 @@ namespace Craft.UIElements.Geometry2D.Reborn
         // =============================
         // Transform
         // =============================
-        private Matrix CreateWorldToViewportTransform(Rect world, Size viewport)
+        private Matrix CreateWorldToViewportTransform(
+            BoundingBox worldWindow, 
+            Size viewport)
         {
-            var scaleX = viewport.Width / world.Width;
-            var scaleY = viewport.Height / world.Height;
+            var scaleX = viewport.Width / worldWindow.Width;
+            var scaleY = viewport.Height / worldWindow.Height;
 
             var m = Matrix.Identity;
 
-            m.Translate(-world.X, -world.Y);
+            m.Translate(-worldWindow.MinX, -worldWindow.MinY);
             m.Scale(scaleX, scaleY);
 
             return m;
         }
 
-        private Rect ComputeWorldWindow()
+        private BoundingBox ComputeWorldWindow()
         {
-            var width = ActualWidth / ViewState.Scaling.Width;
-            var height = ActualHeight / ViewState.Scaling.Height;
-
-            var worldWindow =
-                new BoundingBox(
+            return new BoundingBox(
                     ViewState.WorldOrigin.X,
-                    ViewState.WorldOrigin.X + width,
+                    ViewState.WorldOrigin.X + ActualWidth / ViewState.Scaling.Width,
                     ViewState.WorldOrigin.Y,
-                    ViewState.WorldOrigin.Y + height);
+                    ViewState.WorldOrigin.Y + ActualHeight / ViewState.Scaling.Height);
 
+            // Ikke her - WW er pr definition givet ud fra de andre parametre
             //var limiter = new WorldWindowLimiter(new BoundingBox(0, 1000, 0, 1000));
             //worldWindow = limiter.Limit(worldWindow);
-
-            return new Rect(
-                worldWindow.MinX,
-                worldWindow.MinY,
-                worldWindow.Width,
-                worldWindow.Height);
         }
     }
 }
