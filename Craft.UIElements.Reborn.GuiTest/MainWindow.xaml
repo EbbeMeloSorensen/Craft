@@ -15,12 +15,14 @@
 
         <reborn:GeometryCanvas Grid.Column="0" ClipToBounds="True"
                                Items="{Binding Lines}"
-                               CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
                                ViewState="{Binding ViewState, Mode=OneWayToSource}"
+                               CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
+                               LockAspectRatio="{Binding LockAspectRatio, Mode=TwoWay}"
                                DataContext="{Binding GeometryViewModel}"/>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -40,6 +42,8 @@
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GeometryViewModel.ViewState.Scaling.Width, StringFormat=N2}"/>
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Y scaling:" Margin="0, 0, 10, 0"/>
             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.ViewState.Scaling.Height, StringFormat=N2}"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Lock aspect ratio:" Margin="0, 0, 10, 0"/>
+            <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockAspectRatio}" />
         </Grid>
     </Grid>
 </Window>

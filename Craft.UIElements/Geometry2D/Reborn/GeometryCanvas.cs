@@ -47,12 +47,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             set => SetValue(ViewStateProperty, value);
         }
 
-        public System.Windows.Point? CursorWorldPosition
-        {
-            get => (System.Windows.Point)GetValue(CursorWorldPositionProperty);
-            set => SetValue(CursorWorldPositionProperty, value);
-        }
-
         public static readonly DependencyProperty ViewStateProperty =
             DependencyProperty.Register(
                 nameof(ViewState),
@@ -61,12 +55,31 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 new FrameworkPropertyMetadata(
                     new ViewState(new System.Windows.Point(0, 0), new Size(1, 1)), FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public System.Windows.Point? CursorWorldPosition
+        {
+            get => (System.Windows.Point)GetValue(CursorWorldPositionProperty);
+            set => SetValue(CursorWorldPositionProperty, value);
+        }
+
         public static readonly DependencyProperty CursorWorldPositionProperty =
             DependencyProperty.Register(
                 nameof(CursorWorldPosition),
                 typeof(System.Windows.Point?),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(null));
+
+        public bool LockAspectRatio
+        {
+            get => (bool)GetValue(LockAspectRatioProperty);
+            set => SetValue(LockAspectRatioProperty, value);
+        }
+
+        public static readonly DependencyProperty LockAspectRatioProperty =
+            DependencyProperty.Register(
+                nameof(LockAspectRatio),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false));
 
         public GeometryCanvas()
         {
@@ -274,7 +287,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var proposedZoomLevelY = _zoomLevelY;
 
             // Determine new desired zoom level
-            if (ctrl)
+            if (LockAspectRatio || !ctrl && !alt)
+            {
+                proposedZoomLevelX += steps;
+                proposedZoomLevelY += steps;
+            }
+            else if (ctrl)
             {
                 // X only
                 proposedZoomLevelX += steps;
@@ -282,12 +300,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             else if (alt)
             {
                 // Y only
-                proposedZoomLevelY += steps;
-            }
-            else
-            {
-                // uniform
-                proposedZoomLevelX += steps;
                 proposedZoomLevelY += steps;
             }
 
