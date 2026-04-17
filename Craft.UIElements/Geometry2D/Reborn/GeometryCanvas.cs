@@ -1,16 +1,23 @@
-﻿using Craft.ViewModels.Geometry2D.Reborn;
+﻿using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Craft.DataStructures.Geometry;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
     public class GeometryCanvas : FrameworkElement
     {
+        private const double _zoomBase = 1.2;
+        private const int _minZoomLevel = -20;
+        private const int _maxZoomLevel = 20;
+
+        private int _zoomLevelX;
+        private int _zoomLevelY;
+
         private bool _isPanning;
         private Point _panStartMouse;
         private Point _panStartWorldOrigin;
@@ -86,7 +93,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
         {
             base.OnRender(dc);
 
-            // Debug background
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
 
             var worldWindow = ComputeWorldWindow();
@@ -147,11 +153,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 var worldWindow = ComputeWorldWindow();
 
-                UpdateViewState(new BoundingBox(
+                var proposedWorldWindow = new BoundingBox(
                     _panStartWorldOrigin.X + deltaWorld.X,
                     _panStartWorldOrigin.X + deltaWorld.X + worldWindow.Width,
                     _panStartWorldOrigin.Y + deltaWorld.Y,
-                    _panStartWorldOrigin.Y + deltaWorld.Y + worldWindow.Height));
+                    _panStartWorldOrigin.Y + deltaWorld.Y + worldWindow.Height);
+
+                UpdateViewState(proposedWorldWindow);
             }
             else
             {
@@ -192,6 +200,83 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            if (ActualWidth == 0 || ActualHeight == 0)
+                return;
+
+            var mousePos = e.GetPosition(this);
+
+            var worldWindow = ComputeWorldWindow();
+            var transform = CreateWorldToViewportTransform(worldWindow, RenderSize);
+
+            var inverse = transform;
+            inverse.Invert();
+
+            // 1. World point under cursor BEFORE zoom
+            var worldBefore = inverse.Transform(mousePos);
+
+            // 2. Determine new zoom level
+            var steps = e.Delta / 120; // standard wheel notch
+
+            var ctrl = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
+            var alt = (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
+
+            if (ctrl)
+            {
+                // X only
+                _zoomLevelX += steps;
+            }
+            else if (alt)
+            {
+                // Y only
+                _zoomLevelY += steps;
+            }
+            else
+            {
+                // uniform
+                _zoomLevelX += steps;
+                _zoomLevelY += steps;
+            }
+
+            if (_zoomLevelX > _maxZoomLevel)
+            {
+                _zoomLevelX = _maxZoomLevel;
+            }
+            else if (_zoomLevelX < _minZoomLevel)
+            {
+                _zoomLevelX = _minZoomLevel;
+            }
+
+            if (_zoomLevelY > _maxZoomLevel)
+            {
+                _zoomLevelY = _maxZoomLevel;
+            }
+            else if (_zoomLevelY < _minZoomLevel)
+            {
+                _zoomLevelY = _minZoomLevel;
+            }
+
+            var newScaling = new Size(
+                System.Math.Pow(_zoomBase, _zoomLevelX),
+                System.Math.Pow(_zoomBase, _zoomLevelY));
+
+            // 3. Compute new origin so cursor stays fixed
+            var newOriginX = worldBefore.X - mousePos.X / newScaling.Width;
+            var newOriginY = worldBefore.Y - mousePos.Y / newScaling.Height;
+
+            // 4. Apply
+            var proposedWorldWindow = new BoundingBox(
+                newOriginX,
+                newOriginX + ActualWidth / newScaling.Width,
+                newOriginY,
+                newOriginY + ActualHeight / newScaling.Height);
+
+            UpdateViewState(proposedWorldWindow);
+        }
+
         // =============================
         // Transform
         // =============================
@@ -226,14 +311,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
             //var possiblyConstrainedWorldWindow = limiter.Limit(proposedWorldWindow);
             var possiblyConstrainedWorldWindow = proposedWorldWindow;
 
+            var newScalingX = ActualWidth / proposedWorldWindow.Width;
+            var newScalingY = ActualHeight / proposedWorldWindow.Height;
+
             // Vi transformerer tilbage fra det World Window, vi kunne få
             ViewState = new ViewState(
                 new Point(
                     possiblyConstrainedWorldWindow.MinX,
                     possiblyConstrainedWorldWindow.MinY),
                 new Size(
-                    proposedWorldWindow.Width / ActualWidth,
-                    proposedWorldWindow.Height / ActualHeight
+                    newScalingX,
+                    newScalingY
                 ));
         }
     }
