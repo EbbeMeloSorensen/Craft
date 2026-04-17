@@ -173,7 +173,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
         }
 
         // Suggested by ChatGpt, but it seems unnecessary
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        protected override void OnRenderSizeChanged(
+            SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
             var worldWindow = ComputeWorldWindow();
