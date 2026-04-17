@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn;
+using System.Collections;
 using System.Collections.Specialized;
+using System.Printing;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -108,11 +109,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
 
-            var worldWindow = ComputeWorldWindow();
-
+            DrawGrid(dc, true, true);
+            
             if (Items == null /*|| worldWindow.IsEmpty*/)
                 return;
 
+            var worldWindow = ComputeWorldWindow();
             var transform = CreateWorldToViewportTransform(worldWindow, RenderSize);
             var pen = new Pen(Brushes.Black, 1); // always 1 pixel
 
@@ -129,11 +131,34 @@ namespace Craft.UIElements.Geometry2D.Reborn
         }
 
         // Suggested by ChatGpt, but it seems unnecessary
-        //protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-        //{
-        //    base.OnRenderSizeChanged(sizeInfo);
-        //    InvalidateVisual();
-        //}
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            var worldWindow = ComputeWorldWindow();
+
+            // Som udgangspunkt prøver vi at holde fast i de eksisterende zoom levels
+            // (men det kan være nødvendigt at zoomd ind for at sikre, at det constrainede world vindue dække view porten)
+            var proposedZoomLevelX = _zoomLevelX;
+            var proposedZoomLevelY = _zoomLevelY;
+
+            UpdateZoomLevels(
+                proposedZoomLevelX,
+                proposedZoomLevelY);
+
+            // Vi beregner den nye skalering, der sædvanligvis vil være uændret
+            var scaling = new Size(
+                System.Math.Pow(_zoomBase, _zoomLevelX),
+                System.Math.Pow(_zoomBase, _zoomLevelY));
+
+            var proposedWorldWindow = new BoundingBox(
+                worldWindow.MinX,
+                worldWindow.MinX + sizeInfo.NewSize.Width / scaling.Width,
+                worldWindow.MinY,
+                worldWindow.MinY + sizeInfo.NewSize.Height / scaling.Height);
+
+            UpdateViewState(proposedWorldWindow);
+            InvalidateVisual();
+        }
 
         protected override void OnMouseDown(
             MouseButtonEventArgs e)
@@ -317,6 +342,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
             int proposedZoomLevelX,
             int proposedZoomLevelY)
         {
+            // If scaling is uniform, then we would like to preserve that
+            var uniformZooming = proposedZoomLevelX == proposedZoomLevelY;
+
             // Make sure zoom level is within bounds
             if (proposedZoomLevelX > _maxZoomLevel)
             {
@@ -351,6 +379,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 proposedZoomLevelY++;
             }
 
+            if (uniformZooming && proposedZoomLevelX != proposedZoomLevelY)
+            {
+                proposedZoomLevelX = proposedZoomLevelY = System.Math.Max(proposedZoomLevelX, proposedZoomLevelY);
+            }
+
             _zoomLevelX = proposedZoomLevelX;
             _zoomLevelY = proposedZoomLevelY;
         }
@@ -375,6 +408,68 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     newScalingX,
                     newScalingY
                 ));
+        }
+
+        private void DrawGrid(
+            DrawingContext dc,
+            bool horizontalLines,
+            bool verticalLines)
+        {
+            if (ActualWidth == 0 || ActualHeight == 0)
+                return;
+
+            var world = ComputeWorldWindow();
+            var pen = new Pen(Brushes.LightGray, 1);
+
+            if (horizontalLines)
+            {
+                var scaleX = ViewState.Scaling.Width;
+                var stepX = GetNiceStep(scaleX);
+                for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
+                {
+                    var screenX = (x - world.MinX) * scaleX;
+
+                    dc.DrawLine(
+                        pen,
+                        new System.Windows.Point(screenX, 0),
+                        new System.Windows.Point(screenX, ActualHeight));
+                }
+            }
+
+            if (verticalLines)
+            {
+                var scaleY = ViewState.Scaling.Height;
+                var stepY = GetNiceStep(scaleY);
+                for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
+                {
+                    var screenY = (y - world.MinY) * scaleY;
+
+                    dc.DrawLine(
+                        pen,
+                        new System.Windows.Point(0, screenY),
+                        new System.Windows.Point(ActualWidth, screenY));
+                }
+            }
+        }
+
+        private double GetNiceStep(
+            double scaling)
+        {
+            var targetPixels = 100; // desired spacing
+
+            var rawStep = targetPixels / scaling;
+
+            var magnitude = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(rawStep)));
+            var normalized = rawStep / magnitude;
+
+            double nice;
+
+            if (normalized < 1.5) nice = 1;
+            else if (normalized < 3) nice = 2;
+            else if (normalized < 7) nice = 5;
+            else nice = 10;
+
+            return nice * magnitude;
         }
     }
 }
