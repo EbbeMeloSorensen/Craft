@@ -113,10 +113,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
             // Debug background
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
 
-            DrawGrid(dc);
+            //DrawGrid(dc);
             //DrawAxes(dc);
             //DrawAxisTicks(dc);
-            DrawGridLabels(dc);
+            //DrawGridLabels(dc);
 
             var worldWindow = ComputeWorldWindow();
 
