@@ -121,9 +121,22 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(default(BoundingBox)));
 
+        public BoundingBox ExpandedWorldWindow
+        {
+            get => (BoundingBox)GetValue(ExpandedWorldWindowProperty);
+            set => SetValue(ExpandedWorldWindowProperty, value);
+        }
+
+        public static readonly DependencyProperty ExpandedWorldWindowProperty =
+            DependencyProperty.Register(
+                nameof(ExpandedWorldWindow),
+                typeof(BoundingBox),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(default(BoundingBox)));
+
         public GeometryCanvas()
         {
-            _worldWindowBounds = new BoundingBox(-100, 1000, -100, 500);
+            _worldWindowBounds = new BoundingBox(-2000, 2000, -2000, 2000);
             _worldWindowLimiter = new WorldWindowLimiter(_worldWindowBounds);
         }
 

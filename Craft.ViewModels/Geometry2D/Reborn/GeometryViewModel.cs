@@ -9,6 +9,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
     {
         private ViewState _viewState;
         private BoundingBox _worldWindow;
+        private BoundingBox _expandedWorldWindow;
         private System.Windows.Point? _cursorWorldPosition;
         private bool _lockAspectRatio;
         private bool _lockXAxis;
@@ -30,6 +31,17 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _worldWindow = value;
+                OnPropertyChanged();
+                UpdateExpandedWorldWindowIfNeeded();
+            }
+        }
+
+        public BoundingBox ExpandedWorldWindow
+        {
+            get => _expandedWorldWindow;
+            set
+            {
+                _expandedWorldWindow = value;
                 OnPropertyChanged();
             }
         }
@@ -86,5 +98,47 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void UpdateExpandedWorldWindowIfNeeded()
+        {
+            if (_expandedWorldWindow == null ||
+                !Contains(ExpandedWorldWindow, WorldWindow) ||
+                ExpandedWorldWindow.Width / WorldWindow.Width > 2.0)
+            {
+                ExpandedWorldWindow = Expand(WorldWindow, 1.2);
+            }
+        }
+
+        private BoundingBox Expand(
+            BoundingBox box,
+            double factor)
+        {
+            var width = box.Width;
+            var height = box.Height;
+
+            var expandX = width * (factor - 1) / 1.2;
+            var expandY = height * (factor - 1) / 1.2;
+
+            return new BoundingBox(
+                box.MinX - expandX,
+                box.MaxX + expandX,
+                box.MinY - expandY,
+                box.MaxY + expandY);
+        }
+
+        private bool Contains(
+            BoundingBox bb1,
+            BoundingBox bb2)
+        {
+            if (bb1.MinX <= bb2.MinX &&
+                bb2.MaxX <= bb1.MaxX &&
+                bb1.MinY <= bb2.MinY &&
+                bb2.MaxY <= bb1.MaxY)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
