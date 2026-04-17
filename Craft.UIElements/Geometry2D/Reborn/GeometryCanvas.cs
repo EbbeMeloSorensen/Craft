@@ -145,13 +145,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     deltaPixel.X / ViewState.Scaling.Width,
                     deltaPixel.Y / ViewState.Scaling.Height);
 
-                // Det her kan vi ikke bare gøre - da det muligvis violater constraints
+                var worldWindow = ComputeWorldWindow();
 
-                ViewState = new ViewState(
-                    new Point(
-                        _panStartWorldOrigin.X + deltaWorld.X,
-                        _panStartWorldOrigin.Y + deltaWorld.Y),
-                    ViewState.Scaling);
+                UpdateViewState(new BoundingBox(
+                    _panStartWorldOrigin.X + deltaWorld.X,
+                    _panStartWorldOrigin.X + deltaWorld.X + worldWindow.Width,
+                    _panStartWorldOrigin.Y + deltaWorld.Y,
+                    _panStartWorldOrigin.Y + deltaWorld.Y + worldWindow.Height));
             }
             else
             {
@@ -217,10 +217,24 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     ViewState.WorldOrigin.X + ActualWidth / ViewState.Scaling.Width,
                     ViewState.WorldOrigin.Y,
                     ViewState.WorldOrigin.Y + ActualHeight / ViewState.Scaling.Height);
+        }
 
-            // Ikke her - WW er pr definition givet ud fra de andre parametre
-            //var limiter = new WorldWindowLimiter(new BoundingBox(0, 1000, 0, 1000));
-            //worldWindow = limiter.Limit(worldWindow);
+        private void UpdateViewState(
+            BoundingBox proposedWorldWindow)
+        {
+            var limiter = new WorldWindowLimiter(new BoundingBox(0, 1000, 0, 500));
+            //var possiblyConstrainedWorldWindow = limiter.Limit(proposedWorldWindow);
+            var possiblyConstrainedWorldWindow = proposedWorldWindow;
+
+            // Vi transformerer tilbage fra det World Window, vi kunne få
+            ViewState = new ViewState(
+                new Point(
+                    possiblyConstrainedWorldWindow.MinX,
+                    possiblyConstrainedWorldWindow.MinY),
+                new Size(
+                    proposedWorldWindow.Width / ActualWidth,
+                    proposedWorldWindow.Height / ActualHeight
+                ));
         }
     }
 }
