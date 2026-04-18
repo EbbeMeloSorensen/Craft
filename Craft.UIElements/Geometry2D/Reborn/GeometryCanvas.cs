@@ -245,10 +245,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else
             {
-                DrawGrid(dc, true, true);
-                DrawAxes(dc, true, true);
-                DrawAxisTicks(dc, true, true);
-                DrawGridLabels(dc, true, true);
+                //DrawGrid(dc, true, true);
+                //DrawAxes(dc, true, true);
+                //DrawAxisTicks(dc, true, true);
+                //DrawGridLabels(dc, true, true);
 
                 foreach (var item in Items)
                 {
@@ -477,6 +477,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
             int proposedZoomLevelX,
             int proposedZoomLevelY)
         {
+            if (WorldWindowBounds == null)
+            {
+                return;
+            }
+
             // If scaling is uniform, then we would like to preserve that
             var uniformZooming = proposedZoomLevelX == proposedZoomLevelY;
 
@@ -499,16 +504,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 proposedZoomLevelY = _minZoomLevel;
             }
 
-            var worldWindowBounds = new BoundingBox(0, 1000, 0, 500);
-
             // Make sure the zoom levels are adequately large to ensure the constrained world window covers the viewport
-            while (System.Math.Pow(_zoomBase, proposedZoomLevelX) * worldWindowBounds.Width < ActualWidth &&
+            while (System.Math.Pow(_zoomBase, proposedZoomLevelX) * WorldWindowBounds.Width < ActualWidth &&
                    proposedZoomLevelX < _maxZoomLevel)
             {
                 proposedZoomLevelX++;
             }
 
-            while (System.Math.Pow(_zoomBase, proposedZoomLevelY) * worldWindowBounds.Height < ActualHeight &&
+            while (System.Math.Pow(_zoomBase, proposedZoomLevelY) * WorldWindowBounds.Height < ActualHeight &&
                    proposedZoomLevelY < _maxZoomLevel)
             {
                 proposedZoomLevelY++;

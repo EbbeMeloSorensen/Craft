@@ -121,7 +121,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             _geometryDataSource = new MxCifQuadTreeGeometryDataSource();
 
             LockAspectRatio = true;
-            WorldWindowBounds = new BoundingBox(-1000, 1000, -1000, 1000);
+            WorldWindowBounds = new BoundingBox(-10000, 10000, -10000, 10000);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
