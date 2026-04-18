@@ -9,6 +9,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
     {
         private ViewState _viewState;
         private BoundingBox _worldWindow;
+        private BoundingBox _worldWindowBounds;
         private BoundingBox _expandedWorldWindow;
         private System.Windows.Point? _cursorWorldPosition;
         private bool _lockAspectRatio;
@@ -32,6 +33,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _worldWindow = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public BoundingBox WorldWindowBounds
+        {
+            get => _worldWindowBounds;
+            set
+            {
+                _worldWindowBounds = value;
                 OnPropertyChanged();
             }
         }
@@ -104,6 +115,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         public GeometryViewModel()
         {
             LockAspectRatio = true;
+            WorldWindowBounds = new BoundingBox(-1000, 1000, -1000, 1000);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

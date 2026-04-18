@@ -121,6 +121,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(default(BoundingBox)));
 
+        public BoundingBox WorldWindowBounds
+        {
+            get => (BoundingBox)GetValue(WorldWindowBoundsProperty);
+            set => SetValue(WorldWindowBoundsProperty, value);
+        }
+
+        public static readonly DependencyProperty WorldWindowBoundsProperty =
+            DependencyProperty.Register(
+                nameof(WorldWindowBounds),
+                typeof(BoundingBox),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(default(BoundingBox)));
+
         public BoundingBox ExpandedWorldWindow
         {
             get => (BoundingBox)GetValue(ExpandedWorldWindowProperty);
