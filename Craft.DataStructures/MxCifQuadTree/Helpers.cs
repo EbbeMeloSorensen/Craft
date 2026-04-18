@@ -46,9 +46,9 @@ public static class Helpers
         return rectangle.CenterY < cy ? QUADRANT.NE : QUADRANT.SE;
     }
 
-    public static bool CROSS_AXIS(
+    public static bool CROSS_AXIS<T>(
         this BoundingBox rectangle,
-        BinNode binNode,
+        BinNode<T> binNode,
         double cv,
         double lv,
         AXIS v)
@@ -77,9 +77,9 @@ public static class Helpers
         return rectangle.CROSS_AXIS(binNode.Child[(int)d], cv + g_VF[(int)d] * lv, lv, v);
     }
 
-    public static bool CIF_SEARCH(
+    public static bool CIF_SEARCH<T>(
         this BoundingBox rectangle,
-        QuadNode quadNode,
+        QuadNode<T> quadNode,
         double cx,
         double cy,
         double lx,
@@ -148,9 +148,9 @@ public static class Helpers
         return false;
     }
 
-    public static IEnumerable<BoundingBox> CIF_SEARCH_ALL(
+    public static IEnumerable<BoundingBox> CIF_SEARCH_ALL<T>(
         this BoundingBox rectangle,
-        QuadNode quadNode,
+        QuadNode<T> quadNode,
         double cx,
         double cy,
         double lx,
@@ -234,9 +234,9 @@ public static class Helpers
         */
     }
 
-    public static IEnumerable<BoundingBox> CROSS_AXIS_ALL(
+    public static IEnumerable<BoundingBox> CROSS_AXIS_ALL<T>(
         this BoundingBox rectangle,
-        BinNode binNode,
+        BinNode<T> binNode,
         double cv,
         double lv,
         AXIS v)

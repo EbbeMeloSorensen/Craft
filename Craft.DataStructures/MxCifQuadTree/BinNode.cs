@@ -2,21 +2,22 @@
 
 namespace Craft.DataStructures.MxCifQuadTree;
 
-public class BinNode
+public class BinNode<T>
 {
-    public BinNode[] Child;
+    public BinNode<T>[] Child;
 
     public List<BoundingBox> Rectangles { get; }
 
     public BinNode()
     {
-        Child = new BinNode[2];
+        Child = new BinNode<T>[2];
         Rectangles = new List<BoundingBox>();
     }
 
     public void Insert(
-        BoundingBox rectangle)
+        SpatialItem<T> spatialItem)
     {
+        var rectangle = spatialItem.Bounds;
         Rectangles.Add(rectangle);
     }
 

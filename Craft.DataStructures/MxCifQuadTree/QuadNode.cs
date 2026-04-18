@@ -1,33 +1,33 @@
-﻿using Craft.DataStructures.Geometry;
-using Craft.Logging;
+﻿using Craft.Logging;
 
 namespace Craft.DataStructures.MxCifQuadTree;
 
-public class QuadNode
+public class QuadNode<T>
 {
     private ILogger _logger;
 
     public static readonly int[] g_VF = [-1, 1];
 
-    public BinNode[] _axis;
-    public QuadNode[] _child;
+    public BinNode<T>[] _axis;
+    public QuadNode<T>[] _child;
 
     public QuadNode(
         ILogger logger)
     {
-        _axis = new BinNode[2];
-        _child = new QuadNode[4];
+        _axis = new BinNode<T>[2];
+        _child = new QuadNode<T>[4];
         _logger = logger;
     }
 
     public void InsertOnAxis(
-        BoundingBox rectangle,
+        SpatialItem<T> spatialItem,
         double cv,
         double lv,
         AXIS v)
     {
-        _axis[(int)v] ??= new BinNode();
+        _axis[(int)v] ??= new BinNode<T>();
 
+        var rectangle = spatialItem.Bounds;
         var binNode = _axis[(int)v];
         var d = rectangle.BIN_COMPARE(cv, v);
 
@@ -36,7 +36,7 @@ public class QuadNode
         while (d != DIRECTION.BOTH)
         {
             var index = (int)d;
-            binNode.Child[index] ??= new BinNode();
+            binNode.Child[index] ??= new BinNode<T>();
             binNode = binNode.Child[index];
             lv /= 2;
             cv += lv * g_VF[index];
@@ -59,6 +59,6 @@ public class QuadNode
                 $"        Intersecting at bin node level {binNodeLevel} => inserting rectangle in bin node");
         }
 
-        binNode.Insert(rectangle);
+        binNode.Insert(spatialItem);
     }
 }

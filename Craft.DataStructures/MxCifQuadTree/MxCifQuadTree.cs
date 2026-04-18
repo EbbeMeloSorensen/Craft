@@ -31,7 +31,7 @@ public class MxCifQuadTree<T>
     public static readonly int[] g_VF = [-1, 1];
 
     private BoundingBox _p;
-    private QuadNode _root;
+    private QuadNode<T> _root;
     private ILogger _logger;
 
     public MxCifQuadTree(
@@ -52,7 +52,7 @@ public class MxCifQuadTree<T>
     {
         if (_root == null)
         {
-            _root = new QuadNode(_logger);
+            _root = new QuadNode<T>(_logger);
         }
 
         var rectangle = spatialItem.Bounds;
@@ -79,7 +79,7 @@ public class MxCifQuadTree<T>
             var q = rectangle.CIF_COMPARE(cx, cy);
             var index = (int)q;
 
-            quadNode._child[index] ??= new QuadNode(_logger);
+            quadNode._child[index] ??= new QuadNode<T>(_logger);
             quadNode = quadNode._child[index];
             lx /= 2;
             ly /= 2;
@@ -107,7 +107,7 @@ public class MxCifQuadTree<T>
                     $"    Intersection with x axis on quad level {quadNodeLevel}");
             }
 
-            quadNode.InsertOnAxis(rectangle, cy, ly, AXIS.YA);
+            quadNode.InsertOnAxis(spatialItem, cy, ly, AXIS.YA);
         }
         else
         {
@@ -118,7 +118,7 @@ public class MxCifQuadTree<T>
                     $"    Intersection with y axis on quad level {quadNodeLevel}");
             }
 
-            quadNode.InsertOnAxis(rectangle, cx, lx, AXIS.XA);
+            quadNode.InsertOnAxis(spatialItem, cx, lx, AXIS.XA);
         }
     }
 
@@ -144,15 +144,15 @@ public class MxCifQuadTree<T>
         double CV;
         double LV;
 
-        QuadNode T = _root;
-        QuadNode FT = null;
-        QuadNode TT = null;
-        QuadNode TEMPC = null;
+        QuadNode<T> T = _root;
+        QuadNode<T> FT = null;
+        QuadNode<T> TT = null;
+        QuadNode<T> TEMPC = null;
 
-        BinNode B = null;
-        BinNode FB = null;
-        BinNode TB = null;
-        BinNode TEMPB = null;
+        BinNode<T> B = null;
+        BinNode<T> FB = null;
+        BinNode<T> TB = null;
+        BinNode<T> TEMPB = null;
 
         AXIS V;
         QUADRANT Q;
