@@ -16,6 +16,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _lockXAxis;
         private bool _lockYAxis;
         private bool _debugMode;
+        private IGeometryDataSource _geometryDataSource;
 
         public ViewState ViewState
         {
@@ -54,6 +55,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _expandedWorldWindow = value;
                 OnPropertyChanged();
+                UpdateLineCollection();
             }
         }
 
@@ -114,11 +116,24 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         public GeometryViewModel()
         {
+            _geometryDataSource = new SimpleGeometryDataSource();
+            //_geometryDataSource = new FunctionCurveDataSource();
+
             LockAspectRatio = true;
             WorldWindowBounds = new BoundingBox(-1000, 1000, -1000, 1000);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void UpdateLineCollection()
+        {
+            Lines.Clear();
+
+            _geometryDataSource
+                .Query(ExpandedWorldWindow)
+                .ToList()
+                .ForEach(line => Lines.Add(line));
+        }
     }
 }
