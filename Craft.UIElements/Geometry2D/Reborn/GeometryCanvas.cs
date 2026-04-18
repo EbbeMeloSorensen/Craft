@@ -1,11 +1,11 @@
-﻿using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -22,9 +22,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private System.Windows.Point _panStartMouse;
         private System.Windows.Point _panStartWorldOrigin;
         private bool _updateWorldWindowPending;
-
-        private BoundingBox _worldWindowBounds;
-        private WorldWindowLimiter _worldWindowLimiter;
 
         // =============================
         // Items (your geometries)
@@ -132,7 +129,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 nameof(WorldWindowBounds),
                 typeof(BoundingBox),
                 typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(default(BoundingBox)));
+                new FrameworkPropertyMetadata(
+                    default(BoundingBox),
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnWorldWindowBoundsChanged));
+
+        private static void OnWorldWindowBoundsChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            var canvas = (GeometryCanvas)d;
+            canvas.OnWorldWindowBoundsChanged((BoundingBox)e.NewValue);
+        }
 
         public BoundingBox ExpandedWorldWindow
         {
@@ -159,12 +167,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(bool),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public GeometryCanvas()
-        {
-            _worldWindowBounds = new BoundingBox(-2000, 2000, -2000, 2000);
-            _worldWindowLimiter = new WorldWindowLimiter(_worldWindowBounds);
-        }
 
         // =============================
         // Handle collection changes
@@ -216,12 +218,16 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 var worldPen = new Pen(Brushes.LimeGreen, 2);
                 var expandedPen = new Pen(Brushes.OrangeRed, 2);
+                var boundsPen = new Pen(Brushes.DarkMagenta, 2);
 
                 var worldRect = ToRect(WorldWindow);
                 dc.DrawRectangle(null, worldPen, worldRect);
 
                 var expandedRect = ToRect(ExpandedWorldWindow);
                 dc.DrawRectangle(null, expandedPen, expandedRect);
+
+                var boundsRect = ToRect(WorldWindowBounds);
+                dc.DrawRectangle(null, boundsPen, boundsRect);
 
                 foreach (var item in Items)
                 {
@@ -443,11 +449,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 ViewState.WorldOrigin.Y,
                 ViewState.WorldOrigin.Y + ActualHeight / ViewState.Scaling.Height);
 
-            //if (ExpandedWorldWindow == null)
-            //{
-            //    var a = 0;
-            //}
-
             return worldWindow;
         }
 
@@ -522,6 +523,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void UpdateViewState(
             BoundingBox proposedWorldWindow)
         {
+            if (WorldWindowBounds == null)
+            {
+                return;
+            }
+
             var worldWindow = ComputeWorldWindow();
 
             if (LockXAxis)
@@ -542,7 +548,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     worldWindow.MaxY);
             }
 
-            var newWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
+            var worldWindowLimiter = new WorldWindowLimiter(WorldWindowBounds);
+            var newWorldWindow = worldWindowLimiter.Limit(proposedWorldWindow);
 
             UpdateWorldWindowDeferred();
 
@@ -793,7 +800,15 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     !ExpandedWorldWindow.Contains(WorldWindow) ||
                     ExpandedWorldWindow.Width / WorldWindow.Width > 2.0)
                 {
-                    SetCurrentValue(ExpandedWorldWindowProperty, worldWindow.Expand(1.25));
+                    var expandedWorldWindow = worldWindow.Expand(1.25);
+
+                    if (WorldWindowBounds != null)
+                    {
+                        var limiter = new WorldWindowLimiter(WorldWindowBounds);
+                        expandedWorldWindow = limiter.Limit(expandedWorldWindow);
+                    }
+
+                    SetCurrentValue(ExpandedWorldWindowProperty, expandedWorldWindow);
                 }
 
                 InvalidateVisual();
@@ -822,6 +837,15 @@ namespace Craft.UIElements.Geometry2D.Reborn
             return new Rect(
                 new System.Windows.Point(box.MinX, box.MinY),
                 new System.Windows.Point(box.MaxX, box.MaxY));
+        }
+
+        private void OnWorldWindowBoundsChanged(
+            BoundingBox worldWindowBounds)
+        {
+            if (worldWindowBounds == null)
+                return;
+
+            UpdateViewState(ComputeWorldWindow());
         }
     }
 }
