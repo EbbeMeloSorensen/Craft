@@ -24,7 +24,7 @@ public enum AXIS
     YA
 }
 
-public class MxCifQuadTree
+public class MxCifQuadTree<T>
 {
     public static readonly int[] g_XF = [-1, 1, -1, 1];
     public static readonly int[] g_YF = [-1, -1, 1, 1];
@@ -48,13 +48,14 @@ public class MxCifQuadTree
     }
 
     public void Insert(
-        BoundingBox rectangle)
+        SpatialItem<T> spatialItem)
     {
         if (_root == null)
         {
             _root = new QuadNode(_logger);
         }
 
+        var rectangle = spatialItem.Bounds;
         var quadNode = _root;
         var cx = _p.CenterX;
         var cy = _p.CenterY;

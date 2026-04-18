@@ -4,6 +4,7 @@ using System.Globalization;
 using Craft.Logging;
 using Xunit;
 using Craft.DataStructures.Geometry;
+using Craft.DataStructures.MxCifQuadTree;
 
 namespace Craft.DataStructures.UnitTest;
 
@@ -29,20 +30,20 @@ public class MxCifQuadTreeTest
         var rectangle12 = new BoundingBox(85.5, 89.5, 91.75, 95.75);
 
         // Act
-        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new BoundingBox(0, 100, 0, 100), logger);
+        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree<Line>(new BoundingBox(0, 100, 0, 100), logger);
 
-        mxCifQuadTree1.Insert(rectangle1);
-        mxCifQuadTree1.Insert(rectangle2);
-        mxCifQuadTree1.Insert(rectangle3);
-        mxCifQuadTree1.Insert(rectangle4);
-        mxCifQuadTree1.Insert(rectangle5);
-        mxCifQuadTree1.Insert(rectangle6);
-        mxCifQuadTree1.Insert(rectangle7);
-        mxCifQuadTree1.Insert(rectangle8);
-        mxCifQuadTree1.Insert(rectangle9);
-        mxCifQuadTree1.Insert(rectangle10);
-        mxCifQuadTree1.Insert(rectangle11);
-        mxCifQuadTree1.Insert(rectangle12);
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle1, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle2, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle3, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle4, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle5, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle6, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle7, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle8, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle9, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle10, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle11, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle12, new Line()));
 
         var rectangleQ = new BoundingBox(45, 55, 70, 80);
 
@@ -74,20 +75,20 @@ public class MxCifQuadTreeTest
         var rectangle12 = new BoundingBox(85.5, 89.5, 91.75, 95.75);
 
         // Act
-        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree(new BoundingBox(0 ,100, 0, 100), logger);
+        var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree<Line>(new BoundingBox(0 ,100, 0, 100), logger);
 
-        mxCifQuadTree1.Insert(rectangle1);
-        mxCifQuadTree1.Insert(rectangle2);
-        mxCifQuadTree1.Insert(rectangle3);
-        mxCifQuadTree1.Insert(rectangle4);
-        mxCifQuadTree1.Insert(rectangle5);
-        mxCifQuadTree1.Insert(rectangle6);
-        mxCifQuadTree1.Insert(rectangle7);
-        mxCifQuadTree1.Insert(rectangle8);
-        mxCifQuadTree1.Insert(rectangle9);
-        mxCifQuadTree1.Insert(rectangle10);
-        mxCifQuadTree1.Insert(rectangle11);
-        mxCifQuadTree1.Insert(rectangle12);
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle1, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle2, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle3, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle4, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle5, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle6, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle7, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle8, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle9, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle10, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle11, new Line()));
+        mxCifQuadTree1.Insert(new SpatialItem<Line>(rectangle12, new Line()));
 
         // Act
         mxCifQuadTree1.Remove(rectangle1);
@@ -114,7 +115,7 @@ public class MxCifQuadTreeTest
 
         var logger = new TestLogger();
 
-        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new BoundingBox(0, 100, 0, 100), logger);
+        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree<Line>(new BoundingBox(0, 100, 0, 100), logger);
         var areaOfIntereset = new BoundingBox(40, 80, 20, 60);
 
         var lines = File.ReadAllLines(".//Data//all_rectangles.txt");
@@ -148,7 +149,7 @@ public class MxCifQuadTreeTest
             if (intersectsPreviouslyInsertedRectangles) continue;
 
             sw.WriteLine($"  <rect width=\"{halfWidth * 2}\" height=\"{halfHeight * 2}\" x=\"{centerX - halfWidth}\" y=\"{centerY - halfHeight}\" fill=\"green\" />");
-            mxCifQuadTree.Insert(rectangle);
+            mxCifQuadTree.Insert(new SpatialItem<Line>(rectangle, new Line()));
         }
 
         var intersectingRectangles = mxCifQuadTree
@@ -175,7 +176,7 @@ public class MxCifQuadTreeTest
         var rectanglesInTotal = 1000000;
         var maxNumberOfRectanglesInTree = 100000;
         var rectangleQueue = new Queue<BoundingBox>();
-        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree(new BoundingBox(0, 100, 0, 100), logger);
+        var mxCifQuadTree = new MxCifQuadTree.MxCifQuadTree<Line>(new BoundingBox(0, 100, 0, 100), logger);
         var controlList = new List<int>();
         var rectanglesInMxCifQuadTree = 0;
 
@@ -191,7 +192,7 @@ public class MxCifQuadTreeTest
             if (i < rectanglesInTotal)
             {
                 var rectangle = new BoundingBox(cx - 0.5 * width, cx + 0.5 * width, cy - 0.5 * height, cy + 0.5 * height);
-                mxCifQuadTree.Insert(rectangle);
+                mxCifQuadTree.Insert(new SpatialItem<Line>(rectangle, new Line()));
                 rectanglesInMxCifQuadTree++;
                 rectangleQueue.Enqueue(rectangle);
             }
