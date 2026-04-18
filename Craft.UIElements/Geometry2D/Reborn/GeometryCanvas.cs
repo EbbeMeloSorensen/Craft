@@ -803,7 +803,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     !ExpandedWorldWindow.Contains(WorldWindow) ||
                     ExpandedWorldWindow.Width / WorldWindow.Width > 2.0)
                 {
-                    var expandedWorldWindow = worldWindow.Expand(1.25);
+                    var expandedWorldWindow = worldWindow.Expand(1.2);
 
                     if (WorldWindowBounds != null)
                     {

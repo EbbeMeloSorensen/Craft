@@ -31,5 +31,14 @@ public static class Helpers
             boundingBox.MaxY + expandY);
     }
 
+    public static BoundingBox ComputeBoundingBox(
+        this LineModel lineModel)
+    {
+        var minX = System.Math.Min(lineModel.P1.X, lineModel.P2.X);
+        var maxX = System.Math.Max(lineModel.P1.X, lineModel.P2.X);
+        var minY = System.Math.Min(lineModel.P1.Y, lineModel.P2.Y);
+        var maxY = System.Math.Max(lineModel.P1.Y, lineModel.P2.Y);
+        return new BoundingBox(minX, maxX, minY, maxY);
+    }
 }
 
