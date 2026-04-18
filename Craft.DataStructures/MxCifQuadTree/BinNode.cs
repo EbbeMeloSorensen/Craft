@@ -6,19 +6,18 @@ public class BinNode<T>
 {
     public BinNode<T>[] Child;
 
-    public List<BoundingBox> Rectangles { get; }
+    public List<SpatialItem<T>> SpatialItems { get; }
 
     public BinNode()
     {
         Child = new BinNode<T>[2];
-        Rectangles = new List<BoundingBox>();
+        SpatialItems = new List<SpatialItem<T>>();
     }
 
     public void Insert(
         SpatialItem<T> spatialItem)
     {
-        var rectangle = spatialItem.Bounds;
-        Rectangles.Add(rectangle);
+        SpatialItems.Add(spatialItem);
     }
 
     public void Holds(

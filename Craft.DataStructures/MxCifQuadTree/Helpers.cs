@@ -60,7 +60,7 @@ public static class Helpers
         }
 
         // Does the rectangle intersect any of the rectangles of the bin node
-        if (binNode.Rectangles.Any(_ => _.Intersects(rectangle)))
+        if (binNode.SpatialItems.Any(_ => _.Bounds.Intersects(rectangle)))
         {
             return true;
         }
@@ -148,7 +148,7 @@ public static class Helpers
         return false;
     }
 
-    public static IEnumerable<BoundingBox> CIF_SEARCH_ALL<T>(
+    public static IEnumerable<SpatialItem<T>> CIF_SEARCH_ALL<T>(
         this BoundingBox rectangle,
         QuadNode<T> quadNode,
         double cx,
@@ -234,7 +234,7 @@ public static class Helpers
         */
     }
 
-    public static IEnumerable<BoundingBox> CROSS_AXIS_ALL<T>(
+    public static IEnumerable<SpatialItem<T>> CROSS_AXIS_ALL<T>(
         this BoundingBox rectangle,
         BinNode<T> binNode,
         double cv,
@@ -243,9 +243,9 @@ public static class Helpers
     {
         if (binNode != null)
         {
-            foreach (var rect in binNode.Rectangles.Where(_ => _.Intersects(rectangle)))
+            foreach (var spatialItem in binNode.SpatialItems.Where(_ => _.Bounds.Intersects(rectangle)))
             {
-                yield return rect;
+                yield return spatialItem;
             }
 
             lv /= 2;

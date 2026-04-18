@@ -123,8 +123,10 @@ public class MxCifQuadTree<T>
     }
 
     public void Remove(
-        BoundingBox rectangle)
+        SpatialItem<T> spatialItem)
     {
+        var rectangle = spatialItem.Bounds;
+
         if (_logger.IsEnabled)
         {
             _logger.WriteLineGoddammit(
@@ -217,7 +219,7 @@ public class MxCifQuadTree<T>
 
         while (B != null && D != DIRECTION.BOTH)
         {
-            if (B.Child[(int)D.OPDIR()] != null || B.Rectangles.Any())
+            if (B.Child[(int)D.OPDIR()] != null || B.SpatialItems.Any())
             {
                 FB = B;
                 DF = D;
@@ -252,7 +254,7 @@ public class MxCifQuadTree<T>
             }
 
             // No collapsing is possible, so just remove the rectangle from the bin
-            B.Rectangles.Remove(rectangle);
+            B.SpatialItems.Remove(spatialItem);
         }
         else
         {
@@ -415,11 +417,11 @@ public class MxCifQuadTree<T>
         return intersection;
     }
 
-    public IEnumerable<BoundingBox> GetAllIntersecting(
+    public IEnumerable<SpatialItem<T>> GetAllIntersecting(
         BoundingBox rectangle)
     {
         return _root == null 
-            ? Enumerable.Empty<BoundingBox>() 
+            ? Enumerable.Empty<SpatialItem<T>>() 
             : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
     }
 
