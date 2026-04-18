@@ -207,7 +207,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 return;
 
             var worldToViewportTransform = CreateWorldToViewportTransform(WorldWindow, RenderSize);
-            var pen = new Pen(Brushes.IndianRed, 3); // always 3 pixels
+            var pen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
+            pen.Freeze();
 
             if (DebugMode)
             {
@@ -219,6 +220,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 var worldPen = new Pen(Brushes.LimeGreen, 2);
                 var expandedPen = new Pen(Brushes.OrangeRed, 2);
                 var boundsPen = new Pen(Brushes.DarkMagenta, 2);
+
+                expandedPen.Freeze();
 
                 var worldRect = ToRect(WorldWindow);
                 dc.DrawRectangle(null, worldPen, worldRect);
