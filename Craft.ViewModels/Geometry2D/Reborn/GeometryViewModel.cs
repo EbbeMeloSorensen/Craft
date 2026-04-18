@@ -14,6 +14,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _lockAspectRatio;
         private bool _lockXAxis;
         private bool _lockYAxis;
+        private bool _debugMode;
 
         public ViewState ViewState
         {
@@ -32,7 +33,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _worldWindow = value;
                 OnPropertyChanged();
-                UpdateExpandedWorldWindowIfNeeded();
             }
         }
 
@@ -86,6 +86,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
+        public bool DebugMode
+        {
+            get => _debugMode;
+            set
+            {
+                _debugMode = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<LineModel> Lines { get; }
             = new ObservableCollection<LineModel>();
 
@@ -98,47 +108,5 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-        private void UpdateExpandedWorldWindowIfNeeded()
-        {
-            if (_expandedWorldWindow == null ||
-                !Contains(ExpandedWorldWindow, WorldWindow) ||
-                ExpandedWorldWindow.Width / WorldWindow.Width > 2.0)
-            {
-                ExpandedWorldWindow = Expand(WorldWindow, 1.2);
-            }
-        }
-
-        private BoundingBox Expand(
-            BoundingBox box,
-            double factor)
-        {
-            var width = box.Width;
-            var height = box.Height;
-
-            var expandX = width * (factor - 1) / 1.2;
-            var expandY = height * (factor - 1) / 1.2;
-
-            return new BoundingBox(
-                box.MinX - expandX,
-                box.MaxX + expandX,
-                box.MinY - expandY,
-                box.MaxY + expandY);
-        }
-
-        private bool Contains(
-            BoundingBox bb1,
-            BoundingBox bb2)
-        {
-            if (bb1.MinX <= bb2.MinX &&
-                bb2.MaxX <= bb1.MaxX &&
-                bb1.MinY <= bb2.MinY &&
-                bb2.MaxY <= bb1.MaxY)
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }

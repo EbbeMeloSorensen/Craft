@@ -22,12 +22,13 @@
                                    CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
                                    LockAspectRatio="{Binding LockAspectRatio}"
                                    LockXAxis="{Binding LockXAxis}"
-                                   LockYAxis="{Binding LockYAxis}"
+                                   DebugMode="{Binding DebugMode}"
                                    DataContext="{Binding GeometryViewModel}"/>
         </Border>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -58,7 +59,9 @@
             <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockXAxis}" />
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Lock y axis:" Margin="0, 0, 10, 0"/>
             <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockYAxis}" />
-            <GroupBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window">
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Debug mode:" Margin="0, 0, 10, 0"/>
+            <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding GeometryViewModel.DebugMode}" />
+            <GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -80,7 +83,7 @@
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow.MaxY, StringFormat=N2}"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="Expanded World Window">
+            <GroupBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="Expanded World Window">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

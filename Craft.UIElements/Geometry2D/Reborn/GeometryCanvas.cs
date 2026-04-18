@@ -134,6 +134,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(default(BoundingBox)));
 
+        public bool DebugMode
+        {
+            get => (bool)GetValue(DebugModeProperty);
+            set => SetValue(DebugModeProperty, value);
+        }
+
+        public static readonly DependencyProperty DebugModeProperty =
+            DependencyProperty.Register(
+                nameof(DebugMode),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
         public GeometryCanvas()
         {
             _worldWindowBounds = new BoundingBox(-2000, 2000, -2000, 2000);
@@ -174,27 +187,56 @@ namespace Craft.UIElements.Geometry2D.Reborn
             base.OnRender(dc);
 
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
-
-            DrawGrid(dc, true, true);
-            DrawAxes(dc, true, true);
-            DrawAxisTicks(dc, true, true);
-            DrawGridLabels(dc, true, true);
             
-            if (Items == null /*|| worldWindow.IsEmpty*/)
+            if (Items == null || WorldWindow == null)
                 return;
 
-            var worldWindow = ComputeWorldWindow();
-            var transform = CreateWorldToViewportTransform(worldWindow, RenderSize);
-            var pen = new Pen(Brushes.IndianRed, 3); // always 2 pixels
+            var worldToViewportTransform = CreateWorldToViewportTransform(WorldWindow, RenderSize);
+            var pen = new Pen(Brushes.IndianRed, 3); // always 3 pixels
 
-            foreach (var item in Items)
+            if (DebugMode)
             {
-                if (item is LineModel line)
-                {
-                    var p1 = transform.Transform(line.P1);
-                    var p2 = transform.Transform(line.P2);
+                dc.PushTransform(new MatrixTransform(worldToViewportTransform));
 
-                    dc.DrawLine(pen, p1, p2);
+                var debugTransform = CreateDebugShrinkTransform(WorldWindow, 0.5);
+                dc.PushTransform(debugTransform);
+
+                var worldPen = new Pen(Brushes.LimeGreen, 2);
+                var expandedPen = new Pen(Brushes.OrangeRed, 2);
+
+                var worldRect = ToRect(WorldWindow);
+                dc.DrawRectangle(null, worldPen, worldRect);
+
+                var expandedRect = ToRect(ExpandedWorldWindow);
+                dc.DrawRectangle(null, expandedPen, expandedRect);
+
+                foreach (var item in Items)
+                {
+                    if (item is LineModel line)
+                    {
+                        dc.DrawLine(pen, line.P1, line.P2);
+                    }
+                }
+
+                dc.Pop();
+                dc.Pop();
+            }
+            else
+            {
+                DrawGrid(dc, true, true);
+                DrawAxes(dc, true, true);
+                DrawAxisTicks(dc, true, true);
+                DrawGridLabels(dc, true, true);
+
+                foreach (var item in Items)
+                {
+                    if (item is LineModel line)
+                    {
+                        var p1 = worldToViewportTransform.Transform(line.P1);
+                        var p2 = worldToViewportTransform.Transform(line.P2);
+
+                        dc.DrawLine(pen, p1, p2);
+                    }
                 }
             }
         }
@@ -382,11 +424,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private BoundingBox ComputeWorldWindow()
         {
             // This is BY DEFINITION the world window, i.e it is derived by the parameters: origin, scaling, and viewport size
-            return new BoundingBox(
+            var worldWindow = new BoundingBox(
                 ViewState.WorldOrigin.X,
                 ViewState.WorldOrigin.X + ActualWidth / ViewState.Scaling.Width,
                 ViewState.WorldOrigin.Y,
                 ViewState.WorldOrigin.Y + ActualHeight / ViewState.Scaling.Height);
+
+            //if (ExpandedWorldWindow == null)
+            //{
+            //    var a = 0;
+            //}
+
+            return worldWindow;
         }
 
         // =============================
@@ -722,10 +771,44 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
+                // Should we perhaps update the expanded world window first? It does after all affect the line collection
                 _updateWorldWindowPending = false;
                 var worldWindow = ComputeWorldWindow();
                 SetCurrentValue(WorldWindowProperty, worldWindow);
+
+                if (ExpandedWorldWindow == null ||
+                    !ExpandedWorldWindow.Contains(WorldWindow) ||
+                    ExpandedWorldWindow.Width / WorldWindow.Width > 2.0)
+                {
+                    SetCurrentValue(ExpandedWorldWindowProperty, worldWindow.Expand(1.25));
+                }
+
+                InvalidateVisual();
+
             }), DispatcherPriority.Loaded);
+        }
+
+        private Transform CreateDebugShrinkTransform(
+            BoundingBox worldWindow,
+            double scale)
+        {
+            var cx = (worldWindow.MinX + worldWindow.MaxX) / 2.0;
+            var cy = (worldWindow.MinY + worldWindow.MaxY) / 2.0;
+
+            var group = new TransformGroup();
+
+            group.Children.Add(new TranslateTransform(-cx, -cy));
+            group.Children.Add(new ScaleTransform(scale, scale));
+            group.Children.Add(new TranslateTransform(cx, cy));
+
+            return group;
+        }
+
+        private Rect ToRect(BoundingBox box)
+        {
+            return new Rect(
+                new System.Windows.Point(box.MinX, box.MinY),
+                new System.Windows.Point(box.MaxX, box.MaxY));
         }
     }
 }
