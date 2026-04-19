@@ -10,7 +10,7 @@ public class FunctionCurveDataSource : IGeometryDataSource
     {
         var points = new List<System.Windows.Point>();
 
-        for (var x = window.MinX; x <= window.MaxX; x += 0.5)
+        for (var x = window.MinX; x <= window.MaxX; x += 10)
         {
             var point = new System.Windows.Point(x, 100 * System.Math.Sin(0.05 * x) + 200);
             points.Add(point);

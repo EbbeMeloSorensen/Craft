@@ -161,8 +161,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         public GeometryViewModel()
         {
             //_geometryDataSource = new SimpleGeometryDataSource();
-            //_geometryDataSource = new FunctionCurveDataSource();
-            _geometryDataSource = new MxCifQuadTreeGeometryDataSource();
+            _geometryDataSource = new FunctionCurveDataSource();
+            //_geometryDataSource = new MxCifQuadTreeGeometryDataSource();
 
             LockAspectRatio = true;
             WorldWindowBounds = new BoundingBox(-1000, 1000, -1000, 1000);
