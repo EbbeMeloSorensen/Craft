@@ -112,6 +112,9 @@ In progress:
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
   - Pas på den ikke fucker aspect ratio
+* For reborn - der skal også være mulighed for IKKE at operere med diskrete zoom-værdier - f.eks. hvis det skal understøtte spil, hvor zoom f.eks. kan afhænge af spillerens hastighed
+* For reborn - hvis man har låst x- eller y-akse skal det influere på expanded world window, så det kun udvides i den retning, der ikke er låst
+* For reborn - lav det som ChatGpt foreslog med at gøre grid lines fine
 * For reborn - window zooming / ROI selection - altså hvor man dragger et vindue ligesom i den gamle implementation
 * For reborn - Zoom in/out by clicking a button
 * Try out codex - should be possible to integrate in visual studio or vs code..
