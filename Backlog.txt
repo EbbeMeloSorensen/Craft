@@ -111,6 +111,7 @@ Done:
 In progress:
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
+  - Pas på den ikke fucker aspect ratio
 * For reborn - window zooming / ROI selection - altså hvor man dragger et vindue ligesom i den gamle implementation
 * For reborn - Zoom in/out by clicking a button
 * Try out codex - should be possible to integrate in visual studio or vs code..
