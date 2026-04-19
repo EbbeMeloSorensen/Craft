@@ -2,7 +2,7 @@
 
 namespace Craft.ViewModels.Geometry2D.Reborn;
 
-public struct WorldFocusRequest
+public class WorldFocusRequest
 {
     public Point WorldPoint;
     public Size ViewportRatio;
