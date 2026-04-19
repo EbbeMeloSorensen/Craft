@@ -946,7 +946,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void OnRequestedWorldFocusChanged(
             WorldFocusRequest requestedWorldFocus)
         {
-            throw new NotImplementedException();
+            var worldWindow = ComputeWorldWindow();
+            var minX = requestedWorldFocus.WorldPoint.X - requestedWorldFocus.ViewportRatio.Width * worldWindow.Width;
+            var minY = requestedWorldFocus.WorldPoint.Y - requestedWorldFocus.ViewportRatio.Height * worldWindow.Height;
+            var maxX = minX + worldWindow.Width;
+            var maxY = minY + worldWindow.Height;
+            var proposedWorldWindow = new BoundingBox(minX, maxX, minY, maxY);
+            UpdateViewState(proposedWorldWindow);
         }
 
         private void OnWorldWindowBoundsChanged(
