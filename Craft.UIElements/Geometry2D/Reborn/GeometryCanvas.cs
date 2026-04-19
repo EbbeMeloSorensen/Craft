@@ -120,6 +120,22 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(default(BoundingBox)));
 
+        public BoundingBox RequestedWorldWindow
+        {
+            get => (BoundingBox)GetValue(RequestedWorldWindowProperty);
+            set => SetValue(RequestedWorldWindowProperty, value);
+        }
+
+        public static readonly DependencyProperty RequestedWorldWindowProperty =
+            DependencyProperty.Register(
+                nameof(RequestedWorldWindow),
+                typeof(BoundingBox),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(
+                    default(BoundingBox),
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnRequestedWorldWindowChanged));
+
         public BoundingBox WorldWindowBounds
         {
             get => (BoundingBox)GetValue(WorldWindowBoundsProperty);
@@ -135,14 +151,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     default(BoundingBox),
                     FrameworkPropertyMetadataOptions.AffectsRender,
                     OnWorldWindowBoundsChanged));
-
-        private static void OnWorldWindowBoundsChanged(
-            DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
-        {
-            var canvas = (GeometryCanvas)d;
-            canvas.OnWorldWindowBoundsChanged((BoundingBox)e.NewValue);
-        }
 
         public BoundingBox ExpandedWorldWindow
         {
@@ -875,11 +883,34 @@ namespace Craft.UIElements.Geometry2D.Reborn
             return group;
         }
 
-        private Rect ToRect(BoundingBox box)
+        private Rect ToRect(
+            BoundingBox box)
         {
             return new Rect(
                 new System.Windows.Point(box.MinX, box.MinY),
                 new System.Windows.Point(box.MaxX, box.MaxY));
+        }
+
+        private static void OnRequestedWorldWindowChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            var canvas = (GeometryCanvas)d;
+            canvas.OnRequestedWorldWindowChanged((BoundingBox)e.NewValue);
+        }
+
+        private static void OnWorldWindowBoundsChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            var canvas = (GeometryCanvas)d;
+            canvas.OnWorldWindowBoundsChanged((BoundingBox)e.NewValue);
+        }
+
+        private void OnRequestedWorldWindowChanged(
+            BoundingBox requestedWorldWindow)
+        {
+            UpdateViewState(requestedWorldWindow);
         }
 
         private void OnWorldWindowBoundsChanged(

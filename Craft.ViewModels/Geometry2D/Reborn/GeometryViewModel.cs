@@ -9,6 +9,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
     {
         private ViewState _viewState;
         private BoundingBox _worldWindow;
+        private BoundingBox _requestedWorldWindow;
         private BoundingBox _worldWindowBounds;
         private BoundingBox _expandedWorldWindow;
         private System.Windows.Point? _cursorWorldPosition;
@@ -36,6 +37,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _worldWindow = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public BoundingBox RequestedWorldWindow
+        {
+            get => _requestedWorldWindow;
+            set
+            {
+                _requestedWorldWindow = value;
                 OnPropertyChanged();
             }
         }
