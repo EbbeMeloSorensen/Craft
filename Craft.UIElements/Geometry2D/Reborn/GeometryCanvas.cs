@@ -230,6 +230,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
         public GeometryCanvas()
         {
             CompositionTarget.Rendering += OnRendering;
+            Unloaded += (s, e) => CompositionTarget.Rendering -= OnRendering;
         }
 
         // =============================
