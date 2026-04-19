@@ -107,6 +107,10 @@ Done:
 * For reborn - lock y axis
 * For reborn - lock aspect ratio
 * For reborn - minor/major updates (erstattet af det der expanded window)
+* For MxCifQuadTree - Lav rectangle sådan at den kan slæbe rundt på et objekt.
+* For MxCifQuadTree - Som bruger af et MxCifQuadTree skal man gerne kunne abstrahere fra, at der er sådan et træ
+* For MxCifQuadTree - Implementer det med at man også kan FJERNE rektangler igen i CS-implementationen
+* For MxCifQuadTree - kør noget timing
 
 In progress:
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
@@ -122,10 +126,6 @@ In progress:
 * For reborn - time series views
 * For reborn - panning by "paging"
 
-* For MxCifQuadTree - Lav rectangle sådan at den kan slæbe rundt på et objekt.
-* For MxCifQuadTree - Som bruger af et MxCifQuadTree skal man gerne kunne abstrahere fra, at der er sådan et træ
-* For MxCifQuadTree - Implementer det med at man også kan FJERNE rektangler igen i CS-implementationen
-* For MxCifQuadTree - kør noget timing
 * For MxCifQuadTree - operer med noget max-dybde (så ikke det går amok det med at opdatere)
 * For MxCifQuadTree - Lav en mulighed for at man kan opdatere et objekt og efterfølgende dets position i træet
 
