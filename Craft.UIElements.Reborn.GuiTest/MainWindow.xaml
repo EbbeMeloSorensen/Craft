@@ -19,6 +19,7 @@
                                    ViewState="{Binding ViewState, Mode=OneWayToSource}"
                                    WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
                                    RequestedWorldWindow="{Binding RequestedWorldWindow, Mode=TwoWay}"
+                                   RequestedWorldFocus="{Binding RequestedWorldFocus, Mode=TwoWay}"
                                    WorldWindowBounds="{Binding WorldWindowBounds, Mode=TwoWay}"
                                    ExpandedWorldWindow="{Binding ExpandedWorldWindow, Mode=TwoWay}"
                                    CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
@@ -32,6 +33,7 @@
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -171,6 +173,34 @@
                     <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
                             Width="50" Margin="5, 0, 5, 1"
                             Command="{Binding SetWorldWindowCommand}"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2"
+                      BorderBrush="DarkSlateGray" BorderThickness="1"
+                      Header="Place World Focus">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="1"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="1"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="1"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Y max:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="1"/>
+                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
+                            Width="50" Margin="5, 0, 5, 1"
+                            Command="{Binding SetWorldFocusCommand}"/>
                 </Grid>
             </GroupBox>
         </Grid>

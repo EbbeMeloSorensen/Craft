@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using Craft.DataStructures.Geometry;
 using Craft.ViewModels.Geometry2D.Reborn;
+using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
 {
@@ -56,6 +58,7 @@ namespace Craft.UIElements.Reborn.GuiTest
         }
 
         public ICommand SetWorldWindowCommand { get; }
+        public ICommand SetWorldFocusCommand { get; }
 
         public GeometryViewModel GeometryViewModel { get; }
 
@@ -66,6 +69,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             GeometryViewModel = new GeometryViewModel();
 
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
+            SetWorldFocusCommand = new RelayCommand(SetWorldFocus);
 
             RequestedWW_XMin = "-200.0";
             RequestedWW_XMax = "200.0";
@@ -85,6 +89,15 @@ namespace Craft.UIElements.Reborn.GuiTest
             {
                 GeometryViewModel.RequestedWorldWindow = new BoundingBox(xMin, xMax, yMin, yMax);
             }
+        }
+
+        private void SetWorldFocus()
+        {
+            GeometryViewModel.RequestedWorldFocus = new WorldFocusRequest
+            {
+                ViewportRatio = new Size(0.5, 0.5),
+                WorldPoint = new Point(100.0, 100.0)
+            };
         }
     }
 }

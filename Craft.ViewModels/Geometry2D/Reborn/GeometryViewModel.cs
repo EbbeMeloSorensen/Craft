@@ -10,6 +10,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private ViewState _viewState;
         private BoundingBox _worldWindow;
         private BoundingBox _requestedWorldWindow;
+        private WorldFocusRequest _requestedWorldFocus;
         private BoundingBox _worldWindowBounds;
         private BoundingBox _expandedWorldWindow;
         private System.Windows.Point? _cursorWorldPosition;
@@ -47,6 +48,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _requestedWorldWindow = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public WorldFocusRequest RequestedWorldFocus
+        {
+            get => _requestedWorldFocus;
+            set
+            {
+                _requestedWorldFocus = value;
                 OnPropertyChanged();
             }
         }

@@ -141,6 +141,22 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     FrameworkPropertyMetadataOptions.AffectsRender,
                     OnRequestedWorldWindowChanged));
 
+        public WorldFocusRequest RequestedWorldFocus
+        {
+            get => (WorldFocusRequest)GetValue(RequestedWorldFocusProperty);
+            set => SetValue(RequestedWorldFocusProperty, value);
+        }
+
+        public static readonly DependencyProperty RequestedWorldFocusProperty =
+            DependencyProperty.Register(
+                nameof(RequestedWorldFocus),
+                typeof(WorldFocusRequest),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(
+                    default(WorldFocusRequest),
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnRequestedWorldFocusChanged));
+
         // Denne bruges til at kommunikere udefra kommende requests om at ændre grænser for world vinduet
         // Dvs elementet her MODTAGER DATA udefra gennem denne property
         public BoundingBox WorldWindowBounds
@@ -905,6 +921,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
             canvas.OnRequestedWorldWindowChanged((BoundingBox)e.NewValue);
         }
 
+        private static void OnRequestedWorldFocusChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            var canvas = (GeometryCanvas)d;
+            canvas.OnRequestedWorldFocusChanged((WorldFocusRequest)e.NewValue);
+        }
+
         private static void OnWorldWindowBoundsChanged(
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
@@ -917,6 +941,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
             BoundingBox requestedWorldWindow)
         {
             UpdateViewState(requestedWorldWindow);
+        }
+
+        private void OnRequestedWorldFocusChanged(
+            WorldFocusRequest requestedWorldFocus)
+        {
+            throw new NotImplementedException();
         }
 
         private void OnWorldWindowBoundsChanged(
