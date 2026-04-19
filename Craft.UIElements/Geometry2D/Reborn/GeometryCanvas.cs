@@ -227,6 +227,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public GeometryCanvas()
+        {
+            CompositionTarget.Rendering += OnRendering;
+        }
+
         // =============================
         // Handle collection changes
         // =============================
@@ -961,6 +966,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
             _worldWindowLimiter = new WorldWindowLimiter(worldWindowBounds);
             var proposedWorldWindow = ComputeWorldWindow();
             UpdateViewState(proposedWorldWindow);
+        }
+
+        private void OnRendering(
+            object sender,
+            EventArgs e)
+        {
+            // Todo: Lav noget fedt her, så world window bevæger sig smoothly :)
+            var a = 0;
         }
     }
 }
