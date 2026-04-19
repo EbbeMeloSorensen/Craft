@@ -170,6 +170,32 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public bool ShowGrid
+        {
+            get => (bool)GetValue(ShowGridProperty);
+            set => SetValue(ShowGridProperty, value);
+        }
+
+        public static readonly DependencyProperty ShowGridProperty =
+            DependencyProperty.Register(
+                nameof(ShowGrid),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public bool ShowCoordinateSystem
+        {
+            get => (bool)GetValue(ShowCoordinateSystemProperty);
+            set => SetValue(ShowCoordinateSystemProperty, value);
+        }
+
+        public static readonly DependencyProperty ShowCoordinateSystemProperty =
+            DependencyProperty.Register(
+                nameof(ShowCoordinateSystem),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
         // =============================
         // Handle collection changes
         // =============================
@@ -248,10 +274,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else
             {
-                //DrawGrid(dc, true, true);
-                //DrawAxes(dc, true, true);
-                //DrawAxisTicks(dc, true, true);
-                //DrawGridLabels(dc, true, true);
+                if (ShowGrid)
+                {
+                    DrawGrid(dc, true, true);
+                }
+
+                if (ShowCoordinateSystem)
+                {
+                    DrawAxes(dc, true, true);
+                    DrawAxisTicks(dc, true, true);
+                    DrawGridLabels(dc, true, true);
+                }
 
                 foreach (var item in Items)
                 {

@@ -16,6 +16,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _lockXAxis;
         private bool _lockYAxis;
         private bool _debugMode;
+        private bool _showGrid;
+        private bool _showCoordinateSystem;
         private IGeometryDataSource _geometryDataSource;
 
         public ViewState ViewState
@@ -109,6 +111,26 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
+        public bool ShowGrid
+        {
+            get => _showGrid;
+            set
+            {
+                _showGrid = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShowCoordinateSystem
+        {
+            get => _showCoordinateSystem;
+            set
+            {
+                _showCoordinateSystem = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<LineModel> Lines { get; }
             = new ObservableCollection<LineModel>();
 
@@ -122,7 +144,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
             LockAspectRatio = true;
             WorldWindowBounds = new BoundingBox(-1000, 1000, -1000, 1000);
-            //UpdateLineCollection();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

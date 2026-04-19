@@ -23,12 +23,16 @@
                                    CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
                                    LockAspectRatio="{Binding LockAspectRatio}"
                                    LockXAxis="{Binding LockXAxis}"
+                                   ShowGrid="{Binding ShowGrid}"
+                                   ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
                                    DebugMode="{Binding DebugMode}"
                                    DataContext="{Binding GeometryViewModel}"/>
         </Border>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -61,9 +65,13 @@
             <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockXAxis}" />
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Lock y axis:" Margin="0, 0, 10, 0"/>
             <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockYAxis}" />
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="Debug mode:" Margin="0, 0, 10, 0"/>
-            <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding GeometryViewModel.DebugMode}" />
-            <GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window">
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Show grid:" Margin="0, 0, 10, 0"/>
+            <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding GeometryViewModel.ShowGrid}" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="Show coordinate system:" Margin="0, 0, 10, 0"/>
+            <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding GeometryViewModel.ShowCoordinateSystem}" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Debug mode:" Margin="0, 0, 10, 0"/>
+            <CheckBox Grid.Row="9" Grid.Column="1" IsChecked="{Binding GeometryViewModel.DebugMode}" />
+            <GroupBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -85,7 +93,7 @@
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow.MaxY, StringFormat=N2}"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="Expanded World Window">
+            <GroupBox Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="Expanded World Window">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -107,7 +115,7 @@
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.ExpandedWorldWindow.MaxY, StringFormat=N2}"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window Bounds">
+            <GroupBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window Bounds">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

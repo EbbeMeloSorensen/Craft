@@ -107,7 +107,9 @@ Done:
 * For reborn - lock y axis
 * For reborn - lock aspect ratio
 
+
 In progress:
+* Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window
 * For reborn - window zooming
 * For reborn - Zoom in/out by clicking a button
