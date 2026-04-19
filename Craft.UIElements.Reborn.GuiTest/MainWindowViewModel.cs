@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -9,6 +10,51 @@ namespace Craft.UIElements.Reborn.GuiTest
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        private string _requestedWwXMin;
+        private string _requestedWwXMax;
+        private string _requestedWwYMin;
+        private string _requestedWwYMax;
+
+        public string RequestedWW_XMin
+        {
+            get => _requestedWwXMin;
+            set
+            {
+                _requestedWwXMin = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_XMax
+        {
+            get => _requestedWwXMax;
+            set
+            {
+                _requestedWwXMax = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_YMin
+        {
+            get => _requestedWwYMin;
+            set
+            {
+                _requestedWwYMin = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_YMax
+        {
+            get => _requestedWwYMax;
+            set
+            {
+                _requestedWwYMax = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SetWorldWindowCommand { get; }
 
         public GeometryViewModel GeometryViewModel { get; }
@@ -20,6 +66,11 @@ namespace Craft.UIElements.Reborn.GuiTest
             GeometryViewModel = new GeometryViewModel();
 
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
+
+            RequestedWW_XMin = "-200.0";
+            RequestedWW_XMax = "200.0";
+            RequestedWW_YMin = "-200.0";
+            RequestedWW_YMax = "200.0";
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -27,7 +78,13 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         private void SetWorldWindow()
         {
-            GeometryViewModel.RequestedWorldWindow = new BoundingBox(-500, 200, -500, 200);
+            if (double.TryParse(RequestedWW_XMin, CultureInfo.InvariantCulture, out var xMin) &&
+                double.TryParse(RequestedWW_XMax, CultureInfo.InvariantCulture, out var xMax) &&
+                double.TryParse(RequestedWW_YMin, CultureInfo.InvariantCulture, out var yMin) &&
+                double.TryParse(RequestedWW_YMax, CultureInfo.InvariantCulture, out var yMax))
+            {
+                GeometryViewModel.RequestedWorldWindow = new BoundingBox(xMin, xMax, yMin, yMax);
+            }
         }
     }
 }

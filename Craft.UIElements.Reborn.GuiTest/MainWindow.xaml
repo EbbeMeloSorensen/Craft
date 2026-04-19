@@ -117,7 +117,9 @@
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.ExpandedWorldWindow.MaxY, StringFormat=N2}"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="DarkSlateGray" BorderThickness="1" Header="World Window Bounds">
+            <GroupBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2"
+                      BorderBrush="DarkSlateGray" BorderThickness="1"
+                      Header="World Window Bounds">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -139,10 +141,38 @@
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindowBounds.MaxY, StringFormat=N2}"/>
                 </Grid>
             </GroupBox>
-            <StackPanel Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2">
-                <Button Content="Set world window"
-                        Command="{Binding SetWorldWindowCommand}"/>
-            </StackPanel>
+            <GroupBox Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2"
+                      BorderBrush="DarkSlateGray" BorderThickness="1"
+                      Header="Place World Window">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_XMin}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_XMax}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_YMin}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Y max:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_YMax}"/>
+                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
+                            Width="50" Margin="5, 0, 5, 1"
+                            Command="{Binding SetWorldWindowCommand}"/>
+                </Grid>
+            </GroupBox>
         </Grid>
     </Grid>
 </Window>
