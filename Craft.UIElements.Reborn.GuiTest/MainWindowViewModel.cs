@@ -25,6 +25,11 @@ namespace Craft.UIElements.Reborn.GuiTest
         private string _requestedWwYMin;
         private string _requestedWwYMax;
 
+        private string _requestedWwFocusX;
+        private string _requestedWwFocusY;
+        private string _requestedWwFocusRatioX;
+        private string _requestedWwFocusRatioY;
+
         public string RequestedWW_XMin
         {
             get => _requestedWwXMin;
@@ -65,6 +70,46 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
+        public string RequestedWW_FocusX
+        {
+            get => _requestedWwFocusX;
+            set
+            {
+                _requestedWwFocusX = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_FocusY
+        {
+            get => _requestedWwFocusY;
+            set
+            {
+                _requestedWwFocusY = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_FocusRatioX
+        {
+            get => _requestedWwFocusRatioX;
+            set
+            {
+                _requestedWwFocusRatioX = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_FocusRatioY
+        {
+            get => _requestedWwFocusRatioY;
+            set
+            {
+                _requestedWwFocusRatioY = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SetWorldWindowCommand { get; }
         public ICommand SetWorldFocusCommand { get; }
 
@@ -84,6 +129,11 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_XMax = "200.0";
             RequestedWW_YMin = "-200.0";
             RequestedWW_YMax = "200.0";
+
+            RequestedWW_FocusX = "200";
+            RequestedWW_FocusY = "300";
+            RequestedWW_FocusRatioX = "0.75";
+            RequestedWW_FocusRatioY = "0.75";
 
             // Timer: ~60 FPS
             _timer = new DispatcherTimer
@@ -114,13 +164,17 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         private void SetWorldFocus()
         {
-            // Todo: Get it from the gui
-
-            GeometryViewModel.RequestedWorldFocus = new WorldFocusRequest
+            if (double.TryParse(RequestedWW_FocusX, CultureInfo.InvariantCulture, out var focusX) &&
+                double.TryParse(RequestedWW_FocusY, CultureInfo.InvariantCulture, out var focusY) &&
+                double.TryParse(RequestedWW_FocusRatioX, CultureInfo.InvariantCulture, out var ratioX) &&
+                double.TryParse(RequestedWW_FocusRatioY, CultureInfo.InvariantCulture, out var ratioY))
             {
-                ViewportRatio = new Size(1.0, 1.0),
-                WorldPoint = new Point(200.0, 300.0)
-            };
+                GeometryViewModel.RequestedWorldFocus = new WorldFocusRequest
+                {
+                    ViewportRatio = new Size(ratioX, ratioY),
+                    WorldPoint = new Point(focusX, focusY)
+                };
+            }
         }
 
         private void OnTick(object sender, EventArgs e)

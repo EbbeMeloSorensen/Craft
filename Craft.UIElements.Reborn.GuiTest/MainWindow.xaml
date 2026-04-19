@@ -191,13 +191,17 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="1"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_FocusX}"/>
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="1"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_FocusY}"/>
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="1"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_FocusRatioX}"/>
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Y max:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Margin="1"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_FocusRatioY}"/>
                     <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
                             Width="50" Margin="5, 0, 5, 1"
                             Command="{Binding SetWorldFocusCommand}"/>
