@@ -41,6 +41,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(null, OnItemsChanged));
 
+        // Dette er elementets TILSTAND, som indeholder al nødvendig information for at kunne beregne world vindue og transformere world til viewport koordinater.
         public ViewState ViewState
         {
             get => (ViewState)GetValue(ViewStateProperty);
@@ -107,6 +108,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false));
 
+        // Dette er WorldWindow, som er afledt af ViewState og som bruges til at kommunikere world vinduets position og størrelse til omverdenen
+        // Elementet her modtager IKKE data gennem denne property
         public BoundingBox WorldWindow
         {
             get => (BoundingBox)GetValue(WorldWindowProperty);
@@ -120,6 +123,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(default(BoundingBox)));
 
+        // Denne bruges til at kommunikere udefra kommende requests om at ændre world vinduet
+        // Dvs elementet her MODTAGER DATA udefra gennem denne property
         public BoundingBox RequestedWorldWindow
         {
             get => (BoundingBox)GetValue(RequestedWorldWindowProperty);
@@ -136,6 +141,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     FrameworkPropertyMetadataOptions.AffectsRender,
                     OnRequestedWorldWindowChanged));
 
+        // Denne bruges til at kommunikere udefra kommende requests om at ændre grænser for world vinduet
+        // Dvs elementet her MODTAGER DATA udefra gennem denne property
         public BoundingBox WorldWindowBounds
         {
             get => (BoundingBox)GetValue(WorldWindowBoundsProperty);
@@ -307,7 +314,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
-        // Suggested by ChatGpt, but it seems unnecessary
         protected override void OnRenderSizeChanged(
             SizeChangedInfo sizeInfo)
         {
