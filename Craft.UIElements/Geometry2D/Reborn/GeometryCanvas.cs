@@ -11,6 +11,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 {
     public class GeometryCanvas : FrameworkElement
     {
+        private WorldWindowLimiter _worldWindowLimiter;
+
         private const double _zoomBase = 1.2;
         private const int _minZoomLevel = -20;
         private const int _maxZoomLevel = 20;
@@ -203,18 +205,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
             
-            if (Items == null || WorldWindow == null)
+            if (Items == null /*|| WorldWindow == null*/)
                 return;
 
-            var worldToViewportTransform = CreateWorldToViewportTransform(WorldWindow, RenderSize);
+            var worldWindow = ComputeWorldWindow();
+            var worldToViewportTransform = CreateWorldToViewportTransform(worldWindow, RenderSize);
             var pen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
-            pen.Freeze();
+            //pen.Freeze();
 
             if (DebugMode)
             {
                 dc.PushTransform(new MatrixTransform(worldToViewportTransform));
 
-                var debugTransform = CreateDebugShrinkTransform(WorldWindow, 0.5);
+                var debugTransform = CreateDebugShrinkTransform(worldWindow, 0.5);
                 dc.PushTransform(debugTransform);
 
                 var worldPen = new Pen(Brushes.LimeGreen, 2);
@@ -223,7 +226,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 expandedPen.Freeze();
 
-                var worldRect = ToRect(WorldWindow);
+                var worldRect = ToRect(worldWindow);
                 dc.DrawRectangle(null, worldPen, worldRect);
 
                 var expandedRect = ToRect(ExpandedWorldWindow);
@@ -268,6 +271,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
             SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
+
+            if (_worldWindowLimiter == null)
+            {
+                return;
+            }
+
             var worldWindow = ComputeWorldWindow();
 
             // Som udgangspunkt prøver vi at holde fast i de eksisterende zoom levels
@@ -477,11 +486,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             int proposedZoomLevelX,
             int proposedZoomLevelY)
         {
-            if (WorldWindowBounds == null)
-            {
-                return;
-            }
-
             // If scaling is uniform, then we would like to preserve that
             var uniformZooming = proposedZoomLevelX == proposedZoomLevelY;
 
@@ -529,7 +533,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void UpdateViewState(
             BoundingBox proposedWorldWindow)
         {
-            if (WorldWindowBounds == null)
+            if (_worldWindowLimiter == null)
             {
                 return;
             }
@@ -848,10 +852,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void OnWorldWindowBoundsChanged(
             BoundingBox worldWindowBounds)
         {
-            if (worldWindowBounds == null)
-                return;
-
-            UpdateViewState(ComputeWorldWindow());
+            _worldWindowLimiter = new WorldWindowLimiter(worldWindowBounds);
+            var proposedWorldWindow = ComputeWorldWindow();
+            UpdateViewState(proposedWorldWindow);
         }
     }
 }

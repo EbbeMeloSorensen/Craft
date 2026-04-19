@@ -56,9 +56,6 @@ public class WorldWindowLimiter
 
     private BoundingBox ClampToBounds(BoundingBox worldWindow)
     {
-        //var width = worldWindow.Width;
-        //var height = worldWindow.Height;
-
         var minX = worldWindow.MinX;
         var minY = worldWindow.MinY;
         var maxX = worldWindow.MaxX;
