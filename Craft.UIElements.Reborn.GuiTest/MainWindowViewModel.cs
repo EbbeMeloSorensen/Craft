@@ -17,9 +17,6 @@ namespace Craft.UIElements.Reborn.GuiTest
         private const double Radius = 200;
         private static readonly Point Center = new Point(100, 100);
 
-        private readonly DispatcherTimer _timer;
-        private double _angle;
-
         private string _requestedWwXMin;
         private string _requestedWwXMax;
         private string _requestedWwYMin;
@@ -132,20 +129,8 @@ namespace Craft.UIElements.Reborn.GuiTest
 
             RequestedWW_FocusX = "200";
             RequestedWW_FocusY = "300";
-            RequestedWW_FocusRatioX = "0.75";
-            RequestedWW_FocusRatioY = "0.75";
-
-            // Timer: ~60 FPS
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(32)
-                //Interval = TimeSpan.FromMilliseconds(16)
-                //Interval = TimeSpan.FromMilliseconds(1)
-            };
-
-            // Uncomment to enable continuous rotation of the world focus
-            //_timer.Tick += OnTick;
-            //_timer.Start();
+            RequestedWW_FocusRatioX = "0.5";
+            RequestedWW_FocusRatioY = "0.5";
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -175,20 +160,6 @@ namespace Craft.UIElements.Reborn.GuiTest
                     WorldPoint = new Point(focusX, focusY)
                 };
             }
-        }
-
-        private void OnTick(object sender, EventArgs e)
-        {
-            _angle += 0.05; // speed of rotation
-
-            var x = Center.X + Radius * System.Math.Cos(_angle);
-            var y = Center.Y + Radius * System.Math.Sin(_angle);
-
-            GeometryViewModel.RequestedWorldFocus = new WorldFocusRequest
-            {
-                ViewportRatio = new Size(0.5, 0.5),
-                WorldPoint = new Point(x, y)
-            };
         }
     }
 }

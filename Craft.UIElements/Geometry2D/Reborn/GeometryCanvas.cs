@@ -24,6 +24,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private System.Windows.Point _panStartMouse;
         private System.Windows.Point _panStartWorldOrigin;
         private bool _updateWorldWindowPending;
+        private TimeSpan _lastTime;
+        private BoundingBox _current;
+        private BoundingBox _target;
 
         // =============================
         // Items (your geometries)
@@ -958,7 +961,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var maxX = minX + worldWindow.Width;
             var maxY = minY + worldWindow.Height;
             var proposedWorldWindow = new BoundingBox(minX, maxX, minY, maxY);
-            UpdateViewState(proposedWorldWindow);
+
+            // Instead of just setting it, we glide towards it
+            // Todo: Make this an option
+            //UpdateViewState(proposedWorldWindow);
+
+            _current = worldWindow;
+            _target = proposedWorldWindow;
         }
 
         private void OnWorldWindowBoundsChanged(
@@ -973,8 +982,65 @@ namespace Craft.UIElements.Geometry2D.Reborn
             object sender,
             EventArgs e)
         {
-            // Todo: Lav noget fedt her, så world window bevæger sig smoothly :)
-            var a = 0;
+            if (e is not RenderingEventArgs args)
+                return;
+
+            if (_lastTime == TimeSpan.Zero)
+            {
+                _lastTime = args.RenderingTime;
+                return;
+            }
+
+            // Determine the timespan since the previous frame
+            var dt = (args.RenderingTime - _lastTime).TotalSeconds;
+            _lastTime = args.RenderingTime;
+
+            UpdateCamera(dt);
+        }
+
+        private double Lerp(double a, double b, double t)
+        {
+            return a + (b - a) * t;
+        }
+
+        private void UpdateCamera(double dt)
+        {
+            if (_target == null)
+            {
+                return;
+            }
+
+            if (System.Math.Abs(_current.MinX - _target.MinX) < 0.001 &&
+                System.Math.Abs(_current.MinY - _target.MinY) < 0.001)
+            {
+                _current = _target;
+                _target = null;
+            }
+            else
+            {
+                // Todo: Make this a configuration
+                //var smoothing = 5.0; // higher = faster response
+                var smoothing = 7.0; // higher = faster response
+                //var smoothing = 3.0; // higher = faster response
+
+                var ratio = 1 - System.Math.Exp(-smoothing * dt);
+                var width = Lerp(_current.Width, _target.Width, ratio);
+                var height = Lerp(_current.Height, _target.Height, ratio);
+                var minX = Lerp(_current.MinX, _target.MinX, ratio);
+                var minY = Lerp(_current.MinY, _target.MinY, ratio);
+                var maxX = minX + width;
+                var maxY = minY + height;
+
+                _current = new BoundingBox(
+                    minX, maxX, minY, maxY);
+            }
+
+            UpdateViewState(_current);
+
+            if (_target == null)
+            {
+                _current = null;
+            }
         }
     }
 }
