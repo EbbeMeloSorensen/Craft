@@ -966,6 +966,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             // Todo: Make this an option
             //UpdateViewState(proposedWorldWindow);
 
+            // Todo: Make sure the _target is valid
             _current = worldWindow;
             _target = proposedWorldWindow;
         }
