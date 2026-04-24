@@ -111,9 +111,9 @@ Done:
 * For MxCifQuadTree - Som bruger af et MxCifQuadTree skal man gerne kunne abstrahere fra, at der er sådan et træ
 * For MxCifQuadTree - Implementer det med at man også kan FJERNE rektangler igen i CS-implementationen
 * For MxCifQuadTree - kør noget timing
+* For reborn - Smoothing skal kunne slås til og fra
 
 In progress:
-* For reborn - Smoothing skal kunne slås til og fra
 * For reborn - Smooth faktor skal være en property, der kan sættes udefra
 * For reborn - target for ww flytning skal limites
 * For reborn - panning skal kunne override en igangværende flytning af wold window
