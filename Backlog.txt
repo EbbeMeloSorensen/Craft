@@ -113,9 +113,14 @@ Done:
 * For MxCifQuadTree - kør noget timing
 
 In progress:
+* For reborn - Smoothing skal kunne slås til og fra
+* For reborn - Smooth faktor skal være en property, der kan sættes udefra
+* For reborn - target for ww flytning skal limites
+* For reborn - panning skal kunne override en igangværende flytning af wold window
+* For reborn - Vinduet skal kunne tracke noget, der ændrer sig over tid
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
-  - Pas på den ikke fucker aspect ratio
+  - Pas på, den ikke fucker aspect ratio
 * For reborn - der skal også være mulighed for IKKE at operere med diskrete zoom-værdier - f.eks. hvis det skal understøtte spil, hvor zoom f.eks. kan afhænge af spillerens hastighed
 * For reborn - hvis man har låst x- eller y-akse skal det influere på expanded world window, så det kun udvides i den retning, der ikke er låst
 * For reborn - lav det som ChatGpt foreslog med at gøre grid lines fine

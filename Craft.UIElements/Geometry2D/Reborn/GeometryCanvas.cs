@@ -1020,9 +1020,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
             else
             {
                 // Todo: Make this a configuration
+                //var smoothing = 7.0; // higher = faster response
                 //var smoothing = 5.0; // higher = faster response
-                var smoothing = 7.0; // higher = faster response
                 //var smoothing = 3.0; // higher = faster response
+                var smoothing = 1.0; // higher = faster response
 
                 var ratio = 1 - System.Math.Exp(-smoothing * dt);
                 var width = Lerp(_current.Width, _target.Width, ratio);
