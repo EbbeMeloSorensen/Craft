@@ -17,6 +17,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _lockAspectRatio;
         private bool _lockXAxis;
         private bool _lockYAxis;
+        private bool _dampFocusShifts;
         private bool _debugMode;
         private bool _showGrid;
         private bool _showCoordinateSystem;
@@ -119,6 +120,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _lockYAxis = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool DampFocusShifts
+        {
+            get => _dampFocusShifts;
+            set
+            {
+                _dampFocusShifts = value;
                 OnPropertyChanged();
             }
         }

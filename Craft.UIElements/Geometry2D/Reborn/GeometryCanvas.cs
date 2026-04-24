@@ -111,6 +111,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false));
 
+        public bool DampFocusShifts
+        {
+            get => (bool)GetValue(DampFocusShiftsProperty);
+            set => SetValue(DampFocusShiftsProperty, value);
+        }
+
+        public static readonly DependencyProperty DampFocusShiftsProperty =
+            DependencyProperty.Register(
+                nameof(DampFocusShifts),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false));
+
         // Dette er WorldWindow, som er afledt af ViewState og som bruges til at kommunikere world vinduets position og størrelse til omverdenen
         // Elementet her modtager IKKE data gennem denne property
         public BoundingBox WorldWindow
@@ -630,8 +643,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     worldWindow.MaxY);
             }
 
-            var worldWindowLimiter = new WorldWindowLimiter(WorldWindowBounds);
-            var newWorldWindow = worldWindowLimiter.Limit(proposedWorldWindow);
+            var newWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
 
             UpdateWorldWindowDeferred();
 
@@ -873,7 +885,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                // Should we perhaps update the expanded world window first? It does after all affect the line collection
                 _updateWorldWindowPending = false;
                 var worldWindow = ComputeWorldWindow();
                 SetCurrentValue(WorldWindowProperty, worldWindow);
@@ -883,12 +894,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     ExpandedWorldWindow.Width / WorldWindow.Width > 2.0)
                 {
                     var expandedWorldWindow = worldWindow.Expand(1.2);
-
-                    if (WorldWindowBounds != null)
-                    {
-                        var limiter = new WorldWindowLimiter(WorldWindowBounds);
-                        expandedWorldWindow = limiter.Limit(expandedWorldWindow);
-                    }
+                    expandedWorldWindow = _worldWindowLimiter.Limit(expandedWorldWindow);
 
                     SetCurrentValue(ExpandedWorldWindowProperty, expandedWorldWindow);
                 }
@@ -962,13 +968,16 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var maxY = minY + worldWindow.Height;
             var proposedWorldWindow = new BoundingBox(minX, maxX, minY, maxY);
 
-            // Instead of just setting it, we glide towards it
-            // Todo: Make this an option
-            //UpdateViewState(proposedWorldWindow);
-
-            // Todo: Make sure the _target is valid
-            _current = worldWindow;
-            _target = proposedWorldWindow;
+            if (DampFocusShifts)
+            {
+                // Todo: Make sure the _target is valid
+                _current = worldWindow;
+                _target = proposedWorldWindow;
+            }
+            else
+            {
+                UpdateViewState(proposedWorldWindow);
+            }
         }
 
         private void OnWorldWindowBoundsChanged(
@@ -1004,7 +1013,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             return a + (b - a) * t;
         }
 
-        private void UpdateCamera(double dt)
+        private void UpdateCamera(
+            double dt)
         {
             if (_target == null)
             {
