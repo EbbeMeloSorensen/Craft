@@ -44,6 +44,17 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
+        public BoundingBox ExpandedWorldWindow
+        {
+            get => _expandedWorldWindow;
+            set
+            {
+                _expandedWorldWindow = value;
+                OnPropertyChanged();
+                UpdateLineCollection();
+            }
+        }
+
         public BoundingBox RequestedWorldWindow
         {
             get => _requestedWorldWindow;
@@ -71,17 +82,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _worldWindowBounds = value;
                 OnPropertyChanged();
-            }
-        }
-
-        public BoundingBox ExpandedWorldWindow
-        {
-            get => _expandedWorldWindow;
-            set
-            {
-                _expandedWorldWindow = value;
-                OnPropertyChanged();
-                UpdateLineCollection();
             }
         }
 

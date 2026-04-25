@@ -152,6 +152,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(default(BoundingBox)));
 
+        public BoundingBox ExpandedWorldWindow
+        {
+            get => (BoundingBox)GetValue(ExpandedWorldWindowProperty);
+            set => SetValue(ExpandedWorldWindowProperty, value);
+        }
+
+        public static readonly DependencyProperty ExpandedWorldWindowProperty =
+            DependencyProperty.Register(
+                nameof(ExpandedWorldWindow),
+                typeof(BoundingBox),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(default(BoundingBox)));
+
         // Denne bruges til at kommunikere udefra kommende requests om at ændre world vinduet
         // Dvs elementet her MODTAGER DATA udefra gennem denne property
         public BoundingBox RequestedWorldWindow
@@ -203,19 +216,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     default(BoundingBox),
                     FrameworkPropertyMetadataOptions.AffectsRender,
                     OnWorldWindowBoundsChanged));
-
-        public BoundingBox ExpandedWorldWindow
-        {
-            get => (BoundingBox)GetValue(ExpandedWorldWindowProperty);
-            set => SetValue(ExpandedWorldWindowProperty, value);
-        }
-
-        public static readonly DependencyProperty ExpandedWorldWindowProperty =
-            DependencyProperty.Register(
-                nameof(ExpandedWorldWindow),
-                typeof(BoundingBox),
-                typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(default(BoundingBox)));
 
         public bool DebugMode
         {
