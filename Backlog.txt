@@ -112,11 +112,12 @@ Done:
 * For MxCifQuadTree - Implementer det med at man også kan FJERNE rektangler igen i CS-implementationen
 * For MxCifQuadTree - kør noget timing
 * For reborn - Smoothing skal kunne slås til og fra
+* For reborn - Smooth faktor skal være en property, der kan sættes udefra
+* For reborn - panning skal kunne override en igangværende flytning af wold window
+* For reborn - Parker lige det med zoom levels - zoom med mus skal bare være et sporgsmål om at gange OG DIVIDERE med samme faktor
 
 In progress:
-* For reborn - Smooth faktor skal være en property, der kan sættes udefra
 * For reborn - target for ww flytning skal limites
-* For reborn - panning skal kunne override en igangværende flytning af wold window
 * For reborn - Vinduet skal kunne tracke noget, der ændrer sig over tid
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"

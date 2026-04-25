@@ -10,14 +10,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 {
     public class GeometryCanvas : FrameworkElement
     {
+        private const double _zoomingFactor = 1.2;
         private WorldWindowLimiter _worldWindowLimiter;
-
-        private const double _zoomBase = 1.2;
-        private const int _minZoomLevel = -20;
-        private const int _maxZoomLevel = 20;
-
-        private int _zoomLevelX;
-        private int _zoomLevelY;
 
         private bool _isPanning;
         private System.Windows.Point _panStartMouse;
@@ -133,7 +127,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 nameof(FocusShiftDamping),
                 typeof(double),
                 typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(3.0));
+                new FrameworkPropertyMetadata(5.0));
 
         // Dette er WorldWindow, som er afledt af ViewState og som bruges til at kommunikere world vinduets position og størrelse til omverdenen
         // Elementet her modtager IKKE data gennem denne property
@@ -378,25 +372,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             var worldWindow = ComputeWorldWindow();
 
-            // Som udgangspunkt prøver vi at holde fast i de eksisterende zoom levels
-            // (men det kan være nødvendigt at zoomd ind for at sikre, at det constrainede world vindue dække view porten)
-            var proposedZoomLevelX = _zoomLevelX;
-            var proposedZoomLevelY = _zoomLevelY;
-
-            UpdateZoomLevels(
-                proposedZoomLevelX,
-                proposedZoomLevelY);
-
-            // Vi beregner den nye skalering, der sædvanligvis vil være uændret
-            var scaling = new Size(
-                System.Math.Pow(_zoomBase, _zoomLevelX),
-                System.Math.Pow(_zoomBase, _zoomLevelY));
-
             var proposedWorldWindow = new BoundingBox(
                 worldWindow.MinX,
-                worldWindow.MinX + sizeInfo.NewSize.Width / scaling.Width,
+                worldWindow.MinX + sizeInfo.NewSize.Width / ViewState.Scaling.Width,
                 worldWindow.MinY,
-                worldWindow.MinY + sizeInfo.NewSize.Height / scaling.Height);
+                worldWindow.MinY + sizeInfo.NewSize.Height / ViewState.Scaling.Height);
 
             UpdateViewState(proposedWorldWindow);
             InvalidateVisual();
@@ -409,6 +389,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+                if (_target != null)
+                {
+                    _target = null;
+                    _current = null;
+                }
+
                 Mouse.OverrideCursor = Cursors.Hand;
                 _isPanning = true;
                 _panStartMouse = e.GetPosition(this);
@@ -509,33 +495,29 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var ctrl = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
             var alt = (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
 
-            var proposedZoomLevelX = _zoomLevelX;
-            var proposedZoomLevelY = _zoomLevelY;
+            var proposedScalingWidth = ViewState.Scaling.Width;
+            var proposedScalingHeight = ViewState.Scaling.Height;
 
             // Determine new desired zoom level
             if (LockAspectRatio || !ctrl && !alt)
             {
-                proposedZoomLevelX += steps;
-                proposedZoomLevelY += steps;
+                proposedScalingWidth *= System.Math.Pow(_zoomingFactor, steps);
+                proposedScalingHeight *= System.Math.Pow(_zoomingFactor, steps);
             }
             else if (ctrl)
             {
                 // X only
-                proposedZoomLevelX += steps;
+                proposedScalingWidth *= System.Math.Pow(_zoomingFactor, steps);
             }
             else if (alt)
             {
                 // Y only
-                proposedZoomLevelY += steps;
+                proposedScalingHeight *= System.Math.Pow(_zoomingFactor, steps);
             }
 
-            UpdateZoomLevels(
-                proposedZoomLevelX,
-                proposedZoomLevelY);
-
             var scaling = new Size(
-                System.Math.Pow(_zoomBase, _zoomLevelX),
-                System.Math.Pow(_zoomBase, _zoomLevelY));
+                proposedScalingWidth,
+                proposedScalingHeight);
 
             // 3. Compute new origin so cursor stays fixed
             var proposedOriginX = worldBefore.X - mousePos.X / scaling.Width;
@@ -579,54 +561,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             m.Scale(scaleX, scaleY);
 
             return m;
-        }
-
-        private void UpdateZoomLevels(
-            int proposedZoomLevelX,
-            int proposedZoomLevelY)
-        {
-            // If scaling is uniform, then we would like to preserve that
-            var uniformZooming = proposedZoomLevelX == proposedZoomLevelY;
-
-            // Make sure zoom level is within bounds
-            if (proposedZoomLevelX > _maxZoomLevel)
-            {
-                proposedZoomLevelX = _maxZoomLevel;
-            }
-            else if (proposedZoomLevelX < _minZoomLevel)
-            {
-                proposedZoomLevelX = _minZoomLevel;
-            }
-
-            if (proposedZoomLevelY > _maxZoomLevel)
-            {
-                proposedZoomLevelY = _maxZoomLevel;
-            }
-            else if (proposedZoomLevelY < _minZoomLevel)
-            {
-                proposedZoomLevelY = _minZoomLevel;
-            }
-
-            // Make sure the zoom levels are adequately large to ensure the constrained world window covers the viewport
-            while (System.Math.Pow(_zoomBase, proposedZoomLevelX) * WorldWindowBounds.Width < ActualWidth &&
-                   proposedZoomLevelX < _maxZoomLevel)
-            {
-                proposedZoomLevelX++;
-            }
-
-            while (System.Math.Pow(_zoomBase, proposedZoomLevelY) * WorldWindowBounds.Height < ActualHeight &&
-                   proposedZoomLevelY < _maxZoomLevel)
-            {
-                proposedZoomLevelY++;
-            }
-
-            if (uniformZooming && proposedZoomLevelX != proposedZoomLevelY)
-            {
-                proposedZoomLevelX = proposedZoomLevelY = System.Math.Max(proposedZoomLevelX, proposedZoomLevelY);
-            }
-
-            _zoomLevelX = proposedZoomLevelX;
-            _zoomLevelY = proposedZoomLevelY;
         }
 
         private void UpdateViewState(
