@@ -898,7 +898,51 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void OnRequestedWorldWindowChanged(
             BoundingBox requestedWorldWindow)
         {
-            UpdateViewState(requestedWorldWindow);
+            var proposedWorldWindow = _worldWindowLimiter.Limit(requestedWorldWindow);
+
+            if (LockAspectRatio)
+            {
+                // Make sure to preserve aspect ratio while also ensuring that the entire proposed world window is visible
+                var aspectRatioViewport = ActualWidth / ActualHeight;
+                var aspectRatioProposed = proposedWorldWindow.Width / proposedWorldWindow.Height;
+
+                if (aspectRatioProposed > aspectRatioViewport)
+                {
+                    // Increase height of proposed world window
+                    var heightAdjusted = proposedWorldWindow.Width / aspectRatioViewport;
+                    var minYAdjusted = proposedWorldWindow.CenterY - heightAdjusted / 2;
+
+                    proposedWorldWindow = new BoundingBox(
+                        proposedWorldWindow.MinX,
+                        proposedWorldWindow.MaxX,
+                        minYAdjusted,
+                        minYAdjusted + heightAdjusted);
+                }
+                else if (aspectRatioProposed < aspectRatioViewport)
+                {
+                    // Increase width of proposed world window
+                    var widthAdjusted = proposedWorldWindow.Height * aspectRatioViewport;
+                    var minXAdjusted = proposedWorldWindow.CenterX - widthAdjusted / 2;
+
+                    proposedWorldWindow = new BoundingBox(
+                        minXAdjusted,
+                        minXAdjusted + widthAdjusted,
+                        proposedWorldWindow.MinY,
+                        proposedWorldWindow.MaxY);
+                }
+
+                // Now we have a world window that preserves aspect ratio but it might be too big to fit inside bounds. If so, we scale it uniformly down
+            }
+
+            if (DampFocusShifts)
+            {
+                _current = ComputeWorldWindow();
+                _target = proposedWorldWindow;
+            }
+            else
+            {
+                UpdateViewState(proposedWorldWindow);
+            }
         }
 
         private void OnRequestedWorldFocusChanged(
@@ -913,9 +957,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (DampFocusShifts)
             {
-                // Todo: Make sure the _target is valid
                 _current = worldWindow;
-                _target = proposedWorldWindow;
+                _target = _worldWindowLimiter.Limit(proposedWorldWindow);
             }
             else
             {

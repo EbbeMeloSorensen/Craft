@@ -201,7 +201,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             LockAspectRatio = true;
             DampFocusShifts = true;
             FocusShiftDamping = 5.0;
-            WorldWindowBounds = new BoundingBox(-100, 1000, -100, 800);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

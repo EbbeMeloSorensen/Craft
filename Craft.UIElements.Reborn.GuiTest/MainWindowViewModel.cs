@@ -134,16 +134,20 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         public MainWindowViewModel()
         {
-            GeometryViewModel = new GeometryViewModel();
+            GeometryViewModel = new GeometryViewModel
+            {
+                WorldWindowBounds = new BoundingBox(-200, 600, -200, 500)
+            };
 
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
             SetWorldFocusCommand = new RelayCommand(SetWorldFocus);
 
             // Default values for the world window input fields
-            RequestedWW_XMin = "-200.0";
-            RequestedWW_XMax = "200.0";
-            RequestedWW_YMin = "-200.0";
-            RequestedWW_YMax = "200.0";
+            RequestedWW_XMin = "195.0";
+            RequestedWW_XMax = "405.0";
+            //RequestedWW_YMin = "195.0";
+            RequestedWW_YMin = "-5.0";
+            RequestedWW_YMax = "305.0";
 
             RequestedWW_FocusX = "200";
             RequestedWW_FocusY = "300";
