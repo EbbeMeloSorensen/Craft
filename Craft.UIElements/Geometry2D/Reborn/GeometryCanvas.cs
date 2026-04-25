@@ -2,7 +2,6 @@
 using Craft.ViewModels.Geometry2D.Reborn;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -153,20 +152,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     default(BoundingBox),
                     OnWorldWindowChanged));
 
-        public BoundingBox WorldWindow2
+        public BoundingBox WorldWindowExpanded
         {
-            get => (BoundingBox)GetValue(WorldWindow2Property);
-            set => SetValue(WorldWindow2Property, value);
+            get => (BoundingBox)GetValue(WorldWindowExpandedProperty);
+            set => SetValue(WorldWindowExpandedProperty, value);
         }
 
-        public static readonly DependencyProperty WorldWindow2Property =
+        public static readonly DependencyProperty WorldWindowExpandedProperty =
             DependencyProperty.Register(
-                nameof(WorldWindow2),
+                nameof(WorldWindowExpanded),
                 typeof(BoundingBox),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(
-                    default(BoundingBox),
-                    OnWorldWindow2Changed));
+                    default(BoundingBox)));
 
         // Denne bruges til at kommunikere udefra kommende requests om at ændre world vinduet
         // Dvs elementet her MODTAGER DATA udefra gennem denne property
@@ -324,7 +322,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 var worldRect = ToRect(worldWindow);
                 dc.DrawRectangle(null, worldPen, worldRect);
 
-                var expandedRect = ToRect(WorldWindow2);
+                var expandedRect = ToRect(WorldWindowExpanded);
                 dc.DrawRectangle(null, expandedPen, expandedRect);
 
                 var boundsRect = ToRect(WorldWindowBounds);
@@ -926,13 +924,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             canvas.OnWorldWindowChanged((BoundingBox)e.NewValue);
         }
 
-        private static void OnWorldWindow2Changed(
-            DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
-        {
-            //Debug.WriteLine("WorldWindow2 changed!");
-        }
-
         private static void OnRequestedWorldWindowChanged(
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
@@ -960,13 +951,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void OnWorldWindowChanged(
             BoundingBox worldWindow)
         {
-            if (WorldWindow2 == null ||
-                !WorldWindow2.Contains(worldWindow) ||
-                WorldWindow2.Width / worldWindow.Width > 2.0)
+            if (WorldWindowExpanded == null ||
+                !WorldWindowExpanded.Contains(worldWindow) ||
+                WorldWindowExpanded.Width / worldWindow.Width > 2.0)
             {
                 var expandedWorldWindow = worldWindow.Expand(1.2);
                 expandedWorldWindow = _worldWindowLimiter.Limit(expandedWorldWindow);
-                SetCurrentValue(WorldWindow2Property, expandedWorldWindow);
+                SetCurrentValue(WorldWindowExpandedProperty, expandedWorldWindow);
             }
         }
 
