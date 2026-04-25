@@ -124,6 +124,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false));
 
+        public double FocusShiftDamping
+        {
+            get => (double)GetValue(FocusShiftDampingProperty);
+            set => SetValue(FocusShiftDampingProperty, value);
+        }
+
+        public static readonly DependencyProperty FocusShiftDampingProperty =
+            DependencyProperty.Register(
+                nameof(FocusShiftDamping),
+                typeof(double),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(3.0));
+
         // Dette er WorldWindow, som er afledt af ViewState og som bruges til at kommunikere world vinduets position og størrelse til omverdenen
         // Elementet her modtager IKKE data gennem denne property
         public BoundingBox WorldWindow
@@ -1029,13 +1042,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else
             {
-                // Todo: Make this a configuration
-                //var smoothing = 7.0; // higher = faster response
-                //var smoothing = 5.0; // higher = faster response
-                //var smoothing = 3.0; // higher = faster response
-                var smoothing = 1.0; // higher = faster response
-
-                var ratio = 1 - System.Math.Exp(-smoothing * dt);
+                var ratio = 1 - System.Math.Exp(-FocusShiftDamping * dt);
                 var width = Lerp(_current.Width, _target.Width, ratio);
                 var height = Lerp(_current.Height, _target.Height, ratio);
                 var minX = Lerp(_current.MinX, _target.MinX, ratio);

@@ -18,6 +18,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _lockXAxis;
         private bool _lockYAxis;
         private bool _dampFocusShifts;
+        private double _focusShiftDamping;
         private bool _debugMode;
         private bool _showGrid;
         private bool _showCoordinateSystem;
@@ -134,6 +135,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
+        public double FocusShiftDamping
+        {
+            get => _focusShiftDamping;
+            set
+            {
+                _focusShiftDamping = value;
+                OnPropertyChanged();
+            }
+        }
+
         public bool DebugMode
         {
             get => _debugMode;
@@ -176,7 +187,9 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             _geometryDataSource = new MxCifQuadTreeGeometryDataSource();
 
             LockAspectRatio = true;
-            WorldWindowBounds = new BoundingBox(-10000, 10000, -10000, 10000);
+            DampFocusShifts = true;
+            FocusShiftDamping = 3.0;
+            WorldWindowBounds = new BoundingBox(-1000, 1000, -1000, 1000);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

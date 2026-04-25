@@ -27,6 +27,8 @@ namespace Craft.UIElements.Reborn.GuiTest
         private string _requestedWwFocusRatioX;
         private string _requestedWwFocusRatioY;
 
+        private string _focusShiftDamping;
+
         public string RequestedWW_XMin
         {
             get => _requestedWwXMin;
@@ -107,6 +109,22 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
+        public string FocusShiftDamping
+        {
+            get => _focusShiftDamping;
+            set
+            {
+                _focusShiftDamping = value;
+
+                if (double.TryParse(_focusShiftDamping, CultureInfo.InvariantCulture, out var focusShiftDamping))
+                {
+                    GeometryViewModel.FocusShiftDamping = focusShiftDamping;
+                }
+
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SetWorldWindowCommand { get; }
         public ICommand SetWorldFocusCommand { get; }
 
@@ -131,6 +149,8 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_FocusY = "300";
             RequestedWW_FocusRatioX = "0.5";
             RequestedWW_FocusRatioY = "0.5";
+
+            FocusShiftDamping = GeometryViewModel.FocusShiftDamping.ToString();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

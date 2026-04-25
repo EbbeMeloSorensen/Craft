@@ -27,6 +27,7 @@
                                    LockXAxis="{Binding LockXAxis}"
                                    LockYAxis="{Binding LockYAxis}"
                                    DampFocusShifts="{Binding DampFocusShifts}"
+                                   FocusShiftDamping="{Binding FocusShiftDamping}"
                                    ShowGrid="{Binding ShowGrid}"
                                    ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
                                    DebugMode="{Binding DebugMode}"
@@ -72,8 +73,19 @@
             <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockXAxis}" />
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Lock y axis:" Margin="0, 0, 10, 0"/>
             <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding GeometryViewModel.LockYAxis}" />
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="Damp focus shifts:" Margin="0, 0, 10, 0"/>
-            <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding GeometryViewModel.DampFocusShifts}" />
+            <GroupBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Header="Focus Shift">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox Content="Damp" IsChecked="{Binding GeometryViewModel.DampFocusShifts}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Damping:" Margin="0, 0, 10, 0"/>
+                        <TextBox Grid.Column="1" Text="{Binding FocusShiftDamping}" />
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
             <TextBlock Grid.Row="8" Grid.Column="0" Text="Show grid:" Margin="0, 0, 10, 0"/>
             <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding GeometryViewModel.ShowGrid}" />
             <TextBlock Grid.Row="9" Grid.Column="0" Text="Show coordinate system:" Margin="0, 0, 10, 0"/>
