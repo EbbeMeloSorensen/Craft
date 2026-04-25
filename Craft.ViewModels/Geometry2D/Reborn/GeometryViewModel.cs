@@ -9,6 +9,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
     {
         private ViewState _viewState;
         private BoundingBox _worldWindow;
+        private BoundingBox _worldWindow2;
         private BoundingBox _requestedWorldWindow;
         private WorldFocusRequest _requestedWorldFocus;
         private BoundingBox _worldWindowBounds;
@@ -44,6 +45,17 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
+        public BoundingBox WorldWindow2
+        {
+            get => _worldWindow2;
+            set
+            {
+                _worldWindow2 = value;
+                UpdateLineCollection();
+                OnPropertyChanged();
+            }
+        }
+
         public BoundingBox ExpandedWorldWindow
         {
             get => _expandedWorldWindow;
@@ -51,7 +63,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _expandedWorldWindow = value;
                 OnPropertyChanged();
-                UpdateLineCollection();
+                //UpdateLineCollection();
             }
         }
 
@@ -200,7 +212,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             Lines.Clear();
 
             _geometryDataSource
-                .Query(ExpandedWorldWindow)
+                .Query(WorldWindow2)
                 .ToList()
                 .ForEach(line => Lines.Add(line));
         }

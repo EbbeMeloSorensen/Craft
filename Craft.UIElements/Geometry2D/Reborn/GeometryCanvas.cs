@@ -1,11 +1,11 @@
-﻿using System.Collections;
+﻿using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn;
+using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
-using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -23,7 +23,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private bool _isPanning;
         private System.Windows.Point _panStartMouse;
         private System.Windows.Point _panStartWorldOrigin;
-        private bool _updateWorldWindowPending;
         private TimeSpan _lastTime;
         private BoundingBox _current;
         private BoundingBox _target;
@@ -150,20 +149,24 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 nameof(WorldWindow),
                 typeof(BoundingBox),
                 typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(default(BoundingBox)));
+                new FrameworkPropertyMetadata(
+                    default(BoundingBox),
+                    OnWorldWindowChanged));
 
-        public BoundingBox ExpandedWorldWindow
+        public BoundingBox WorldWindow2
         {
-            get => (BoundingBox)GetValue(ExpandedWorldWindowProperty);
-            set => SetValue(ExpandedWorldWindowProperty, value);
+            get => (BoundingBox)GetValue(WorldWindow2Property);
+            set => SetValue(WorldWindow2Property, value);
         }
 
-        public static readonly DependencyProperty ExpandedWorldWindowProperty =
+        public static readonly DependencyProperty WorldWindow2Property =
             DependencyProperty.Register(
-                nameof(ExpandedWorldWindow),
+                nameof(WorldWindow2),
                 typeof(BoundingBox),
                 typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(default(BoundingBox)));
+                new FrameworkPropertyMetadata(
+                    default(BoundingBox),
+                    OnWorldWindow2Changed));
 
         // Denne bruges til at kommunikere udefra kommende requests om at ændre world vinduet
         // Dvs elementet her MODTAGER DATA udefra gennem denne property
@@ -321,7 +324,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 var worldRect = ToRect(worldWindow);
                 dc.DrawRectangle(null, worldPen, worldRect);
 
-                var expandedRect = ToRect(ExpandedWorldWindow);
+                var expandedRect = ToRect(WorldWindow2);
                 dc.DrawRectangle(null, expandedPen, expandedRect);
 
                 var boundsRect = ToRect(WorldWindowBounds);
@@ -658,7 +661,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             var newWorldWindow = _worldWindowLimiter.Limit(proposedWorldWindow);
 
-            UpdateWorldWindowDeferred();
+            SetCurrentValue(WorldWindowProperty, newWorldWindow);
 
             var newScalingX = ActualWidth / newWorldWindow.Width;
             var newScalingY = ActualHeight / newWorldWindow.Height;
@@ -889,34 +892,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             return (worldY - ViewState.WorldOrigin.Y) * ViewState.Scaling.Height;
         }
 
-        private void UpdateWorldWindowDeferred()
-        {
-            if (_updateWorldWindowPending)
-                return;
-
-            _updateWorldWindowPending = true;
-
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                _updateWorldWindowPending = false;
-                var worldWindow = ComputeWorldWindow();
-                SetCurrentValue(WorldWindowProperty, worldWindow);
-
-                if (ExpandedWorldWindow == null ||
-                    !ExpandedWorldWindow.Contains(WorldWindow) ||
-                    ExpandedWorldWindow.Width / WorldWindow.Width > 2.0)
-                {
-                    var expandedWorldWindow = worldWindow.Expand(1.2);
-                    expandedWorldWindow = _worldWindowLimiter.Limit(expandedWorldWindow);
-
-                    SetCurrentValue(ExpandedWorldWindowProperty, expandedWorldWindow);
-                }
-
-                InvalidateVisual();
-
-            }), DispatcherPriority.Loaded);
-        }
-
         private Transform CreateDebugShrinkTransform(
             BoundingBox worldWindow,
             double scale)
@@ -941,6 +916,23 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 new System.Windows.Point(box.MaxX, box.MaxY));
         }
 
+        private static void OnWorldWindowChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            //Debug.WriteLine("WorldWindow changed!");
+
+            var canvas = (GeometryCanvas)d;
+            canvas.OnWorldWindowChanged((BoundingBox)e.NewValue);
+        }
+
+        private static void OnWorldWindow2Changed(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            //Debug.WriteLine("WorldWindow2 changed!");
+        }
+
         private static void OnRequestedWorldWindowChanged(
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
@@ -963,6 +955,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
         {
             var canvas = (GeometryCanvas)d;
             canvas.OnWorldWindowBoundsChanged((BoundingBox)e.NewValue);
+        }
+
+        private void OnWorldWindowChanged(
+            BoundingBox worldWindow)
+        {
+            if (WorldWindow2 == null ||
+                !WorldWindow2.Contains(worldWindow) ||
+                WorldWindow2.Width / worldWindow.Width > 2.0)
+            {
+                var expandedWorldWindow = worldWindow.Expand(1.2);
+                expandedWorldWindow = _worldWindowLimiter.Limit(expandedWorldWindow);
+                SetCurrentValue(WorldWindow2Property, expandedWorldWindow);
+            }
         }
 
         private void OnRequestedWorldWindowChanged(

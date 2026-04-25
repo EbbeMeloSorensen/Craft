@@ -22,10 +22,10 @@
                                    Items="{Binding Lines}"
                                    ViewState="{Binding ViewState, Mode=OneWayToSource}"
                                    WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
+                                   WorldWindow2="{Binding WorldWindow2, Mode=TwoWay}"
                                    RequestedWorldWindow="{Binding RequestedWorldWindow, Mode=TwoWay}"
                                    RequestedWorldFocus="{Binding RequestedWorldFocus, Mode=TwoWay}"
                                    WorldWindowBounds="{Binding WorldWindowBounds, Mode=TwoWay}"
-                                   ExpandedWorldWindow="{Binding ExpandedWorldWindow, Mode=TwoWay}"
                                    CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
                                    LockAspectRatio="{Binding LockAspectRatio}"
                                    LockXAxis="{Binding LockXAxis}"
@@ -106,13 +106,13 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GeometryViewModel.ExpandedWorldWindow.MinX, StringFormat=N2}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow2.MinX, StringFormat=N2}"/>
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GeometryViewModel.ExpandedWorldWindow.MinY, StringFormat=N2}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow2.MinY, StringFormat=N2}"/>
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GeometryViewModel.ExpandedWorldWindow.MaxX, StringFormat=N2}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow2.MaxX, StringFormat=N2}"/>
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Y max:" Margin="0, 0, 10, 0"/>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.ExpandedWorldWindow.MaxY, StringFormat=N2}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GeometryViewModel.WorldWindow2.MaxY, StringFormat=N2}"/>
                 </Grid>
             </GroupBox>
             <GroupBox Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2"
