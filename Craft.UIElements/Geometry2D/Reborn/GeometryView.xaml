@@ -6,24 +6,26 @@
              xmlns:local="clr-namespace:Craft.UIElements.Geometry2D.Reborn"
              xmlns:reborn="clr-namespace:Craft.ViewModels.Geometry2D.Reborn;assembly=Craft.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance reborn:GeometryViewModel}">
-    <local:GeometryCanvas ClipToBounds="True"
-                          x:Name="GeometryCanvas"
-                          Items="{Binding Lines}"
-                          ViewState="{Binding ViewState, Mode=OneWayToSource}"
-                          WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
-                          WorldWindowExpanded="{Binding WorldWindowExpanded, Mode=TwoWay}"
-                          RequestedWorldWindow="{Binding RequestedWorldWindow, Mode=TwoWay}"
-                          RequestedWorldFocus="{Binding RequestedWorldFocus, Mode=TwoWay}"
-                          WorldWindowBounds="{Binding WorldWindowBounds, Mode=TwoWay}"
-                          CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
-                          LockAspectRatio="{Binding LockAspectRatio}"
-                          LockXAxis="{Binding LockXAxis}"
-                          LockYAxis="{Binding LockYAxis}"
-                          DampFocusShifts="{Binding DampFocusShifts}"
-                          FocusShiftDamping="{Binding FocusShiftDamping}"
-                          ShowGrid="{Binding ShowGrid}"
-                          ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
-                          DebugMode="{Binding DebugMode}">
-    </local:GeometryCanvas>
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid DataContext="{Binding GeometryViewModel}">
+        <local:GeometryCanvas ClipToBounds="True"
+                              x:Name="GeometryCanvas"
+                              Items="{Binding Lines}"
+                              ViewState="{Binding ViewState, Mode=OneWayToSource}"
+                              WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
+                              WorldWindowExpanded="{Binding WorldWindowExpanded, Mode=TwoWay}"
+                              RequestedWorldWindow="{Binding RequestedWorldWindow, Mode=TwoWay}"
+                              RequestedWorldFocus="{Binding RequestedWorldFocus, Mode=TwoWay}"
+                              WorldWindowBounds="{Binding WorldWindowBounds, Mode=TwoWay}"
+                              CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
+                              LockAspectRatio="{Binding LockAspectRatio}"
+                              LockXAxis="{Binding LockXAxis}"
+                              LockYAxis="{Binding LockYAxis}"
+                              DampFocusShifts="{Binding DampFocusShifts}"
+                              FocusShiftDamping="{Binding FocusShiftDamping}"
+                              ShowGrid="{Binding ShowGrid}"
+                              ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
+                              DebugMode="{Binding DebugMode}">
+        </local:GeometryCanvas>
+    </Grid>
 </UserControl>

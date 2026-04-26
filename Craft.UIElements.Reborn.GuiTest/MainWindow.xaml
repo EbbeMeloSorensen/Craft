@@ -18,8 +18,8 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.Row="0" Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">
-            <reborn:GeometryView DataContext="{Binding GeometryViewModel}"
-                                 FrameHandler="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <reborn:GeometryView DataContext="{Binding}"
+                                 FrameHandler="{Binding}"/>
         </Border>
 
         <Grid Grid.Row="0" Grid.Column="1">
