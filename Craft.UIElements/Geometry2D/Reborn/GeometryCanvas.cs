@@ -368,7 +368,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     if (TimeAxisMode)
                     {
-
+                        // Todo: convert from world coordinates
+                        var startTime = (long)WorldWindow.MinX;
+                        var endTime = (long)WorldWindow.MaxX;
                     }
                     else
                     {
