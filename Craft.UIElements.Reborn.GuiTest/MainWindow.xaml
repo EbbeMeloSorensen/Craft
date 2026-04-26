@@ -17,8 +17,9 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">
-            <reborn:GeometryCanvas ClipToBounds="True"
+        <Border Grid.Row="0" Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">
+            <!--<reborn:GeometryCanvas ClipToBounds="True"
+                                   x:Name="GeometryCanvas"
                                    Items="{Binding Lines}"
                                    ViewState="{Binding ViewState, Mode=OneWayToSource}"
                                    WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
@@ -35,8 +36,10 @@
                                    ShowGrid="{Binding ShowGrid}"
                                    ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
                                    DebugMode="{Binding DebugMode}"
-                                   DataContext="{Binding GeometryViewModel}"/>
+                                   DataContext="{Binding GeometryViewModel}"/>-->
+            <reborn:GeometryView DataContext="{Binding GeometryViewModel}"/>
         </Border>
+        
 
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>

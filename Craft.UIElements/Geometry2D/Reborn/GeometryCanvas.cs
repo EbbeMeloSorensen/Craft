@@ -251,6 +251,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public event EventHandler<FrameEventArgs> FrameRendering;
+
         public GeometryCanvas()
         {
             CompositionTarget.Rendering += OnRendering;
@@ -477,6 +479,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (ActualWidth == 0 || ActualHeight == 0)
                 return;
+
+            if (_target != null)
+            {
+                _target = null;
+                _current = null;
+            }
 
             var mousePos = e.GetPosition(this);
 
@@ -1027,9 +1035,15 @@ namespace Craft.UIElements.Geometry2D.Reborn
             _lastTime = args.RenderingTime;
 
             UpdateCamera(dt);
+
+            FrameRendering?.Invoke(this,
+                new FrameEventArgs(args.RenderingTime, dt));
         }
 
-        private double Lerp(double a, double b, double t)
+        private double Lerp(
+            double a,
+            double b,
+            double t)
         {
             return a + (b - a) * t;
         }

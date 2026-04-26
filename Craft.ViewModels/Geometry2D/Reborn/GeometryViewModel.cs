@@ -203,6 +203,17 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             FocusShiftDamping = 5.0;
         }
 
+        // Called for each frame
+        public void OnFrame(
+            TimeSpan time,
+            double deltaSeconds)
+        {
+            // Update simulation
+            //Update(deltaSeconds);
+
+            // Update camera
+            //RequestedWorldFocus = ComputeCamera();
+        }
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
