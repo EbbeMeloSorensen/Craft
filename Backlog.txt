@@ -114,6 +114,7 @@ Done:
 * For reborn - Smoothing skal kunne slås til og fra
 * For reborn - Smooth faktor skal være en property, der kan sættes udefra
 * For reborn - panning skal kunne override en igangværende flytning af wold window
+* For reborn - zooming skal kunne override en igangværende flytning af wold window
 * For reborn - Parker lige det med zoom levels - zoom med mus skal bare være et spørgsmål om at gange OG DIVIDERE med samme faktor
 * For reborn - target for ww flytning skal limites
 * For reborn - Når man requester et arbitrært world window, skal det også slide
