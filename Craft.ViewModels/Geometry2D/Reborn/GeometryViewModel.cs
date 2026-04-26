@@ -197,8 +197,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         public GeometryViewModel()
         {
             //_geometryDataSource = new SimpleGeometryDataSource();
-            //_geometryDataSource = new FunctionCurveDataSource();
-            _geometryDataSource = new MxCifQuadTreeGeometryDataSource();
+            _geometryDataSource = new FunctionCurveDataSource();
+            //_geometryDataSource = new MxCifQuadTreeGeometryDataSource();
 
             LockAspectRatio = true;
             DampFocusShifts = true;
@@ -232,7 +232,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private WorldFocusRequest ComputeCamera(
             TimeSpan time)
         {
-            var x = time.TotalSeconds * 10.0;
+            var x = time.TotalSeconds * 50.0;
             var y = 150.0;
 
             var worldFocusRequest = new WorldFocusRequest

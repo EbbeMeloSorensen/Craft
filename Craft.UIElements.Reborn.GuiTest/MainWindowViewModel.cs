@@ -130,7 +130,7 @@ namespace Craft.UIElements.Reborn.GuiTest
         public MainWindowViewModel()
         {
             var centerOfHouse = new Point(200, 150);
-            var worldWindowBoundsSize = new Size(2000, 2000);
+            var worldWindowBoundsSize = new Size(100000, 100000);
 
             GeometryViewModel = new GeometryViewModel
             {
