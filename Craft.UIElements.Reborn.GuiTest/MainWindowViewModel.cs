@@ -129,9 +129,16 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         public MainWindowViewModel()
         {
+            var centerOfHouse = new Point(200, 150);
+            var worldWindowBoundsSize = new Size(2000, 2000);
+
             GeometryViewModel = new GeometryViewModel
             {
-                WorldWindowBounds = new BoundingBox(-200, 600, -200, 500)
+                WorldWindowBounds = new BoundingBox(
+                    centerOfHouse.X - worldWindowBoundsSize.Width / 2,
+                    centerOfHouse.X + worldWindowBoundsSize.Width / 2,
+                    centerOfHouse.Y - worldWindowBoundsSize.Height / 2,
+                    centerOfHouse.Y + worldWindowBoundsSize.Height / 2)
             };
 
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);

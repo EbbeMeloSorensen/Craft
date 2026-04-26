@@ -114,12 +114,13 @@ Done:
 * For reborn - Smoothing skal kunne slås til og fra
 * For reborn - Smooth faktor skal være en property, der kan sættes udefra
 * For reborn - panning skal kunne override en igangværende flytning af wold window
-* For reborn - Parker lige det med zoom levels - zoom med mus skal bare være et sporgsmål om at gange OG DIVIDERE med samme faktor
-
-In progress:
+* For reborn - Parker lige det med zoom levels - zoom med mus skal bare være et spørgsmål om at gange OG DIVIDERE med samme faktor
 * For reborn - target for ww flytning skal limites
 * For reborn - Når man requester et arbitrært world window, skal det også slide
 * For reborn - Når man requester et arbitrært world window, må den ikke fucke aspect ratio, hvis denne er låst
+
+In progress:
+* For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering
 * For reborn - Vinduet skal kunne tracke noget, der ændrer sig over tid
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
