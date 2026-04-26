@@ -10,7 +10,7 @@ using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : INotifyPropertyChanged, IFrameAware
     {
         private string _requestedWwXMin;
         private string _requestedWwXMax;
@@ -191,6 +191,33 @@ namespace Craft.UIElements.Reborn.GuiTest
                     WorldPoint = new Point(focusX, focusY)
                 };
             }
+        }
+
+        // Called for each frame
+        public void OnFrame(
+            TimeSpan time,
+            double dt)
+        {
+            // Update simulation
+            //Update(deltaSeconds);
+
+            // Update camera
+            GeometryViewModel.RequestedWorldFocus = ComputeCamera(time);
+        }
+
+        private WorldFocusRequest ComputeCamera(
+            TimeSpan time)
+        {
+            var x = time.TotalSeconds * 50.0;
+            var y = 150.0;
+
+            var worldFocusRequest = new WorldFocusRequest
+            {
+                WorldPoint = new Point(x, y),
+                ViewportRatio = new Size(0.5, 0.5)
+            };
+
+            return worldFocusRequest;
         }
     }
 }

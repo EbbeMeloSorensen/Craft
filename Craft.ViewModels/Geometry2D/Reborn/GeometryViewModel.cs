@@ -1,9 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using Craft.DataStructures.Geometry;
-using Point = System.Windows.Point;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {
@@ -205,17 +203,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             FocusShiftDamping = 5.0;
         }
 
-        // Called for each frame
-        public void OnFrame(
-            TimeSpan time,
-            double deltaSeconds)
-        {
-            // Update simulation
-            //Update(deltaSeconds);
-
-            // Update camera
-            RequestedWorldFocus = ComputeCamera(time);
-        }
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -227,21 +214,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
                 .Query(WorldWindowExpanded)
                 .ToList()
                 .ForEach(line => Lines.Add(line));
-        }
-
-        private WorldFocusRequest ComputeCamera(
-            TimeSpan time)
-        {
-            var x = time.TotalSeconds * 50.0;
-            var y = 150.0;
-
-            var worldFocusRequest = new WorldFocusRequest
-            {
-                WorldPoint = new Point(x, y),
-                ViewportRatio = new Size(0.5, 0.5)
-            };
-
-            return worldFocusRequest;
         }
     }
 }

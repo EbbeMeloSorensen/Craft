@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Craft.UIElements.Geometry2D.Reborn"
              xmlns:reborn="clr-namespace:Craft.ViewModels.Geometry2D.Reborn;assembly=Craft.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance reborn:GeometryViewModel }">
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance reborn:GeometryViewModel}">
     <local:GeometryCanvas ClipToBounds="True"
                           x:Name="GeometryCanvas"
                           Items="{Binding Lines}"

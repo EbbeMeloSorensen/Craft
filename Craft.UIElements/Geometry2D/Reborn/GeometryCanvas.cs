@@ -251,6 +251,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
+
         public event EventHandler<FrameEventArgs> FrameRendering;
 
         public GeometryCanvas()

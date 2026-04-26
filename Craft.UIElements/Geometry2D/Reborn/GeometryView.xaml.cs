@@ -9,6 +9,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
     /// </summary>
     public partial class GeometryView : UserControl
     {
+        public IFrameAware FrameHandler
+        {
+            get => (IFrameAware)GetValue(FrameHandlerProperty);
+            set => SetValue(FrameHandlerProperty, value);
+        }
+
+        public static readonly DependencyProperty FrameHandlerProperty =
+            DependencyProperty.Register(
+                nameof(FrameHandler),
+                typeof(IFrameAware),
+                typeof(GeometryView),
+                new FrameworkPropertyMetadata(null));
+
         public GeometryView()
         {
             InitializeComponent();
@@ -35,10 +48,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             object sender,
             FrameEventArgs e)
         {
-            if (DataContext is GeometryViewModel vm)
-            {
-                vm.OnFrame(e.Time, e.DeltaSeconds);
-            }
+            FrameHandler?.OnFrame(e.Time, e.DeltaSeconds);
         }
     }
 }

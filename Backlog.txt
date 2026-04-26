@@ -122,6 +122,7 @@ Done:
 
 In progress:
 * For reborn - Vinduet skal kunne tracke noget, der ændrer sig over tid
+  - frame event skal ramme hosten og ikke GeometryViewModel
 * For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
