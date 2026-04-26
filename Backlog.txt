@@ -125,6 +125,7 @@ Done:
 In progress:
 * For reborn - Lav et mode, hvor x tick labels viser tid
 * For reborn - Introducer polylines som alternativ til bare at have linier (som foreslået af ChatGpt)
+* For reborn - Introducer ellipser som alternativ til bare at have linier
 * For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
