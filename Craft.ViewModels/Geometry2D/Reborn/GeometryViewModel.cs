@@ -23,6 +23,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _debugMode;
         private bool _showGrid;
         private bool _showCoordinateSystem;
+        private bool _timeAxisMode;
         private IGeometryDataSource _geometryDataSource;
 
         public ViewState ViewState
@@ -183,6 +184,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _showCoordinateSystem = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool TimeAxisMode
+        {
+            get => _timeAxisMode;
+            set
+            {
+                _timeAxisMode = value;
                 OnPropertyChanged();
             }
         }

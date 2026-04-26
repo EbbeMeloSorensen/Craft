@@ -25,6 +25,7 @@
                               FocusShiftDamping="{Binding FocusShiftDamping}"
                               ShowGrid="{Binding ShowGrid}"
                               ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
+                              TimeAxisMode="{Binding TimeAxisMode}"
                               DebugMode="{Binding DebugMode}">
         </local:GeometryCanvas>
     </Grid>

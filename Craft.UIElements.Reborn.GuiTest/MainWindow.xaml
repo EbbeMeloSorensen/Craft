@@ -214,18 +214,19 @@
             <GroupBox Grid.Column="3" Header="Geometry View Control Params"
                       BorderBrush="DarkSlateGray" BorderThickness="1">
                 <StackPanel Margin="3">
-                    <CheckBox Content="Lock aspect ratio" IsChecked="{Binding GeometryViewModel.LockAspectRatio}" />
-                    <CheckBox Content="Lock X axis" IsChecked="{Binding GeometryViewModel.LockXAxis}" />
-                    <CheckBox Content="Lock Y axis" IsChecked="{Binding GeometryViewModel.LockYAxis}" />
-                    <CheckBox Content="Show grid" IsChecked="{Binding GeometryViewModel.ShowGrid}" />
-                    <CheckBox Content="Show coordinate system" IsChecked="{Binding GeometryViewModel.ShowCoordinateSystem}" />
-                    <CheckBox Content="Debug mode" IsChecked="{Binding GeometryViewModel.DebugMode}" />
+                    <CheckBox Content="Lock aspect ratio" IsChecked="{Binding GeometryViewModel.LockAspectRatio}"/>
+                    <CheckBox Content="Lock X axis" IsChecked="{Binding GeometryViewModel.LockXAxis}"/>
+                    <CheckBox Content="Lock Y axis" IsChecked="{Binding GeometryViewModel.LockYAxis}"/>
+                    <CheckBox Content="Show grid" IsChecked="{Binding GeometryViewModel.ShowGrid}"/>
+                    <CheckBox Content="Show coordinate system" IsChecked="{Binding GeometryViewModel.ShowCoordinateSystem}"/>
+                    <CheckBox Content="Time axis mode (x)" IsChecked="{Binding GeometryViewModel.TimeAxisMode}"/>
+                    <CheckBox Content="Debug mode" IsChecked="{Binding GeometryViewModel.DebugMode}"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox Grid.Column="4" Header="Host Params"
                       BorderBrush="DarkSlateGray" BorderThickness="1">
                 <StackPanel Margin="3">
-                    <CheckBox Content="Continually Move Focus" IsChecked="{Binding ContinuallyMoveFocus}" />
+                    <CheckBox Content="Continually Move Focus" IsChecked="{Binding ContinuallyMoveFocus}"/>
                 </StackPanel>
             </GroupBox>
         </Grid>

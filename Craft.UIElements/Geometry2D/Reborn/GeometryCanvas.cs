@@ -251,6 +251,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public bool TimeAxisMode
+        {
+            get => (bool)GetValue(TimeAxisModeProperty);
+            set => SetValue(TimeAxisModeProperty, value);
+        }
+
+        public static readonly DependencyProperty TimeAxisModeProperty =
+            DependencyProperty.Register(
+                nameof(TimeAxisMode),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
         public event EventHandler<FrameEventArgs> FrameRendering;
 
         public GeometryCanvas()
@@ -339,14 +352,29 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 if (ShowGrid)
                 {
-                    DrawGrid(dc, true, true);
+                    if (TimeAxisMode)
+                    {
+
+                    }
+                    else
+                    {
+                        DrawGrid(dc, true, true);
+                    }
                 }
 
                 if (ShowCoordinateSystem)
                 {
                     DrawAxes(dc, true, true);
-                    DrawAxisTicks(dc, true, true);
-                    DrawGridLabels(dc, true, true);
+
+                    if (TimeAxisMode)
+                    {
+
+                    }
+                    else
+                    {
+                        DrawAxisTicks(dc, true, true);
+                        DrawGridLabels(dc, true, true);
+                    }
                 }
 
                 foreach (var item in Items)
