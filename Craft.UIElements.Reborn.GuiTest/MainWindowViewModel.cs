@@ -6,17 +6,12 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        // Radius and center of circular motion
-        private const double Radius = 200;
-        private static readonly Point Center = new Point(100, 100);
-
         private string _requestedWwXMin;
         private string _requestedWwXMax;
         private string _requestedWwYMin;
@@ -143,11 +138,16 @@ namespace Craft.UIElements.Reborn.GuiTest
             SetWorldFocusCommand = new RelayCommand(SetWorldFocus);
 
             // Default values for the world window input fields
-            RequestedWW_XMin = "195.0";
-            RequestedWW_XMax = "405.0";
-            //RequestedWW_YMin = "195.0";
-            RequestedWW_YMin = "-5.0";
-            RequestedWW_YMax = "305.0";
+            //RequestedWW_XMin = "195.0";
+            //RequestedWW_XMax = "405.0";
+            ////RequestedWW_YMin = "195.0";
+            //RequestedWW_YMin = "-5.0";
+            //RequestedWW_YMax = "305.0";
+
+            RequestedWW_XMin = "0";
+            RequestedWW_XMax = "2000";
+            RequestedWW_YMin = "0";
+            RequestedWW_YMax = "2000";
 
             RequestedWW_FocusX = "200";
             RequestedWW_FocusY = "300";

@@ -905,12 +905,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 // Make sure to preserve aspect ratio while also ensuring that the entire proposed world window is visible
                 var aspectRatioViewport = ActualWidth / ActualHeight;
                 var aspectRatioProposed = proposedWorldWindow.Width / proposedWorldWindow.Height;
+                var minXAdjusted = 0.0;
+                var minYAdjusted = 0.0;
 
                 if (aspectRatioProposed > aspectRatioViewport)
                 {
                     // Increase height of proposed world window
                     var heightAdjusted = proposedWorldWindow.Width / aspectRatioViewport;
-                    var minYAdjusted = proposedWorldWindow.CenterY - heightAdjusted / 2;
+                    minYAdjusted = proposedWorldWindow.CenterY - heightAdjusted / 2;
 
                     proposedWorldWindow = new BoundingBox(
                         proposedWorldWindow.MinX,
@@ -922,7 +924,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     // Increase width of proposed world window
                     var widthAdjusted = proposedWorldWindow.Height * aspectRatioViewport;
-                    var minXAdjusted = proposedWorldWindow.CenterX - widthAdjusted / 2;
+                    minXAdjusted = proposedWorldWindow.CenterX - widthAdjusted / 2;
 
                     proposedWorldWindow = new BoundingBox(
                         minXAdjusted,
@@ -932,6 +934,39 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 }
 
                 // Now we have a world window that preserves aspect ratio but it might be too big to fit inside bounds. If so, we scale it uniformly down
+                if (proposedWorldWindow.Width > WorldWindowBounds.Width ||
+                    proposedWorldWindow.Height > WorldWindowBounds.Height)
+                {
+                    var scaleX = WorldWindowBounds.Width / proposedWorldWindow.Width;
+                    var scaleY = WorldWindowBounds.Height / proposedWorldWindow.Height;
+                    var scale = System.Math.Min(1, System.Math.Min(scaleX, scaleY));
+                    var newWidth = proposedWorldWindow.Width * scale;
+                    var newHeight = proposedWorldWindow.Height * scale;
+                    minXAdjusted = proposedWorldWindow.CenterX - newWidth / 2;
+                    minYAdjusted = proposedWorldWindow.CenterY - newHeight / 2;
+
+                    proposedWorldWindow = new BoundingBox(
+                        minXAdjusted,
+                        minXAdjusted + newWidth,
+                        minYAdjusted,
+                        minYAdjusted + newHeight);
+                }
+
+                // Now the window size fits the bounds and still has the correct aspect ratio, but it might still exceed the bounds in terms of position
+                var minCx = WorldWindowBounds.MinX + proposedWorldWindow.Width / 2;
+                var maxCx = WorldWindowBounds.MaxX - proposedWorldWindow.Width / 2;
+                var minCy = WorldWindowBounds.MinY + proposedWorldWindow.Height / 2;
+                var maxCy = WorldWindowBounds.MaxY - proposedWorldWindow.Height / 2;
+                var newCenterX = System.Math.Max(System.Math.Min(proposedWorldWindow.CenterX, maxCx), minCx);
+                var newCenterY = System.Math.Max(System.Math.Min(proposedWorldWindow.CenterY, maxCy), minCy);
+                minXAdjusted = newCenterX - proposedWorldWindow.Width / 2;
+                minYAdjusted = newCenterY - proposedWorldWindow.Height / 2;
+
+                proposedWorldWindow = new BoundingBox(
+                    minXAdjusted,
+                    minXAdjusted + proposedWorldWindow.Width,
+                    minYAdjusted,
+                    minYAdjusted + proposedWorldWindow.Height);
             }
 
             if (DampFocusShifts)
