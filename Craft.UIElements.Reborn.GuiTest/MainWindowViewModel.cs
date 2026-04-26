@@ -23,6 +23,7 @@ namespace Craft.UIElements.Reborn.GuiTest
         private string _requestedWwFocusRatioY;
 
         private string _focusShiftDamping;
+        private bool _continuallyMoveFocus;
 
         public string RequestedWW_XMin
         {
@@ -120,6 +121,16 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
+        public bool ContinuallyMoveFocus
+        {
+            get => _continuallyMoveFocus;
+            set
+            {
+                _continuallyMoveFocus = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SetWorldWindowCommand { get; }
         public ICommand SetWorldFocusCommand { get; }
 
@@ -198,11 +209,14 @@ namespace Craft.UIElements.Reborn.GuiTest
             TimeSpan time,
             double dt)
         {
-            // Update simulation
-            //Update(deltaSeconds);
+            if (ContinuallyMoveFocus)
+            {
+                // Update simulation (like when it was a game - not doing that yet)
+                //Update(deltaSeconds);
 
-            // Update camera
-            GeometryViewModel.RequestedWorldFocus = ComputeCamera(time);
+                // Update camera
+                GeometryViewModel.RequestedWorldFocus = ComputeCamera(time);
+            }
         }
 
         private WorldFocusRequest ComputeCamera(
