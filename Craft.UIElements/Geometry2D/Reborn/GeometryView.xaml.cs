@@ -31,7 +31,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             GeometryCanvas.FrameRendering -= OnFrameRendering;
         }
 
-
         private void OnFrameRendering(
             object sender,
             FrameEventArgs e)

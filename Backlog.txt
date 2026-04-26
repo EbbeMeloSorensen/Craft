@@ -121,8 +121,8 @@ Done:
 * For reborn - Når man requester et arbitrært world window, må den ikke fucke aspect ratio, hvis denne er låst
 
 In progress:
-* For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering
 * For reborn - Vinduet skal kunne tracke noget, der ændrer sig over tid
+* For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering
 * Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
   - Pas på, den ikke fucker aspect ratio
