@@ -1,6 +1,6 @@
 ﻿using Craft.DataStructures.Geometry;
 
-namespace Craft.ViewModels.Geometry2D.Reborn;
+namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public interface IGeometryDataSource
 {

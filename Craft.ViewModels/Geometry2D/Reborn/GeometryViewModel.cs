@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {

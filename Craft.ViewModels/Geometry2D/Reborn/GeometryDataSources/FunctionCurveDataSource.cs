@@ -1,7 +1,7 @@
 ﻿using Craft.DataStructures.Geometry;
 using Craft.Utils.Linq;
 
-namespace Craft.ViewModels.Geometry2D.Reborn;
+namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class FunctionCurveDataSource : IGeometryDataSource
 {
