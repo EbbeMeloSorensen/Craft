@@ -5,6 +5,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn;
 public class WorldWindowLimiter
 {
     private readonly BoundingBox _bounds;
+    private bool _disable = true;
 
     public WorldWindowLimiter(
         BoundingBox bounds)
@@ -18,6 +19,11 @@ public class WorldWindowLimiter
     public BoundingBox Limit(
         BoundingBox worldWindow)
     {
+        if (_disable)
+        {
+            return worldWindow;
+        }
+
         // Step 1: Enforce minimum zoom (fit inside bounds)
         var fitted = EnforceMinimumZoom(worldWindow);
 
