@@ -145,15 +145,21 @@ namespace Craft.UIElements.Reborn.GuiTest
 
             GeometryViewModel = new GeometryViewModel
             {
+                //WorldWindowBounds = new BoundingBox(
+                //    centerOfHouse.X - worldWindowBoundsSize.Width / 2,
+                //    centerOfHouse.X + worldWindowBoundsSize.Width / 2,
+                //    centerOfHouse.Y - worldWindowBoundsSize.Height / 2,
+                //    centerOfHouse.Y + worldWindowBoundsSize.Height / 2),
                 WorldWindowBounds = new BoundingBox(
-                    centerOfHouse.X - worldWindowBoundsSize.Width / 2,
-                    centerOfHouse.X + worldWindowBoundsSize.Width / 2,
-                    centerOfHouse.Y - worldWindowBoundsSize.Height / 2,
-                    centerOfHouse.Y + worldWindowBoundsSize.Height / 2),
+                    double.MinValue,
+                    double.MaxValue,
+                    double.MinValue,
+                    double.MaxValue),
                 ShowCoordinateSystem = true,
-                LockAspectRatio = false,
+                LockAspectRatio = true,
                 DampFocusShifts = false,
-                TimeAxisMode = true
+                TimeAxisMode = false,
+                FocusShiftDamping = 5.0
             };
 
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
@@ -172,9 +178,12 @@ namespace Craft.UIElements.Reborn.GuiTest
             //RequestedWW_YMax = "2000";
 
             var ticksInAYear = TimeSpan.FromDays(365).Ticks;
+            var ticksInAWeek = TimeSpan.FromDays(7).Ticks;
+            var ticksInADay = TimeSpan.FromDays(1).Ticks;
+            var ticksInAnHour = TimeSpan.FromHours(1).Ticks;
 
-            RequestedWW_XMin = (-ticksInAYear).ToString();
-            RequestedWW_XMax = ticksInAYear.ToString();
+            RequestedWW_XMin = (-ticksInAnHour).ToString();
+            RequestedWW_XMax = ticksInAnHour.ToString();
             RequestedWW_YMin = "-100";
             RequestedWW_YMax = "100";
 

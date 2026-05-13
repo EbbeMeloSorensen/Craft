@@ -350,30 +350,21 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else
             {
-                if (ShowGrid)
+                if (TimeAxisMode)
                 {
-                    if (TimeAxisMode)
-                    {
-
-                    }
-                    else
+                    var a = (long)WorldWindow.MinX;
+                    var b = (long)WorldWindow.MaxX;
+                }
+                else
+                {
+                    if (ShowGrid)
                     {
                         DrawGrid(dc, true, true);
                     }
-                }
 
-                if (ShowCoordinateSystem)
-                {
-                    DrawAxes(dc, true, true);
-
-                    if (TimeAxisMode)
+                    if (ShowCoordinateSystem)
                     {
-                        // Todo: convert from world coordinates
-                        var startTime = (long)WorldWindow.MinX;
-                        var endTime = (long)WorldWindow.MaxX;
-                    }
-                    else
-                    {
+                        DrawAxes(dc, true, true);
                         DrawAxisTicks(dc, true, true);
                         DrawGridLabels(dc, true, true);
                     }
@@ -659,21 +650,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (horizontalLines)
             {
-                var scaleX = ViewState.Scaling.Width;
-                var stepX = GetNiceStep(scaleX);
-                for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
-                {
-                    var screenX = (x - world.MinX) * scaleX;
-
-                    dc.DrawLine(
-                        pen,
-                        new System.Windows.Point(screenX, 0),
-                        new System.Windows.Point(screenX, ActualHeight));
-                }
-            }
-
-            if (verticalLines)
-            {
                 var scaleY = ViewState.Scaling.Height;
                 var stepY = GetNiceStep(scaleY);
                 for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
@@ -684,6 +660,21 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         pen,
                         new System.Windows.Point(0, screenY),
                         new System.Windows.Point(ActualWidth, screenY));
+                }
+            }
+
+            if (verticalLines)
+            {
+                var scaleX = ViewState.Scaling.Width;
+                var stepX = GetNiceStep(scaleX);
+                for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
+                {
+                    var screenX = (x - world.MinX) * scaleX;
+
+                    dc.DrawLine(
+                        pen,
+                        new System.Windows.Point(screenX, 0),
+                        new System.Windows.Point(screenX, ActualHeight));
                 }
             }
         }

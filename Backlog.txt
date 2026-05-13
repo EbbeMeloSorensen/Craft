@@ -124,6 +124,8 @@ Done:
 
 In progress:
 * For reborn - Lav et mode, hvor x tick labels viser tid
+  - I første omgang - sikr, at ticks er maximalt en dag og skriv labels, der alle er fuldt kvalificerede (som om alle var major ticks)
+    - Først bare grid lines
 * For reborn - Introducer polylines som alternativ til bare at have linier (som foreslået af ChatGpt)
 * For reborn - Introducer ellipser som alternativ til bare at have linier
 * For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering

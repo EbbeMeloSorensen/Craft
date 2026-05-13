@@ -210,10 +210,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             //_geometryDataSource = new SimpleGeometryDataSource();
             //_geometryDataSource = new FunctionCurveDataSource();
             //_geometryDataSource = new MxCifQuadTreeGeometryDataSource();
-
-            LockAspectRatio = true;
-            DampFocusShifts = true;
-            FocusShiftDamping = 5.0;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
