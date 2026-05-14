@@ -50,7 +50,14 @@ public static class TimeTickEngine
                 endTicks,
                 viewportWidth);
 
-            ticks.Add(new Tick(x, current));
+            var kind = strategy.IsMajorTick(current)
+                ? TickKind.Major
+                : TickKind.Minor;
+
+            ticks.Add(new Tick(
+                x,
+                current,
+                kind));
 
             current = strategy.Next(current);
         }

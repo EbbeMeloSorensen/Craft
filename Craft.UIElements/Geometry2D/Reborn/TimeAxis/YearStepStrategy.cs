@@ -35,4 +35,9 @@ public class YearStepStrategy : ITimeStepStrategy
         return TimeCoordinates.ToWorldTicks(
             dt.AddYears(_years));
     }
+
+    public bool IsMajorTick(long ticks)
+    {
+        return true;
+    }
 }

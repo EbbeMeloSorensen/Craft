@@ -35,4 +35,11 @@ public class MonthStepStrategy : ITimeStepStrategy
         return TimeCoordinates.ToWorldTicks(
             dt.AddMonths(_months));
     }
+
+    public bool IsMajorTick(long ticks)
+    {
+        var dt = TimeCoordinates.ToDateTime(ticks);
+
+        return dt.Month == 1;
+    }
 }

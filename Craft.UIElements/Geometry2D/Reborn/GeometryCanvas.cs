@@ -312,7 +312,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             var worldWindow = ComputeWorldWindow();
             var worldToViewportTransform = CreateWorldToViewportTransform(worldWindow, RenderSize);
-            var pen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
+            var drawingPen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
             //pen.Freeze();
 
             if (DebugMode)
@@ -341,7 +341,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     if (item is LineModel line)
                     {
-                        dc.DrawLine(pen, line.P1, line.P2);
+                        dc.DrawLine(drawingPen, line.P1, line.P2);
                     }
                 }
 
@@ -357,10 +357,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     var ticks = TimeTickEngine.Generate(startTicks, endTicks, ActualWidth, 80, 160);
 
+                    var minorGridLinePen = new Pen(Brushes.Gray, 1);
+                    var majorGridLinePen = new Pen(Brushes.Black, 2);
+
                     foreach (var tick in ticks)
                     {
+                        var gridLinePen = tick.Kind == TickKind.Major
+                            ? majorGridLinePen
+                            : minorGridLinePen;
+
                         dc.DrawLine(
-                            pen,
+                            gridLinePen,
                             new System.Windows.Point(tick.X, 0),
                             new System.Windows.Point(tick.X, ActualHeight));
                     }
@@ -387,7 +394,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         var p1 = worldToViewportTransform.Transform(line.P1);
                         var p2 = worldToViewportTransform.Transform(line.P2);
 
-                        dc.DrawLine(pen, p1, p2);
+                        dc.DrawLine(drawingPen, p1, p2);
                     }
                 }
             }

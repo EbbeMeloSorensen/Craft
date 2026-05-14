@@ -7,4 +7,6 @@ public interface ITimeStepStrategy
     long Next(long ticks);
 
     double ApproximateDurationSeconds { get; }
+
+    bool IsMajorTick(long ticks);
 }
