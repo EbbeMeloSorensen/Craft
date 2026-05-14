@@ -352,8 +352,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 if (TimeAxisMode)
                 {
-                    var a = (long)WorldWindow.MinX;
-                    var b = (long)WorldWindow.MaxX;
+                    var startTicks = (long)WorldWindow.MinX;
+                    var endTicks = (long)WorldWindow.MaxX;
+
+                    var ticks = TimeTickEngine.Generate(startTicks, endTicks, ActualWidth, 80, 160);
+
+                    foreach (var tick in ticks)
+                    {
+                        dc.DrawLine(
+                            pen,
+                            new System.Windows.Point(tick.X, 0),
+                            new System.Windows.Point(tick.X, ActualHeight));
+                    }
                 }
                 else
                 {
