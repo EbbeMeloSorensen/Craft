@@ -49,4 +49,34 @@ public class FixedStepStrategy : ITimeStepStrategy
                dt.Minute == 0 &&
                dt.Second == 0;
     }
+
+    public string FormatLabel(long ticks, TickKind kind)
+    {
+        var dt = TimeCoordinates.ToDateTime(ticks);
+
+        if (_stepTicks < TimeSpan.TicksPerMinute)
+        {
+            return kind == TickKind.Major
+                ? dt.ToString("HH:mm:ss")
+                : dt.ToString("ss");
+        }
+
+        if (_stepTicks < TimeSpan.TicksPerHour)
+        {
+            return kind == TickKind.Major
+                ? dt.ToString("HH:mm")
+                : dt.ToString("mm");
+        }
+
+        if (_stepTicks < TimeSpan.TicksPerDay)
+        {
+            return kind == TickKind.Major
+                ? dt.ToString("dd MMM HH:mm")
+                : dt.ToString("HH:mm");
+        }
+
+        return kind == TickKind.Major
+            ? dt.ToString("yyyy-MM-dd")
+            : dt.ToString("dd");
+    }
 }

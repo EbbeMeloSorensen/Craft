@@ -54,10 +54,14 @@ public static class TimeTickEngine
                 ? TickKind.Major
                 : TickKind.Minor;
 
+            var label =
+                strategy.FormatLabel(current, kind);
+
             ticks.Add(new Tick(
                 x,
                 current,
-                kind));
+                kind,
+                label));
 
             current = strategy.Next(current);
         }

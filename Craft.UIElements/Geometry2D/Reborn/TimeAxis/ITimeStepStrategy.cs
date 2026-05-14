@@ -9,4 +9,6 @@ public interface ITimeStepStrategy
     double ApproximateDurationSeconds { get; }
 
     bool IsMajorTick(long ticks);
+
+    string FormatLabel(long ticks, TickKind kind);
 }

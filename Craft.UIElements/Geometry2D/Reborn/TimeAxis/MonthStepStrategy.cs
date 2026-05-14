@@ -42,4 +42,13 @@ public class MonthStepStrategy : ITimeStepStrategy
 
         return dt.Month == 1;
     }
+
+    public string FormatLabel(long ticks, TickKind kind)
+    {
+        var dt = TimeCoordinates.ToDateTime(ticks);
+
+        return kind == TickKind.Major
+            ? dt.ToString("yyyy")
+            : dt.ToString("MMM");
+    }
 }

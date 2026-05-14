@@ -5,4 +5,5 @@
 public record Tick(
     double X,
     long WorldTicks,
-    TickKind Kind);
+    TickKind Kind,
+    string? label);

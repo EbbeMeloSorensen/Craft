@@ -355,10 +355,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     var startTicks = (long)WorldWindow.MinX;
                     var endTicks = (long)WorldWindow.MaxX;
 
-                    var ticks = TimeTickEngine.Generate(startTicks, endTicks, ActualWidth, 80, 160);
+                    var ticks = TimeTickEngine.Generate(
+                        startTicks,
+                        endTicks,
+                        ActualWidth,
+                        80,
+                        160);
 
                     var minorGridLinePen = new Pen(Brushes.Gray, 1);
-                    var majorGridLinePen = new Pen(Brushes.Black, 2);
+                    var majorGridLinePen = new Pen(Brushes.Gray, 2);
+
+                    var typeface = new Typeface("Segoe UI");
+                    double fontSize = 10;
+                    double margin = 4;
+                    var yScreen = ActualHeight - margin;
 
                     foreach (var tick in ticks)
                     {
@@ -366,10 +376,26 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             ? majorGridLinePen
                             : minorGridLinePen;
 
+                        // Grid lines
                         dc.DrawLine(
                             gridLinePen,
                             new System.Windows.Point(tick.X, 0),
                             new System.Windows.Point(tick.X, ActualHeight));
+
+                        // Labels
+                        var text = new FormattedText(
+                            tick.label,
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            FlowDirection.LeftToRight,
+                            typeface,
+                            fontSize,
+                            Brushes.Black,
+                            1.0);
+
+                        // Center text under grid line
+                        dc.DrawText(
+                            text,
+                            new System.Windows.Point(tick.X - text.Width / 2, yScreen - text.Height));
                     }
                 }
                 else

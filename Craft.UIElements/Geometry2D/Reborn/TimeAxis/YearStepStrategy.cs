@@ -40,4 +40,11 @@ public class YearStepStrategy : ITimeStepStrategy
     {
         return true;
     }
+
+    public string FormatLabel(long ticks, TickKind kind)
+    {
+        var dt = TimeCoordinates.ToDateTime(ticks);
+
+        return dt.ToString("yyyy");
+    }
 }
