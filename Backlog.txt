@@ -123,6 +123,7 @@ Done:
   - frame event skal ramme hosten og ikke GeometryViewModel
 
 In progress:
+* Lav et design, der undgår "gigantic world coordinates in Matrix"
 * For reborn - Lav et mode, hvor x tick labels viser tid
   - I første omgang - sikr, at ticks er maximalt en dag og skriv labels, der alle er fuldt kvalificerede (som om alle var major ticks)
     - Først bare grid lines

@@ -518,15 +518,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
 
             var mousePos = e.GetPosition(this);
-
             var worldWindow = ComputeWorldWindow();
-            var transform = CreateWorldToViewportTransform(worldWindow, RenderSize);
-
-            var inverse = transform;
-            inverse.Invert();
-
+            
             // 1. World point under cursor BEFORE zoom
-            var worldBefore = inverse.Transform(mousePos);
+            var transform = CreateViewportToWorldTransform(worldWindow, RenderSize);
+            var worldBefore = transform.Transform(mousePos);
 
             // 2. Determine new zoom level
             var steps = e.Delta / 120; // standard wheel notch
@@ -587,8 +583,23 @@ namespace Craft.UIElements.Geometry2D.Reborn
         // =============================
         // Transform
         // =============================
-        private Matrix CreateWorldToViewportTransform(
+        private Matrix CreateViewportToWorldTransform(
             BoundingBox worldWindow, 
+            Size viewport)
+        {
+            var scaleX = worldWindow.Width / viewport.Width;
+            var scaleY = worldWindow.Height / viewport.Height;
+
+            var m = Matrix.Identity;
+
+            m.Scale(scaleX, scaleY);
+            m.Translate(worldWindow.MinX, worldWindow.MinY);
+
+            return m;
+        }
+
+        private Matrix CreateWorldToViewportTransform(
+            BoundingBox worldWindow,
             Size viewport)
         {
             var scaleX = viewport.Width / worldWindow.Width;
