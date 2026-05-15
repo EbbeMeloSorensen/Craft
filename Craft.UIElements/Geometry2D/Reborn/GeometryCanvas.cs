@@ -362,8 +362,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         80,
                         160);
 
-                    var minorGridLinePen = new Pen(Brushes.Gray, 1);
-                    var majorGridLinePen = new Pen(Brushes.Gray, 2);
+                    var minorGridLinePen = new Pen(Brushes.LightGray, 1);
+                    var majorGridLinePen = new Pen(Brushes.LightGray, 2);
 
                     var typeface = new Typeface("Segoe UI");
                     double fontSize = 10;
@@ -1067,10 +1067,21 @@ namespace Craft.UIElements.Geometry2D.Reborn
             WorldFocusRequest requestedWorldFocus)
         {
             var worldWindow = ComputeWorldWindow();
-            var minX = requestedWorldFocus.WorldPoint.X - requestedWorldFocus.ViewportRatio.Width * worldWindow.Width;
-            var minY = requestedWorldFocus.WorldPoint.Y - requestedWorldFocus.ViewportRatio.Height * worldWindow.Height;
-            var maxX = minX + worldWindow.Width;
-            var maxY = minY + worldWindow.Height;
+
+            var proposedWidth = worldWindow.Width;
+            var proposedHeight = worldWindow.Height;
+
+            if (requestedWorldFocus.Scaling.HasValue)
+            {
+                proposedWidth = ActualWidth * requestedWorldFocus.Scaling.Value.Width;
+                proposedHeight = ActualHeight * requestedWorldFocus.Scaling.Value.Height;
+            }
+
+            var minX = requestedWorldFocus.WorldPoint.X - requestedWorldFocus.ViewportRatio.Width * proposedWidth;
+            var minY = requestedWorldFocus.WorldPoint.Y - requestedWorldFocus.ViewportRatio.Height * proposedHeight;
+            var maxX = minX + proposedWidth;
+            var maxY = minY + proposedHeight;
+
             var proposedWorldWindow = new BoundingBox(minX, maxX, minY, maxY);
 
             if (DampFocusShifts)

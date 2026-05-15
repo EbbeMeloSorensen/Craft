@@ -161,7 +161,7 @@
                     <TextBox Grid.Row="3" Grid.Column="1" Margin="1"
                              Text="{Binding RequestedWW_YMax}"/>
                     <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
-                            Width="50" Margin="3, 0, 0, 0"
+                            Width="40" Margin="3, 0, 0, 0"
                             Command="{Binding SetWorldWindowCommand}"/>
                 </Grid>
             </GroupBox>
@@ -174,10 +174,12 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="X:" Margin="0, 0, 10, 0"/>
@@ -192,8 +194,14 @@
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Y ratio:" Margin="0, 0, 10, 0"/>
                     <TextBox Grid.Row="3" Grid.Column="1" Margin="1"
                              Text="{Binding RequestedWW_FocusRatioY}"/>
-                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
-                            Width="50" Margin="3, 0, 0, 0"
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="X scaling:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_ScalingX}"/>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Y scaling:" Margin="0, 0, 10, 0"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" Margin="1"
+                             Text="{Binding RequestedWW_ScalingY}"/>
+                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="6" Content="Apply"
+                            Width="40" Margin="3, 0, 0, 0"
                             Command="{Binding SetWorldFocusCommand}"/>
                 </Grid>
             </GroupBox>

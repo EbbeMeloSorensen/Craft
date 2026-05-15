@@ -21,6 +21,8 @@ namespace Craft.UIElements.Reborn.GuiTest
         private string _requestedWwFocusY;
         private string _requestedWwFocusRatioX;
         private string _requestedWwFocusRatioY;
+        private string _requestedWwScalingX;
+        private string _requestedWwScalingY;
 
         private string _focusShiftDamping;
         private bool _continuallyMoveFocus;
@@ -101,6 +103,26 @@ namespace Craft.UIElements.Reborn.GuiTest
             set
             {
                 _requestedWwFocusRatioY = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_ScalingX
+        {
+            get => _requestedWwScalingX;
+            set
+            {
+                _requestedWwScalingX = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWW_ScalingY
+        {
+            get => _requestedWwScalingY;
+            set
+            {
+                _requestedWwScalingY = value;
                 OnPropertyChanged();
             }
         }
@@ -188,9 +210,11 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_YMax = "100";
 
             RequestedWW_FocusX = "200";
-            RequestedWW_FocusY = "300";
+            RequestedWW_FocusY = "150";
             RequestedWW_FocusRatioX = "0.5";
             RequestedWW_FocusRatioY = "0.5";
+            RequestedWW_ScalingX = "1";
+            RequestedWW_ScalingY = "1";
 
             FocusShiftDamping = GeometryViewModel.FocusShiftDamping.ToString();
         }
@@ -214,12 +238,15 @@ namespace Craft.UIElements.Reborn.GuiTest
             if (double.TryParse(RequestedWW_FocusX, CultureInfo.InvariantCulture, out var focusX) &&
                 double.TryParse(RequestedWW_FocusY, CultureInfo.InvariantCulture, out var focusY) &&
                 double.TryParse(RequestedWW_FocusRatioX, CultureInfo.InvariantCulture, out var ratioX) &&
-                double.TryParse(RequestedWW_FocusRatioY, CultureInfo.InvariantCulture, out var ratioY))
+                double.TryParse(RequestedWW_FocusRatioY, CultureInfo.InvariantCulture, out var ratioY) &&
+                double.TryParse(RequestedWW_ScalingX, CultureInfo.InvariantCulture, out var scalingX) &&
+                double.TryParse(RequestedWW_ScalingY, CultureInfo.InvariantCulture, out var scalingY))
             {
                 GeometryViewModel.RequestedWorldFocus = new WorldFocusRequest
                 {
                     ViewportRatio = new Size(ratioX, ratioY),
-                    WorldPoint = new Point(focusX, focusY)
+                    WorldPoint = new Point(focusX, focusY),
+                    Scaling = new Size(scalingX, scalingY)
                 };
             }
         }
