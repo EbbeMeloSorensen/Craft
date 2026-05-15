@@ -5,18 +5,31 @@ public static class TimeTickEngine
     private static readonly ITimeStepStrategy[] Candidates =
     {
         new FixedStepStrategy(TimeSpan.FromSeconds(1)),
+        new FixedStepStrategy(TimeSpan.FromSeconds(2)),
         new FixedStepStrategy(TimeSpan.FromSeconds(5)),
         new FixedStepStrategy(TimeSpan.FromSeconds(10)),
+        new FixedStepStrategy(TimeSpan.FromSeconds(15)),
+        new FixedStepStrategy(TimeSpan.FromSeconds(20)),
         new FixedStepStrategy(TimeSpan.FromSeconds(30)),
 
         new FixedStepStrategy(TimeSpan.FromMinutes(1)),
+        new FixedStepStrategy(TimeSpan.FromMinutes(2)),
         new FixedStepStrategy(TimeSpan.FromMinutes(5)),
+        new FixedStepStrategy(TimeSpan.FromMinutes(10)),
         new FixedStepStrategy(TimeSpan.FromMinutes(15)),
+        new FixedStepStrategy(TimeSpan.FromMinutes(20)),
+        new FixedStepStrategy(TimeSpan.FromMinutes(30)),
 
         new FixedStepStrategy(TimeSpan.FromHours(1)),
+        new FixedStepStrategy(TimeSpan.FromHours(2)),
+        new FixedStepStrategy(TimeSpan.FromHours(4)),
         new FixedStepStrategy(TimeSpan.FromHours(6)),
+        new FixedStepStrategy(TimeSpan.FromHours(8)),
+        new FixedStepStrategy(TimeSpan.FromHours(12)),
 
         new FixedStepStrategy(TimeSpan.FromDays(1)),
+        new FixedStepStrategy(TimeSpan.FromDays(2)),
+        new FixedStepStrategy(TimeSpan.FromDays(5)),
 
         new MonthStepStrategy(1),
         new MonthStepStrategy(3),
@@ -28,15 +41,13 @@ public static class TimeTickEngine
         long startTicks,
         long endTicks,
         double viewportWidth,
-        double minPixelSpacing,
-        double maxPixelSpacing)
+        double targetSpacing)
     {
         var strategy = ChooseStrategy(
             startTicks,
             endTicks,
             viewportWidth,
-            minPixelSpacing,
-            maxPixelSpacing);
+            targetSpacing);
 
         var ticks = new List<Tick>();
 
@@ -73,12 +84,14 @@ public static class TimeTickEngine
         long startTicks,
         long endTicks,
         double viewportWidth,
-        double minPixelSpacing,
-        double maxPixelSpacing)
+        double targetSpacing)
     {
         var totalSeconds =
             TimeSpan.FromTicks(endTicks - startTicks)
                     .TotalSeconds;
+
+        var bestError = double.MaxValue;
+        var best = Candidates.Last();
 
         foreach (var candidate in Candidates)
         {
@@ -89,14 +102,16 @@ public static class TimeTickEngine
             var spacing =
                 viewportWidth / tickCount;
 
-            if (spacing >= minPixelSpacing &&
-                spacing <= maxPixelSpacing)
-            {
-                return candidate;
-            }
+            var error =
+                System.Math.Abs(spacing - targetSpacing);
+
+            if (error > bestError) continue;
+
+            bestError = error;
+            best = candidate;
         }
 
-        return Candidates.Last();
+        return best;
     }
 
     private static double ToViewportX(

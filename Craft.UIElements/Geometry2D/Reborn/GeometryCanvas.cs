@@ -359,8 +359,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         startTicks,
                         endTicks,
                         ActualWidth,
-                        80,
-                        160);
+                        120);
 
                     var minorGridLinePen = new Pen(Brushes.LightGray, 1);
                     var majorGridLinePen = new Pen(Brushes.LightGray, 2);
