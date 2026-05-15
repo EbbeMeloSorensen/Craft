@@ -204,8 +204,10 @@ namespace Craft.UIElements.Reborn.GuiTest
             var ticksInADay = TimeSpan.FromDays(1).Ticks;
             var ticksInAnHour = TimeSpan.FromHours(1).Ticks;
 
-            RequestedWW_XMin = (-ticksInAYear * 5).ToString();
-            RequestedWW_XMax = (ticksInAYear * 5).ToString();
+            //RequestedWW_XMin = (-ticksInAYear * 5).ToString();
+            //RequestedWW_XMax = (ticksInAYear * 5).ToString();
+            RequestedWW_XMin = (ticksInADay * 1).ToString();
+            RequestedWW_XMax = (ticksInADay * 20).ToString();
             RequestedWW_YMin = "-100";
             RequestedWW_YMax = "100";
 

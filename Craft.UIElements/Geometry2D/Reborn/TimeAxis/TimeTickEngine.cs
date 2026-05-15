@@ -71,21 +71,45 @@ public static class TimeTickEngine
                 endTicks,
                 viewportWidth);
 
-            var kind = strategy.IsMajorTick(current)
-                ? TickKind.Major
-                : TickKind.Minor;
+            if (x >= 0)
+            {
+                var kind = strategy.IsMajorTick(current)
+                    ? TickKind.Major
+                    : TickKind.Minor;
 
-            var labelLines =
-                strategy.FormatLabel(current, kind);
+                var labelLines =
+                    strategy.FormatLabel(current, kind);
 
-            ticks.Add(new Tick(
-                x,
-                current,
-                kind,
-                labelLines));
+                ticks.Add(new Tick(
+                    x,
+                    current,
+                    kind,
+                    labelLines));
+            }
 
             current = strategy.Next(current);
         }
+
+        var hasMajor = ticks.Any(t => t.Kind == TickKind.Major);
+
+        if (hasMajor || ticks.Count <= 0) return ticks;
+
+        // No major ticks present, so promote the first tick with a label to the anchor
+        // (later, some ticks may have no labels)
+
+        var anchorIndex = 0;
+
+        while (ticks[anchorIndex].LabelLines.Count == 0 && anchorIndex < ticks.Count - 1)
+        {
+            anchorIndex++;
+        }
+
+        ticks[anchorIndex] =
+            ticks[anchorIndex] with
+            {
+                Kind = TickKind.Anchor,
+                LabelLines = strategy.FormatLabel(ticks[anchorIndex].WorldTicks, TickKind.Anchor)
+            };
 
         return ticks;
     }

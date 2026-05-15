@@ -1,4 +1,6 @@
-﻿namespace Craft.UIElements.Geometry2D.Reborn;
+﻿using System.ComponentModel;
+
+namespace Craft.UIElements.Geometry2D.Reborn;
 
 public class FixedStepStrategy : ITimeStepStrategy
 {
@@ -98,15 +100,27 @@ public class FixedStepStrategy : ITimeStepStrategy
                 };
         }
 
-        return kind == TickKind.Major
-            ? new[]
-            {
-                dt.ToString("dd MMM"),
-                dt.ToString("yyyy")
-            }
-            : new[]
-            {
-                dt.ToString("dd")
-            };
-    }
+        switch (kind)
+        {
+            case TickKind.Minor:
+                return new[]
+                {
+                    dt.ToString("dd")
+                };
+            case TickKind.Major:
+                return new[]
+                {
+                    dt.ToString("dd MMM"),
+                    dt.ToString("yyyy")
+                };
+            case TickKind.Anchor:
+                return new[]
+                {
+                    dt.ToString("dd MMM"),
+                    dt.ToString("yyyy")
+                };
+            default:
+                throw new InvalidEnumArgumentException();
+        }
+   }
 }

@@ -3,5 +3,6 @@
 public enum TickKind
 {
     Minor,
-    Major
+    Major,
+    Anchor
 }
