@@ -50,33 +50,63 @@ public class FixedStepStrategy : ITimeStepStrategy
                dt.Second == 0;
     }
 
-    public string FormatLabel(long ticks, TickKind kind)
+    public IReadOnlyList<string> FormatLabel(
+        long ticks,
+        TickKind kind)
     {
         var dt = TimeCoordinates.ToDateTime(ticks);
 
         if (_stepTicks < TimeSpan.TicksPerMinute)
         {
             return kind == TickKind.Major
-                ? dt.ToString("HH:mm:ss")
-                : dt.ToString("ss");
+                ? new[]
+                {
+                    dt.ToString("HH:mm:ss"),
+                    dt.ToString("yyyy-MM-dd")
+                }
+                : new[]
+                {
+                    dt.ToString("ss")
+                };
         }
 
         if (_stepTicks < TimeSpan.TicksPerHour)
         {
             return kind == TickKind.Major
-                ? dt.ToString("HH:mm")
-                : dt.ToString("mm");
+                ? new[]
+                {
+                    dt.ToString("HH:mm"),
+                    dt.ToString("yyyy-MM-dd")
+                }
+                : new[]
+                {
+                    dt.ToString("mm")
+                };
         }
 
         if (_stepTicks < TimeSpan.TicksPerDay)
         {
             return kind == TickKind.Major
-                ? dt.ToString("dd MMM HH:mm")
-                : dt.ToString("HH:mm");
+                ? new[]
+                {
+                    dt.ToString("HH:mm"),
+                    dt.ToString("yyyy-MM-dd")
+                }
+                : new[]
+                {
+                    dt.ToString("HH:mm")
+                };
         }
 
         return kind == TickKind.Major
-            ? dt.ToString("yyyy-MM-dd")
-            : dt.ToString("dd");
+            ? new[]
+            {
+                dt.ToString("dd MMM"),
+                dt.ToString("yyyy")
+            }
+            : new[]
+            {
+                dt.ToString("dd")
+            };
     }
 }

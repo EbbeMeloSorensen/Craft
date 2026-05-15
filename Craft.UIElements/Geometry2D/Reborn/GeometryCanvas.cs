@@ -381,20 +381,25 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             new System.Windows.Point(tick.X, 0),
                             new System.Windows.Point(tick.X, ActualHeight));
 
-                        // Labels
-                        var text = new FormattedText(
-                            tick.label,
-                            System.Globalization.CultureInfo.InvariantCulture,
-                            FlowDirection.LeftToRight,
-                            typeface,
-                            fontSize,
-                            Brushes.Black,
-                            1.0);
+                        for (var i = 0; i < tick.LabelLines.Count; i++)
+                        {
+                            var text = new FormattedText(
+                                tick.LabelLines[i],
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                FlowDirection.LeftToRight,
+                                typeface,
+                                fontSize,
+                                Brushes.Black,
+                                1.0);
 
-                        // Center text under grid line
-                        dc.DrawText(
-                            text,
-                            new System.Windows.Point(tick.X - text.Width / 2, yScreen - text.Height));
+                            var x = tick.X - text.Width / 2;
+                            var y = yScreen - text.Height * (tick.LabelLines.Count - i);
+
+                            // Center text under grid line
+                            dc.DrawText(
+                                text,
+                                new System.Windows.Point(x, y));
+                        }
                     }
                 }
                 else

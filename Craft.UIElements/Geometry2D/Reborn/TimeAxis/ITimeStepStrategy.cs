@@ -10,5 +10,5 @@ public interface ITimeStepStrategy
 
     bool IsMajorTick(long ticks);
 
-    string FormatLabel(long ticks, TickKind kind);
+    IReadOnlyList<string> FormatLabel(long ticks, TickKind kind);
 }

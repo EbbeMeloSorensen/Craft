@@ -22,6 +22,7 @@ public static class TimeTickEngine
 
         new FixedStepStrategy(TimeSpan.FromHours(1)),
         new FixedStepStrategy(TimeSpan.FromHours(2)),
+        new FixedStepStrategy(TimeSpan.FromHours(3)),
         new FixedStepStrategy(TimeSpan.FromHours(4)),
         new FixedStepStrategy(TimeSpan.FromHours(6)),
         new FixedStepStrategy(TimeSpan.FromHours(8)),
@@ -32,9 +33,18 @@ public static class TimeTickEngine
         new FixedStepStrategy(TimeSpan.FromDays(5)),
 
         new MonthStepStrategy(1),
+        new MonthStepStrategy(2),
         new MonthStepStrategy(3),
+        new MonthStepStrategy(4),
+        new MonthStepStrategy(6),
 
-        new YearStepStrategy(1)
+        new YearStepStrategy(1),
+        new YearStepStrategy(2),
+        new YearStepStrategy(5),
+        new YearStepStrategy(10),
+        new YearStepStrategy(20),
+        new YearStepStrategy(50),
+        new YearStepStrategy(100),
     };
 
     public static IReadOnlyList<Tick> Generate(
@@ -65,14 +75,14 @@ public static class TimeTickEngine
                 ? TickKind.Major
                 : TickKind.Minor;
 
-            var label =
+            var labelLines =
                 strategy.FormatLabel(current, kind);
 
             ticks.Add(new Tick(
                 x,
                 current,
                 kind,
-                label));
+                labelLines));
 
             current = strategy.Next(current);
         }

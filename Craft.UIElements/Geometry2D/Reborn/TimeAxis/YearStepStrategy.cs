@@ -17,7 +17,7 @@ public class YearStepStrategy : ITimeStepStrategy
         var dt = TimeCoordinates.ToDateTime(ticks);
 
         var aligned = new DateTime(
-            dt.Year,
+            (dt.Year / _years) * _years,
             1,
             1,
             0,
@@ -41,10 +41,15 @@ public class YearStepStrategy : ITimeStepStrategy
         return true;
     }
 
-    public string FormatLabel(long ticks, TickKind kind)
+    public IReadOnlyList<string> FormatLabel(
+        long ticks,
+        TickKind kind)
     {
         var dt = TimeCoordinates.ToDateTime(ticks);
 
-        return dt.ToString("yyyy");
+        return new[]
+        {
+            dt.ToString("yyyy")
+        };
     }
 }

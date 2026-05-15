@@ -18,7 +18,7 @@ public class MonthStepStrategy : ITimeStepStrategy
 
         var aligned = new DateTime(
             dt.Year,
-            dt.Month,
+            ((dt.Month - 1) / _months) * _months + 1,
             1,
             0,
             0,
@@ -43,12 +43,21 @@ public class MonthStepStrategy : ITimeStepStrategy
         return dt.Month == 1;
     }
 
-    public string FormatLabel(long ticks, TickKind kind)
+    public IReadOnlyList<string> FormatLabel(
+        long ticks,
+        TickKind kind)
     {
         var dt = TimeCoordinates.ToDateTime(ticks);
 
         return kind == TickKind.Major
-            ? dt.ToString("yyyy")
-            : dt.ToString("MMM");
+            ? new[]
+            {
+                dt.ToString("MMM"),
+                dt.ToString("yyyy")
+            }
+            : new[]
+            {
+                dt.ToString("MMM")
+            };
     }
 }

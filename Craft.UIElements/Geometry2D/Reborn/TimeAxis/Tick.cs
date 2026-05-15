@@ -6,4 +6,4 @@ public record Tick(
     double X,
     long WorldTicks,
     TickKind Kind,
-    string? label);
+    IReadOnlyList<string> LabelLines);
