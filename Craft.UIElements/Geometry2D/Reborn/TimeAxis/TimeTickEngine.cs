@@ -31,6 +31,7 @@ public static class TimeTickEngine
         new FixedStepStrategy(TimeSpan.FromDays(1)),
         //new FixedStepStrategy(TimeSpan.FromDays(2)),
         new FixedStepStrategy(TimeSpan.FromDays(5)),
+        new FixedStepStrategy(TimeSpan.FromDays(10)),
 
         new MonthStepStrategy(1),
         //new MonthStepStrategy(2),
@@ -39,11 +40,11 @@ public static class TimeTickEngine
         new MonthStepStrategy(6),
 
         new YearStepStrategy(1),
-        new YearStepStrategy(2),
+        //new YearStepStrategy(2),
         new YearStepStrategy(5),
         new YearStepStrategy(10),
         new YearStepStrategy(20),
-        new YearStepStrategy(50),
+        //new YearStepStrategy(50),
         new YearStepStrategy(100),
     };
 
@@ -63,28 +64,29 @@ public static class TimeTickEngine
 
         var current = strategy.Align(startTicks);
 
-        //var dummy = TimeCoordinates.ToDateTime(current);
-
-        var firstSemantic =
-            GetNextMonthBoundary(startTicks);
-
-        var firstDistancePx =
-            WorldDistanceToViewportDistance(
-                current,
-                firstSemantic,
-                startTicks,
-                endTicks,
-                viewportWidth);
-
         // Hvis en kandidatlinie er tæt på en semantisk grænse (fx månedsskifte), så snap til den i stedet for at vise den "regulære" kandidatlinie
         const double semanticSnapThresholdPx = 40;
 
-        var semanticDominatesFirstTick =
-            firstDistancePx < semanticSnapThresholdPx;
-
-        if (semanticDominatesFirstTick)
+        if (strategy is FixedStepStrategy)
         {
-            current = firstSemantic;
+            var firstSemantic =
+                GetNextMonthBoundary(startTicks);
+
+            var firstDistancePx =
+                WorldDistanceToViewportDistance(
+                    current,
+                    firstSemantic,
+                    startTicks,
+                    endTicks,
+                    viewportWidth);
+
+            var semanticDominatesFirstTick =
+                firstDistancePx < semanticSnapThresholdPx;
+
+            if (semanticDominatesFirstTick)
+            {
+                current = firstSemantic;
+            }
         }
 
         while (current <= endTicks)
