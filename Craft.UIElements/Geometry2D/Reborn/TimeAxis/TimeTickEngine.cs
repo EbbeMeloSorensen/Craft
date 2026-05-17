@@ -5,46 +5,32 @@ public static class TimeTickEngine
     private static readonly ITimeStepStrategy[] Candidates =
     {
         new FixedStepStrategy(TimeSpan.FromSeconds(1)),
-        //new FixedStepStrategy(TimeSpan.FromSeconds(2)),
         new FixedStepStrategy(TimeSpan.FromSeconds(5)),
-        //new FixedStepStrategy(TimeSpan.FromSeconds(10)),
         new FixedStepStrategy(TimeSpan.FromSeconds(15)),
-        //new FixedStepStrategy(TimeSpan.FromSeconds(20)),
         new FixedStepStrategy(TimeSpan.FromSeconds(30)),
 
         new FixedStepStrategy(TimeSpan.FromMinutes(1)),
-        //new FixedStepStrategy(TimeSpan.FromMinutes(2)),
         new FixedStepStrategy(TimeSpan.FromMinutes(5)),
-        //new FixedStepStrategy(TimeSpan.FromMinutes(10)),
         new FixedStepStrategy(TimeSpan.FromMinutes(15)),
-        //new FixedStepStrategy(TimeSpan.FromMinutes(20)),
         new FixedStepStrategy(TimeSpan.FromMinutes(30)),
 
         new FixedStepStrategy(TimeSpan.FromHours(1)),
-        //new FixedStepStrategy(TimeSpan.FromHours(2)),
         new FixedStepStrategy(TimeSpan.FromHours(3)),
-        //new FixedStepStrategy(TimeSpan.FromHours(4)),
         new FixedStepStrategy(TimeSpan.FromHours(6)),
-        //new FixedStepStrategy(TimeSpan.FromHours(8)),
         new FixedStepStrategy(TimeSpan.FromHours(12)),
 
         new FixedStepStrategy(TimeSpan.FromDays(1)),
-        //new FixedStepStrategy(TimeSpan.FromDays(2)),
         new FixedStepStrategy(TimeSpan.FromDays(5)),
         new FixedStepStrategy(TimeSpan.FromDays(10)),
 
         new MonthStepStrategy(1),
-        //new MonthStepStrategy(2),
         new MonthStepStrategy(3),
-        //new MonthStepStrategy(4),
         new MonthStepStrategy(6),
 
         new YearStepStrategy(1),
-        //new YearStepStrategy(2),
         new YearStepStrategy(5),
         new YearStepStrategy(10),
         new YearStepStrategy(20),
-        //new YearStepStrategy(50),
         new YearStepStrategy(100),
     };
 
