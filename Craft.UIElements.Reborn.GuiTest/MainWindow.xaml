@@ -183,7 +183,8 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Date min:" Margin="0, 0, 10, 0"/>
-                        <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding RequestedStartDate}"/>
+                        <DatePicker Grid.Row="0" Grid.Column="1" Margin="0, 0, 0, 2"
+                                    SelectedDate="{Binding RequestedStartDate}"/>
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Date max:" Margin="0, 0, 10, 0"/>
                         <DatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding RequestedEndDate}"/>
                         <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Content="Apply"

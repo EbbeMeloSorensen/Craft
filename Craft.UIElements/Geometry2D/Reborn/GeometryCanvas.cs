@@ -371,15 +371,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     foreach (var tick in ticks)
                     {
-                        var gridLinePen = tick.Kind == TickKind.Major
-                            ? majorGridLinePen
-                            : minorGridLinePen;
+                        if (ShowGrid)
+                        {
+                            var gridLinePen = tick.Kind == TickKind.Major
+                                ? majorGridLinePen
+                                : minorGridLinePen;
 
-                        // Grid lines
-                        dc.DrawLine(
-                            gridLinePen,
-                            new System.Windows.Point(tick.X, 0),
-                            new System.Windows.Point(tick.X, ActualHeight));
+                            dc.DrawLine(
+                                gridLinePen,
+                                new System.Windows.Point(tick.X, 0),
+                                new System.Windows.Point(tick.X, ActualHeight));
+                        }
 
                         for (var i = 0; i < tick.LabelLines.Count; i++)
                         {
@@ -413,12 +415,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 new System.Windows.Point(x, y));
                         }
                     }
+
+                    if (ShowGrid)
+                    {
+                        DrawHorizontalGridLines(dc);
+                    }
                 }
                 else
                 {
                     if (ShowGrid)
                     {
-                        DrawGrid(dc, true, true);
+                        DrawHorizontalGridLines(dc);
+                        DrawVerticalGridLines(dc);
                     }
 
                     if (ShowCoordinateSystem)
@@ -707,10 +715,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 ));
         }
 
-        private void DrawGrid(
-            DrawingContext dc,
-            bool horizontalLines,
-            bool verticalLines)
+        private void DrawHorizontalGridLines(
+            DrawingContext dc)
         {
             if (ActualWidth == 0 || ActualHeight == 0)
                 return;
@@ -718,34 +724,38 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var world = ComputeWorldWindow();
             var pen = new Pen(Brushes.LightGray, 1);
 
-            if (horizontalLines)
+            var scaleY = ViewState.Scaling.Height;
+            var stepY = GetNiceStep(scaleY);
+            for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
             {
-                var scaleY = ViewState.Scaling.Height;
-                var stepY = GetNiceStep(scaleY);
-                for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
-                {
-                    var screenY = (y - world.MinY) * scaleY;
+                var screenY = (y - world.MinY) * scaleY;
 
-                    dc.DrawLine(
-                        pen,
-                        new System.Windows.Point(0, screenY),
-                        new System.Windows.Point(ActualWidth, screenY));
-                }
+                dc.DrawLine(
+                    pen,
+                    new System.Windows.Point(0, screenY),
+                    new System.Windows.Point(ActualWidth, screenY));
             }
+        }
 
-            if (verticalLines)
+        private void DrawVerticalGridLines(
+            DrawingContext dc)
+        {
+            if (ActualWidth == 0 || ActualHeight == 0)
+                return;
+
+            var world = ComputeWorldWindow();
+            var pen = new Pen(Brushes.LightGray, 1);
+
+            var scaleX = ViewState.Scaling.Width;
+            var stepX = GetNiceStep(scaleX);
+            for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
             {
-                var scaleX = ViewState.Scaling.Width;
-                var stepX = GetNiceStep(scaleX);
-                for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
-                {
-                    var screenX = (x - world.MinX) * scaleX;
+                var screenX = (x - world.MinX) * scaleX;
 
-                    dc.DrawLine(
-                        pen,
-                        new System.Windows.Point(screenX, 0),
-                        new System.Windows.Point(screenX, ActualHeight));
-                }
+                dc.DrawLine(
+                    pen,
+                    new System.Windows.Point(screenX, 0),
+                    new System.Windows.Point(screenX, ActualHeight));
             }
         }
 
@@ -848,8 +858,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     if (sx < 0 || sx > ActualWidth)
                         continue;
 
-                    var text = new FormattedText(
-                        $"{x / 1:G}",
+                    var text = System.Math.Abs(x) > 9000
+                        ? $"{x / 1:0.###e0}"
+                        : $"{x / 1:G}";
+
+                    var formattedText = new FormattedText(
+                        text,
                         System.Globalization.CultureInfo.InvariantCulture,
                         FlowDirection.LeftToRight,
                         typeface,
@@ -859,8 +873,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     // Center text under grid line
                     dc.DrawText(
-                        text,
-                        new System.Windows.Point(sx - text.Width / 2, yScreen - text.Height));
+                        formattedText,
+                        new System.Windows.Point(sx - formattedText.Width / 2, yScreen - formattedText.Height));
                 }
             }
 
@@ -875,8 +889,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     if (sy < 0 || sy > ActualHeight)
                         continue;
 
-                    var text = new FormattedText(
-                        $"{y / 1:G}",
+                    var text = System.Math.Abs(y) > 9000
+                        ? $"{y / 1:0.###e0}"
+                        : $"{y / 1:G}";
+
+                    var formattedText = new FormattedText(
+                        text,
                         System.Globalization.CultureInfo.InvariantCulture,
                         FlowDirection.LeftToRight,
                         typeface,
@@ -885,8 +903,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         1.0);
 
                     dc.DrawText(
-                        text,
-                        new System.Windows.Point(xScreen, sy - text.Height / 2));
+                        formattedText,
+                        new System.Windows.Point(xScreen, sy - formattedText.Height / 2));
                 }
             }
         }
