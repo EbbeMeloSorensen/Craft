@@ -5,37 +5,37 @@ public static class TimeTickEngine
     private static readonly ITimeStepStrategy[] Candidates =
     {
         new FixedStepStrategy(TimeSpan.FromSeconds(1)),
-        new FixedStepStrategy(TimeSpan.FromSeconds(2)),
+        //new FixedStepStrategy(TimeSpan.FromSeconds(2)),
         new FixedStepStrategy(TimeSpan.FromSeconds(5)),
-        new FixedStepStrategy(TimeSpan.FromSeconds(10)),
+        //new FixedStepStrategy(TimeSpan.FromSeconds(10)),
         new FixedStepStrategy(TimeSpan.FromSeconds(15)),
-        new FixedStepStrategy(TimeSpan.FromSeconds(20)),
+        //new FixedStepStrategy(TimeSpan.FromSeconds(20)),
         new FixedStepStrategy(TimeSpan.FromSeconds(30)),
 
         new FixedStepStrategy(TimeSpan.FromMinutes(1)),
-        new FixedStepStrategy(TimeSpan.FromMinutes(2)),
+        //new FixedStepStrategy(TimeSpan.FromMinutes(2)),
         new FixedStepStrategy(TimeSpan.FromMinutes(5)),
-        new FixedStepStrategy(TimeSpan.FromMinutes(10)),
+        //new FixedStepStrategy(TimeSpan.FromMinutes(10)),
         new FixedStepStrategy(TimeSpan.FromMinutes(15)),
-        new FixedStepStrategy(TimeSpan.FromMinutes(20)),
+        //new FixedStepStrategy(TimeSpan.FromMinutes(20)),
         new FixedStepStrategy(TimeSpan.FromMinutes(30)),
 
         new FixedStepStrategy(TimeSpan.FromHours(1)),
-        new FixedStepStrategy(TimeSpan.FromHours(2)),
+        //new FixedStepStrategy(TimeSpan.FromHours(2)),
         new FixedStepStrategy(TimeSpan.FromHours(3)),
-        new FixedStepStrategy(TimeSpan.FromHours(4)),
+        //new FixedStepStrategy(TimeSpan.FromHours(4)),
         new FixedStepStrategy(TimeSpan.FromHours(6)),
-        new FixedStepStrategy(TimeSpan.FromHours(8)),
+        //new FixedStepStrategy(TimeSpan.FromHours(8)),
         new FixedStepStrategy(TimeSpan.FromHours(12)),
 
         new FixedStepStrategy(TimeSpan.FromDays(1)),
-        new FixedStepStrategy(TimeSpan.FromDays(2)),
+        //new FixedStepStrategy(TimeSpan.FromDays(2)),
         new FixedStepStrategy(TimeSpan.FromDays(5)),
 
         new MonthStepStrategy(1),
-        new MonthStepStrategy(2),
+        //new MonthStepStrategy(2),
         new MonthStepStrategy(3),
-        new MonthStepStrategy(4),
+        //new MonthStepStrategy(4),
         new MonthStepStrategy(6),
 
         new YearStepStrategy(1),
@@ -63,6 +63,30 @@ public static class TimeTickEngine
 
         var current = strategy.Align(startTicks);
 
+        //var dummy = TimeCoordinates.ToDateTime(current);
+
+        var firstSemantic =
+            GetNextMonthBoundary(startTicks);
+
+        var firstDistancePx =
+            WorldDistanceToViewportDistance(
+                current,
+                firstSemantic,
+                startTicks,
+                endTicks,
+                viewportWidth);
+
+        // Hvis en kandidatlinie er tæt på en semantisk grænse (fx månedsskifte), så snap til den i stedet for at vise den "regulære" kandidatlinie
+        const double semanticSnapThresholdPx = 40;
+
+        var semanticDominatesFirstTick =
+            firstDistancePx < semanticSnapThresholdPx;
+
+        if (semanticDominatesFirstTick)
+        {
+            current = firstSemantic;
+        }
+
         while (current <= endTicks)
         {
             var x = ToViewportX(
@@ -87,7 +111,36 @@ public static class TimeTickEngine
                     labelLines));
             }
 
-            current = strategy.Next(current);
+            // -------------------------------------------------
+            // Compute next regular tick
+            // -------------------------------------------------
+
+            var regularNext = strategy.Next(current);
+
+            // -------------------------------------------------
+            // Compute next semantic boundary (we might use that instead)
+            // -------------------------------------------------
+
+            var semanticNext = GetNextMonthBoundary(current);
+
+            var distancePx =
+                WorldDistanceToViewportDistance(
+                    regularNext,
+                    semanticNext,
+                    startTicks,
+                    endTicks,
+                    viewportWidth);
+
+            var semanticIsNear =
+                distancePx < semanticSnapThresholdPx;
+
+            if (semanticIsNear)
+            {
+                current = semanticNext;
+                continue;
+            }
+
+            current = regularNext;
         }
 
         var hasMajor = ticks.Any(t => t.Kind == TickKind.Major);
@@ -158,5 +211,36 @@ public static class TimeTickEngine
         double offset = tick - startTicks;
 
         return offset / total * width;
+    }
+
+    private static long GetNextMonthBoundary(long ticks)
+    {
+        var dt = TimeCoordinates.ToDateTime(ticks);
+
+        var nextMonth = new DateTime(
+                dt.Year,
+                dt.Month,
+                1,
+                0,
+                0,
+                0,
+                DateTimeKind.Utc)
+            .AddMonths(1);
+
+        return TimeCoordinates.ToWorldTicks(nextMonth);
+    }
+
+    private static double WorldDistanceToViewportDistance(
+        long a,
+        long b,
+        long startTicks,
+        long endTicks,
+        double viewportWidth)
+    {
+        double totalWorld = endTicks - startTicks;
+
+        double worldDistance = System.Math.Abs(b - a);
+
+        return worldDistance / totalWorld * viewportWidth;
     }
 }

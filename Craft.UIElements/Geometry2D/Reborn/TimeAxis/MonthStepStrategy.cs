@@ -1,4 +1,6 @@
-﻿namespace Craft.UIElements.Geometry2D.Reborn;
+﻿using System.ComponentModel;
+
+namespace Craft.UIElements.Geometry2D.Reborn;
 
 public class MonthStepStrategy : ITimeStepStrategy
 {
@@ -49,15 +51,12 @@ public class MonthStepStrategy : ITimeStepStrategy
     {
         var dt = TimeCoordinates.ToDateTime(ticks);
 
-        return kind == TickKind.Major
-            ? new[]
-            {
-                dt.ToString("MMM"),
-                dt.ToString("yyyy")
-            }
-            : new[]
-            {
-                dt.ToString("MMM")
-            };
+        return kind switch
+        {
+            TickKind.Minor => new[] { dt.ToString("MMM") },
+            TickKind.Major => new[] { dt.ToString("MMM"), dt.ToString("yyyy") },
+            TickKind.Anchor => new[] { dt.ToString("MMM"), dt.ToString("yyyy") },
+            _ => throw new InvalidEnumArgumentException()
+        };
     }
 }

@@ -395,6 +395,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             var x = tick.X - text.Width / 2;
                             var y = yScreen - text.Height * (tick.LabelLines.Count - i);
 
+                            if (tick.Kind != TickKind.Minor)
+                            {
+                                if (x < 0)
+                                {
+                                    x = 0;
+                                }
+                                else if (x + text.Width > ActualWidth)
+                                {
+                                    x = ActualWidth - text.Width;
+                                }
+                            }
+
                             // Center text under grid line
                             dc.DrawText(
                                 text,

@@ -16,6 +16,42 @@ public class FixedStepStrategy : ITimeStepStrategy
 
     public long Align(long ticks)
     {
+        var dt = TimeCoordinates.ToDateTime(ticks);
+
+        // Only apply month-relative alignment
+        // for day-based steps
+
+        if (_stepTicks >= TimeSpan.TicksPerDay)
+        {
+            var monthStart = new DateTime(
+                dt.Year,
+                dt.Month,
+                1,
+                0,
+                0,
+                0,
+                DateTimeKind.Utc);
+
+            var daysSinceMonthStart =
+                (dt.Date - monthStart).Days;
+
+            var stepDays =
+                (int)TimeSpan
+                    .FromTicks(_stepTicks)
+                    .TotalDays;
+
+            var alignedDays =
+                (daysSinceMonthStart / stepDays)
+                * stepDays;
+
+            var aligned =
+                monthStart.AddDays(alignedDays);
+
+            return TimeCoordinates.ToWorldTicks(aligned);
+        }
+
+        // fallback for smaller units
+
         return ticks - (ticks % _stepTicks);
     }
 
@@ -60,67 +96,43 @@ public class FixedStepStrategy : ITimeStepStrategy
 
         if (_stepTicks < TimeSpan.TicksPerMinute)
         {
-            return kind == TickKind.Major
-                ? new[]
-                {
-                    dt.ToString("HH:mm:ss"),
-                    dt.ToString("yyyy-MM-dd")
-                }
-                : new[]
-                {
-                    dt.ToString("ss")
-                };
+            return kind switch
+            {
+                TickKind.Minor => new[] { dt.ToString("ss") },
+                TickKind.Major => new[] { dt.ToString("HH:mm:ss"), dt.ToString("yyyy-MM-dd") },
+                TickKind.Anchor => new[] { dt.ToString("HH:mm::ss"), dt.ToString("yyyy-MM-dd") },
+                _ => throw new InvalidEnumArgumentException()
+            };
         }
 
         if (_stepTicks < TimeSpan.TicksPerHour)
         {
-            return kind == TickKind.Major
-                ? new[]
-                {
-                    dt.ToString("HH:mm"),
-                    dt.ToString("yyyy-MM-dd")
-                }
-                : new[]
-                {
-                    dt.ToString("mm")
-                };
+            return kind switch
+            {
+                TickKind.Minor => new[] { dt.ToString("mm") },
+                TickKind.Major => new[] { dt.ToString("HH:mm"), dt.ToString("yyyy-MM-dd") },
+                TickKind.Anchor => new[] { dt.ToString("HH:mm"), dt.ToString("yyyy-MM-dd") },
+                _ => throw new InvalidEnumArgumentException()
+            };
         }
 
         if (_stepTicks < TimeSpan.TicksPerDay)
         {
-            return kind == TickKind.Major
-                ? new[]
-                {
-                    dt.ToString("HH:mm"),
-                    dt.ToString("yyyy-MM-dd")
-                }
-                : new[]
-                {
-                    dt.ToString("HH:mm")
-                };
+            return kind switch
+            {
+                TickKind.Minor => new[] { dt.ToString("HH:mm") },
+                TickKind.Major => new[] { dt.ToString("HH:mm"), dt.ToString("yyyy-MM-dd") },
+                TickKind.Anchor => new[] { dt.ToString("HH:mm"), dt.ToString("yyyy-MM-dd") },
+                _ => throw new InvalidEnumArgumentException()
+            };
         }
 
-        switch (kind)
+        return kind switch
         {
-            case TickKind.Minor:
-                return new[]
-                {
-                    dt.ToString("dd")
-                };
-            case TickKind.Major:
-                return new[]
-                {
-                    dt.ToString("dd MMM"),
-                    dt.ToString("yyyy")
-                };
-            case TickKind.Anchor:
-                return new[]
-                {
-                    dt.ToString("dd MMM"),
-                    dt.ToString("yyyy")
-                };
-            default:
-                throw new InvalidEnumArgumentException();
-        }
-   }
+            TickKind.Minor => new[] {dt.ToString("dd")},
+            TickKind.Major => new[] {dt.ToString("dd"), dt.ToString("MMM yyyy")},
+            TickKind.Anchor => new[] {dt.ToString("dd"), dt.ToString("MMM yyyy")},
+            _ => throw new InvalidEnumArgumentException()
+        };
+    }
 }
