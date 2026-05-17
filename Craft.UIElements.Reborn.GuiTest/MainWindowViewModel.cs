@@ -1,4 +1,5 @@
 ﻿using Craft.DataStructures.Geometry;
+using Craft.UIElements.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn;
 using GalaSoft.MvvmLight.Command;
 using System.ComponentModel;
@@ -16,6 +17,8 @@ namespace Craft.UIElements.Reborn.GuiTest
         private string _requestedWwXMax;
         private string _requestedWwYMin;
         private string _requestedWwYMax;
+        private DateTime? _requestedStartDate;
+        private DateTime? _requestedEndDate;
 
         private string _requestedWwFocusX;
         private string _requestedWwFocusY;
@@ -63,6 +66,26 @@ namespace Craft.UIElements.Reborn.GuiTest
             set
             {
                 _requestedWwYMax = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime? RequestedStartDate
+        {
+            get => _requestedStartDate;
+            set
+            {
+                _requestedStartDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime? RequestedEndDate
+        {
+            get => _requestedEndDate;
+            set
+            {
+                _requestedEndDate = value;
                 OnPropertyChanged();
             }
         }
@@ -154,6 +177,7 @@ namespace Craft.UIElements.Reborn.GuiTest
         }
 
         public ICommand SetWorldWindowCommand { get; }
+        public ICommand SetTimeIntervalCommand { get; }
         public ICommand SetWorldFocusCommand { get; }
 
         public GeometryViewModel GeometryViewModel { get; }
@@ -185,6 +209,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             };
 
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
+            SetTimeIntervalCommand = new RelayCommand(SetTimeInterval);
             SetWorldFocusCommand = new RelayCommand(SetWorldFocus);
 
             // Default values for the world window input fields
@@ -213,6 +238,9 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_YMin = "-100";
             RequestedWW_YMax = "100";
 
+            RequestedStartDate = new DateTime(1975, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            RequestedEndDate = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
             RequestedWW_FocusX = "200";
             RequestedWW_FocusY = "150";
             RequestedWW_FocusRatioX = "0.5";
@@ -235,6 +263,17 @@ namespace Craft.UIElements.Reborn.GuiTest
             {
                 GeometryViewModel.RequestedWorldWindow = new BoundingBox(xMin, xMax, yMin, yMax);
             }
+        }
+
+        private void SetTimeInterval()
+        {
+            var xMin = TimeCoordinates.ToWorldTicks(RequestedStartDate.Value);
+            var xMax = TimeCoordinates.ToWorldTicks(RequestedEndDate.Value);
+
+            var yMin = GeometryViewModel.WorldWindow.MinY;
+            var yMax = GeometryViewModel.WorldWindow.MaxY;
+
+            GeometryViewModel.RequestedWorldWindow = new BoundingBox(xMin, xMax, yMin, yMax);
         }
 
         private void SetWorldFocus()

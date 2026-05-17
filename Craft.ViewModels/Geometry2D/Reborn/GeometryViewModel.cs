@@ -116,6 +116,12 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _lockAspectRatio = value;
                 OnPropertyChanged();
+
+                if (_lockAspectRatio && TimeAxisMode)
+                {
+                    // Lock aspect ratio and time axis mode are incompatible, so disable
+                    TimeAxisMode = false;
+                }
             }
         }
 
@@ -196,6 +202,12 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _timeAxisMode = value;
                 OnPropertyChanged();
+
+                if (_timeAxisMode)
+                {
+                    // Lock aspect ratio and time axis mode are incompatible, so disable
+                    LockAspectRatio = false;
+                }
             }
         }
 

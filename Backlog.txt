@@ -121,18 +121,19 @@ Done:
 * For reborn - Når man requester et arbitrært world window, må den ikke fucke aspect ratio, hvis denne er låst
 * For reborn - Vinduet skal kunne tracke noget, der ændrer sig over tid
   - frame event skal ramme hosten og ikke GeometryViewModel
-
-In progress:
 * Lav et design, der undgår "gigantic world coordinates in Matrix"
 * For reborn - Lav et mode, hvor x tick labels viser tid
-  - I første omgang - sikr, at ticks er maximalt en dag og skriv labels, der alle er fuldt kvalificerede (som om alle var major ticks)
-    - Først bare grid lines
-* For reborn - Introducer polylines som alternativ til bare at have linier (som foreslået af ChatGpt)
-* For reborn - Introducer ellipser som alternativ til bare at have linier
 * For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering
-* Husk: Kør det i retning af, at det skal kunne bruges til inspektion af tidsserier
 * For reborn - Place World window  "ok"
   - Pas på, den ikke fucker aspect ratio
+
+In progress:
+* For reborn - Forbedr usability i test miljøet
+  - 
+* For reborn - Sikr, at den ikke crasher, hvis du zommer meget ud i time axis mode
+* For reborn - Introducer vertikale linier som alternativ til bare at have liniestykker
+* For reborn - Introducer ellipser som alternativ til bare at have linier
+* For reborn - Introducer polylines som alternativ til bare at have linier (som foreslået af ChatGpt)
 * For reborn - der skal også være mulighed for IKKE at operere med diskrete zoom-værdier - f.eks. hvis det skal understøtte spil, hvor zoom f.eks. kan afhænge af spillerens hastighed
 * For reborn - hvis man har låst x- eller y-akse skal det influere på expanded world window, så det kun udvides i den retning, der ikke er låst
 * For reborn - lav det som ChatGpt foreslog med at gøre grid lines fine

@@ -133,41 +133,69 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <GroupBox Grid.Column="0"
-                      BorderBrush="DarkSlateGray" BorderThickness="1"
-                      Header="Place World Window">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="1"
-                             Text="{Binding RequestedWW_XMin}"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="1"
-                             Text="{Binding RequestedWW_YMin}"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="1"
-                             Text="{Binding RequestedWW_XMax}"/>
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Y max:" Margin="0, 0, 10, 0"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Margin="1"
-                             Text="{Binding RequestedWW_YMax}"/>
-                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
-                            Width="40" Margin="3, 0, 0, 0"
-                            Command="{Binding SetWorldWindowCommand}"/>
-                </Grid>
-            </GroupBox>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox Grid.Row="0" BorderBrush="DarkSlateGray" BorderThickness="1"
+                          Header="Set World Window">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="X min:" Margin="0, 0, 10, 0"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Margin="1"
+                                 Text="{Binding RequestedWW_XMin}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Y min:" Margin="0, 0, 10, 0"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Margin="1"
+                                 Text="{Binding RequestedWW_YMin}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="X max:" Margin="0, 0, 10, 0"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Margin="1"
+                                 Text="{Binding RequestedWW_XMax}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Y max:" Margin="0, 0, 10, 0"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Margin="1"
+                                 Text="{Binding RequestedWW_YMax}"/>
+                        <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="4" Content="Apply"
+                                Width="40" Margin="3, 0, 0, 0"
+                                Command="{Binding SetWorldWindowCommand}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Row="1" BorderBrush="DarkSlateGray" BorderThickness="1"
+                          Header="Set Time Interval (x)">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Date min:" Margin="0, 0, 10, 0"/>
+                        <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding RequestedStartDate}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Date max:" Margin="0, 0, 10, 0"/>
+                        <DatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding RequestedEndDate}"/>
+                        <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Content="Apply"
+                                Width="40" Margin="3, 0, 0, 0"
+                                Command="{Binding SetTimeIntervalCommand}"/>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+
             <GroupBox Grid.Column="1"
                       BorderBrush="DarkSlateGray" BorderThickness="1"
-                      Header="Place World Focus">
+                      Header="Set World Focus">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
