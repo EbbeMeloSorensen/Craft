@@ -131,9 +131,9 @@ In progress:
 * For reborn - Forbedr usability i test miljøet
   - Lock Aspect Ratio og Time Axis mode skal ikke begge kunne være true (OK)
   - Scientific notation for labels, der repræsenterer store tal (OK)
-  - Grid on/off skal også gælde for time axis mode
-  - Y-aksen skal vises uanset om man er i Time Axis mode eller ej
-  - Scientific notation for tallene til højre, når de er store
+  - Grid on/off skal også gælde for time axis mode (OK)
+  - Y-aksen skal vises uanset om man er i Time Axis mode eller ej (OK)
+  - Scientific notation for tallene til højre for vieweren, når de er store
   - Labels for x- og y-akse skal ikke overlappe
 * For reborn - Sikr, at den ikke crasher, hvis du zommer meget ud i time axis mode
 * For reborn - Introducer vertikale linier som alternativ til bare at have liniestykker

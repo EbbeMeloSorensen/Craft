@@ -383,42 +383,50 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 new System.Windows.Point(tick.X, ActualHeight));
                         }
 
-                        for (var i = 0; i < tick.LabelLines.Count; i++)
+                        if (ShowCoordinateSystem)
                         {
-                            var text = new FormattedText(
-                                tick.LabelLines[i],
-                                System.Globalization.CultureInfo.InvariantCulture,
-                                FlowDirection.LeftToRight,
-                                typeface,
-                                fontSize,
-                                Brushes.Black,
-                                1.0);
-
-                            var x = tick.X - text.Width / 2;
-                            var y = yScreen - text.Height * (tick.LabelLines.Count - i);
-
-                            if (tick.Kind != TickKind.Minor)
+                            for (var i = 0; i < tick.LabelLines.Count; i++)
                             {
-                                if (x < 0)
-                                {
-                                    x = 0;
-                                }
-                                else if (x + text.Width > ActualWidth)
-                                {
-                                    x = ActualWidth - text.Width;
-                                }
-                            }
+                                var text = new FormattedText(
+                                    tick.LabelLines[i],
+                                    System.Globalization.CultureInfo.InvariantCulture,
+                                    FlowDirection.LeftToRight,
+                                    typeface,
+                                    fontSize,
+                                    Brushes.Black,
+                                    1.0);
 
-                            // Center text under grid line
-                            dc.DrawText(
-                                text,
-                                new System.Windows.Point(x, y));
+                                var x = tick.X - text.Width / 2;
+                                var y = yScreen - text.Height * (tick.LabelLines.Count - i);
+
+                                if (tick.Kind != TickKind.Minor)
+                                {
+                                    if (x < 0)
+                                    {
+                                        x = 0;
+                                    }
+                                    else if (x + text.Width > ActualWidth)
+                                    {
+                                        x = ActualWidth - text.Width;
+                                    }
+                                }
+
+                                // Center text under grid line
+                                dc.DrawText(
+                                    text,
+                                    new System.Windows.Point(x, y));
+                            }
                         }
                     }
 
                     if (ShowGrid)
                     {
                         DrawHorizontalGridLines(dc);
+                    }
+
+                    if (ShowCoordinateSystem)
+                    {
+                        DrawHorizontalGridLabels(dc);
                     }
                 }
                 else
@@ -433,7 +441,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     {
                         DrawAxes(dc, true, true);
                         DrawAxisTicks(dc, true, true);
-                        DrawGridLabels(dc, true, true);
+                        DrawHorizontalGridLabels(dc);
+                        DrawVerticalGridLabels(dc);
                     }
                 }
 
@@ -832,80 +841,81 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
-        private void DrawGridLabels(
-            DrawingContext dc,
-            bool horizontalAxisLabels,
-            bool verticalAxisLabels)
+        private void DrawHorizontalGridLabels(
+            DrawingContext dc)
         {
-            var scaleX = ViewState.Scaling.Width;
             var scaleY = ViewState.Scaling.Height;
-            var stepX = GetNiceStep(scaleX);
             var stepY = GetNiceStep(scaleY);
             var world = ComputeWorldWindow();
             var typeface = new Typeface("Segoe UI");
             double fontSize = 10;
             double margin = 4;
 
-            if (horizontalAxisLabels)
+            var xScreen = margin;
+
+            for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
             {
-                var yScreen = ActualHeight - margin;
+                var sy = WorldToScreenY(y);
 
-                for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
-                {
-                    var sx = WorldToScreenX(x);
+                if (sy < 0 || sy > ActualHeight)
+                    continue;
 
-                    // Skip if outside screen (safety)
-                    if (sx < 0 || sx > ActualWidth)
-                        continue;
+                var text = System.Math.Abs(y) > 9000
+                    ? $"{y / 1:0.###e0}"
+                    : $"{y / 1:G}";
 
-                    var text = System.Math.Abs(x) > 9000
-                        ? $"{x / 1:0.###e0}"
-                        : $"{x / 1:G}";
+                var formattedText = new FormattedText(
+                    text,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    typeface,
+                    fontSize,
+                    Brushes.Black,
+                    1.0);
 
-                    var formattedText = new FormattedText(
-                        text,
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        FlowDirection.LeftToRight,
-                        typeface,
-                        fontSize,
-                        Brushes.Black,
-                        1.0);
-
-                    // Center text under grid line
-                    dc.DrawText(
-                        formattedText,
-                        new System.Windows.Point(sx - formattedText.Width / 2, yScreen - formattedText.Height));
-                }
+                dc.DrawText(
+                    formattedText,
+                    new System.Windows.Point(xScreen, sy - formattedText.Height / 2));
             }
+        }
 
-            if (verticalAxisLabels)
+        private void DrawVerticalGridLabels(
+            DrawingContext dc)
+        {
+            var scaleX = ViewState.Scaling.Width;
+            var stepX = GetNiceStep(scaleX);
+            var world = ComputeWorldWindow();
+            var typeface = new Typeface("Segoe UI");
+            double fontSize = 10;
+            double margin = 4;
+
+            var yScreen = ActualHeight - margin;
+
+            for (var x = System.Math.Floor(world.MinX / stepX) * stepX; x < world.MaxX; x += stepX)
             {
-                var xScreen = margin;
+                var sx = WorldToScreenX(x);
 
-                for (var y = System.Math.Floor(world.MinY / stepY) * stepY; y < world.MaxY; y += stepY)
-                {
-                    var sy = WorldToScreenY(y);
+                // Skip if outside screen (safety)
+                if (sx < 0 || sx > ActualWidth)
+                    continue;
 
-                    if (sy < 0 || sy > ActualHeight)
-                        continue;
+                var text = System.Math.Abs(x) > 9000
+                    ? $"{x / 1:0.###e0}"
+                    : $"{x / 1:G}";
 
-                    var text = System.Math.Abs(y) > 9000
-                        ? $"{y / 1:0.###e0}"
-                        : $"{y / 1:G}";
+                var formattedText = new FormattedText(
+                    text,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    typeface,
+                    fontSize,
+                    Brushes.Black,
+                    1.0);
 
-                    var formattedText = new FormattedText(
-                        text,
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        FlowDirection.LeftToRight,
-                        typeface,
-                        fontSize,
-                        Brushes.Black,
-                        1.0);
-
-                    dc.DrawText(
-                        formattedText,
-                        new System.Windows.Point(xScreen, sy - formattedText.Height / 2));
-                }
+                // Center text under grid line
+                dc.DrawText(
+                    formattedText,
+                    new System.Windows.Point(sx - formattedText.Width / 2, yScreen - formattedText.Height));
             }
         }
 
