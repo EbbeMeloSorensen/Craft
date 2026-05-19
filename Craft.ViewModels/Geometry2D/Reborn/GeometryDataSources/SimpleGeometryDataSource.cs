@@ -1,10 +1,11 @@
-﻿using Craft.DataStructures.Geometry;
+﻿using System.Collections;
+using Craft.DataStructures.Geometry;
 
 namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class SimpleGeometryDataSource : IGeometryDataSource
 {
-    public IEnumerable<LineModel> Query(BoundingBox window)
+    public IEnumerable Query(BoundingBox window)
     {
         yield return new LineModel
         {
@@ -34,6 +35,11 @@ public class SimpleGeometryDataSource : IGeometryDataSource
         {
             P1 = new System.Windows.Point(400, 0),
             P2 = new System.Windows.Point(0, 0)
+        };
+
+        yield return new PointModel
+        {
+            P = new System.Windows.Point(200, 150)
         };
     }
 }

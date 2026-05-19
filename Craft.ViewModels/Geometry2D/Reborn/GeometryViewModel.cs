@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
+using System.Windows.Shapes;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {
@@ -211,8 +212,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
-        public ObservableCollection<LineModel> Lines { get; }
-            = new ObservableCollection<LineModel>();
+        public ObservableCollection<object> Lines { get; }
+            = new ObservableCollection<object>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -231,10 +232,10 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         {
             Lines.Clear();
 
-            _geometryDataSource
-                .Query(WorldWindowExpanded)
-                .ToList()
-                .ForEach(line => Lines.Add(line));
+            foreach (var geometricPrimitive in _geometryDataSource.Query(WorldWindowExpanded))
+            {
+                Lines.Add(geometricPrimitive);
+            }
         }
     }
 }

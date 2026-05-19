@@ -313,6 +313,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var worldWindow = ComputeWorldWindow();
             var worldToViewportTransform = CreateWorldToViewportTransform(worldWindow, RenderSize);
             var drawingPen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
+            var drawingBrush = Brushes.IndianRed;
             //pen.Freeze();
 
             if (DebugMode)
@@ -448,12 +449,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 foreach (var item in Items)
                 {
-                    if (item is LineModel line)
+                    switch (item)
                     {
-                        var p1 = worldToViewportTransform.Transform(line.P1);
-                        var p2 = worldToViewportTransform.Transform(line.P2);
+                        case PointModel point:
+                            var p = worldToViewportTransform.Transform(point.P);
+                            dc.DrawEllipse(drawingBrush, null, p, 3, 3);
+                            break;
 
-                        dc.DrawLine(drawingPen, p1, p2);
+                        case LineModel line:
+                            var p1 = worldToViewportTransform.Transform(line.P1);
+                            var p2 = worldToViewportTransform.Transform(line.P2);
+                            dc.DrawLine(drawingPen, p1, p2);
+                            break;
                     }
                 }
             }

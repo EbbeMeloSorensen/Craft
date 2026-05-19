@@ -1,11 +1,12 @@
-﻿using Craft.DataStructures.Geometry;
+﻿using System.Collections;
+using Craft.DataStructures.Geometry;
 using Craft.Utils.Linq;
 
 namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class FunctionCurveDataSource : IGeometryDataSource
 {
-    public IEnumerable<LineModel> Query(
+    public IEnumerable Query(
         BoundingBox window)
     {
         var points = new List<System.Windows.Point>();

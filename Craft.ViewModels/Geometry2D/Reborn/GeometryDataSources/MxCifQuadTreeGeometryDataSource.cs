@@ -1,4 +1,5 @@
-﻿using Craft.DataStructures.Geometry;
+﻿using System.Collections;
+using Craft.DataStructures.Geometry;
 using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
 
@@ -48,7 +49,7 @@ public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
         }
     }
 
-    public IEnumerable<LineModel> Query(
+    public IEnumerable Query(
         BoundingBox window)
     {
         var result = _mxCifQuadTree.GetAllIntersecting(window);
