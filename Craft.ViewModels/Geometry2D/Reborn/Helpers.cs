@@ -1,4 +1,5 @@
 ﻿using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 
 namespace Craft.ViewModels.Geometry2D.Reborn;
 

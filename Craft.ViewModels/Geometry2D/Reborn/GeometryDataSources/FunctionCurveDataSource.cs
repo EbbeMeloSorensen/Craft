@@ -1,6 +1,7 @@
 ﻿using System.Collections;
-using Craft.DataStructures.Geometry;
 using Craft.Utils.Linq;
+using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 
 namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
@@ -13,7 +14,6 @@ public class FunctionCurveDataSource : IGeometryDataSource
 
         for (var x = window.MinX; x <= window.MaxX; x += 2)
         {
-
             var point = new System.Windows.Point(x, 100 * System.Math.Sin(0.1 * x) * System.Math.Sin(0.005 * x) + 150);
             points.Add(point);
         }

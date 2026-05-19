@@ -2,6 +2,7 @@
 using Craft.DataStructures.Geometry;
 using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 
 namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 

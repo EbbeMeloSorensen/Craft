@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Craft.ViewModels.Geometry2D.Reborn;
+namespace Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 
 public class LineModel
 {

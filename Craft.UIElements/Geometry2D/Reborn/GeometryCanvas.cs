@@ -1,5 +1,6 @@
 ﻿using Craft.DataStructures.Geometry;
 using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
@@ -451,15 +452,22 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     switch (item)
                     {
+                        case LineModel line:
+                            var p1 = worldToViewportTransform.Transform(line.P1);
+                            var p2 = worldToViewportTransform.Transform(line.P2);
+                            dc.DrawLine(drawingPen, p1, p2);
+                            break;
+
                         case PointModel point:
                             var p = worldToViewportTransform.Transform(point.P);
                             dc.DrawEllipse(drawingBrush, null, p, 3, 3);
                             break;
 
-                        case LineModel line:
-                            var p1 = worldToViewportTransform.Transform(line.P1);
-                            var p2 = worldToViewportTransform.Transform(line.P2);
-                            dc.DrawLine(drawingPen, p1, p2);
+                        case CircleModel circle:
+                            var c = worldToViewportTransform.Transform(circle.Center);
+                            var radiusX = ViewState.Scaling.Width * circle.Radius;
+                            var radiusY = ViewState.Scaling.Height * circle.Radius;
+                            dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
                             break;
                     }
                 }
