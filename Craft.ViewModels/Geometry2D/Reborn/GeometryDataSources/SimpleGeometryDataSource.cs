@@ -8,6 +8,26 @@ public class SimpleGeometryDataSource : IGeometryDataSource
 {
     public IEnumerable Query(BoundingBox window)
     {
+        yield return new VerticalLineModel
+        {
+            X = 175
+        };
+
+        yield return new VerticalLineModel
+        {
+            X = 225
+        };
+
+        yield return new HorizontalLineModel
+        {
+            Y = 50
+        };
+
+        yield return new HorizontalLineModel
+        {
+            Y = 100
+        };
+
         yield return new CircleModel
         {
             Center = new System.Windows.Point(200, 75),

@@ -11,11 +11,14 @@ public class QuadNode<T>
     public BinNode<T>[] _axis;
     public QuadNode<T>[] _child;
 
+    public List<SpatialItem<T>> SpatialItems { get; }  // Relevant if operating with max depth
+
     public QuadNode(
         ILogger logger)
     {
         _axis = new BinNode<T>[2];
         _child = new QuadNode<T>[4];
+        SpatialItems = new List<SpatialItem<T>>();
         _logger = logger;
     }
 
