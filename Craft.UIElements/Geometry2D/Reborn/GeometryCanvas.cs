@@ -486,6 +486,29 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         dc.DrawEllipse(drawingBrush, null, p, 3, 3);
                         break;
 
+                    case PolyLineModel polyLineModel:
+
+                        var sg = new StreamGeometry();
+
+                        using (var ctx = sg.Open())
+                        {
+                            ctx.BeginFigure(
+                                worldToViewportTransform.Transform(polyLineModel.Points.First()),
+                                isFilled: false,
+                                isClosed: false);
+
+                            ctx.PolyLineTo(
+                                polyLineModel.Points.Skip(1)
+                                    .Select(point => worldToViewportTransform.Transform(point))
+                                    .ToList(),
+                                isStroked: true,
+                                isSmoothJoin: false);
+                        }
+
+                        sg.Freeze();
+                        dc.DrawGeometry(null, drawingPen, sg);
+                        break;
+
                     case CircleModel circle:
                         var c = worldToViewportTransform.Transform(circle.Center);
                         var radiusX = ViewState.Scaling.Width * circle.Radius;

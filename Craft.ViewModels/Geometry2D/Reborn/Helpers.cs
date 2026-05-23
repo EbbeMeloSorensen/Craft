@@ -51,5 +51,25 @@ public static class Helpers
             pointModel.P.Y,
             pointModel.P.Y);
     }
+
+    public static BoundingBox ComputeBoundingBox(
+        this CircleModel circleModel)
+    {
+        return new BoundingBox(
+            circleModel.Center.X - circleModel.Radius,
+            circleModel.Center.X + circleModel.Radius,
+            circleModel.Center.Y - circleModel.Radius,
+            circleModel.Center.Y + circleModel.Radius);
+    }
+
+    public static BoundingBox ComputeBoundingBox(
+        this PolyLineModel polyLineModel)
+    {
+        return new BoundingBox(
+            polyLineModel.Points.Min(_ => _.X),
+            polyLineModel.Points.Max(_ => _.X),
+            polyLineModel.Points.Min(_ => _.Y),
+            polyLineModel.Points.Max(_ => _.Y));
+    }
 }
 

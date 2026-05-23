@@ -8,24 +8,69 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
 {
-    private MxCifQuadTree<LineModel> _mxCifQuadTree;
+    private MxCifQuadTree<object> _mxCifQuadTree;
 
     public MxCifQuadTreeGeometryDataSource()
     {
-        _mxCifQuadTree = new MxCifQuadTree<LineModel>(new BoundingBox(-500, 500, -500, 500), new DummyLogger());
+        _mxCifQuadTree = new MxCifQuadTree<object>(new BoundingBox(-2000, 2000, -2000, 2000), new DummyLogger());
 
-        var points = new List<PointModel>
+        var polyLines = new List<PolyLineModel>
         {
-            new PointModel
+            new PolyLineModel
             {
-                P = new System.Windows.Point(100, 100),
-            },
+                Points = new List<System.Windows.Point>
+                {
+                    new(0, 0),
+                    new(100, 100),
+                    new(200, 50),
+                    new(300, 150)
+                }
+            }
         };
+
+        foreach (var polyLine in polyLines)
+        {
+            var bbox = polyLine.ComputeBoundingBox();
+            _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, polyLine));
+        }
+
+        var circles = new List<CircleModel>
+        {
+            new CircleModel
+            {
+                Center = new System.Windows.Point(150, 150),
+                Radius = 40
+            },
+            new CircleModel
+            {
+                Center = new System.Windows.Point(250, 150),
+                Radius = 40
+            }
+        };
+
+        foreach (var circle in circles)
+        {
+            var bbox = circle.ComputeBoundingBox();
+            _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, circle));
+        }
+
+        var points = new List<PointModel>();
+
+        for (var x = -100; x <= 500; x += 100)
+        {
+            for (var y = -100; y <= 500; y += 100)
+            {
+                points.Add(new PointModel
+                {
+                    P = new System.Windows.Point(x, y),
+                });
+            }
+        }
 
         foreach (var point in points)
         {
             var bbox = point.ComputeBoundingBox();
-            //_mxCifQuadTree.Insert(new SpatialItem<PointModel>(bbox, point));
+            _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, point));
         }
 
         var lines = new List<LineModel>
@@ -60,7 +105,7 @@ public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
         foreach (var line in lines)
         {
             var bbox = line.ComputeBoundingBox();
-            _mxCifQuadTree.Insert(new SpatialItem<LineModel>(bbox, line));
+            _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, line));
         }
     }
 
