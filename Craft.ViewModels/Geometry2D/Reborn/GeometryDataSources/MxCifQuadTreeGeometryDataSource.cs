@@ -12,7 +12,7 @@ public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
 
     public MxCifQuadTreeGeometryDataSource()
     {
-        _mxCifQuadTree = new MxCifQuadTree<object>(new BoundingBox(-2000, 2000, -2000, 2000), new DummyLogger());
+        _mxCifQuadTree = new MxCifQuadTree<object>(new BoundingBox(-2000, 2000, -2000, 2000), 8, new DummyLogger());
 
         var polyLines = new List<PolyLineModel>
         {
@@ -56,9 +56,9 @@ public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
 
         var points = new List<PointModel>();
 
-        for (var x = -100; x <= 500; x += 100)
+        for (var x = -100; x <= 500; x += 20)
         {
-            for (var y = -100; y <= 500; y += 100)
+            for (var y = -100; y <= 500; y += 20)
             {
                 points.Add(new PointModel
                 {
