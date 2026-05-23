@@ -14,6 +14,20 @@ public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
     {
         _mxCifQuadTree = new MxCifQuadTree<LineModel>(new BoundingBox(-500, 500, -500, 500), new DummyLogger());
 
+        var points = new List<PointModel>
+        {
+            new PointModel
+            {
+                P = new System.Windows.Point(100, 100),
+            },
+        };
+
+        foreach (var point in points)
+        {
+            var bbox = point.ComputeBoundingBox();
+            //_mxCifQuadTree.Insert(new SpatialItem<PointModel>(bbox, point));
+        }
+
         var lines = new List<LineModel>
         {
             new LineModel

@@ -22,6 +22,12 @@ public class QuadNode<T>
         _logger = logger;
     }
 
+    public void Insert(
+        SpatialItem<T> spatialItem)
+    {
+        SpatialItems.Add(spatialItem);
+    }
+
     public void InsertOnAxis(
         SpatialItem<T> spatialItem,
         double cv,

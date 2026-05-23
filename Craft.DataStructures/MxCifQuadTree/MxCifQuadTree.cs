@@ -32,13 +32,22 @@ public class MxCifQuadTree<T>
 
     private BoundingBox _p;
     private QuadNode<T> _root;
+    private int _maxQuadNodeLevel;
     private ILogger _logger;
 
     public MxCifQuadTree(
         BoundingBox rectangle,
+        ILogger logger) : this(rectangle, 1000, logger)
+    {
+    }
+
+    public MxCifQuadTree(
+        BoundingBox rectangle,
+        int maxQuadNodeLevel,
         ILogger logger)
     {
         _p = rectangle;
+        _maxQuadNodeLevel = maxQuadNodeLevel;
         _logger = logger;
 
         if (_logger.IsEnabled)
@@ -74,7 +83,10 @@ public class MxCifQuadTree<T>
 
         var quadNodeLevel = 1;
 
-        while (dx != DIRECTION.BOTH && dy != DIRECTION.BOTH)
+        while (
+            dx != DIRECTION.BOTH && 
+            dy != DIRECTION.BOTH &&
+            quadNodeLevel < _maxQuadNodeLevel)
         {
             var q = rectangle.CIF_COMPARE(cx, cy);
             var index = (int)q;
@@ -109,7 +121,7 @@ public class MxCifQuadTree<T>
 
             quadNode.InsertOnAxis(spatialItem, cy, ly, AXIS.YA);
         }
-        else
+        else if (dy == DIRECTION.BOTH)
         {
             if (_logger.IsEnabled)
             {
@@ -119,6 +131,17 @@ public class MxCifQuadTree<T>
             }
 
             quadNode.InsertOnAxis(spatialItem, cx, lx, AXIS.XA);
+        }
+        else
+        {
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"    No axis intersection but max quad node level ({_maxQuadNodeLevel}) reached, so inserting rectangle in quad node");
+            }
+
+            quadNode.Insert(spatialItem);
         }
     }
 
@@ -400,21 +423,7 @@ public class MxCifQuadTree<T>
     public bool Intersects(
         BoundingBox rectangle)
     {
-        if (_root == null)
-        {
-            return false;
-        }
-
-        var intersection = rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
-
-        if (_logger.IsEnabled && intersection)
-        {
-            _logger.WriteLineGoddammit(
-                LogMessageCategory.Information,
-                $"Rectangle: (Cx, Cy) = ({rectangle.CenterX}, {rectangle.CenterY}), (W, H) = ({rectangle.MaxX - rectangle.MinX}, {rectangle.MaxY - rectangle.MinY}) intersects existing rectangles and is therefore rejected");
-        }
-
-        return intersection;
+        return _root != null && rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
     }
 
     public IEnumerable<SpatialItem<T>> GetAllIntersecting(

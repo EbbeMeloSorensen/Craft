@@ -97,6 +97,12 @@ public static class Helpers
             return false;
         }
 
+        // Does the rectangle intersect any rectangles in the quadnode itself?
+        if (quadNode.SpatialItems.Any(_ => _.Bounds.Intersects(rectangle)))
+        {
+            return true;
+        }
+
         // Does the rectangle intersect any rectangles in any of the two bintrees of the quadnode?
         //if (rectangle.CROSS_AXIS(quadNode._axis[1], cy, ly, AXIS.YA) ||
         //    rectangle.CROSS_AXIS(quadNode._axis[0], cx, lx, AXIS.XA))
@@ -156,21 +162,14 @@ public static class Helpers
         double lx,
         double ly)
     {
-        // Is there a quadnode in the first place?
-        //if (quadNode == null)
-        //{
-        //    return Enumerable.Empty<Rectangle>();
-        //}
-
-        //// Is rectangle outside the rectangle of the very quadnode
-        //if (!rectangle.Intersects(new Rectangle(cx, cy, lx, ly)))
-        //{
-        //    return Enumerable.Empty<Rectangle>();
-        //}
-
         if (quadNode != null &&
             rectangle.Intersects(new BoundingBox(cx - lx, cx + lx, cy - ly, cy + ly)))
         {
+            foreach (var rect in quadNode.SpatialItems)
+            {
+                yield return rect;
+            }
+
             foreach (var rect in rectangle.CROSS_AXIS_ALL(quadNode._axis[1], cy, ly, AXIS.YA))
             {
                 yield return rect;
