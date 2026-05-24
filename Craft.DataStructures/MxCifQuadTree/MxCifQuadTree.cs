@@ -185,14 +185,20 @@ public class MxCifQuadTree<T>
         DIRECTION D;
         DIRECTION DF = DIRECTION.LEFT;
 
-        while (rectangle.BIN_COMPARE(CX, V = AXIS.XA) != DIRECTION.BOTH &&
-               rectangle.BIN_COMPARE(CY, V = AXIS.YA) != DIRECTION.BOTH)
+        DIRECTION DX = DIRECTION.LEFT;
+        DIRECTION DY = DIRECTION.LEFT;
+        var quadLevel = 1;
+
+        // Så længe rektanglet ikke intersectes af krydset for den aktuelle quad node, så bevæg os ned i træet
+        while ((DX = rectangle.BIN_COMPARE(CX, V = AXIS.XA)) != DIRECTION.BOTH &&
+               (DY = rectangle.BIN_COMPARE(CY, V = AXIS.YA)) != DIRECTION.BOTH &&
+               quadLevel < _maxQuadNodeLevel)
         {
             Q = rectangle.CIF_COMPARE(CX, CY);
 
             if (T._child[(int)Q] == null)
             {
-                // The rectangle is not int the tree
+                // The rectangle is not in the tree
                 return;
             }
 
@@ -211,187 +217,65 @@ public class MxCifQuadTree<T>
             LY /= 2;
             CX += LX * g_XF[(int)Q];
             CY += LY * g_YF[(int)Q];
+            quadLevel++;
         }
 
-        var axis = V == AXIS.XA ? "Y" : "X";
-
-        if (_logger.IsEnabled)
-        {
-            _logger.WriteLineGoddammit(
-                LogMessageCategory.Information,
-                $"  Rectangle resides in {axis} axis of quad node centered at (x, y) = ({CX}, {CY})");
-        }
-
-        V = V.OTHERAXIS();
-        B = T._axis[(int)V];
-        FB = null;
-
-        if (V == AXIS.XA)
-        {
-            CV = CX;
-            LV = LX;
-        }
-        else
-        {
-            CV = CY;
-            LV = LY;
-        }
-
-        D = rectangle.BIN_COMPARE(CV, V);
-        var binLevel = 1;
-
-        while (B != null && D != DIRECTION.BOTH)
-        {
-            if (B.Child[(int)D.OPDIR()] != null || B.SpatialItems.Any())
-            {
-                FB = B;
-                DF = D;
-            }
-
-            B = B.Child[(int)D];
-            LV /= 2;
-            CV += LV * g_VF[(int)D];
-            D = rectangle.BIN_COMPARE(CV, V);
-            binLevel++;
-        }
-
-        if (_logger.IsEnabled)
-        {
-            _logger.WriteLineGoddammit(
-                LogMessageCategory.Information,
-                $"    Specifically, rectangle resides in bin tree level {binLevel} in bin node centered at v = {CV}");
-        }
-
-        if (B == null)
-        {
-            return;
-        }
-
-        if (B.Child[0] != null || B.Child[1] != null)
+        if (quadLevel == _maxQuadNodeLevel &&
+            DX != DIRECTION.BOTH &&
+            DY != DIRECTION.BOTH)
         {
             if (_logger.IsEnabled)
             {
                 _logger.WriteLineGoddammit(
                     LogMessageCategory.Information,
-                    "      No collapsing possible, so just removing rectangle from bin node");
+                    $"  Rectangle resides in quad node centered at (x, y) = ({CX}, {CY})");
             }
 
-            // No collapsing is possible, so just remove the rectangle from the bin
-            B.SpatialItems.Remove(spatialItem);
-        }
-        else
-        {
-            if (_logger.IsEnabled)
+            T.SpatialItems.Remove(spatialItem);
+
+            if (T.SpatialItems.Any())
             {
-                _logger.WriteLineGoddammit(
-                    LogMessageCategory.Information,
-                    "      Attempting to collapse bin nodes");
-            }
-
-            // Attempt to collapse bin nodes
-
-            // Get a link to the oldest dismissable bin node
-            TB = FB != null ? FB.Child[(int)DF] : T._axis[(int)V];
-
-            // Initialize direction variable for scanning
-            D = DIRECTION.LEFT;
-
-            // Destroy BinNodes
-            while (TB != B)
-            {
-                // Determine the direction to the BinNode child
-                if (TB.Child[(int)D] == null)
+                if (_logger.IsEnabled)
                 {
-                    D = D.OPDIR();
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "      No collapsing possible, so just removing rectangle from bin node");
                 }
 
-                TEMPB = TB.Child[(int)D];
+                return;
+            }
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    "      Attempting to collapse quad nodes (under construction)");
+            }
+
+            // Todo: Attempt to collapse quad nodes
+
+            // Attempt to collapse quad nodes
+
+            // Get a link to the oldest dismissable QuadNode
+            TT = FT != null ? FT._child[(int)QF] : _root;
+
+            // Initialize quadrant variable for scanning
+            Q = QUADRANT.NW;
+
+            // Destroy QuadNodes
+            while (TT != T)
+            {
+                // Determine the direction to the QuadNode child
+                while (TT._child[(int)Q] == null)
+                {
+                    Q = Q.CCQUAD();
+                }
+
+                // Get a link to the QuadNode child for the next iteration
+                TEMPC = TT._child[(int)Q];
 
                 // Detach in order to avoid premature destruction of children
-                TB.Child[(int)D] = null;
-
-                if (_logger.IsEnabled)
-                {
-                    _logger.WriteLineGoddammit(
-                        LogMessageCategory.Information,
-                        "        Collapsing bin node");
-                }
-
-                TB = TEMPB;
-            }
-
-            if (_logger.IsEnabled)
-            {
-                _logger.WriteLineGoddammit(
-                    LogMessageCategory.Information,
-                    "        Collapsing bin node");
-            }
-
-            if (FB != null)
-            {
-                // Set pointer to oldest destroyed BinNode to NULL
-                FB.Child[(int)DF] = null;
-            }
-            else
-            {
-                T._axis[(int)V] = null;
-
-                if (T._axis[(int)V.OTHERAXIS()] != null ||
-                    T._child[0] != null ||
-                    T._child[1] != null ||
-                    T._child[2] != null ||
-                    T._child[3] != null)
-                {
-                    if (_logger.IsEnabled)
-                    {
-                        _logger.WriteLineGoddammit(
-                            LogMessageCategory.Information,
-                            "      No furher collapsing possible");
-                    }
-
-                    return;
-                }
-
-                if (_logger.IsEnabled)
-                {
-                    _logger.WriteLineGoddammit(
-                        LogMessageCategory.Information,
-                        "      Attempting to collapse quad nodes");
-                }
-
-                // Attempt to collapse quad nodes
-
-                // Get a link to the oldest dismissable QuadNode
-                TT = FT != null ? FT._child[(int)QF] : _root;
-
-                // Initialize quadrant variable for scanning
-                Q = QUADRANT.NW;
-
-                // Destroy QuadNodes
-                while (TT != T)
-                {
-                    // Determine the direction to the QuadNode child
-                    while (TT._child[(int)Q] == null)
-                    {
-                        Q = Q.CCQUAD();
-                    }
-
-                    // Get a link to the QuadNode child for the next iteration
-                    TEMPC = TT._child[(int)Q];
-
-                    // Detach in order to avoid premature destruction of children
-                    TT._child[(int)Q] = null;
-
-                    if (_logger.IsEnabled)
-                    {
-                        _logger.WriteLineGoddammit(
-                            LogMessageCategory.Information,
-                            "        Collapsing quad node");
-                    }
-
-                    // Proceed to the QuadNode child
-                    TT = TEMPC;
-                }
+                TT._child[(int)Q] = null;
 
                 if (_logger.IsEnabled)
                 {
@@ -400,21 +284,243 @@ public class MxCifQuadTree<T>
                         "        Collapsing quad node");
                 }
 
-                // Set pointer to oldest destroyed QuadNode to NULL
-                if (FT != null)
+                // Proceed to the QuadNode child
+                TT = TEMPC;
+            }
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    "        Collapsing quad node");
+            }
+
+            // Set pointer to oldest destroyed QuadNode to NULL
+            if (FT != null)
+            {
+                FT._child[(int)QF] = null;
+            }
+            else
+            {
+                if (_logger.IsEnabled)
                 {
-                    FT._child[(int)QF] = null;
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "          (MxCifTree is empty at this point)");
                 }
-                else
+
+                _root = null;
+            }
+
+
+
+
+        }
+        else
+        {
+            var axis = V == AXIS.XA ? "Y" : "X";
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"  Rectangle resides in {axis} axis of quad node centered at (x, y) = ({CX}, {CY})");
+            }
+
+            V = V.OTHERAXIS();
+            B = T._axis[(int)V];
+            FB = null;
+
+            if (V == AXIS.XA)
+            {
+                CV = CX;
+                LV = LX;
+            }
+            else
+            {
+                CV = CY;
+                LV = LY;
+            }
+
+            D = rectangle.BIN_COMPARE(CV, V);
+            var binLevel = 1;
+
+            while (B != null && D != DIRECTION.BOTH)
+            {
+                if (B.Child[(int)D.OPDIR()] != null || B.SpatialItems.Any())
                 {
+                    FB = B;
+                    DF = D;
+                }
+
+                B = B.Child[(int)D];
+                LV /= 2;
+                CV += LV * g_VF[(int)D];
+                D = rectangle.BIN_COMPARE(CV, V);
+                binLevel++;
+            }
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"    Specifically, rectangle resides in bin tree level {binLevel} in bin node centered at v = {CV}");
+            }
+
+            if (B == null)
+            {
+                return;
+            }
+
+            if (B.Child[0] != null || B.Child[1] != null)
+            {
+                if (_logger.IsEnabled)
+                {
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "      No collapsing possible, so just removing rectangle from bin node");
+                }
+
+                // No collapsing is possible, so just remove the rectangle from the bin
+                B.SpatialItems.Remove(spatialItem);
+            }
+            else
+            {
+                if (_logger.IsEnabled)
+                {
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "      Attempting to collapse bin nodes");
+                }
+
+                // Attempt to collapse bin nodes
+
+                // Get a link to the oldest dismissable bin node
+                TB = FB != null ? FB.Child[(int)DF] : T._axis[(int)V];
+
+                // Initialize direction variable for scanning
+                D = DIRECTION.LEFT;
+
+                // Destroy BinNodes
+                while (TB != B)
+                {
+                    // Determine the direction to the BinNode child
+                    if (TB.Child[(int)D] == null)
+                    {
+                        D = D.OPDIR();
+                    }
+
+                    TEMPB = TB.Child[(int)D];
+
+                    // Detach in order to avoid premature destruction of children
+                    TB.Child[(int)D] = null;
+
                     if (_logger.IsEnabled)
                     {
                         _logger.WriteLineGoddammit(
                             LogMessageCategory.Information,
-                            "          (MxCifTree is empty at this point)");
+                            "        Collapsing bin node");
                     }
 
-                    _root = null;
+                    TB = TEMPB;
+                }
+
+                if (_logger.IsEnabled)
+                {
+                    _logger.WriteLineGoddammit(
+                        LogMessageCategory.Information,
+                        "        Collapsing bin node");
+                }
+
+                if (FB != null)
+                {
+                    // Set pointer to oldest destroyed BinNode to NULL
+                    FB.Child[(int)DF] = null;
+                }
+                else
+                {
+                    T._axis[(int)V] = null;
+
+                    if (T._axis[(int)V.OTHERAXIS()] != null ||
+                        T._child[0] != null ||
+                        T._child[1] != null ||
+                        T._child[2] != null ||
+                        T._child[3] != null)
+                    {
+                        if (_logger.IsEnabled)
+                        {
+                            _logger.WriteLineGoddammit(
+                                LogMessageCategory.Information,
+                                "      No furher collapsing possible");
+                        }
+
+                        return;
+                    }
+
+                    if (_logger.IsEnabled)
+                    {
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Information,
+                            "      Attempting to collapse quad nodes");
+                    }
+
+                    // Attempt to collapse quad nodes
+
+                    // Get a link to the oldest dismissable QuadNode
+                    TT = FT != null ? FT._child[(int)QF] : _root;
+
+                    // Initialize quadrant variable for scanning
+                    Q = QUADRANT.NW;
+
+                    // Destroy QuadNodes
+                    while (TT != T)
+                    {
+                        // Determine the direction to the QuadNode child
+                        while (TT._child[(int)Q] == null)
+                        {
+                            Q = Q.CCQUAD();
+                        }
+
+                        // Get a link to the QuadNode child for the next iteration
+                        TEMPC = TT._child[(int)Q];
+
+                        // Detach in order to avoid premature destruction of children
+                        TT._child[(int)Q] = null;
+
+                        if (_logger.IsEnabled)
+                        {
+                            _logger.WriteLineGoddammit(
+                                LogMessageCategory.Information,
+                                "        Collapsing quad node");
+                        }
+
+                        // Proceed to the QuadNode child
+                        TT = TEMPC;
+                    }
+
+                    if (_logger.IsEnabled)
+                    {
+                        _logger.WriteLineGoddammit(
+                            LogMessageCategory.Information,
+                            "        Collapsing quad node");
+                    }
+
+                    // Set pointer to oldest destroyed QuadNode to NULL
+                    if (FT != null)
+                    {
+                        FT._child[(int)QF] = null;
+                    }
+                    else
+                    {
+                        if (_logger.IsEnabled)
+                        {
+                            _logger.WriteLineGoddammit(
+                                LogMessageCategory.Information,
+                                "          (MxCifTree is empty at this point)");
+                        }
+
+                        _root = null;
+                    }
                 }
             }
         }

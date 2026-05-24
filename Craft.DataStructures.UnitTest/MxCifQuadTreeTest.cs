@@ -222,18 +222,14 @@ public class MxCifQuadTreeTest
         logger.IsEnabled = true;
 
         // Arrange
-        var spatialItem1 = new SpatialItem<Line>(new BoundingBox(48, 52, 48, 52), new Line());
-        var spatialItem2 = new SpatialItem<Line>(new BoundingBox(23, 27, 23, 27), new Line());
-        var spatialItem3 = new SpatialItem<Line>(new BoundingBox(10.5, 14.5, 10.5, 14.5), new Line());
-        var spatialItem4 = new SpatialItem<Line>(new BoundingBox(4.25, 8.25, 4.25, 8.25), new Line());
+        var spatialItem1 = new SpatialItem<Line>(new BoundingBox(4.25, 8.25, 4.25, 8.25), new Line());
+        var spatialItem2 = new SpatialItem<Line>(new BoundingBox(4.25, 8.25, 4.25, 8.25), new Line());
 
         // Act
         var mxCifQuadTree1 = new MxCifQuadTree.MxCifQuadTree<Line>(new BoundingBox(0, 100, 0, 100), 3, logger);
 
         mxCifQuadTree1.Insert(spatialItem1);
         mxCifQuadTree1.Insert(spatialItem2);
-        mxCifQuadTree1.Insert(spatialItem3);
-        mxCifQuadTree1.Insert(spatialItem4);
 
         // Kan vi finde ud af, om vi intersecter med et rektangel, der er gemt på en quad node?
         var rectangleQ = new BoundingBox(4, 6, 4, 6);
@@ -242,14 +238,69 @@ public class MxCifQuadTreeTest
         var intersection = mxCifQuadTree1.Intersects(rectangleQ);
         intersection.Should().BeTrue();
 
-        var intersectingRectangles = mxCifQuadTree1.GetAllIntersecting(rectangleQ);
-        var rectangle = intersectingRectangles.FirstOrDefault();
+        var intersectingRectangles1 = mxCifQuadTree1.GetAllIntersecting(rectangleQ);
+        var rectangle = intersectingRectangles1.FirstOrDefault();
         rectangle.Should().NotBeNull();
         rectangle.Bounds.Should().BeEquivalentTo(new BoundingBox(4.25, 8.25, 4.25, 8.25));
 
         // Act
-        //mxCifQuadTree1.Remove(spatialItem4); // Coming soon
+        mxCifQuadTree1.Remove(spatialItem1);
+        mxCifQuadTree1.Remove(spatialItem2);
+
+        var intersectingRectangles2 = mxCifQuadTree1.GetAllIntersecting(rectangleQ);
+        intersectingRectangles2.Count().Should().Be(0);
 
         logger.Complete();
+    }
+
+    [Fact]
+    public void Test6_TimingTest_MaxDepth()
+    {
+        var stopWatch = new Stopwatch();
+        var logger = new TestLogger();
+        logger.IsEnabled = false;
+
+        var random = new Random(0);
+        var rectanglesInTotal = 10000;
+        var maxNumberOfRectanglesInTree = 1000;
+        var spatialItemQueue = new Queue<SpatialItem<Line>>();
+        var mxCifQuadTree = new MxCifQuadTree<Line>(new BoundingBox(0, 100, 0, 100), 3, logger);
+        var controlList = new List<int>();
+        var rectanglesInMxCifQuadTree = 0;
+
+        stopWatch.Start();
+
+        for (var i = 0; i < rectanglesInTotal + maxNumberOfRectanglesInTree; i++)
+        {
+            var width = 10.0;
+            var height = 10.0;
+            var cx = random.NextDouble() * (100 - width) + 0.5 * width;
+            var cy = random.NextDouble() * (100 - height) + 0.5 * height;
+
+            if (i < rectanglesInTotal)
+            {
+                var boundingBox = new BoundingBox(cx - 0.5 * width, cx + 0.5 * width, cy - 0.5 * height, cy + 0.5 * height);
+                var spatialItem = new SpatialItem<Line>(boundingBox, new Line());
+                mxCifQuadTree.Insert(spatialItem);
+                rectanglesInMxCifQuadTree++;
+                spatialItemQueue.Enqueue(spatialItem);
+            }
+
+            if (i >= maxNumberOfRectanglesInTree && spatialItemQueue.Count > 0)
+            {
+                var spatialItemFromQueue = spatialItemQueue.Dequeue();
+                mxCifQuadTree.Remove(spatialItemFromQueue);
+                rectanglesInMxCifQuadTree--;
+            }
+
+            controlList.Add(rectanglesInMxCifQuadTree);
+        }
+
+        stopWatch.Stop();
+        var elapsed = stopWatch.Elapsed;
+
+        logger.Complete();
+
+        mxCifQuadTree.GetAllIntersecting(new BoundingBox(0, 100, 0, 100)).Count().Should().Be(0);
     }
 }
