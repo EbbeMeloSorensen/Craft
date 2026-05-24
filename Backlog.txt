@@ -129,10 +129,10 @@ Done:
 
 In progress:
 * For reborn - tegne andre ting end bare liniestykker
-  - Punkter (som ikke bliver større, når man zoomer ind)
-  - Ellipser
-  - Vertikale linier
-  - Polylines
+  - Punkter (som ikke bliver større, når man zoomer ind) (OK)
+  - Ellipser (OK)
+  - Vertikale linier (OK)
+  - Polylines (OK)
 * For reborn - tegn en dummy tidsserie - bare noget sinuskurve agtigt med punkter
 * For reborn - Forbedr usability i test miljøet
   - Lock Aspect Ratio og Time Axis mode skal ikke begge kunne være true (OK)
