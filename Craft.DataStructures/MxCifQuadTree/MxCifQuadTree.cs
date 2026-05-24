@@ -84,7 +84,7 @@ public class MxCifQuadTree<T>
         var quadNodeLevel = 1;
 
         while (
-            dx != DIRECTION.BOTH && 
+            dx != DIRECTION.BOTH &&
             dy != DIRECTION.BOTH &&
             quadNodeLevel < _maxQuadNodeLevel)
         {
@@ -171,8 +171,6 @@ public class MxCifQuadTree<T>
 
         QuadNode<T> T = _root;
         QuadNode<T> FT = null;
-        QuadNode<T> TT = null;
-        QuadNode<T> TEMPC = null;
 
         BinNode<T> B = null;
         BinNode<T> FB = null;
@@ -252,69 +250,7 @@ public class MxCifQuadTree<T>
                     "      Attempting to collapse quad nodes (under construction)");
             }
 
-            // Todo: Attempt to collapse quad nodes
-
-            // Attempt to collapse quad nodes
-
-            // Get a link to the oldest dismissable QuadNode
-            TT = FT != null ? FT._child[(int)QF] : _root;
-
-            // Initialize quadrant variable for scanning
-            Q = QUADRANT.NW;
-
-            // Destroy QuadNodes
-            while (TT != T)
-            {
-                // Determine the direction to the QuadNode child
-                while (TT._child[(int)Q] == null)
-                {
-                    Q = Q.CCQUAD();
-                }
-
-                // Get a link to the QuadNode child for the next iteration
-                TEMPC = TT._child[(int)Q];
-
-                // Detach in order to avoid premature destruction of children
-                TT._child[(int)Q] = null;
-
-                if (_logger.IsEnabled)
-                {
-                    _logger.WriteLineGoddammit(
-                        LogMessageCategory.Information,
-                        "        Collapsing quad node");
-                }
-
-                // Proceed to the QuadNode child
-                TT = TEMPC;
-            }
-
-            if (_logger.IsEnabled)
-            {
-                _logger.WriteLineGoddammit(
-                    LogMessageCategory.Information,
-                    "        Collapsing quad node");
-            }
-
-            // Set pointer to oldest destroyed QuadNode to NULL
-            if (FT != null)
-            {
-                FT._child[(int)QF] = null;
-            }
-            else
-            {
-                if (_logger.IsEnabled)
-                {
-                    _logger.WriteLineGoddammit(
-                        LogMessageCategory.Information,
-                        "          (MxCifTree is empty at this point)");
-                }
-
-                _root = null;
-            }
-
-
-
-
+            AttemptToCollapseQuadNodes(FT, T, QF);
         }
         else
         {
@@ -464,63 +400,7 @@ public class MxCifQuadTree<T>
                             "      Attempting to collapse quad nodes");
                     }
 
-                    // Attempt to collapse quad nodes
-
-                    // Get a link to the oldest dismissable QuadNode
-                    TT = FT != null ? FT._child[(int)QF] : _root;
-
-                    // Initialize quadrant variable for scanning
-                    Q = QUADRANT.NW;
-
-                    // Destroy QuadNodes
-                    while (TT != T)
-                    {
-                        // Determine the direction to the QuadNode child
-                        while (TT._child[(int)Q] == null)
-                        {
-                            Q = Q.CCQUAD();
-                        }
-
-                        // Get a link to the QuadNode child for the next iteration
-                        TEMPC = TT._child[(int)Q];
-
-                        // Detach in order to avoid premature destruction of children
-                        TT._child[(int)Q] = null;
-
-                        if (_logger.IsEnabled)
-                        {
-                            _logger.WriteLineGoddammit(
-                                LogMessageCategory.Information,
-                                "        Collapsing quad node");
-                        }
-
-                        // Proceed to the QuadNode child
-                        TT = TEMPC;
-                    }
-
-                    if (_logger.IsEnabled)
-                    {
-                        _logger.WriteLineGoddammit(
-                            LogMessageCategory.Information,
-                            "        Collapsing quad node");
-                    }
-
-                    // Set pointer to oldest destroyed QuadNode to NULL
-                    if (FT != null)
-                    {
-                        FT._child[(int)QF] = null;
-                    }
-                    else
-                    {
-                        if (_logger.IsEnabled)
-                        {
-                            _logger.WriteLineGoddammit(
-                                LogMessageCategory.Information,
-                                "          (MxCifTree is empty at this point)");
-                        }
-
-                        _root = null;
-                    }
+                    AttemptToCollapseQuadNodes(FT, T, QF);
                 }
             }
         }
@@ -535,13 +415,78 @@ public class MxCifQuadTree<T>
     public IEnumerable<SpatialItem<T>> GetAllIntersecting(
         BoundingBox rectangle)
     {
-        return _root == null 
-            ? Enumerable.Empty<SpatialItem<T>>() 
+        return _root == null
+            ? Enumerable.Empty<SpatialItem<T>>()
             : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
     }
 
     public bool Clear()
     {
         throw new NotImplementedException();
+    }
+
+    private void AttemptToCollapseQuadNodes(
+        QuadNode<T> FT,
+        QuadNode<T> T,
+        QUADRANT QF)
+    {
+        QuadNode<T> TT = null;
+        QuadNode<T> TEMPC = null;
+
+        // Get a link to the oldest dismissable QuadNode
+        TT = FT != null ? FT._child[(int)QF] : _root;
+
+        // Initialize quadrant variable for scanning
+        var Q = QUADRANT.NW;
+
+        // Destroy QuadNodes
+        while (TT != T)
+        {
+            // Determine the direction to the QuadNode child
+            while (TT._child[(int)Q] == null)
+            {
+                Q = Q.CCQUAD();
+            }
+
+            // Get a link to the QuadNode child for the next iteration
+            TEMPC = TT._child[(int)Q];
+
+            // Detach in order to avoid premature destruction of children
+            TT._child[(int)Q] = null;
+
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    "        Collapsing quad node");
+            }
+
+            // Proceed to the QuadNode child
+            TT = TEMPC;
+        }
+
+        if (_logger.IsEnabled)
+        {
+            _logger.WriteLineGoddammit(
+                LogMessageCategory.Information,
+                "        Collapsing quad node");
+        }
+
+        // Set pointer to oldest destroyed QuadNode to NULL
+        if (FT != null)
+        {
+            FT._child[(int)QF] = null;
+        }
+        else
+        {
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    "          (MxCifTree is empty at this point)");
+            }
+
+            _root = null;
+        }
     }
 }
