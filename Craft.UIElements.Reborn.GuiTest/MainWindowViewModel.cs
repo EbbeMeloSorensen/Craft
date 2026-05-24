@@ -1,12 +1,13 @@
-﻿using Craft.DataStructures.Geometry;
-using Craft.UIElements.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn;
-using GalaSoft.MvvmLight.Command;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
+using Craft.DataStructures.Geometry;
+using Craft.UIElements.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
@@ -189,7 +190,13 @@ namespace Craft.UIElements.Reborn.GuiTest
             var centerOfHouse = new Point(200, 150);
             var worldWindowBoundsSize = new Size(100000, 100000);
 
-            GeometryViewModel = new GeometryViewModel
+            //var geometryDataSource = new EmptyDataSource();
+            //var geometryDataSource = new SimpleGeometryDataSource();
+            //var geometryDataSource = new FunctionCurveDataSource();
+            //var geometryDataSource = new MxCifQuadTreeGeometryDataSource();
+            var geometryDataSource = new TimeStampDataSource();
+
+            GeometryViewModel = new GeometryViewModel(geometryDataSource)
             {
                 //WorldWindowBounds = new BoundingBox(
                 //    centerOfHouse.X - worldWindowBoundsSize.Width / 2,

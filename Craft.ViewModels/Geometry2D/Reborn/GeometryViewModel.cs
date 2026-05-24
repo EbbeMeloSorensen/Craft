@@ -217,12 +217,15 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public GeometryViewModel()
+        public GeometryViewModel(
+            IGeometryDataSource geometryDataSource)
         {
+            _geometryDataSource = geometryDataSource;
+
             //_geometryDataSource = new EmptyDataSource();
             //_geometryDataSource = new SimpleGeometryDataSource();
             //_geometryDataSource = new FunctionCurveDataSource();
-            _geometryDataSource = new MxCifQuadTreeGeometryDataSource();
+            //_geometryDataSource = new MxCifQuadTreeGeometryDataSource();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
