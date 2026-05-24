@@ -195,7 +195,8 @@ namespace Craft.UIElements.Reborn.GuiTest
             //var geometryDataSource = new FunctionCurveDataSource();
             //var geometryDataSource = new MxCifQuadTreeGeometryDataSource();
 
-            var geometryDataSource = new TimeStampDataSource();
+            //var geometryDataSource = new TimeStampDataSource();
+            var geometryDataSource = new TemperatureDataSource();
 
             GeometryViewModel = new GeometryViewModel(geometryDataSource)
             {
