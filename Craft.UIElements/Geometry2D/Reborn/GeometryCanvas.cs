@@ -4,7 +4,6 @@ using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
