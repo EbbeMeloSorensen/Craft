@@ -128,6 +128,7 @@ Done:
   - Pas på, den ikke fucker aspect ratio (OK)
 
 In progress:
+* Brug Reborn til at vise bouncing ball
 * For reborn - tegne andre ting end bare liniestykker
   - Punkter (som ikke bliver større, når man zoomer ind) (OK)
   - Ellipser (OK)
