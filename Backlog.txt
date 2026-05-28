@@ -129,6 +129,8 @@ Done:
 
 In progress:
 * Brug Reborn til at vise bouncing ball
+  - Lav en dedikeret datasource, som subscriber til Enginens CurrentStateChanged event
+    og vedligeholder en collection af "shapes"
 * For reborn - tegne andre ting end bare liniestykker
   - Punkter (som ikke bliver større, når man zoomer ind) (OK)
   - Ellipser (OK)
