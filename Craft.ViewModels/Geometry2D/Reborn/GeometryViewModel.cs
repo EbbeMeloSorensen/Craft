@@ -3,7 +3,6 @@ using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Shapes;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {

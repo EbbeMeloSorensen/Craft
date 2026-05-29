@@ -3,6 +3,8 @@ using Craft.Math;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
+using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using Craft.ViewModels.Geometry2D.ScrollFree;
 using Craft.ViewModels.Simulation;
 using GalaSoft.MvvmLight;
@@ -20,6 +22,9 @@ namespace Craft.Simulation.Reborn.GuiTest
         public Engine.Engine Engine { get; }
 
         public GeometryEditorViewModel GeometryEditorViewModel { get; }
+
+        public GeometryViewModel GeometryViewModel { get; }
+
 
         public RelayCommand StartAnimationCommand
         {
@@ -55,6 +60,10 @@ namespace Craft.Simulation.Reborn.GuiTest
             {
                 UpdateModelCallBack = Engine.UpdateModel
             };
+
+            var geometryDataSource = new EmptyDataSource();
+
+            GeometryViewModel = new GeometryViewModel(geometryDataSource);
 
             _sceneViewController = new SceneViewController(Engine, GeometryEditorViewModel);
 
