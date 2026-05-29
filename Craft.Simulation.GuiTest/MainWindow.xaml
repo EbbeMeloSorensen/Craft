@@ -4,21 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Craft.Simulation.GuiTest"
-        xmlns:bouncingBall="clr-namespace:Craft.Simulation.GuiTest.BouncingBall"
-        xmlns:vanishingBoundaries="clr-namespace:Craft.Simulation.GuiTest.VanishingBoundaries"
-        xmlns:pushingBalls="clr-namespace:Craft.Simulation.GuiTest.PushingBalls"
+        xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Closing="MainWindow_OnClosing">
-    <TabControl>
-        <TabItem Header="Bouncing Ball">
-            <bouncingBall:BouncingBallView DataContext="{Binding BouncingBallViewModel}"/>
-        </TabItem>
-        <TabItem Header="Vanishing Boundaries">
-            <vanishingBoundaries:VanishingBoundariesView DataContext="{Binding VanishingBoundariesViewModel}"/>
-        </TabItem>
-        <TabItem Header="Pushing Balls">
-            <pushingBalls:PushingBallsView DataContext="{Binding PushingBallsViewModel}"/>
-        </TabItem>
-    </TabControl>
+    <Grid>
+        <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}"/>
+
+        <StackPanel>
+            <Button Content="{Binding StartResumeButtonText}"
+                    Width="60" Height="20" Margin="10"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Command="{Binding StartAnimationCommand}"/>
+            <Button Content="Pause" Width="60" Height="20" Margin="10, 0, 10, 10"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Command="{Binding PauseAnimationCommand}"/>
+        </StackPanel>
+    </Grid>
 </Window>
