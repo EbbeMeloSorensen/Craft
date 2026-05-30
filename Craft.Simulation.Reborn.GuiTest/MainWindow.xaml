@@ -5,11 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Craft.Simulation.Reborn.GuiTest"
         xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
+        xmlns:reborn="clr-namespace:Craft.UIElements.Geometry2D.Reborn;assembly=Craft.UIElements"
         mc:Ignorable="d"
         Title="Simulator and Reborn" Height="450" Width="800"
         Closing="MainWindow_OnClosing">
     <Grid>
-        <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}"/>
+        <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}" Visibility="Hidden"/>
+
+        <reborn:GeometryView DataContext="{Binding}"
+                             FrameHandler="{Binding}"/>
 
         <StackPanel>
             <Button Content="{Binding StartResumeButtonText}"

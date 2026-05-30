@@ -1,5 +1,6 @@
 ﻿using Craft.Logging;
 using Craft.Math;
+using Craft.DataStructures.Geometry;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
@@ -63,7 +64,19 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             var geometryDataSource = new EmptyDataSource();
 
-            GeometryViewModel = new GeometryViewModel(geometryDataSource);
+            GeometryViewModel = new GeometryViewModel(geometryDataSource)
+            {
+                WorldWindowBounds = new BoundingBox(
+                    double.MinValue,
+                    double.MaxValue,
+                    double.MinValue,
+                    double.MaxValue),
+                ShowCoordinateSystem = true,
+                LockAspectRatio = true,
+                DampFocusShifts = false,
+                TimeAxisMode = false,
+                FocusShiftDamping = 5.0
+            };
 
             _sceneViewController = new SceneViewController(Engine, GeometryEditorViewModel);
 

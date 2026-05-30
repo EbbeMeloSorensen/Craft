@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 using Craft.DataStructures.Geometry;
 using Craft.UIElements.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
