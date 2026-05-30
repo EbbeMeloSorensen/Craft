@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Command;
 using Craft.DataStructures.Geometry;
 using Craft.UIElements.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
@@ -192,10 +193,10 @@ namespace Craft.UIElements.Reborn.GuiTest
             //var geometryDataSource = new EmptyDataSource();
             //var geometryDataSource = new SimpleGeometryDataSource();
             //var geometryDataSource = new FunctionCurveDataSource();
-            //var geometryDataSource = new MxCifQuadTreeGeometryDataSource();
+            var geometryDataSource = new MxCifQuadTreeGeometryDataSource();
 
             //var geometryDataSource = new TimeStampDataSource();
-            var geometryDataSource = new TemperatureDataSource();
+            //var geometryDataSource = new TemperatureDataSource();
 
             GeometryViewModel = new GeometryViewModel(geometryDataSource)
             {
