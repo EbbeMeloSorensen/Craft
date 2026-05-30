@@ -21,7 +21,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             object sender,
             CancelEventArgs e)
         {
-            ViewModel.Engine.HandleClosing();
+            ViewModel.HandleClosing();
+            //ViewModel.Engine.HandleClosing();
         }
     }
 }

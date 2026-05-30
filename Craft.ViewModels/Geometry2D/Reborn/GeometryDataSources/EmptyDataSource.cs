@@ -5,7 +5,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class EmptyDataSource : IGeometryDataSource
 {
-    public IEnumerable Query(BoundingBox window)
+    public IEnumerable Query(
+        BoundingBox window)
     {
         return Enumerable.Empty<object>();
     }

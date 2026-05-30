@@ -1,31 +1,30 @@
-﻿using Craft.Logging;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using Craft.Logging;
 using Craft.Math;
 using Craft.DataStructures.Geometry;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
 using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using Craft.ViewModels.Geometry2D.ScrollFree;
 using Craft.ViewModels.Simulation;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, IFrameAware
     {
         private SceneViewController _sceneViewController;
         private RelayCommand _startAnimationCommand;
         private RelayCommand _pauseAnimationCommand;
         private string _startResumeButtonText = "Start";
+        private GeometryDataStore _geometryDataStore;
 
         public Engine.Engine Engine { get; }
 
         public GeometryEditorViewModel GeometryEditorViewModel { get; }
 
         public GeometryViewModel GeometryViewModel { get; }
-
 
         public RelayCommand StartAnimationCommand
         {
@@ -57,14 +56,17 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             Engine = new Engine.Engine(new DummyLogger());
 
+            Engine.CurrentStateChanged += Engine_CurrentStateChanged;
+
             GeometryEditorViewModel = new GeometryEditorViewModel(1)
             {
-                UpdateModelCallBack = Engine.UpdateModel
+                // Vi gør det ikke længere her
+                //UpdateModelCallBack = Engine.UpdateModel
             };
 
-            var geometryDataSource = new EmptyDataSource();
+            _geometryDataStore = new GeometryDataStore();
 
-            GeometryViewModel = new GeometryViewModel(geometryDataSource)
+            GeometryViewModel = new GeometryViewModel(_geometryDataStore)
             {
                 WorldWindowBounds = new BoundingBox(
                     double.MinValue,
@@ -88,6 +90,25 @@ namespace Craft.Simulation.Reborn.GuiTest
                 false);
 
             _sceneViewController.ActiveScene = scene;
+        }
+
+        public void OnFrame(
+            TimeSpan time,
+            double dt)
+        {
+            // Vi trigger Enginen her - ikke med den gamle Callback
+            Engine.UpdateModel();
+
+            // Update simulation (like when it was a game - not doing that yet)
+            //Update(deltaSeconds);
+
+            // Update camera
+            //GeometryViewModel.RequestedWorldFocus = ComputeCamera(time);
+        }
+
+        public void HandleClosing()
+        {
+            Engine.HandleClosing();
         }
 
         private Scene GenerateScene()
@@ -157,6 +178,21 @@ namespace Craft.Simulation.Reborn.GuiTest
         private bool CanPauseAnimation()
         {
             return Engine.AnimationRunning;
+        }
+
+        private void Engine_CurrentStateChanged(
+            object? sender,
+            Engine.CurrentStateChangedEventArgs e)
+        {
+            _geometryDataStore.Clear();
+
+            e.State.BodyStates.ForEach(bs =>
+            {
+                var center = new System.Windows.Point(bs.Position.X, bs.Position.Y);
+                var radius = (bs.Body as CircularBody).Radius;
+
+                _geometryDataStore.AddCircle(center, radius);
+            });
         }
     }
 }

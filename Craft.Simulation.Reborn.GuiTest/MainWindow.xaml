@@ -10,12 +10,21 @@
         Title="Simulator and Reborn" Height="450" Width="800"
         Closing="MainWindow_OnClosing">
     <Grid>
-        <scrollFree:GeometryEditorView DataContext="{Binding GeometryEditorViewModel}" Visibility="Hidden"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <scrollFree:GeometryEditorView
+            Grid.Column="0"
+            DataContext="{Binding GeometryEditorViewModel}"/>
 
-        <reborn:GeometryView DataContext="{Binding}"
-                             FrameHandler="{Binding}"/>
+        <reborn:GeometryView
+            Grid.Column="1"
+            DataContext="{Binding}"
+            FrameHandler="{Binding}"/>
 
-        <StackPanel>
+        <StackPanel Grid.Column="0" Grid.ColumnSpan="2">
             <Button Content="{Binding StartResumeButtonText}"
                     Width="60" Height="20" Margin="10"
                     HorizontalAlignment="Left" VerticalAlignment="Top"
