@@ -10,7 +10,7 @@
     <Grid DataContext="{Binding GeometryViewModel}">
         <local:GeometryCanvas ClipToBounds="True"
                               x:Name="GeometryCanvas"
-                              Items="{Binding Lines}"
+                              Items="{Binding GeometricObjects}"
                               ViewState="{Binding ViewState, Mode=OneWayToSource}"
                               WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
                               WorldWindowExpanded="{Binding WorldWindowExpanded, Mode=TwoWay}"

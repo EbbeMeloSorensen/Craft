@@ -53,7 +53,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _worldWindowExpanded = value;
-                UpdateLineCollection();
+                UpdateGeometricObjects();
                 OnPropertyChanged();
             }
         }
@@ -211,7 +211,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
-        public ObservableCollection<object> Lines { get; }
+        public ObservableCollection<object> GeometricObjects { get; }
             = new ObservableCollection<object>();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -230,13 +230,13 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private void UpdateLineCollection()
+        private void UpdateGeometricObjects()
         {
-            Lines.Clear();
+            GeometricObjects.Clear();
 
             foreach (var geometricPrimitive in _geometryDataSource.Query(WorldWindowExpanded))
             {
-                Lines.Add(geometricPrimitive);
+                GeometricObjects.Add(geometricPrimitive);
             }
         }
     }
