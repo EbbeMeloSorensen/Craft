@@ -14,6 +14,10 @@ namespace Craft.UIElements.Reborn.GuiTest
 {
     public class MainWindowViewModel : INotifyPropertyChanged, IFrameAware
     {
+        private string _requestedWwBoundsXMin;
+        private string _requestedWwBoundsXMax;
+        private string _requestedWwBoundsYMin;
+        private string _requestedWwBoundsYMax;
         private string _requestedWwXMin;
         private string _requestedWwXMax;
         private string _requestedWwYMin;
@@ -30,6 +34,46 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         private string _focusShiftDamping;
         private bool _continuallyMoveFocus;
+
+        public string RequestedWWBounds_XMin
+        {
+            get => _requestedWwBoundsXMin;
+            set
+            {
+                _requestedWwBoundsXMin = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWWBounds_XMax
+        {
+            get => _requestedWwBoundsXMax;
+            set
+            {
+                _requestedWwBoundsXMax = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWWBounds_YMin
+        {
+            get => _requestedWwBoundsYMin;
+            set
+            {
+                _requestedWwBoundsYMin = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RequestedWWBounds_YMax
+        {
+            get => _requestedWwBoundsYMax;
+            set
+            {
+                _requestedWwBoundsYMax = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string RequestedWW_XMin
         {
@@ -177,6 +221,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
+        public ICommand SetWorldWindowBoundsCommand { get; }
         public ICommand SetWorldWindowCommand { get; }
         public ICommand SetTimeIntervalCommand { get; }
         public ICommand SetWorldFocusCommand { get; }
@@ -187,9 +232,6 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         public MainWindowViewModel()
         {
-            var centerOfHouse = new Point(200, 150);
-            var worldWindowBoundsSize = new Size(1500, 1500);
-
             //var geometryDataSource = new EmptyDataSource();
             //var geometryDataSource = new SimpleGeometryDataSource();
             //var geometryDataSource = new FunctionCurveDataSource();
@@ -201,15 +243,10 @@ namespace Craft.UIElements.Reborn.GuiTest
             GeometryViewModel = new GeometryViewModel(geometryDataSource)
             {
                 WorldWindowBounds = new BoundingBox(
-                    centerOfHouse.X - worldWindowBoundsSize.Width / 2,
-                    centerOfHouse.X + worldWindowBoundsSize.Width / 2,
-                    centerOfHouse.Y - worldWindowBoundsSize.Height / 2,
-                    centerOfHouse.Y + worldWindowBoundsSize.Height / 2),
-                //WorldWindowBounds = new BoundingBox(
-                //    double.MinValue,
-                //    double.MaxValue,
-                //    double.MinValue,
-                //    double.MaxValue),
+                    double.MinValue,
+                    double.MaxValue,
+                    double.MinValue,
+                    double.MaxValue),
                 ShowCoordinateSystem = true,
                 LockAspectRatio = true,
                 DampFocusShifts = false,
@@ -217,22 +254,18 @@ namespace Craft.UIElements.Reborn.GuiTest
                 FocusShiftDamping = 5.0
             };
 
+            SetWorldWindowBoundsCommand = new RelayCommand(SetWorldWindowBounds);
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
             SetTimeIntervalCommand = new RelayCommand(SetTimeInterval);
             SetWorldFocusCommand = new RelayCommand(SetWorldFocus);
 
+            // Default values for the world window bounds input fields
+            RequestedWWBounds_XMin = "-300";
+            RequestedWWBounds_XMax = "700";
+            RequestedWWBounds_YMin = "-300";
+            RequestedWWBounds_YMax = "700";
+
             // Default values for the world window input fields
-            //RequestedWW_XMin = "195.0";
-            //RequestedWW_XMax = "405.0";
-            ////RequestedWW_YMin = "195.0";
-            //RequestedWW_YMin = "-5.0";
-            //RequestedWW_YMax = "305.0";
-
-            //RequestedWW_XMin = "0";
-            //RequestedWW_XMax = "2000";
-            //RequestedWW_YMin = "0";
-            //RequestedWW_YMax = "2000";
-
             var ticksInAYear = TimeSpan.FromDays(365).Ticks;
             var ticksInAWeek = TimeSpan.FromDays(7).Ticks;
             var ticksInADay = TimeSpan.FromDays(1).Ticks;
@@ -247,9 +280,11 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_YMin = "-100";
             RequestedWW_YMax = "100";
 
+            // Default values for the date range input fields
             RequestedStartDate = new DateTime(1975, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             RequestedEndDate = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+            // Default values for the date focus input fields
             RequestedWW_FocusX = "200";
             RequestedWW_FocusY = "150";
             RequestedWW_FocusRatioX = "0.5";
@@ -262,6 +297,17 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void SetWorldWindowBounds()
+        {
+            if (double.TryParse(RequestedWWBounds_XMin, CultureInfo.InvariantCulture, out var xMin) &&
+                double.TryParse(RequestedWWBounds_XMax, CultureInfo.InvariantCulture, out var xMax) &&
+                double.TryParse(RequestedWWBounds_YMin, CultureInfo.InvariantCulture, out var yMin) &&
+                double.TryParse(RequestedWWBounds_YMax, CultureInfo.InvariantCulture, out var yMax))
+            {
+                GeometryViewModel.WorldWindowBounds = new BoundingBox(xMin, xMax, yMin, yMax);
+            }
+        }
 
         private void SetWorldWindow()
         {
