@@ -129,8 +129,12 @@ Done:
 
 In progress:
 * Brug Reborn til at vise bouncing ball
-  - Lav en dedikeret datasource, som subscriber til Enginens CurrentStateChanged event
-    og vedligeholder en collection af "shapes"
+  - Lad GeometryViewModel spørge sin datasource om statiske geometriske objekter (OK)
+  - Lad MainWindowViewModel subscribe til Enginens CurrentStateChanged og lad den informere GeometryViewModel om nye dynamiske geometriske objekter (OK)
+  - Initialiser fokus og world window som foreskrevet af scenen
+  - Tegn de statiske ting fra scenen
+  - Slip helt af med den gamle GeometryEditorViewModel og SceneViewController
+  - Gør det muligt at samle keyboard events
 * For reborn - tegne andre ting end bare liniestykker
   - Punkter (som ikke bliver større, når man zoomer ind) (OK)
   - Ellipser (OK)
