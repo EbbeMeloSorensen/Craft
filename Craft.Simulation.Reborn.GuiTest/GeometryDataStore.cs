@@ -7,33 +7,41 @@ namespace Craft.Simulation.Reborn.GuiTest
 {
     public class GeometryDataStore : IGeometryDataSource
     {
-        private List<object> _geometricObjects;
+        private List<object> _staticGeometricObjects;
+        private List<object> _dynamicGeometricObjects;
 
         public GeometryDataStore()
         {
-            _geometricObjects = new List<object>();
+            _staticGeometricObjects = new List<object>();
+            _dynamicGeometricObjects = new List<object>();
         }
 
-        public void AddCircle(
-            System.Windows.Point center,
-            double radius)
+        public void AddStaticGeometryObject(
+            object geometryObject)
         {
-            _geometricObjects.Add(new CircleModel
-            {
-                Center = center,
-                Radius = radius
-            });
+            _staticGeometricObjects.Add(geometryObject);
         }
 
-        public void Clear()
+        public void AddDynamicGeometryObject(
+            object geometryObject)
         {
-            _geometricObjects.Clear();
+            _dynamicGeometricObjects.Add(geometryObject);
+        }
+
+        public void ClearStaticGeometryObjects()
+        {
+            _staticGeometricObjects.Clear();
+        }
+
+        public void ClearDynamicGeometryObjects()
+        {
+            _dynamicGeometricObjects.Clear();
         }
 
         public IEnumerable Query(
             BoundingBox window)
         {
-            return _geometricObjects;
+            return _staticGeometricObjects;
         }
     }
 }

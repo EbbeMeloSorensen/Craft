@@ -1,14 +1,15 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using Craft.DataStructures.Geometry;
 using Craft.Logging;
 using Craft.Math;
-using Craft.DataStructures.Geometry;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
 using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using Craft.ViewModels.Geometry2D.ScrollFree;
 using Craft.ViewModels.Simulation;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
@@ -184,15 +185,13 @@ namespace Craft.Simulation.Reborn.GuiTest
             object? sender,
             Engine.CurrentStateChangedEventArgs e)
         {
-            _geometryDataStore.Clear();
-
-            e.State.BodyStates.ForEach(bs =>
+            var geometricObjects = e.State.BodyStates.Select(bs => new CircleModel
             {
-                var center = new System.Windows.Point(bs.Position.X, bs.Position.Y);
-                var radius = (bs.Body as CircularBody).Radius;
-
-                _geometryDataStore.AddCircle(center, radius);
+                Center = new System.Windows.Point(bs.Position.X, bs.Position.Y),
+                Radius = (bs.Body as CircularBody)!.Radius
             });
+
+            GeometryViewModel.ReplaceDynamicGeometryLayer(geometricObjects);
         }
     }
 }

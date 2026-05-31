@@ -53,7 +53,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _worldWindowExpanded = value;
-                UpdateStaticGeometricObjects();
+                ReplaceStaticGeometryLayer();
                 OnPropertyChanged();
             }
         }
@@ -225,18 +225,32 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private void UpdateStaticGeometricObjects()
+        public void ReplaceDynamicGeometryLayer(
+            IEnumerable<object> geometricObjects)
         {
-            var frameDependentLayers = GeometryLayers
-                .Where(gl => gl.IsFrameDependent)
+            ClearLayer(true);
+
+            GeometryLayers.Add(new GeometryLayer(geometricObjects, true));
+        }
+
+        private void ReplaceStaticGeometryLayer()
+        {
+            ClearLayer(false);
+
+            GeometryLayers.Add(new GeometryLayer(
+                _geometryDataSource.Query(WorldWindowExpanded), false));
+        }
+
+        private void ClearLayer(
+            bool frameDependent)
+        {
+            var remainingLayers = GeometryLayers
+                .Where(gl => gl.IsFrameDependent != frameDependent)
                 .ToList();
 
             GeometryLayers.Clear();
 
-            GeometryLayers.Add(new GeometryLayer(
-                _geometryDataSource.Query(WorldWindowExpanded), false));
-
-            frameDependentLayers.ForEach(gl => GeometryLayers.Add(gl));
+            remainingLayers.ForEach(gl => GeometryLayers.Add(gl));
         }
     }
 }
