@@ -1,7 +1,6 @@
 ﻿using Craft.DataStructures.Geometry;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
@@ -1213,6 +1212,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
         {
             _worldWindowLimiter = new WorldWindowLimiter(worldWindowBounds);
             var proposedWorldWindow = ComputeWorldWindow();
+
+            //proposedWorldWindow = new BoundingBox(-2000, 2000, -2000, 2000);
+
             UpdateViewState(proposedWorldWindow);
         }
 

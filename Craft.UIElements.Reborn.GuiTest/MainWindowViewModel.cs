@@ -242,11 +242,6 @@ namespace Craft.UIElements.Reborn.GuiTest
 
             GeometryViewModel = new GeometryViewModel(geometryDataSource)
             {
-                WorldWindowBounds = new BoundingBox(
-                    double.MinValue,
-                    double.MaxValue,
-                    double.MinValue,
-                    double.MaxValue),
                 ShowCoordinateSystem = true,
                 LockAspectRatio = true,
                 DampFocusShifts = false,

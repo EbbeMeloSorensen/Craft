@@ -219,6 +219,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         public GeometryViewModel(
             IGeometryDataSource geometryDataSource)
         {
+            WorldWindowBounds = new BoundingBox(double.MinValue, double.MaxValue, double.MinValue, double.MaxValue);
+
             _geometryDataSource = geometryDataSource;
         }
 
