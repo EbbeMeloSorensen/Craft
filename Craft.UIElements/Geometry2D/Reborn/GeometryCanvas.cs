@@ -24,18 +24,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
         // =============================
         // Items (your geometries)
         // =============================
-        public IEnumerable Items
+
+        public IEnumerable<GeometryLayer> GeometryLayers
         {
-            get => (IEnumerable)GetValue(ItemsProperty);
-            set => SetValue(ItemsProperty, value);
+            get => (IEnumerable<GeometryLayer>)GetValue(GeometryLayersProperty);
+            set => SetValue(GeometryLayersProperty, value);
         }
 
-        public static readonly DependencyProperty ItemsProperty =
+        public static readonly DependencyProperty GeometryLayersProperty =
             DependencyProperty.Register(
-                nameof(Items),
-                typeof(IEnumerable),
+                nameof(GeometryLayers),
+                typeof(IEnumerable<GeometryLayer>),
                 typeof(GeometryCanvas),
-                new FrameworkPropertyMetadata(null, OnItemsChanged));
+                new FrameworkPropertyMetadata(null, OnGeometryLayersChanged));
 
         // Dette er elementets TILSTAND, som indeholder al nødvendig information for at kunne beregne world vindue og transformere world til viewport koordinater.
         public ViewState ViewState
@@ -276,7 +277,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
         // =============================
         // Handle collection changes
         // =============================
-        private static void OnItemsChanged(
+
+        private static void OnGeometryLayersChanged(
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
@@ -308,8 +310,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
             
-            if (Items == null /*|| WorldWindow == null*/)
+            //if (Items == null /*|| WorldWindow == null*/)
+            //    return;
+
+            if (GeometryLayers == null)
+            {
                 return;
+            }
 
             var worldWindow = ComputeWorldWindow();
             var worldToViewportTransform = CreateWorldToViewportTransform(worldWindow, RenderSize);
@@ -452,68 +459,71 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var drawingBrush = Brushes.IndianRed;
             //pen.Freeze(); // What does this do? ChatGpt talked about it
 
-            foreach (var item in Items)
+            foreach (var geometryLayer in GeometryLayers)
             {
-                switch (item)
+                foreach (var geometricObject in geometryLayer.GeometricObjects)
                 {
-                    case LineModel line:
-                        var p1 = worldToViewportTransform.Transform(line.P1);
-                        var p2 = worldToViewportTransform.Transform(line.P2);
-                        dc.DrawLine(drawingPen, p1, p2);
-                        break;
+                    switch (geometricObject)
+                    {
+                        case LineModel line:
+                            var p1 = worldToViewportTransform.Transform(line.P1);
+                            var p2 = worldToViewportTransform.Transform(line.P2);
+                            dc.DrawLine(drawingPen, p1, p2);
+                            break;
 
-                    case VerticalLineModel verticalLine:
-                        var screenX = (verticalLine.X - worldWindow.MinX) * ViewState.Scaling.Width;
+                        case VerticalLineModel verticalLine:
+                            var screenX = (verticalLine.X - worldWindow.MinX) * ViewState.Scaling.Width;
 
-                        dc.DrawLine(
-                            drawingPen,
-                            new System.Windows.Point(screenX, 0),
-                            new System.Windows.Point(screenX, ActualHeight));
-                        break;
+                            dc.DrawLine(
+                                drawingPen,
+                                new System.Windows.Point(screenX, 0),
+                                new System.Windows.Point(screenX, ActualHeight));
+                            break;
 
-                    case HorizontalLineModel horizontalLine:
-                        var screenY = (horizontalLine.Y - worldWindow.MinY) * ViewState.Scaling.Height;
+                        case HorizontalLineModel horizontalLine:
+                            var screenY = (horizontalLine.Y - worldWindow.MinY) * ViewState.Scaling.Height;
 
-                        dc.DrawLine(
-                            drawingPen,
-                            new System.Windows.Point(0, screenY),
-                            new System.Windows.Point(ActualWidth, screenY));
-                        break;
+                            dc.DrawLine(
+                                drawingPen,
+                                new System.Windows.Point(0, screenY),
+                                new System.Windows.Point(ActualWidth, screenY));
+                            break;
 
-                    case PointModel point:
-                        var p = worldToViewportTransform.Transform(point.P);
-                        dc.DrawEllipse(drawingBrush, null, p, 3, 3);
-                        break;
+                        case PointModel point:
+                            var p = worldToViewportTransform.Transform(point.P);
+                            dc.DrawEllipse(drawingBrush, null, p, 3, 3);
+                            break;
 
-                    case PolyLineModel polyLineModel:
+                        case PolyLineModel polyLineModel:
 
-                        var sg = new StreamGeometry();
+                            var sg = new StreamGeometry();
 
-                        using (var ctx = sg.Open())
-                        {
-                            ctx.BeginFigure(
-                                worldToViewportTransform.Transform(polyLineModel.Points.First()),
-                                isFilled: false,
-                                isClosed: false);
+                            using (var ctx = sg.Open())
+                            {
+                                ctx.BeginFigure(
+                                    worldToViewportTransform.Transform(polyLineModel.Points.First()),
+                                    isFilled: false,
+                                    isClosed: false);
 
-                            ctx.PolyLineTo(
-                                polyLineModel.Points.Skip(1)
-                                    .Select(point => worldToViewportTransform.Transform(point))
-                                    .ToList(),
-                                isStroked: true,
-                                isSmoothJoin: false);
-                        }
+                                ctx.PolyLineTo(
+                                    polyLineModel.Points.Skip(1)
+                                        .Select(point => worldToViewportTransform.Transform(point))
+                                        .ToList(),
+                                    isStroked: true,
+                                    isSmoothJoin: false);
+                            }
 
-                        sg.Freeze();
-                        dc.DrawGeometry(null, drawingPen, sg);
-                        break;
+                            sg.Freeze();
+                            dc.DrawGeometry(null, drawingPen, sg);
+                            break;
 
-                    case CircleModel circle:
-                        var c = worldToViewportTransform.Transform(circle.Center);
-                        var radiusX = ViewState.Scaling.Width * circle.Radius;
-                        var radiusY = ViewState.Scaling.Height * circle.Radius;
-                        dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
-                        break;
+                        case CircleModel circle:
+                            var c = worldToViewportTransform.Transform(circle.Center);
+                            var radiusX = ViewState.Scaling.Width * circle.Radius;
+                            var radiusY = ViewState.Scaling.Height * circle.Radius;
+                            dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
+                            break;
+                    }
                 }
             }
         }

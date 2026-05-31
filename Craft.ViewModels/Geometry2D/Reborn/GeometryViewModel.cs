@@ -1,8 +1,8 @@
-﻿using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {
@@ -211,8 +211,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
-        public ObservableCollection<object> GeometricObjects { get; }
-            = new ObservableCollection<object>();
+        public ObservableCollection<GeometryLayer> GeometryLayers { get; }
+            = new ObservableCollection<GeometryLayer>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -232,12 +232,12 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         private void UpdateStaticGeometricObjects()
         {
-            GeometricObjects.Clear();
+            GeometryLayers.Clear();
 
-            foreach (var geometricObject in _geometryDataSource.Query(WorldWindowExpanded))
-            {
-                GeometricObjects.Add(geometricObject);
-            }
+            var layer = new GeometryLayer(
+                _geometryDataSource.Query(WorldWindowExpanded));
+
+            GeometryLayers.Add(layer);
         }
     }
 }
