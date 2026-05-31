@@ -220,11 +220,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             IGeometryDataSource geometryDataSource)
         {
             _geometryDataSource = geometryDataSource;
-
-            //_geometryDataSource = new EmptyDataSource();
-            //_geometryDataSource = new SimpleGeometryDataSource();
-            //_geometryDataSource = new FunctionCurveDataSource();
-            //_geometryDataSource = new MxCifQuadTreeGeometryDataSource();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -232,12 +227,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         private void UpdateStaticGeometricObjects()
         {
+            var frameDependentLayers = GeometryLayers
+                .Where(gl => gl.IsFrameDependent)
+                .ToList();
+
             GeometryLayers.Clear();
 
-            var layer = new GeometryLayer(
-                _geometryDataSource.Query(WorldWindowExpanded));
+            GeometryLayers.Add(new GeometryLayer(
+                _geometryDataSource.Query(WorldWindowExpanded), false));
 
-            GeometryLayers.Add(layer);
+            frameDependentLayers.ForEach(gl => GeometryLayers.Add(gl));
         }
     }
 }
