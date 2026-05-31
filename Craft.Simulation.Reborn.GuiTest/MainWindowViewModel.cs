@@ -6,7 +6,6 @@ using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
-using Craft.ViewModels.Geometry2D.ScrollFree;
 using Craft.ViewModels.Simulation;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -15,15 +14,12 @@ namespace Craft.Simulation.Reborn.GuiTest
 {
     public class MainWindowViewModel : ViewModelBase, IFrameAware
     {
-        private SceneViewController _sceneViewController;
         private RelayCommand _startAnimationCommand;
         private RelayCommand _pauseAnimationCommand;
         private string _startResumeButtonText = "Start";
         private GeometryDataStore _geometryDataStore;
 
         public Engine.Engine Engine { get; }
-
-        public GeometryEditorViewModel GeometryEditorViewModel { get; }
 
         public GeometryViewModel GeometryViewModel { get; }
 
@@ -59,12 +55,6 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             Engine.CurrentStateChanged += Engine_CurrentStateChanged;
 
-            GeometryEditorViewModel = new GeometryEditorViewModel(1)
-            {
-                // Vi gør det ikke længere her
-                //UpdateModelCallBack = Engine.UpdateModel
-            };
-
             _geometryDataStore = new GeometryDataStore();
 
             GeometryViewModel = new GeometryViewModel(_geometryDataStore)
@@ -81,16 +71,20 @@ namespace Craft.Simulation.Reborn.GuiTest
                 FocusShiftDamping = 5.0
             };
 
-            _sceneViewController = new SceneViewController(Engine, GeometryEditorViewModel);
-
             var scene = GenerateScene();
 
-            GeometryEditorViewModel.InitializeWorldWindow(
-                scene.InitialWorldWindowFocus(),
-                scene.InitialWorldWindowSize(),
-                false);
+            var initialWorldWindowFocus = scene.InitialWorldWindowFocus();
+            var initialWorldWindowSize = scene.InitialWorldWindowSize();
 
-            _sceneViewController.ActiveScene = scene;
+            //GeometryViewModel.RequestedWorldWindow = new BoundingBox(
+            //    initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
+            //    initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
+            //    initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
+            //    initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
+
+            Engine.EngineCore.Scene = scene;
+
+            var initialState = Engine.EngineCore.SpawnNewThread();
         }
 
         public void OnFrame(
