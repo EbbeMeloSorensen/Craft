@@ -211,7 +211,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
-        public ObservableCollection<object> StaticGeometricObjects { get; }
+        public ObservableCollection<object> GeometricObjects { get; }
             = new ObservableCollection<object>();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -232,11 +232,11 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         private void UpdateStaticGeometricObjects()
         {
-            StaticGeometricObjects.Clear();
+            GeometricObjects.Clear();
 
-            foreach (var geometricPrimitive in _geometryDataSource.Query(WorldWindowExpanded))
+            foreach (var geometricObject in _geometryDataSource.Query(WorldWindowExpanded))
             {
-                StaticGeometricObjects.Add(geometricPrimitive);
+                GeometricObjects.Add(geometricObject);
             }
         }
     }
