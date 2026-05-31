@@ -188,7 +188,7 @@ namespace Craft.UIElements.Reborn.GuiTest
         public MainWindowViewModel()
         {
             var centerOfHouse = new Point(200, 150);
-            var worldWindowBoundsSize = new Size(100000, 100000);
+            var worldWindowBoundsSize = new Size(1500, 1500);
 
             //var geometryDataSource = new EmptyDataSource();
             //var geometryDataSource = new SimpleGeometryDataSource();
@@ -200,16 +200,16 @@ namespace Craft.UIElements.Reborn.GuiTest
 
             GeometryViewModel = new GeometryViewModel(geometryDataSource)
             {
-                //WorldWindowBounds = new BoundingBox(
-                //    centerOfHouse.X - worldWindowBoundsSize.Width / 2,
-                //    centerOfHouse.X + worldWindowBoundsSize.Width / 2,
-                //    centerOfHouse.Y - worldWindowBoundsSize.Height / 2,
-                //    centerOfHouse.Y + worldWindowBoundsSize.Height / 2),
                 WorldWindowBounds = new BoundingBox(
-                    double.MinValue,
-                    double.MaxValue,
-                    double.MinValue,
-                    double.MaxValue),
+                    centerOfHouse.X - worldWindowBoundsSize.Width / 2,
+                    centerOfHouse.X + worldWindowBoundsSize.Width / 2,
+                    centerOfHouse.Y - worldWindowBoundsSize.Height / 2,
+                    centerOfHouse.Y + worldWindowBoundsSize.Height / 2),
+                //WorldWindowBounds = new BoundingBox(
+                //    double.MinValue,
+                //    double.MaxValue,
+                //    double.MinValue,
+                //    double.MaxValue),
                 ShowCoordinateSystem = true,
                 LockAspectRatio = true,
                 DampFocusShifts = false,
