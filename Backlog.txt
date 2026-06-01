@@ -128,14 +128,16 @@ Done:
   - Pas på, den ikke fucker aspect ratio (OK)
 
 In progress:
-* Brug Reborn til at vise bouncing ball
+* Brug Reborn til at håndtere de gamle animationer
   - Lad GeometryViewModel spørge sin datasource om statiske geometriske objekter (OK)
   - Lad MainWindowViewModel subscribe til Enginens CurrentStateChanged og lad den informere GeometryViewModel om nye dynamiske geometriske objekter (OK)
+  - Få scenen "Auto: Bouncing ball I" fra det gamle laboratorium til at køre i reborn (OK)
   - Slip helt af med den gamle GeometryEditorViewModel og SceneViewController (OK)
   - Fix det med at ww bounds ikke længere virker.. (OK)
   - Initialiser fokus og world window som foreskrevet af scenen (OK)
-  - Tegn de statiske ting fra scenen
-  - Gør det muligt at samle keyboard events
+  - Gør det muligt at samle keyboard events (OK)
+  - Få scenen "Interactive: Rotation VII (constrained)" fra det gamle laboratorium til at køre i reborn (OK)
+  - Tegn de statiske ting fra scenen - og brug MxCifQuadTree til at håndtere det
 * For reborn - tegne andre ting end bare liniestykker
   - Punkter (som ikke bliver større, når man zoomer ind) (OK)
   - Ellipser (OK)

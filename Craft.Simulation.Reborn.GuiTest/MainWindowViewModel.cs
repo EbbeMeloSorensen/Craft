@@ -67,7 +67,8 @@ namespace Craft.Simulation.Reborn.GuiTest
                 FocusShiftDamping = 5.0
             };
 
-            _scene = GenerateScene();
+            //_scene = GenerateScene1();
+            _scene = GenerateScene2();
 
             Engine.EngineCore.Scene = _scene;
         }
@@ -101,7 +102,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             Engine.HandleClosing();
         }
 
-        private Scene GenerateScene()
+        private Scene GenerateScene1()
         {
             var ballRadius = 0.125;
             var initialBallPosition = new Vector2D(1, -0.125);
@@ -114,7 +115,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             var ball = new CircularBody(1, ballRadius, 1, affectedByGravity, affectedByBoundaries);
             initialState.AddBodyState(new BodyState(ball, initialBallPosition) { NaturalVelocity = initialBallVelocity });
 
-            var name = "Simple Game";
+            var name = "Auto: Bouncing Ball";
             var standardGravity = 9.82;
             var initialWorldWindowUpperLeft = new Point2D(-1.4, -1.3);
             var initialWorldWindowLowerRight = new Point2D(5, 3);
@@ -142,6 +143,65 @@ namespace Craft.Simulation.Reborn.GuiTest
             scene.AddBoundary(new HalfPlane(new Vector2D(3, 1), new Vector2D(0, -1)));
             scene.AddBoundary(new HalfPlane(new Vector2D(-1, 1), new Vector2D(1, 0)));
 
+            return scene;
+        }
+
+        private Scene GenerateScene2()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, 1.7))
+            {
+                Orientation = 0.5 * System.Math.PI
+            });
+
+            var scene = new Scene("Interactive: Exploration", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, false, 0.005);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+
+            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            {
+                var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
+                var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
+                var currentArtificialSpeed = currentStateOfMainBody.ArtificialVelocity.Length;
+
+                var newRotationalSpeed = 0.0;
+
+                if (keyboardState.LeftArrowDown)
+                {
+                    newRotationalSpeed += System.Math.PI;
+                }
+
+                if (keyboardState.RightArrowDown)
+                {
+                    newRotationalSpeed -= System.Math.PI;
+                }
+
+                var newArtificialSpeed = 0.0;
+
+                if (keyboardState.UpArrowDown)
+                {
+                    newArtificialSpeed += 1.5;
+                }
+
+                if (keyboardState.DownArrowDown)
+                {
+                    newArtificialSpeed -= 1.5;
+                }
+
+                currentStateOfMainBody.RotationalSpeed = newRotationalSpeed;
+                currentStateOfMainBody.ArtificialVelocity = new Vector2D(newArtificialSpeed, 0);
+
+                if (System.Math.Abs(newRotationalSpeed - currentRotationalSpeed) < 0.01 &&
+                    System.Math.Abs(newArtificialSpeed - currentArtificialSpeed) < 0.01)
+                {
+                    return false;
+                }
+
+                return true;
+            };
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 2);
+            scene.AddRectangularBoundary(0, 2, 0.6, 1.1);
             return scene;
         }
 
