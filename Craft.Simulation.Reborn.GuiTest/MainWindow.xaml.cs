@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using Craft.Simulation.Engine;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
@@ -29,6 +30,59 @@ namespace Craft.Simulation.Reborn.GuiTest
             CancelEventArgs e)
         {
             ViewModel.HandleClosing();
+        }
+
+        private void MainWindow_KeyDown(
+            object sender,
+            System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.IsRepeat)
+            {
+                return;
+            }
+
+            switch (e.Key)
+            {
+                case System.Windows.Input.Key.Up:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyPressed);
+                    break;
+                case System.Windows.Input.Key.Down:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyPressed);
+                    break;
+                case System.Windows.Input.Key.Left:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyPressed);
+                    break;
+                case System.Windows.Input.Key.Right:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyPressed);
+                    break;
+                case System.Windows.Input.Key.Space:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyPressed);
+                    break;
+            }
+        }
+
+        private void MainWindow_KeyUp(
+            object sender,
+            System.Windows.Input.KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case System.Windows.Input.Key.Up:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyReleased);
+                    break;
+                case System.Windows.Input.Key.Down:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyReleased);
+                    break;
+                case System.Windows.Input.Key.Left:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyReleased);
+                    break;
+                case System.Windows.Input.Key.Right:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyReleased);
+                    break;
+                case System.Windows.Input.Key.Space:
+                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyReleased);
+                    break;
+            }
         }
     }
 }
