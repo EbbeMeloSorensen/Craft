@@ -1,14 +1,15 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Craft.DataStructures.Geometry;
 using Craft.Logging;
 using Craft.Math;
-using Craft.Simulation.Bodies;
-using Craft.Simulation.BodyStates;
-using Craft.Simulation.Boundaries;
+using Craft.DataStructures.Geometry;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using Craft.ViewModels.Simulation;
+using Craft.Simulation.Bodies;
+using Craft.Simulation.BodyStates;
+using Craft.Simulation.Boundaries;
+using Point = System.Windows.Point;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
@@ -68,7 +69,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             };
 
             //_scene = GenerateScene1();
-            _scene = GenerateScene2();
+            //_scene = GenerateScene2();
+            _scene = GenerateScene3();
 
             Engine.EngineCore.Scene = _scene;
         }
@@ -93,6 +95,31 @@ namespace Craft.Simulation.Reborn.GuiTest
                 initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
 
             var initialState = Engine.EngineCore.SpawnNewThread();
+
+            _scene.Boundaries.ForEach(boundary =>
+            {
+                if (!boundary.Visible) return;
+
+                switch (boundary)
+                {
+                    case HorizontalLineSegment horizontalLineSegment:
+                        _geometryDataStore.AddStaticGeometryObject(new LineModel
+                        {
+                            P1 = new Point(horizontalLineSegment.X0, horizontalLineSegment.Y),
+                            P2 = new Point(horizontalLineSegment.X1, horizontalLineSegment.Y)
+                        });
+                        break;
+                    case VerticalLineSegment verticalLineSegment:
+                        _geometryDataStore.AddStaticGeometryObject(new LineModel
+                        {
+                            P1 = new Point(verticalLineSegment.X, verticalLineSegment.Y0),
+                            P2 = new Point(verticalLineSegment.X, verticalLineSegment.Y1)
+                        });
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            });
 
             UpdateGeometricObjects(initialState);
         }
@@ -139,9 +166,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
 
-            scene.AddBoundary(new HalfPlane(new Vector2D(3, -0.3), new Vector2D(-1, 0)));
-            scene.AddBoundary(new HalfPlane(new Vector2D(3, 1), new Vector2D(0, -1)));
-            scene.AddBoundary(new HalfPlane(new Vector2D(-1, 1), new Vector2D(1, 0)));
+            scene.AddRectangularBoundary(-1, 3, -0.3, 2);
 
             return scene;
         }
@@ -201,7 +226,81 @@ namespace Craft.Simulation.Reborn.GuiTest
             };
 
             scene.AddRectangularBoundary(-1, 3, -0.3, 2);
-            scene.AddRectangularBoundary(0, 2, 0.6, 1.1);
+            scene.AddRectangularBoundary(-0.2, 2.2, 0.6, 1.1);
+            return scene;
+        }
+
+        private Scene GenerateScene3()
+        {
+            var initialState = new State();
+
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.3, 1, false), new Vector2D(1.5, 0.5))
+            {
+                Orientation = 0.5 * System.Math.PI
+            });
+
+            var scene = new Scene("Interactive: Maze", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, false, 0.005);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+
+            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            {
+                var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
+                var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
+                var currentArtificialSpeed = currentStateOfMainBody.ArtificialVelocity.Length;
+
+                var newRotationalSpeed = 0.0;
+
+                if (keyboardState.LeftArrowDown)
+                {
+                    newRotationalSpeed += System.Math.PI;
+                }
+
+                if (keyboardState.RightArrowDown)
+                {
+                    newRotationalSpeed -= System.Math.PI;
+                }
+
+                var newArtificialSpeed = 0.0;
+
+                if (keyboardState.UpArrowDown)
+                {
+                    newArtificialSpeed += 1.5;
+                }
+
+                if (keyboardState.DownArrowDown)
+                {
+                    newArtificialSpeed -= 1.5;
+                }
+
+                currentStateOfMainBody.RotationalSpeed = newRotationalSpeed;
+                currentStateOfMainBody.ArtificialVelocity = new Vector2D(newArtificialSpeed, 0);
+
+                if (System.Math.Abs(newRotationalSpeed - currentRotationalSpeed) < 0.01 &&
+                    System.Math.Abs(newArtificialSpeed - currentArtificialSpeed) < 0.01)
+                {
+                    return false;
+                }
+
+                return true;
+            };
+
+            var rows = 4;
+            var cols = 4;
+            var halfWidth = 0.5;
+
+            for (var r = 0; r < rows; r++)
+            {
+                var y = -2.0 * r - 0.5;
+
+                for (var c = 0; c < cols; c++)
+                {
+                    var x = 2.0 * c + 0.5;
+
+                    scene.AddRectangularBoundary(x - halfWidth, x + halfWidth, y - halfWidth, y + halfWidth);
+                }
+            }
+
             return scene;
         }
 
