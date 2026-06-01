@@ -290,7 +290,34 @@ namespace Craft.UIElements.Reborn.GuiTest
             FocusShiftDamping = GeometryViewModel.FocusShiftDamping.ToString();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        // Called for each frame
+        public void OnFrame(
+            TimeSpan time,
+            double dt)
+        {
+            if (ContinuallyMoveFocus)
+            {
+                // Update simulation (like when it was a game - not doing that yet)
+                //Update(deltaSeconds);
+
+                // Update camera
+                GeometryViewModel.RequestedWorldFocus = ComputeCamera(time);
+            }
+        }
+
+        public void OnLoaded()
+        {
+            //GeometryViewModel.RequestedWorldWindow = new BoundingBox(-100, 100, -100, 100);
+
+            GeometryViewModel.RequestedWorldFocus = new WorldFocusRequest
+            {
+                WorldPoint = new Point(0, 0),
+                ViewportRatio = new Size(0.5, 0.5),
+            };
+        }
+
+        protected void OnPropertyChanged(
+            [CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         private void SetWorldWindowBounds()
@@ -341,21 +368,6 @@ namespace Craft.UIElements.Reborn.GuiTest
                     WorldPoint = new Point(focusX, focusY),
                     Scaling = new Size(scalingX, scalingY)
                 };
-            }
-        }
-
-        // Called for each frame
-        public void OnFrame(
-            TimeSpan time,
-            double dt)
-        {
-            if (ContinuallyMoveFocus)
-            {
-                // Update simulation (like when it was a game - not doing that yet)
-                //Update(deltaSeconds);
-
-                // Update camera
-                GeometryViewModel.RequestedWorldFocus = ComputeCamera(time);
             }
         }
 

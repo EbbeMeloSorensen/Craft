@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Craft.UIElements.Reborn.GuiTest"
         xmlns:reborn="clr-namespace:Craft.UIElements.Geometry2D.Reborn;assembly=Craft.UIElements"
         mc:Ignorable="d"
-        Title="Craft.UIElements.Reborn.GuiTest" Height="600" Width="900">
+        Title="Craft.UIElements.Reborn.GuiTest" Height="600" Width="900"
+        Loaded="MainWindow_OnLoaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
