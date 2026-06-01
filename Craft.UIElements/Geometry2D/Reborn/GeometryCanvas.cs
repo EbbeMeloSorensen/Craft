@@ -1211,11 +1211,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             BoundingBox worldWindowBounds)
         {
             _worldWindowLimiter = new WorldWindowLimiter(worldWindowBounds);
-            var proposedWorldWindow = ComputeWorldWindow();
-
-            //proposedWorldWindow = new BoundingBox(-2000, 2000, -2000, 2000);
-
-            UpdateViewState(proposedWorldWindow);
+            UpdateViewState(ComputeWorldWindow());
         }
 
         private void OnRendering(

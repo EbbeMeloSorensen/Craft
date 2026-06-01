@@ -1,4 +1,6 @@
-﻿using Craft.DataStructures.Geometry;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using Craft.DataStructures.Geometry;
 using Craft.Logging;
 using Craft.Math;
 using Craft.Simulation.Bodies;
@@ -7,8 +9,6 @@ using Craft.Simulation.Boundaries;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using Craft.ViewModels.Simulation;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
@@ -18,6 +18,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         private RelayCommand _pauseAnimationCommand;
         private string _startResumeButtonText = "Start";
         private GeometryDataStore _geometryDataStore;
+        private Scene _scene;
 
         public Engine.Engine Engine { get; }
 
@@ -59,11 +60,6 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             GeometryViewModel = new GeometryViewModel(_geometryDataStore)
             {
-                WorldWindowBounds = new BoundingBox(
-                    double.MinValue,
-                    double.MaxValue,
-                    double.MinValue,
-                    double.MaxValue),
                 ShowCoordinateSystem = true,
                 LockAspectRatio = true,
                 DampFocusShifts = false,
@@ -71,34 +67,32 @@ namespace Craft.Simulation.Reborn.GuiTest
                 FocusShiftDamping = 5.0
             };
 
-            var scene = GenerateScene();
+            _scene = GenerateScene();
 
-            var initialWorldWindowFocus = scene.InitialWorldWindowFocus();
-            var initialWorldWindowSize = scene.InitialWorldWindowSize();
-
-            //GeometryViewModel.RequestedWorldWindow = new BoundingBox(
-            //    initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
-            //    initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
-            //    initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
-            //    initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
-
-            Engine.EngineCore.Scene = scene;
-
-            var initialState = Engine.EngineCore.SpawnNewThread();
+            Engine.EngineCore.Scene = _scene;
         }
 
         public void OnFrame(
             TimeSpan time,
             double dt)
         {
-            // Vi trigger Enginen her - ikke med den gamle Callback
             Engine.UpdateModel();
+        }
 
-            // Update simulation (like when it was a game - not doing that yet)
-            //Update(deltaSeconds);
+        public void HandleLoaded()
+        {
+            var initialWorldWindowFocus = _scene.InitialWorldWindowFocus();
+            var initialWorldWindowSize = _scene.InitialWorldWindowSize();
 
-            // Update camera
-            //GeometryViewModel.RequestedWorldFocus = ComputeCamera(time);
+            GeometryViewModel.RequestedWorldWindow = new BoundingBox(
+                initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
+                initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
+                initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
+                initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
+
+            var initialState = Engine.EngineCore.SpawnNewThread();
+
+            UpdateGeometricObjects(initialState);
         }
 
         public void HandleClosing()
@@ -179,7 +173,13 @@ namespace Craft.Simulation.Reborn.GuiTest
             object? sender,
             Engine.CurrentStateChangedEventArgs e)
         {
-            var geometricObjects = e.State.BodyStates.Select(bs => new CircleModel
+            UpdateGeometricObjects(e.State);
+        }
+
+        private void UpdateGeometricObjects(
+            State state)
+        {
+            var geometricObjects = state.BodyStates.Select(bs => new CircleModel
             {
                 Center = new System.Windows.Point(bs.Position.X, bs.Position.Y),
                 Radius = (bs.Body as CircularBody)!.Radius

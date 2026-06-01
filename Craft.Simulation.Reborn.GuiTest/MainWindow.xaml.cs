@@ -17,12 +17,18 @@ namespace Craft.Simulation.Reborn.GuiTest
             DataContext = new MainWindowViewModel();
         }
 
+        private void MainWindow_OnLoaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            ViewModel.HandleLoaded();
+        }
+
         private void MainWindow_OnClosing(
             object sender,
             CancelEventArgs e)
         {
             ViewModel.HandleClosing();
-            //ViewModel.Engine.HandleClosing();
         }
     }
 }
