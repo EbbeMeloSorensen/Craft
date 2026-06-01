@@ -76,6 +76,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             TimeSpan time,
             double dt)
         {
+            // Bemærk, at man ikke bruger parametrene her
             Engine.UpdateModel();
         }
 
