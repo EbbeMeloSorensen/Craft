@@ -234,7 +234,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             var initialState = new State();
 
-            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.3, 1, false), new Vector2D(1.5, 0.5))
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.2, 1, false), new Vector2D(1.5, 0.5))
             {
                 Orientation = 0.5 * System.Math.PI
             });
@@ -265,12 +265,12 @@ namespace Craft.Simulation.Reborn.GuiTest
 
                 if (keyboardState.UpArrowDown)
                 {
-                    newArtificialSpeed += 1.5;
+                    newArtificialSpeed += 3.0;
                 }
 
                 if (keyboardState.DownArrowDown)
                 {
-                    newArtificialSpeed -= 1.5;
+                    newArtificialSpeed -= 3.0;
                 }
 
                 currentStateOfMainBody.RotationalSpeed = newRotationalSpeed;
