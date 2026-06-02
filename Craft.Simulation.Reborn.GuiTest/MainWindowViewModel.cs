@@ -72,30 +72,6 @@ namespace Craft.Simulation.Reborn.GuiTest
             //_scene = GenerateScene2();
             _scene = GenerateScene3();
 
-            Engine.EngineCore.Scene = _scene;
-        }
-
-        public void OnFrame(
-            TimeSpan time,
-            double dt)
-        {
-            // Bemærk, at man ikke bruger parametrene her
-            Engine.UpdateModel();
-        }
-
-        public void HandleLoaded()
-        {
-            var initialWorldWindowFocus = _scene.InitialWorldWindowFocus();
-            var initialWorldWindowSize = _scene.InitialWorldWindowSize();
-
-            GeometryViewModel.RequestedWorldWindow = new BoundingBox(
-                initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
-                initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
-                initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
-                initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
-
-            var initialState = Engine.EngineCore.SpawnNewThread();
-
             _scene.Boundaries.ForEach(boundary =>
             {
                 if (!boundary.Visible) return;
@@ -120,6 +96,30 @@ namespace Craft.Simulation.Reborn.GuiTest
                         throw new ArgumentException();
                 }
             });
+
+            Engine.EngineCore.Scene = _scene;
+        }
+
+        public void OnFrame(
+            TimeSpan time,
+            double dt)
+        {
+            // Bemærk, at man ikke bruger parametrene her
+            Engine.UpdateModel();
+        }
+
+        public void HandleLoaded()
+        {
+            var initialWorldWindowFocus = _scene.InitialWorldWindowFocus();
+            var initialWorldWindowSize = _scene.InitialWorldWindowSize();
+
+            GeometryViewModel.RequestedWorldWindow = new BoundingBox(
+                initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
+                initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
+                initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
+                initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
+
+            var initialState = Engine.EngineCore.SpawnNewThread();
 
             UpdateGeometricObjects(initialState);
         }
@@ -285,8 +285,8 @@ namespace Craft.Simulation.Reborn.GuiTest
                 return true;
             };
 
-            var rows = 4;
-            var cols = 4;
+            var rows = 30;
+            var cols = 30;
             var halfWidth = 0.5;
 
             for (var r = 0; r < rows; r++)
