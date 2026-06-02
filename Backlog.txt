@@ -137,9 +137,9 @@ In progress:
   - Initialiser fokus og world window som foreskrevet af scenen (OK)
   - Gør det muligt at samle keyboard events (OK)
   - Få scenen "Interactive: Rotation VII (constrained)" fra det gamle laboratorium til at køre i reborn (OK)
+  - Få kameraet til at følge med bodyen (OK)
   ------------
-  - Tegn de statiske ting fra scenen - og brug MxCifQuadTree til at håndtere det
-  - Få kameraet til at følge med bodyen
+  - Tegn de statiske ting fra scenen - og brug MxCifQuadTree til at håndtere det (OK?)
   - Refaktorer det med hvem der vedligeholder collection af statiske geometriske objekter, så det bliver lettere at koble 3D på senere.
   - Brug et MxCifQuadTree til at optimere boundary collision detection for selve Enginen.
   - Stress test det med en scene med mange boundaries

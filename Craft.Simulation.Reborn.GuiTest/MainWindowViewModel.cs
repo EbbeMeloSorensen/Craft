@@ -63,9 +63,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             {
                 ShowCoordinateSystem = true,
                 LockAspectRatio = true,
-                DampFocusShifts = false,
-                TimeAxisMode = false,
-                FocusShiftDamping = 5.0
+                DampFocusShifts = false
             };
 
             //_scene = GenerateScene1();
@@ -122,6 +120,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             var initialState = Engine.EngineCore.SpawnNewThread();
 
             UpdateGeometricObjects(initialState);
+            UpdateFocus(_scene.InitialState.BodyStates.First().Position);
         }
 
         public void HandleClosing()
@@ -334,6 +333,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             Engine.CurrentStateChangedEventArgs e)
         {
             UpdateGeometricObjects(e.State);
+            UpdateFocus(e.State.BodyStates.First().Position);
         }
 
         private void UpdateGeometricObjects(
@@ -346,6 +346,16 @@ namespace Craft.Simulation.Reborn.GuiTest
             });
 
             GeometryViewModel.ReplaceDynamicGeometryLayer(geometricObjects);
+        }
+
+        private void UpdateFocus(
+            Vector2D focus)
+        {
+            GeometryViewModel.RequestedWorldFocus = new WorldFocusRequest
+            {
+                WorldPoint = new Point(focus.X, focus.Y),
+                ViewportRatio = new System.Windows.Size(0.5, 0.5)
+            };
         }
     }
 }
