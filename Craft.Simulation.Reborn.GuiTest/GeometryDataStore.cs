@@ -13,12 +13,14 @@ namespace Craft.Simulation.Reborn.GuiTest
         private List<object> _staticGeometricObjects;
         private MxCifQuadTree<object> _mxCifQuadTree;
 
-        public GeometryDataStore()
+        public GeometryDataStore(
+            BoundingBox region,
+            int maxDepth = 8)
         {
             _staticGeometricObjects = new List<object>();
 
             _mxCifQuadTree = new MxCifQuadTree<object>(
-                new BoundingBox(-100, 100, -100, 100), 8, new DummyLogger());
+                region, maxDepth, new DummyLogger());
         }
 
         public void AddStaticGeometryObject(

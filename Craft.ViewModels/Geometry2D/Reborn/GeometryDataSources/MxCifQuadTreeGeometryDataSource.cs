@@ -10,9 +10,11 @@ public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
 {
     private MxCifQuadTree<object> _mxCifQuadTree;
 
-    public MxCifQuadTreeGeometryDataSource()
+    public MxCifQuadTreeGeometryDataSource(
+        BoundingBox region,
+        int maxDepth = 8)
     {
-        _mxCifQuadTree = new MxCifQuadTree<object>(new BoundingBox(-2000, 2000, -2000, 2000), 8, new DummyLogger());
+        _mxCifQuadTree = new MxCifQuadTree<object>(region, maxDepth, new DummyLogger());
 
         var polyLines = new List<PolyLineModel>
         {

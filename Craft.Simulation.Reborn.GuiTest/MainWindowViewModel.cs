@@ -1,14 +1,15 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using Craft.DataStructures.Geometry;
+using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
 using Craft.Math;
-using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
-using Craft.ViewModels.Simulation;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
+using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
+using Craft.ViewModels.Simulation;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Point = System.Windows.Point;
 
 namespace Craft.Simulation.Reborn.GuiTest
@@ -57,18 +58,11 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             Engine.CurrentStateChanged += Engine_CurrentStateChanged;
 
-            _geometryDataStore = new GeometryDataStore();
-
-            GeometryViewModel = new GeometryViewModel(_geometryDataStore)
-            {
-                ShowCoordinateSystem = true,
-                LockAspectRatio = true,
-                DampFocusShifts = false
-            };
-
             //_scene = GenerateScene1();
             //_scene = GenerateScene2();
-            _scene = GenerateScene3();
+            _scene = GenerateScene3(200, 200); // The bigger values, the more computationally intensive the scene is
+
+            var staticGeometryObjects = new List<object>();
 
             _scene.Boundaries.ForEach(boundary =>
             {
@@ -77,14 +71,14 @@ namespace Craft.Simulation.Reborn.GuiTest
                 switch (boundary)
                 {
                     case HorizontalLineSegment horizontalLineSegment:
-                        _geometryDataStore.AddStaticGeometryObject(new LineModel
+                        staticGeometryObjects.Add(new LineModel
                         {
                             P1 = new Point(horizontalLineSegment.X0, horizontalLineSegment.Y),
                             P2 = new Point(horizontalLineSegment.X1, horizontalLineSegment.Y)
                         });
                         break;
                     case VerticalLineSegment verticalLineSegment:
-                        _geometryDataStore.AddStaticGeometryObject(new LineModel
+                        staticGeometryObjects.Add(new LineModel
                         {
                             P1 = new Point(verticalLineSegment.X, verticalLineSegment.Y0),
                             P2 = new Point(verticalLineSegment.X, verticalLineSegment.Y1)
@@ -94,6 +88,32 @@ namespace Craft.Simulation.Reborn.GuiTest
                         throw new ArgumentException();
                 }
             });
+
+            var boundingBoxes = staticGeometryObjects.Select(geometryObject =>
+            {
+                return geometryObject switch
+                {
+                    LineModel line => line.ComputeBoundingBox(),
+                    _ => throw new InvalidOperationException(),
+                };
+            });
+
+            _geometryDataStore = new GeometryDataStore(
+                new BoundingBox(
+                    boundingBoxes.Min(b => b.MinX) - 1,
+                    boundingBoxes.Max(b => b.MaxX) + 1,
+                    boundingBoxes.Min(b => b.MinY) - 1,
+                    boundingBoxes.Max(b => b.MaxY) + 1),
+                    8);
+
+            staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
+
+            GeometryViewModel = new GeometryViewModel(_geometryDataStore)
+            {
+                ShowCoordinateSystem = true,
+                LockAspectRatio = true,
+                DampFocusShifts = false
+            };
 
             Engine.EngineCore.Scene = _scene;
         }
@@ -229,7 +249,9 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
-        private Scene GenerateScene3()
+        private Scene GenerateScene3(
+            int rows,
+            int cols)
         {
             var initialState = new State();
 
@@ -284,8 +306,6 @@ namespace Craft.Simulation.Reborn.GuiTest
                 return true;
             };
 
-            var rows = 30;
-            var cols = 30;
             var halfWidth = 0.5;
 
             for (var r = 0; r < rows; r++)
