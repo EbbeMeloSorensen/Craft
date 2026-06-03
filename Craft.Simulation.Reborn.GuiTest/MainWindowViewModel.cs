@@ -60,7 +60,8 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             //_scene = GenerateScene1();
             //_scene = GenerateScene2();
-            _scene = GenerateScene3(200, 200); // The bigger values, the more computationally intensive the scene is
+            //_scene = GenerateScene3(200, 200); // The bigger values, the more computationally intensive the scene is
+            _scene = GenerateScene3(10, 10); // The bigger values, the more computationally intensive the scene is
 
             var staticGeometryObjects = new List<object>();
 

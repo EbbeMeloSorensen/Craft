@@ -324,7 +324,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 dc.PushTransform(new MatrixTransform(worldToViewportTransform));
 
-                var debugTransform = CreateDebugShrinkTransform(worldWindow, 0.5);
+                var debugTransform = CreateDebugShrinkTransform(worldWindow, 0.4);
                 dc.PushTransform(debugTransform);
 
                 var worldPen = new Pen(Brushes.LimeGreen, 2);
@@ -342,7 +342,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 var boundsRect = ToRect(WorldWindowBounds);
                 dc.DrawRectangle(null, boundsPen, boundsRect);
 
-                DrawGeometries(dc, worldWindow, worldToViewportTransform);
+                DrawGeometriesDebug(dc);
 
                 dc.Pop();
                 dc.Pop();
@@ -454,6 +454,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
             BoundingBox worldWindow,
             Matrix worldToViewportTransform)
         {
+            // Notice that we use worldWindow and worldToViewportTransform here,
+            // since we want full control over the pen thickness in screen pixels, regardless of zoom level.
+            // If we used a Transform on the DrawingContext instead, the pen thickness would also be scaled,
+            // which is not what we want.
+
             var drawingPen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
             var drawingBrush = Brushes.IndianRed;
             //pen.Freeze(); // What does this do? ChatGpt talked about it
@@ -521,6 +526,75 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             var radiusX = ViewState.Scaling.Width * circle.Radius;
                             var radiusY = ViewState.Scaling.Height * circle.Radius;
                             dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void DrawGeometriesDebug(
+            DrawingContext dc)
+        {
+            var drawingPen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
+            var drawingBrush = Brushes.IndianRed;
+            //pen.Freeze(); // What does this do? ChatGpt talked about it
+
+            foreach (var geometryLayer in GeometryLayers)
+            {
+                foreach (var geometricObject in geometryLayer.GeometricObjects)
+                {
+                    switch (geometricObject)
+                    {
+                        case LineModel line:
+                            dc.DrawLine(drawingPen, line.P1, line.P2);
+                            break;
+
+                        //case VerticalLineModel verticalLine:
+                        //    var screenX = (verticalLine.X - worldWindow.MinX) * ViewState.Scaling.Width;
+
+                        //    dc.DrawLine(
+                        //        drawingPen,
+                        //        new System.Windows.Point(screenX, 0),
+                        //        new System.Windows.Point(screenX, ActualHeight));
+                        //    break;
+
+                        //case HorizontalLineModel horizontalLine:
+                        //    var screenY = (horizontalLine.Y - worldWindow.MinY) * ViewState.Scaling.Height;
+
+                        //    dc.DrawLine(
+                        //        drawingPen,
+                        //        new System.Windows.Point(0, screenY),
+                        //        new System.Windows.Point(ActualWidth, screenY));
+                        //    break;
+
+                        case PointModel point:
+                            dc.DrawEllipse(drawingBrush, null, point.P, 3, 3);
+                            break;
+
+                        case PolyLineModel polyLineModel:
+
+                            var sg = new StreamGeometry();
+
+                            using (var ctx = sg.Open())
+                            {
+                                ctx.BeginFigure(
+                                    polyLineModel.Points.First(),
+                                    isFilled: false,
+                                    isClosed: false);
+
+                                ctx.PolyLineTo(
+                                    polyLineModel.Points.Skip(1).ToList(),
+                                    isStroked: true,
+                                    isSmoothJoin: false);
+                            }
+
+                            sg.Freeze();
+                            dc.DrawGeometry(null, drawingPen, sg);
+                            break;
+
+                        case CircleModel circle:
+                            dc.DrawEllipse(drawingBrush, null,
+                                circle.Center, circle.Radius, circle.Radius);
                             break;
                     }
                 }
