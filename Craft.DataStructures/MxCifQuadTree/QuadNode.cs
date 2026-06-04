@@ -32,7 +32,8 @@ public class QuadNode<T>
         SpatialItem<T> spatialItem,
         double cv,
         double lv,
-        AXIS v)
+        AXIS v,
+        int maxBinNodeLevel)
     {
         _axis[(int)v] ??= new BinNode<T>();
 
@@ -42,7 +43,7 @@ public class QuadNode<T>
 
         var binNodeLevel = 1;
 
-        while (d != DIRECTION.BOTH)
+        while (d != DIRECTION.BOTH && binNodeLevel < maxBinNodeLevel)
         {
             var index = (int)d;
             binNode.Child[index] ??= new BinNode<T>();
@@ -61,13 +62,25 @@ public class QuadNode<T>
             binNodeLevel++;
         }
 
-        if (_logger.IsEnabled)
+        if (binNodeLevel == maxBinNodeLevel)
         {
-            _logger.WriteLineGoddammit(
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
                 LogMessageCategory.Information,
-                $"        Intersecting at bin node level {binNodeLevel} => inserting rectangle in bin node");
+                $"        Max bin node level ({maxBinNodeLevel}) reached, so ignoring rectangle (for now)");
+            }
         }
+        else
+        {
+            if (_logger.IsEnabled)
+            {
+                _logger.WriteLineGoddammit(
+                    LogMessageCategory.Information,
+                    $"        Intersecting at bin node level {binNodeLevel} => inserting rectangle in bin node");
+            }
 
-        binNode.Insert(spatialItem);
+            binNode.Insert(spatialItem);
+        }
     }
 }

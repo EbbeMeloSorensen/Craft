@@ -104,7 +104,7 @@ public class MxCifQuadTree<T>
             {
                 _logger.WriteLineGoddammit(
                     LogMessageCategory.Information,
-                    $"  No intersection at quad node level {quadNodeLevel} => Navigating to the {q}, where quad node is centered at (x, y) = ({cx}, {cy})");
+                    $"  No intersection at quad node level {quadNodeLevel} => Navigating to the {q}, where quad node with size of ({lx * 2}, {ly * 2}) is centered at (x, y) = ({cx}, {cy})");
             }
 
             quadNodeLevel++;
@@ -116,10 +116,10 @@ public class MxCifQuadTree<T>
             {
                 _logger.WriteLineGoddammit(
                     LogMessageCategory.Information,
-                    $"    Intersection with x axis on quad level {quadNodeLevel}");
+                    $"    Intersection with y axis on quad level {quadNodeLevel}");
             }
 
-            quadNode.InsertOnAxis(spatialItem, cy, ly, AXIS.YA);
+            quadNode.InsertOnAxis(spatialItem, cy, ly, AXIS.YA, _maxQuadNodeLevel - quadNodeLevel);
         }
         else if (dy == DIRECTION.BOTH)
         {
@@ -127,10 +127,10 @@ public class MxCifQuadTree<T>
             {
                 _logger.WriteLineGoddammit(
                     LogMessageCategory.Information,
-                    $"    Intersection with y axis on quad level {quadNodeLevel}");
+                    $"    Intersection with x axis on quad level {quadNodeLevel}");
             }
 
-            quadNode.InsertOnAxis(spatialItem, cx, lx, AXIS.XA);
+            quadNode.InsertOnAxis(spatialItem, cx, lx, AXIS.XA, _maxQuadNodeLevel - quadNodeLevel);
         }
         else
         {

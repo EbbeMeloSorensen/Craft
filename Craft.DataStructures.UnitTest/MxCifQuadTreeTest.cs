@@ -303,4 +303,19 @@ public class MxCifQuadTreeTest
 
         mxCifQuadTree.GetAllIntersecting(new BoundingBox(0, 100, 0, 100)).Count().Should().Be(0);
     }
+
+    [Fact]
+    public void Test7_Insert_Tricky_Horizontal_Line_Without_MaxDepth_ForBinTrees()
+    {
+        var logger = new TestLogger();
+        logger.IsEnabled = true;
+
+        // Arrange
+        var spatialItem1 = new SpatialItem<Line>(new BoundingBox(0, 1, 0, 0), new Line());
+
+        // Act
+        var mxCifQuadTree1 = new MxCifQuadTree<Line>(new BoundingBox(-1, 20, -20, 1), 4, logger);
+        mxCifQuadTree1.Insert(spatialItem1);
+        logger.Complete();
+    }
 }

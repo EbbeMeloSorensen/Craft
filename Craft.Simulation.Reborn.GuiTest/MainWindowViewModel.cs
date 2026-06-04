@@ -1,5 +1,4 @@
 ﻿using Craft.DataStructures.Geometry;
-using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
 using Craft.Math;
 using Craft.Simulation.Bodies;
