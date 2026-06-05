@@ -119,7 +119,7 @@ public class MxCifQuadTree<T>
                     $"    Intersection with y axis on quad level {quadNodeLevel}");
             }
 
-            quadNode.InsertOnAxis(spatialItem, cy, ly, AXIS.YA, _maxQuadNodeLevel - quadNodeLevel);
+            quadNode.InsertOnAxis(spatialItem, cy, ly, AXIS.YA, _maxQuadNodeLevel + 1 - quadNodeLevel);
         }
         else if (dy == DIRECTION.BOTH)
         {
@@ -130,7 +130,7 @@ public class MxCifQuadTree<T>
                     $"    Intersection with x axis on quad level {quadNodeLevel}");
             }
 
-            quadNode.InsertOnAxis(spatialItem, cx, lx, AXIS.XA, _maxQuadNodeLevel - quadNodeLevel);
+            quadNode.InsertOnAxis(spatialItem, cx, lx, AXIS.XA, _maxQuadNodeLevel + 1 - quadNodeLevel);
         }
         else
         {
@@ -247,7 +247,7 @@ public class MxCifQuadTree<T>
             {
                 _logger.WriteLineGoddammit(
                     LogMessageCategory.Information,
-                    "      Attempting to collapse quad nodes (under construction)");
+                    "      Attempting to collapse quad nodes");
             }
 
             AttemptToCollapseQuadNodes(FT, T, QF);
@@ -266,6 +266,7 @@ public class MxCifQuadTree<T>
             V = V.OTHERAXIS();
             B = T._axis[(int)V];
             FB = null;
+            var maxBinLevel = _maxQuadNodeLevel + 1 - quadLevel;
 
             if (V == AXIS.XA)
             {
@@ -281,7 +282,9 @@ public class MxCifQuadTree<T>
             D = rectangle.BIN_COMPARE(CV, V);
             var binLevel = 1;
 
-            while (B != null && D != DIRECTION.BOTH)
+            while (B != null &&
+                D != DIRECTION.BOTH &&
+                binLevel < maxBinLevel)
             {
                 if (B.Child[(int)D.OPDIR()] != null || B.SpatialItems.Any())
                 {
@@ -308,17 +311,18 @@ public class MxCifQuadTree<T>
                 return;
             }
 
-            if (B.Child[0] != null || B.Child[1] != null)
+            B.SpatialItems.Remove(spatialItem);
+
+            if (B.Child[0] != null ||
+                B.Child[1] != null ||
+                B.SpatialItems.Any())
             {
                 if (_logger.IsEnabled)
                 {
                     _logger.WriteLineGoddammit(
                         LogMessageCategory.Information,
-                        "      No collapsing possible, so just removing rectangle from bin node");
+                        "      No collapsing possible");
                 }
-
-                // No collapsing is possible, so just remove the rectangle from the bin
-                B.SpatialItems.Remove(spatialItem);
             }
             else
             {
@@ -420,9 +424,14 @@ public class MxCifQuadTree<T>
             : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
     }
 
-    public bool Clear()
+    public void Clear()
     {
-        throw new NotImplementedException();
+        _root = null;
+    }
+
+    public bool IsEmpty()
+    {
+        return _root == null;
     }
 
     private void AttemptToCollapseQuadNodes(
