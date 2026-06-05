@@ -59,8 +59,8 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             //_scene = GenerateScene1();
             //_scene = GenerateScene2();
-            //_scene = GenerateScene3(200, 200); // The bigger values, the more computationally intensive the scene is
-            _scene = GenerateScene3(10, 10); // The bigger values, the more computationally intensive the scene is
+            _scene = GenerateScene3(120, 120); // The bigger values, the more computationally intensive the scene is
+            //_scene = GenerateScene3(10, 10); // The bigger values, the more computationally intensive the scene is
 
             var staticGeometryObjects = new List<object>();
 
@@ -100,10 +100,10 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             _geometryDataStore = new GeometryDataStore(
                 new BoundingBox(
-                    boundingBoxes.Min(b => b.MinX) - 1,
-                    boundingBoxes.Max(b => b.MaxX) + 1,
-                    boundingBoxes.Min(b => b.MinY) - 1,
-                    boundingBoxes.Max(b => b.MaxY) + 1),
+                    boundingBoxes.Min(b => b.MinX),
+                    boundingBoxes.Max(b => b.MaxX),
+                    boundingBoxes.Min(b => b.MinY),
+                    boundingBoxes.Max(b => b.MaxY)),
                     8);
 
             staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
