@@ -79,14 +79,14 @@ namespace Craft.Simulation.Engine
                 if (scene.HandleBoundaryCollisions)
                 {
                     IdentifyFirstCollisionWithABoundary(
-                            propagatedBodyStateMap,
-                            scene.Boundaries,
-                            timeLeftInCurrentIncrement,
-                            out bodyState,
-                            out boundary,
-                            out timeUntilCollisionWithBoundary,
-                            out lineSegmentEndPointInvolvedInCollision,
-                            out effectiveSurfaceNormalForBoundary);
+                        propagatedBodyStateMap,
+                        scene.Boundaries,
+                        timeLeftInCurrentIncrement,
+                        out bodyState,
+                        out boundary,
+                        out timeUntilCollisionWithBoundary,
+                        out lineSegmentEndPointInvolvedInCollision,
+                        out effectiveSurfaceNormalForBoundary);
                 }
 
                 BodyState bodyState1 = null;
