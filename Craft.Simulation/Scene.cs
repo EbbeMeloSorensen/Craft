@@ -75,6 +75,7 @@ namespace Craft.Simulation
         public double GravitationalConstant { get; }
         public double CoefficientOfFriction { get; }
         public double TimeFactor { get; }
+        public bool HandleBoundaryCollisions { get; }
         public bool HandleBodyCollisions { get; }
         public double DeltaT { get; }
         public SceneViewMode ViewMode { get; }
@@ -175,6 +176,7 @@ namespace Craft.Simulation
             double gravitationalConstant = 6.674E-11,
             double coefficientOfFriction = 0.0,
             double timeFactor = 1.0,
+            bool handleBoundaryCollisions = true,
             bool handleBodyCollisions = true,
             double deltaT = 0.001,
             SceneViewMode viewMode = SceneViewMode.Stationary,
@@ -197,6 +199,7 @@ namespace Craft.Simulation
             GravitationalConstant = gravitationalConstant;
             CoefficientOfFriction = coefficientOfFriction;
             TimeFactor = timeFactor;
+            HandleBoundaryCollisions = handleBoundaryCollisions;
             HandleBodyCollisions = handleBodyCollisions;
             DeltaT = deltaT;
             ViewMode = viewMode;

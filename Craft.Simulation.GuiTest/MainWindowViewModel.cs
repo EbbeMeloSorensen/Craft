@@ -88,6 +88,7 @@ namespace Craft.Simulation.GuiTest
             var gravitationalConstant = 0.0;
             var coefficientOfFriction = 0.0;
             var timeFactor = 1.0;
+            var handleBoundaryCollisions = true;
             var handleBodyCollisions = false;
             var deltaT = 0.001;
 
@@ -100,6 +101,7 @@ namespace Craft.Simulation.GuiTest
                 gravitationalConstant,
                 coefficientOfFriction,
                 timeFactor,
+                handleBoundaryCollisions,
                 handleBodyCollisions,
                 deltaT);
 

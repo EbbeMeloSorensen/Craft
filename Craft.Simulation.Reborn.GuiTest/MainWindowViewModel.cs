@@ -60,7 +60,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             //_scene = GenerateScene1();
             //_scene = GenerateScene2();
             //_scene = GenerateScene3(200, 200); // The bigger values, the more computationally intensive the scene is
-            _scene = GenerateScene3(10, 10); // The bigger values, the more computationally intensive the scene is
+            _scene = GenerateScene3(false, 50, 50); // The bigger values, the more computationally intensive the scene is
 
             var staticGeometryObjects = new List<object>();
 
@@ -100,10 +100,10 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             _geometryDataStore = new GeometryDataStore(
                 new BoundingBox(
-                    boundingBoxes.Min(b => b.MinX) - 1,
-                    boundingBoxes.Max(b => b.MaxX) + 1,
-                    boundingBoxes.Min(b => b.MinY) - 1,
-                    boundingBoxes.Max(b => b.MaxY) + 1),
+                    boundingBoxes.Min(b => b.MinX),
+                    boundingBoxes.Max(b => b.MaxX),
+                    boundingBoxes.Min(b => b.MinY),
+                    boundingBoxes.Max(b => b.MaxY)),
                     8);
 
             staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
@@ -168,6 +168,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             var gravitationalConstant = 0.0;
             var coefficientOfFriction = 0.0;
             var timeFactor = 1.0;
+            var handleBoundaryCollisions = true;
             var handleBodyCollisions = false;
             var deltaT = 0.001;
 
@@ -180,6 +181,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 gravitationalConstant,
                 coefficientOfFriction,
                 timeFactor,
+                handleBoundaryCollisions,
                 handleBodyCollisions,
                 deltaT);
 
@@ -198,7 +200,9 @@ namespace Craft.Simulation.Reborn.GuiTest
                 Orientation = 0.5 * System.Math.PI
             });
 
-            var scene = new Scene("Interactive: Exploration", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, false, 0.005);
+            var handleBoundaryCollisions = true;
+
+            var scene = new Scene("Interactive: Exploration", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, false, 0.005);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
@@ -250,6 +254,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         }
 
         private Scene GenerateScene3(
+            bool handleBoundaryCollisions,
             int rows,
             int cols)
         {
@@ -260,7 +265,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 Orientation = 0.5 * System.Math.PI
             });
 
-            var scene = new Scene("Interactive: Maze", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, false, 0.005);
+            var scene = new Scene("Interactive: Maze", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, false, 0.005);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
