@@ -140,14 +140,14 @@ In progress:
   - Få kameraet til at følge med bodyen (OK)
   - Tegn de statiske ting fra scenen - og brug MxCifQuadTree til at håndtere det (OK)
   - Lav det sådan, at MXCifQuadtreets overordnede bounding box initialiseres, så den passer med, hvad der er brug for (OK)
+  - Fix buggen med at den risikerer at gå uendeligt langt ned i bin treet. Der skal være en max dybde, lige som der er for QuadTree (OK)
+  - Lav et setup, der eksponerer, at simulatoren bruger mange kræfter på at håndtere collision detection (OK)
   ------------
-  - Kan man egentlig ikke bare nøjes med at gemme objekterne i MxCifQuadTree'et eller skal man gemme bounding boxes, som du gør nu?
-  - Fix buggen med at den risikerer at gå uendeligt langt ned i bin treet. Der skal være en max dybde, lige som der er for QuadTree
-  - Fix Debug Mode i den almindelig GUI test (Almost - mangler lige vertikale og horisontale linier, hvor bounding boxes jo nok skal skæres - og så skal du nok lige undersøge, hvorfor det går i fuck, hvis man prøver at indsætte en bounding box, som tangerer en af quad treets sider)
-  - Fix Debug Mode i simulator GUI testen
-  - Lav et setup, der eksponerer, at simulatoren bruger mange kræfter på at håndtere collision detection
-  - Refaktorer det med hvem der vedligeholder collection af statiske geometriske objekter, så det bliver lettere at koble 3D på senere.
   - Brug et MxCifQuadTree til at optimere boundary collision detection for selve Enginen.
+  - Kan man egentlig ikke bare nøjes med at gemme objekterne i MxCifQuadTree'et eller skal man gemme bounding boxes, som du gør nu?
+  - Fix Debug Mode i den almindelig GUI test (Almost - mangler lige vertikale og horisontale linier, hvor bounding boxes jo nok skal skæres)
+  - Fix Debug Mode i simulator GUI testen
+  - Refaktorer det med hvem der vedligeholder collection af statiske geometriske objekter, så det bliver lettere at koble 3D på senere.
   - Stress test det med en scene med mange boundaries
   - Få det til at virke med døre
   - Gør dig uafhængig af det med at der skal være en boundary omkring en npc - evt med massen af boldene
