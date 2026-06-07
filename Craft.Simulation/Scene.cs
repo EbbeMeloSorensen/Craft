@@ -1,4 +1,6 @@
-﻿using Craft.Math;
+﻿using Craft.DataStructures.Geometry;
+using Craft.DataStructures.MxCifQuadTree;
+using Craft.Math;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
@@ -64,6 +66,7 @@ namespace Craft.Simulation
     public class Scene
     {
         private StandardInteractionCallback _standardInteractionCallback;
+        private DataStore _boundaryDataStore;
 
         public string Name { get; }
         public Point2D InitialWorldWindowUpperLeft { get; }
@@ -88,6 +91,8 @@ namespace Craft.Simulation
 
         public bool IncludeCustomForces { get; set; }
         public int FinalStateIndex { get; set; }
+
+        public IGeometryDataSource BoundaryDataSource => _boundaryDataStore;
 
         public InitializationCallback InitializationCallback { get; set; }
 
@@ -216,6 +221,26 @@ namespace Craft.Simulation
             IBoundary boundary)
         {
             Boundaries.Add(boundary);
+        }
+
+        public void InitializeBoundaryDataStore()
+        {
+            var boundingBoxes = Boundaries.Select(
+                boundary => boundary.ComputeBoundingBox());
+
+            var minX = boundingBoxes.Min(b => b.MinX);
+            var maxX = boundingBoxes.Max(b => b.MaxX);
+            var minY = boundingBoxes.Min(b => b.MinY);
+            var maxY = boundingBoxes.Max(b => b.MaxY);
+            var maxLevel = 8;
+
+            _boundaryDataStore = new DataStore(
+                new BoundingBox(minX, maxX, minY, maxY), maxLevel);
+
+            Boundaries.ForEach(boundary =>
+            {
+                _boundaryDataStore.AddGeometricObject(boundary, boundary.ComputeBoundingBox());
+            });
         }
 
         public void AddEnclosureOfHalfPlanes(

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Craft.DataStructures\Craft.DataStructures.csproj" />
     <ProjectReference Include="..\Craft.Logging\Craft.Logging.csproj" />
     <ProjectReference Include="..\Craft.Math\Craft.Math.csproj" />
   </ItemGroup>
