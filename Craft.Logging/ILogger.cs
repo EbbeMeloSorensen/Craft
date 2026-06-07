@@ -13,7 +13,7 @@
     {
         bool IsEnabled { get; set; }
 
-        string WriteLineGoddammit(
+        string WriteLine(
             LogMessageCategory category,
             string message,
             string aspect = "general",

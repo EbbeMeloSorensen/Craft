@@ -16,13 +16,13 @@ namespace Craft.ViewModel.Utils
             _logViewModel = logViewModel;
         }
 
-        public override string WriteLineGoddammit(
+        public override string WriteLine(
             LogMessageCategory category,
             string message,
             string aspect,
             bool startStopWatch)
         {
-            message = _logger.WriteLineGoddammit(category, message, aspect, startStopWatch);
+            message = _logger.WriteLine(category, message, aspect, startStopWatch);
             _logViewModel.Append($"{GetCurrentTime()}: {message}");
             _logViewModel.LogUpdated = true;
             return message;

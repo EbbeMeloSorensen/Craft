@@ -10,7 +10,7 @@ namespace Craft.Logging
             set => throw new InvalidOperationException();
         }
 
-        public string WriteLineGoddammit(
+        public string WriteLine(
             LogMessageCategory category,
             string message,
             string aspect = "general",
@@ -36,7 +36,7 @@ namespace Craft.Logging
 
         public bool IsEnabled { get; set; }
 
-        public virtual string WriteLineGoddammit(
+        public virtual string WriteLine(
             LogMessageCategory category,
             string message,
             string aspect,

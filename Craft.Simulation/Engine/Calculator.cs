@@ -47,7 +47,7 @@ namespace Craft.Simulation.Engine
 
             if (logger.IsEnabled)
             {
-                logger.WriteLineGoddammit(
+                logger.WriteLine(
                     LogMessageCategory.Debug,
                     $"Propagating state {indexOfInputState}:", "propagation");
             }
@@ -140,11 +140,11 @@ namespace Craft.Simulation.Engine
 
                         if (logger.IsEnabled)
                         {
-                            logger.WriteLineGoddammit(
+                            logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 $"  Iteration {iteration}, progress: 100%", "propagation");
 
-                            logger.WriteLineGoddammit(
+                            logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 "    Result:", "propagation");
 
@@ -192,15 +192,15 @@ namespace Craft.Simulation.Engine
 
                         if (logger.IsEnabled)
                         {
-                            logger.WriteLineGoddammit(
+                            logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 $"  Body{bodyState.Body.Id} collided with boundary after {timeUntilCollisionWithBoundary} seconds. Time Left: {timeLeftInCurrentIncrement} seconds", "propagation");
 
-                            logger.WriteLineGoddammit(
+                            logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 $"  Iteration {iteration} progress: {100 * (deltaT - timeLeftInCurrentIncrement) / deltaT:F5}%", "propagation");
 
-                            logger.WriteLineGoddammit(
+                            logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 "    Result:", "propagation");
 
@@ -263,11 +263,11 @@ namespace Craft.Simulation.Engine
 
                         if (logger.IsEnabled)
                         {
-                            logger.WriteLineGoddammit(
+                            logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 $"  Body{bodyState1.Body.Id} and Body{bodyState2.Body.Id} collided after {timeUntilCollisionBetweenBodies} seconds. Time Left: {timeLeftInCurrentIncrement} seconds", "propagation");
 
-                            logger.WriteLineGoddammit(
+                            logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 $"  Iteration {iteration} progress: {100 * (deltaT - timeLeftInCurrentIncrement) / deltaT:F5}%", "propagation");
                         }
@@ -296,17 +296,17 @@ namespace Craft.Simulation.Engine
         {
             if (!logger.IsEnabled) return;
 
-            logger.WriteLineGoddammit(
+            logger.WriteLine(
                 LogMessageCategory.Debug,
                 $"      Energy: {state.CalculateTotalEnergy(10.0)}", "propagation");
 
-            logger.WriteLineGoddammit(
+            logger.WriteLine(
                 LogMessageCategory.Debug,
                 "      Bodies:", "propagation");
 
             state.BodyStates.ForEach(bs =>
             {
-                logger.WriteLineGoddammit(
+                logger.WriteLine(
                     LogMessageCategory.Debug,
                     $"        Body{bs.Body.Id}: Position: ({bs.Position.X}, {bs.Position.Y}, Natural Velocity: ({bs.NaturalVelocity.X}, {bs.NaturalVelocity.Y}))", "propagation");
             });

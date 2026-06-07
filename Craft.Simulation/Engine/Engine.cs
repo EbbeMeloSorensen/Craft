@@ -192,7 +192,7 @@ namespace Craft.Simulation.Engine
                             message += " (final state)";
                         }
 
-                        _logger.WriteLineGoddammit(
+                        _logger.WriteLine(
                             LogMessageCategory.Debug,
                             message,
                             "state_sequence");
@@ -207,7 +207,7 @@ namespace Craft.Simulation.Engine
 
                     if (_logger.IsEnabled)
                     {
-                        _logger.WriteLineGoddammit(
+                        _logger.WriteLine(
                             LogMessageCategory.Debug,
                             "  Main thread: State producer fell behind by ? indexes - pausing state consumption", "state_sequence");
                     }
@@ -221,7 +221,7 @@ namespace Craft.Simulation.Engine
 
                 if (_logger.IsEnabled)
                 {
-                    _logger.WriteLineGoddammit(
+                    _logger.WriteLine(
                         LogMessageCategory.Debug,
                         "  Main thread: Resuming state consumption", "state_sequence");
                 }

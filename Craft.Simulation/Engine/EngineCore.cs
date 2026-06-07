@@ -98,7 +98,7 @@ namespace Craft.Simulation.Engine
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     $"  Main thread: Requesting state with index {stateIndex}", "state_sequence");
             }
@@ -197,7 +197,7 @@ namespace Craft.Simulation.Engine
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     $"  Checking if we should continue animation, lead is currently {lead} ({_stateSequenceCount} + {_disposedStates} - {lastIndexRequested})", "state_sequence");
             }
@@ -232,12 +232,12 @@ namespace Craft.Simulation.Engine
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     "Spawning new thread",
                     "state_sequence");
 
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     "State 0:",
                     "propagation");
@@ -280,7 +280,7 @@ namespace Craft.Simulation.Engine
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     "Thread should have exited by now",
                     "state_sequence");
@@ -300,7 +300,7 @@ namespace Craft.Simulation.Engine
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     $"  Main thread: Disposed of {nDisposableStates} historical states. Buffer size: {_stateSequenceCount}",
                     "state_sequence");
@@ -323,7 +323,7 @@ namespace Craft.Simulation.Engine
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     $"Gonna invalidate states later than index {stateIndex} ({disposableStates} states in total)",
                     "state_sequence");
@@ -336,7 +336,7 @@ namespace Craft.Simulation.Engine
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Debug,
                     $"Done - length of state sequence is now {_stateSequenceCount}, and Last index generated is {_lastIndexGenerated})",
                     "state_sequence");
@@ -370,7 +370,7 @@ namespace Craft.Simulation.Engine
                     {
                         if (_logger.IsEnabled)
                         {
-                            _logger.WriteLineGoddammit(
+                            _logger.WriteLine(
                                 LogMessageCategory.Debug,
                                 "State producer thread: Got signal to exit",
                                 "state_sequence");
@@ -446,7 +446,7 @@ namespace Craft.Simulation.Engine
                             message += " (done)";
                         }
 
-                        _logger.WriteLineGoddammit(
+                        _logger.WriteLine(
                             LogMessageCategory.Debug,
                             message,
                             "state_sequence");
@@ -457,7 +457,7 @@ namespace Craft.Simulation.Engine
                     if (_logger.IsEnabled)
                     {
                         // If we are here, then some of the latest states were invalidated
-                        _logger.WriteLineGoddammit(
+                        _logger.WriteLine(
                             LogMessageCategory.Debug,
                             $"State producer thread: Newly produced state with index {lastIndexGeneratedBeforePropagation + 1} has to be discarded", "state_sequence");
                     }

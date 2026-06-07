@@ -13,7 +13,7 @@ namespace Craft.DataStructures.UnitTest
             _streamWriter = new StreamWriter(@"C:\Temp\CS_Log.txt");
         }
 
-        public string WriteLineGoddammit(
+        public string WriteLine(
             LogMessageCategory category,
             string message,
             string aspect = "general",

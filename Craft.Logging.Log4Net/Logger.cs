@@ -13,7 +13,7 @@ namespace Craft.Logging.Log4Net
             _aspectToLoggerMap = new Dictionary<string, ILog>();
         }
 
-        public override string WriteLineGoddammit(
+        public override string WriteLine(
             LogMessageCategory category,
             string message,
             string aspect,
@@ -30,7 +30,7 @@ namespace Craft.Logging.Log4Net
                 _aspectToLoggerMap[aspect] = log;
             }
 
-            message = base.WriteLineGoddammit(category, message, aspect, startStopWatch);
+            message = base.WriteLine(category, message, aspect, startStopWatch);
 
             switch (category)
             {

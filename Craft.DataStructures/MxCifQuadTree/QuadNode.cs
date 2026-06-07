@@ -55,7 +55,7 @@ public class QuadNode<T>
 
             if (_logger.IsEnabled)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Information,
                     $"      No intersection at bin node level {binNodeLevel} => Navigating to the {d}, where bin node is centered at x = {cv}");
             }
@@ -68,13 +68,13 @@ public class QuadNode<T>
         {
             if (d == DIRECTION.BOTH)
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Information,
                     $"        Intersecting at bin node level {binNodeLevel} => inserting rectangle in bin node");
             }
             else
             {
-                _logger.WriteLineGoddammit(
+                _logger.WriteLine(
                     LogMessageCategory.Information,
                     $"        No axis intersection but max bin node level ({maxBinNodeLevel}) reached, so inserting rectangle in bin node");
             }
