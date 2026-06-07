@@ -142,8 +142,8 @@ In progress:
   - Lav det sådan, at MXCifQuadtreets overordnede bounding box initialiseres, så den passer med, hvad der er brug for (OK)
   - Fix buggen med at den risikerer at gå uendeligt langt ned i bin treet. Der skal være en max dybde, lige som der er for QuadTree (OK)
   - Lav et setup, der eksponerer, at simulatoren bruger mange kræfter på at håndtere collision detection (OK)
+  - Brug et MxCifQuadTree til at optimere boundary collision detection for selve Enginen (OK)
   ------------
-  - Brug et MxCifQuadTree til at optimere boundary collision detection for selve Enginen.
   - Kan man egentlig ikke bare nøjes med at gemme objekterne i MxCifQuadTree'et eller skal man gemme bounding boxes, som du gør nu?
   - Fix Debug Mode i den almindelig GUI test (Almost - mangler lige vertikale og horisontale linier, hvor bounding boxes jo nok skal skæres)
   - Fix Debug Mode i simulator GUI testen

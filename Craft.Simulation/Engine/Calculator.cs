@@ -1,4 +1,5 @@
-﻿using Craft.Logging;
+﻿using Craft.DataStructures.Geometry;
+using Craft.Logging;
 using Craft.Math;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
@@ -81,6 +82,7 @@ namespace Craft.Simulation.Engine
                     IdentifyFirstCollisionWithABoundary(
                         propagatedBodyStateMap,
                         scene.Boundaries,
+                        scene.BoundaryDataSource,
                         timeLeftInCurrentIncrement,
                         out bodyState,
                         out boundary,
@@ -571,6 +573,7 @@ namespace Craft.Simulation.Engine
         private static void IdentifyFirstCollisionWithABoundary(
             Dictionary<BodyState, BodyState> propagatedBodyStateMap,
             List<IBoundary> boundaries,
+            IGeometryDataSource boundaryDataStore,
             double timeLeftInCurrentIncrement,
             out BodyState bodyStateInvolvedInCollision,
             out IBoundary boundaryInvolvedInCollision,
@@ -597,8 +600,25 @@ namespace Craft.Simulation.Engine
 
                 var effectiveVelocity = (bsAfter.Position - bsBefore.Position) / timeLeftInCurrentIncrement;
 
-                foreach (var boundary in boundaries)
+                var bodySize = bsAfter.Body switch
                 {
+                    CircularBody circularBody => new Size2D(circularBody.Radius, circularBody.Radius),
+                    RectangularBody rectangularBody => new Size2D(rectangularBody.Width / 2, rectangularBody.Height / 2),
+                    _ => throw new ArgumentException()
+                };
+
+                var boundingBoxOfBody = new BoundingBox(
+                    bsAfter.Position.X - bodySize.Width,
+                    bsAfter.Position.X + bodySize.Width,
+                    bsAfter.Position.Y - bodySize.Height,
+                    bsAfter.Position.Y + bodySize.Height);
+
+                var potentiallyIntersectingBoundaries = boundaryDataStore.Query(boundingBoxOfBody);
+
+                //foreach (var boundary in boundaries)
+                foreach (var temp in potentiallyIntersectingBoundaries)
+                {
+                    var boundary = temp as IBoundary;
                     if (!boundary.Intersects(bsAfter))
                     {
                         continue;

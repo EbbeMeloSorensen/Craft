@@ -59,8 +59,10 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             //_scene = GenerateScene1();
             //_scene = GenerateScene2();
-            //_scene = GenerateScene3(200, 200); // The bigger values, the more computationally intensive the scene is
-            _scene = GenerateScene3(true, 50, 50); // The bigger values, the more computationally intensive the scene is
+            _scene = GenerateScene3(true, 10, 10); // The bigger values, the more computationally intensive the scene is
+            //_scene = GenerateScene3(true, 50, 50); // The bigger values, the more computationally intensive the scene is
+            //_scene = GenerateScene3(true, 300, 300); // The bigger values, the more computationally intensive the scene is
+            // (Det tager lang tid at loade med store værdier såsom 300 x 300, men når først det er loadet, kører det ret hurtigt)
 
             var staticGeometryObjects = new List<object>();
 
@@ -189,6 +191,8 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             scene.AddRectangularBoundary(-1, 3, -0.3, 2);
 
+            scene.InitializeBoundaryDataStore();
+
             return scene;
         }
 
@@ -250,6 +254,9 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             scene.AddRectangularBoundary(-1, 3, -0.3, 2);
             scene.AddRectangularBoundary(-0.2, 2.2, 0.6, 1.1);
+
+            scene.InitializeBoundaryDataStore();
+
             return scene;
         }
 
@@ -324,6 +331,8 @@ namespace Craft.Simulation.Reborn.GuiTest
                     scene.AddRectangularBoundary(x - halfWidth, x + halfWidth, y - halfWidth, y + halfWidth);
                 }
             }
+
+            scene.InitializeBoundaryDataStore();
 
             return scene;
         }
