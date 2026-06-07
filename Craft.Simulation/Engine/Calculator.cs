@@ -1,4 +1,5 @@
-﻿using Craft.DataStructures.Geometry;
+﻿using System.Collections;
+using Craft.DataStructures.Geometry;
 using Craft.Logging;
 using Craft.Math;
 using Craft.Simulation.Bodies;
@@ -600,22 +601,26 @@ namespace Craft.Simulation.Engine
 
                 var effectiveVelocity = (bsAfter.Position - bsBefore.Position) / timeLeftInCurrentIncrement;
 
-                var bodySize = bsAfter.Body switch
+                IEnumerable potentiallyIntersectingBoundaries = boundaries;
+
+                if (boundaryDataStore != null)
                 {
-                    CircularBody circularBody => new Size2D(circularBody.Radius, circularBody.Radius),
-                    RectangularBody rectangularBody => new Size2D(rectangularBody.Width / 2, rectangularBody.Height / 2),
-                    _ => throw new ArgumentException()
-                };
+                    var bodySize = bsAfter.Body switch
+                    {
+                        CircularBody circularBody => new Size2D(circularBody.Radius, circularBody.Radius),
+                        RectangularBody rectangularBody => new Size2D(rectangularBody.Width / 2, rectangularBody.Height / 2),
+                        _ => throw new ArgumentException()
+                    };
 
-                var boundingBoxOfBody = new BoundingBox(
-                    bsAfter.Position.X - bodySize.Width,
-                    bsAfter.Position.X + bodySize.Width,
-                    bsAfter.Position.Y - bodySize.Height,
-                    bsAfter.Position.Y + bodySize.Height);
+                    var boundingBoxOfBody = new BoundingBox(
+                        bsAfter.Position.X - bodySize.Width,
+                        bsAfter.Position.X + bodySize.Width,
+                        bsAfter.Position.Y - bodySize.Height,
+                        bsAfter.Position.Y + bodySize.Height);
 
-                var potentiallyIntersectingBoundaries = boundaryDataStore.Query(boundingBoxOfBody);
+                    potentiallyIntersectingBoundaries = boundaryDataStore.Query(boundingBoxOfBody);
+                }
 
-                //foreach (var boundary in boundaries)
                 foreach (var temp in potentiallyIntersectingBoundaries)
                 {
                     var boundary = temp as IBoundary;
