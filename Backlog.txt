@@ -143,16 +143,18 @@ In progress:
   - Fix buggen med at den risikerer at gå uendeligt langt ned i bin treet. Der skal være en max dybde, lige som der er for QuadTree (OK)
   - Lav et setup, der eksponerer, at simulatoren bruger mange kræfter på at håndtere collision detection (OK)
   - Brug et MxCifQuadTree til at optimere boundary collision detection for selve Enginen (OK)
+  - Stress test det med en scene med mange boundaries (OK)
   ------------
+  - I "Dark alliance" - skift over til Reborn
+  - Refaktorer simulatoren, så en boundary er en almindelig body
+  - Refaktorer det med hvem der vedligeholder collection af statiske geometriske objekter, så det bliver lettere at koble 3D på senere.
+  - Udvid "Dark Alliance" (Undermountain level 1)
   - Kan man egentlig ikke bare nøjes med at gemme objekterne i MxCifQuadTree'et eller skal man gemme bounding boxes, som du gør nu?
   - Fix Debug Mode i den almindelig GUI test (Almost - mangler lige vertikale og horisontale linier, hvor bounding boxes jo nok skal skæres)
   - Fix Debug Mode i simulator GUI testen
-  - Refaktorer det med hvem der vedligeholder collection af statiske geometriske objekter, så det bliver lettere at koble 3D på senere.
-  - Stress test det med en scene med mange boundaries
   - Få det til at virke med døre
   - Gør dig uafhængig af det med at der skal være en boundary omkring en npc - evt med massen af boldene
   - NPC'er og døre bør være viewport afhængige på lige for med boundaries
-  - Få Undermountain level 1 på banen
   - Lav det sådan, at man kun ser vægge i overviewet, som man faktisk har set (nice to have)
 * For reborn - tegne andre ting end bare liniestykker
   - Punkter (som ikke bliver større, når man zoomer ind) (OK)
