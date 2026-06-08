@@ -260,12 +260,34 @@ namespace Craft.Simulation
             double x1,
             double y0,
             double y1,
+            bool diamond,
             bool visible = true)
         {
-            AddBoundary(new HorizontalLineSegment(y0, x0, x1) { Visible = visible });
-            AddBoundary(new HorizontalLineSegment(y1, x0, x1) { Visible = visible });
-            AddBoundary(new VerticalLineSegment(x0, y0, y1) { Visible = visible });
-            AddBoundary(new VerticalLineSegment(x1, y0, y1) { Visible = visible });
+            if (diamond)
+            {
+                AddBoundary(new LineSegment(
+                    new Vector2D((x0 + x1) / 2, y0),
+                    new Vector2D(x1, (y0 + y1) / 2)));
+
+                AddBoundary(new LineSegment(
+                    new Vector2D(x1, (y0 + y1) / 2),
+                    new Vector2D((x0 + x1) / 2, y1)));
+
+                AddBoundary(new LineSegment(
+                    new Vector2D((x0 + x1) / 2, y1),
+                    new Vector2D(x0, (y0 + y1) / 2)));
+
+                AddBoundary(new LineSegment(
+                    new Vector2D(x0, (y0 + y1) / 2),
+                    new Vector2D((x0 + x1) / 2, y0)));
+            }
+            else
+            {
+                AddBoundary(new HorizontalLineSegment(y0, x0, x1) { Visible = visible });
+                AddBoundary(new HorizontalLineSegment(y1, x0, x1) { Visible = visible });
+                AddBoundary(new VerticalLineSegment(x0, y0, y1) { Visible = visible });
+                AddBoundary(new VerticalLineSegment(x1, y0, y1) { Visible = visible });
+            }
         }
     }
 }

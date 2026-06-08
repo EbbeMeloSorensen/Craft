@@ -59,6 +59,8 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             //_scene = GenerateScene1();
             //_scene = GenerateScene2();
+            //_scene = GenerateScene3(true, 1, 1); // The bigger values, the more computationally intensive the scene is
+            //_scene = GenerateScene3(true, 3, 3); // The bigger values, the more computationally intensive the scene is
             _scene = GenerateScene3(true, 10, 10); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 50, 50); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 300, 300); // The bigger values, the more computationally intensive the scene is
@@ -84,6 +86,13 @@ namespace Craft.Simulation.Reborn.GuiTest
                         {
                             P1 = new Point(verticalLineSegment.X, verticalLineSegment.Y0),
                             P2 = new Point(verticalLineSegment.X, verticalLineSegment.Y1)
+                        });
+                        break;
+                    case LineSegment lineSegment:
+                        staticGeometryObjects.Add(new LineModel
+                        {
+                            P1 = new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
+                            P2 = new Point(lineSegment.Point2.X, lineSegment.Point2.Y)
                         });
                         break;
                     default:
@@ -189,7 +198,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
 
-            scene.AddRectangularBoundary(-1, 3, -0.3, 2);
+            scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
 
             scene.InitializeBoundaryDataStore();
 
@@ -252,8 +261,8 @@ namespace Craft.Simulation.Reborn.GuiTest
                 return true;
             };
 
-            scene.AddRectangularBoundary(-1, 3, -0.3, 2);
-            scene.AddRectangularBoundary(-0.2, 2.2, 0.6, 1.1);
+            scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
+            scene.AddRectangularBoundary(-0.2, 2.2, 0.6, 1.1, false);
 
             scene.InitializeBoundaryDataStore();
 
@@ -328,7 +337,12 @@ namespace Craft.Simulation.Reborn.GuiTest
                 {
                     var x = 2.0 * c + 0.5;
 
-                    scene.AddRectangularBoundary(x - halfWidth, x + halfWidth, y - halfWidth, y + halfWidth);
+                    scene.AddRectangularBoundary(
+                        x - halfWidth,
+                        x + halfWidth,
+                        y - halfWidth,
+                        y + halfWidth,
+                        (r + c) % 2 == 0);
                 }
             }
 

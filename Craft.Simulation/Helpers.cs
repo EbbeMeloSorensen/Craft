@@ -22,10 +22,10 @@ internal static class Helpers
                 verticalLineSegment.Y0,
                 verticalLineSegment.Y1),
             LineSegment lineSegment => new BoundingBox(
-                System.Math.Min(lineSegment.Point1.X, lineSegment.Point1.X),
-                System.Math.Max(lineSegment.Point1.X, lineSegment.Point1.X),
-                System.Math.Min(lineSegment.Point1.Y, lineSegment.Point1.Y),
-                System.Math.Max(lineSegment.Point1.Y, lineSegment.Point1.Y)),
+                System.Math.Min(lineSegment.Point1.X, lineSegment.Point2.X),
+                System.Math.Max(lineSegment.Point1.X, lineSegment.Point2.X),
+                System.Math.Min(lineSegment.Point1.Y, lineSegment.Point2.Y),
+                System.Math.Max(lineSegment.Point1.Y, lineSegment.Point2.Y)),
             _ => throw new ArgumentException("Unknown boundary type")
         };
     }
