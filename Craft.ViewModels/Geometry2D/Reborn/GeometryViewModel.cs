@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {
@@ -25,7 +25,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _showGrid;
         private bool _showCoordinateSystem;
         private bool _timeAxisMode;
-        private IGeometryDataSource _geometryDataSource;
 
         public ViewState ViewState
         {
@@ -53,7 +52,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _worldWindowExpanded = value;
-                ReplaceStaticGeometryLayer();
                 OnPropertyChanged();
             }
         }
@@ -65,7 +63,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _expandedWorldWindow = value;
                 OnPropertyChanged();
-                //UpdateLineCollection();
             }
         }
 
@@ -216,31 +213,32 @@ namespace Craft.ViewModels.Geometry2D.Reborn
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public GeometryViewModel(
-            IGeometryDataSource geometryDataSource)
+        public GeometryViewModel()
         {
-            WorldWindowBounds = new BoundingBox(double.MinValue, double.MaxValue, double.MinValue, double.MaxValue);
-
-            _geometryDataSource = geometryDataSource;
+            WorldWindowBounds = new BoundingBox(
+                double.MinValue,
+                double.MaxValue,
+                double.MinValue,
+                double.MaxValue);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public void ReplaceDynamicGeometryLayer(
-            IEnumerable<object> geometricObjects)
+            IEnumerable geometricObjects)
         {
             ClearLayer(true);
 
             GeometryLayers.Add(new GeometryLayer(geometricObjects, true));
         }
 
-        private void ReplaceStaticGeometryLayer()
+        public void ReplaceStaticGeometryLayer(
+            IEnumerable geometricObjects)
         {
             ClearLayer(false);
 
-            GeometryLayers.Add(new GeometryLayer(
-                _geometryDataSource.Query(WorldWindowExpanded), false));
+            GeometryLayers.Add(new GeometryLayer(geometricObjects, false));
         }
 
         private void ClearLayer(

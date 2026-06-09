@@ -241,7 +241,8 @@ namespace Craft.UIElements.Reborn.GuiTest
             //var geometryDataSource = new TimeStampDataSource();
             //var geometryDataSource = new TemperatureDataSource();
 
-            GeometryViewModel = new GeometryViewModel(geometryDataSource)
+            //GeometryViewModel = new GeometryViewModel(geometryDataSource)
+            GeometryViewModel = new GeometryViewModel()
             {
                 ShowCoordinateSystem = true,
                 LockAspectRatio = true,

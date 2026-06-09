@@ -58,10 +58,10 @@ namespace Craft.Simulation.Reborn.GuiTest
             Engine.CurrentStateChanged += Engine_CurrentStateChanged;
 
             //_scene = GenerateScene1();
-            _scene = GenerateScene2();
+            //_scene = GenerateScene2();
             //_scene = GenerateScene3(true, 1, 1); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 3, 3); // The bigger values, the more computationally intensive the scene is
-            //_scene = GenerateScene3(true, 10, 10); // The bigger values, the more computationally intensive the scene is
+            _scene = GenerateScene3(true, 10, 10); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 50, 50); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 300, 300); // The bigger values, the more computationally intensive the scene is
             // (Det tager lang tid at loade med store værdier såsom 300 x 300, men når først det er loadet, kører det ret hurtigt)
@@ -119,12 +119,15 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
 
-            GeometryViewModel = new GeometryViewModel(_geometryDataStore)
+            //GeometryViewModel = new GeometryViewModel(_geometryDataStore)
+            GeometryViewModel = new GeometryViewModel()
             {
                 ShowCoordinateSystem = true,
                 LockAspectRatio = true,
                 DampFocusShifts = false
             };
+
+            GeometryViewModel.PropertyChanged += GeometryViewModel_PropertyChanged;
 
             Engine.EngineCore.Scene = _scene;
         }
@@ -151,7 +154,11 @@ namespace Craft.Simulation.Reborn.GuiTest
             var initialState = Engine.EngineCore.SpawnNewThread();
 
             UpdateGeometricObjects(initialState);
-            UpdateFocus(_scene.InitialState.BodyStates.First().Position);
+
+            if (_scene.ViewMode == SceneViewMode.FocusOnFirstBody)
+            {
+                UpdateFocus(_scene.InitialState.BodyStates.First().Position);
+            }
         }
 
         public void HandleClosing()
@@ -281,7 +288,19 @@ namespace Craft.Simulation.Reborn.GuiTest
                 Orientation = 0.5 * System.Math.PI
             });
 
-            var scene = new Scene("Interactive: Maze", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, false, 0.005);
+            var scene = new Scene(
+                "Interactive: Maze",
+                new Point2D(-1.4, -1.3),
+                new Point2D(5, 3),
+                initialState,
+                0,
+                0,
+                0,
+                1,
+                handleBoundaryCollisions,
+                false,
+                0.005,
+                SceneViewMode.FocusOnFirstBody);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
@@ -381,7 +400,24 @@ namespace Craft.Simulation.Reborn.GuiTest
             Engine.CurrentStateChangedEventArgs e)
         {
             UpdateGeometricObjects(e.State);
-            UpdateFocus(e.State.BodyStates.First().Position);
+
+            if (_scene.ViewMode == SceneViewMode.FocusOnFirstBody)
+            {
+                UpdateFocus(e.State.BodyStates.First().Position);
+            }
+        }
+
+        private void GeometryViewModel_PropertyChanged(
+            object? sender,
+            System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(GeometryViewModel.WorldWindowExpanded))
+            {
+                var geometricObjects = _geometryDataStore.Query(GeometryViewModel.WorldWindowExpanded);
+
+                GeometryViewModel.ReplaceStaticGeometryLayer(
+                    geometricObjects);
+            }
         }
 
         private void UpdateGeometricObjects(
@@ -389,7 +425,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             var geometricObjects = state.BodyStates.Select(bs => new CircleModel
             {
-                Center = new System.Windows.Point(bs.Position.X, bs.Position.Y),
+                Center = new Point(bs.Position.X, bs.Position.Y),
                 Radius = (bs.Body as CircularBody)!.Radius
             });
 
