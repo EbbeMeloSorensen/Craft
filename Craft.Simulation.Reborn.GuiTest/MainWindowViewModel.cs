@@ -58,10 +58,10 @@ namespace Craft.Simulation.Reborn.GuiTest
             Engine.CurrentStateChanged += Engine_CurrentStateChanged;
 
             //_scene = GenerateScene1();
-            //_scene = GenerateScene2();
+            _scene = GenerateScene2();
             //_scene = GenerateScene3(true, 1, 1); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 3, 3); // The bigger values, the more computationally intensive the scene is
-            _scene = GenerateScene3(true, 10, 10); // The bigger values, the more computationally intensive the scene is
+            //_scene = GenerateScene3(true, 10, 10); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 50, 50); // The bigger values, the more computationally intensive the scene is
             //_scene = GenerateScene3(true, 300, 300); // The bigger values, the more computationally intensive the scene is
             // (Det tager lang tid at loade med store værdier såsom 300 x 300, men når først det er loadet, kører det ret hurtigt)
