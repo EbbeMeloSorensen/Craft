@@ -2,7 +2,6 @@
 using Craft.DataStructures.Geometry;
 using Craft.UIElements.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 namespace Craft.UIElements.Reborn.GuiTest;
 

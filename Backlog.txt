@@ -145,9 +145,11 @@ In progress:
   - Brug et MxCifQuadTree til at optimere boundary collision detection for selve Enginen (OK)
   - Stress test det med en scene med mange boundaries (OK)
   - Refaktorer det med hvem der vedligeholder collection af statiske geometriske objekter, så det bliver lettere at koble 3D på senere. (OK)
+  - Refaktorer lige den almindelige (ikke simulator) test af Reborn (OK)
   ------------
-  - Refaktorer lige den almindelige (ikke simulator) test af Reborn
-  - I "Dark alliance" - skift over til Reborn
+  - I "Dark alliance" - Tilføj reborn
+    - Hvordan gør du lige med npc'er? Det er jo bodies, men de er altså statiske
+    - og hvad med tønder? det er vist bare boundaries
   - Refaktorer simulatoren, så en boundary er en almindelig body
   - Udvid "Dark Alliance" (Undermountain level 1)
   - Kan man egentlig ikke bare nøjes med at gemme objekterne i MxCifQuadTree'et eller skal man gemme bounding boxes, som du gør nu?

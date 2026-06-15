@@ -14,6 +14,8 @@ namespace Craft.UIElements.Reborn.GuiTest
 {
     public class MainWindowViewModel : INotifyPropertyChanged, IFrameAware
     {
+        private IGeometryDataSource _geometryDataSource;
+
         private string _requestedWwBoundsXMin;
         private string _requestedWwBoundsXMax;
         private string _requestedWwBoundsYMin;
@@ -235,13 +237,12 @@ namespace Craft.UIElements.Reborn.GuiTest
             //var geometryDataSource = new EmptyDataSource();
             //var geometryDataSource = new SimpleGeometryDataSource();
             //var geometryDataSource = new FunctionCurveDataSource();
-            var geometryDataSource = new MxCifQuadTreeGeometryDataSource(
+            _geometryDataSource = new MxCifQuadTreeGeometryDataSource(
                 new BoundingBox(-2000, 2000, -2000, 2000), 8);
 
-            //var geometryDataSource = new TimeStampDataSource();
-            //var geometryDataSource = new TemperatureDataSource();
+            //_geometryDataSource = new TimeStampDataSource();
+            //_geometryDataSource = new TemperatureDataSource();
 
-            //GeometryViewModel = new GeometryViewModel(geometryDataSource)
             GeometryViewModel = new GeometryViewModel()
             {
                 ShowCoordinateSystem = true,
@@ -250,6 +251,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                 TimeAxisMode = false,
                 FocusShiftDamping = 5.0
             };
+
+            GeometryViewModel.PropertyChanged += GeometryViewModel_PropertyChanged;
 
             SetWorldWindowBoundsCommand = new RelayCommand(SetWorldWindowBounds);
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
@@ -290,6 +293,20 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_ScalingY = "1";
 
             FocusShiftDamping = GeometryViewModel.FocusShiftDamping.ToString();
+        }
+
+        private void GeometryViewModel_PropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(GeometryViewModel.WorldWindowExpanded))
+            {
+                var geometricObjects = _geometryDataSource.Query(
+                    GeometryViewModel.WorldWindowExpanded);
+
+                GeometryViewModel.ReplaceStaticGeometryLayer(
+                    geometricObjects);
+            }
         }
 
         // Called for each frame
