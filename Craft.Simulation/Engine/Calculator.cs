@@ -28,11 +28,6 @@ namespace Craft.Simulation.Engine
             out List<BoundaryCollisionReport> boundaryCollisionReports,
             out List<BodyCollisionReport> bodyCollisionReports) // Dictionary of body id vs effective normal vectors of boundary collisions that took place in the propagation
         {
-            if (state.Index == 1114)
-            {
-                var a = 0;
-            }
-
             if (scene == null)
             {
                 throw new InvalidOperationException("Please set a scene before calling EngineCore.PropagateState");
@@ -56,12 +51,6 @@ namespace Craft.Simulation.Engine
             var iteration = 1;
             while (timeLeftInCurrentIncrement > 1E-12)
             {
-                if (iteration > 100)
-                {
-                    // Something wrong
-                    var a = 0;
-                }
-
                 // Beregn positionsforskydninger givet de gældende kræfter (hvor vi vel at mærke ikke tager højde for boundaries)
                 var propagatedBodyStateMap = CalculatePropagatedBodyStateMap(
                     state,
@@ -474,6 +463,7 @@ namespace Craft.Simulation.Engine
                         }
                     }
 
+                    // Bemærk: vi kan indtil videre KUN håndtere kollisioner mellem circular bodies!
                     if (!(body1 is CircularBody) ||
                         !(body2 is CircularBody))
                     {
@@ -535,22 +525,14 @@ namespace Craft.Simulation.Engine
                     }
 
                     var t = -(-B - System.Math.Sqrt(discriminant)) / (2 * A);
-
                     var t1 = -B + System.Math.Sqrt(discriminant) / (2 * A);
                     var t2 = -B - System.Math.Sqrt(discriminant) / (2 * A);
 
-                    if (t < 0)
-                    {
-                        //var a = 0;
-                    }
-
-                    if (t > timeLeftInCurrentIncrement)
-                    {
-                        //var a = 0;
-                    }
-
                     if (!double.IsNaN(timeSinceFirstCollision) &&
-                        !(t > timeSinceFirstCollision)) continue;
+                        !(t > timeSinceFirstCollision))
+                    {
+                        continue;
+                    }
 
                     bodyState1InvolvedInCollision = bs1After;
                     bodyState2InvolvedInCollision = bs2After;
@@ -564,11 +546,6 @@ namespace Craft.Simulation.Engine
             timeUntilCollision = double.IsNaN(timeSinceFirstCollision)
                 ? double.NaN
                 : timeLeftInCurrentIncrement - timeSinceFirstCollision;
-
-            if (timeUntilCollision < -0.000001)
-            {
-                //var a = 0;
-            }
         }
 
         private static void IdentifyFirstCollisionWithABoundary(
