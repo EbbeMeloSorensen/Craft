@@ -148,6 +148,15 @@ In progress:
   - Refaktorer lige den almindelige (ikke simulator) test af Reborn (OK)
   ------------
   - Genopfrisk, hvad der sker, når man støder ind i en punkt-boundary
+    - Generelt er du nok nødt til at dokumentere, hvordan kollisioner håndteres i det gamle
+      - fsa bodies håndteres kun kollisioner mellem cirkulære bodies
+        - det kan lede til elastisk stød, block (hvordan er det konkret, og hvis det virker, hvorfor har du så ikke brugt det i Dark Alliance...), eller ignore
+      - fsa kollisioner mellem bodies of boundaries..
+        - bodyen skal være enten en circular body eller en rectangular body (Det er pt det eneste, du har)
+        - boundary skal være et liniestykke, et punkt eller en halfplane
+        - Det, der sker, når man kolliderer med en boundary, er generelt, at man:
+          1) beregner den "effektive normalvektor" for overfladen, der hvor den rammes
+          2) eliminerer den del af bodyens normalvektor, der går i retning af pågældende normalvektor
   - Introducer en body, som er et punkt, og som blokerer bodies, lige som den gamle punkt boundary gør
   - Introducer en body, som er et liniestykke, og som blokerer bodies, lige som den gamle line boundary gør
   - Refaktorer body, så man kan have en statisk en af slagsen
