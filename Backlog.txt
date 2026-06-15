@@ -147,6 +147,10 @@ In progress:
   - Refaktorer det med hvem der vedligeholder collection af statiske geometriske objekter, så det bliver lettere at koble 3D på senere. (OK)
   - Refaktorer lige den almindelige (ikke simulator) test af Reborn (OK)
   ------------
+  - Genopfrisk, hvad der sker, når man støder ind i en punkt-boundary
+  - Introducer en body, som er et punkt, og som blokerer bodies, lige som den gamle punkt boundary gør
+  - Introducer en body, som er et liniestykke, og som blokerer bodies, lige som den gamle line boundary gør
+  - Refaktorer body, så man kan have en statisk en af slagsen
   - I "Dark alliance" - Tilføj reborn
     - Hvordan gør du lige med npc'er? Det er jo bodies, men de er altså statiske
     - og hvad med tønder? det er vist bare boundaries
