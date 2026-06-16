@@ -155,8 +155,13 @@ In progress:
         - bodyen skal være enten en circular body eller en rectangular body (Det er pt det eneste, du har)
         - boundary skal være et liniestykke, et punkt eller en halfplane
         - Det, der sker, når man kolliderer med en boundary, er generelt, at man:
-          1) beregner den "effektive normalvektor" for overfladen, der hvor den rammes
+          1) beregner den "effektive normalvektor" for overfladen, der hvor den rammes.
+             ..hvordan definerer du denne effektive normalvektor, f.eks i forbindelse med kollision med et punkt?
           2) eliminerer den del af bodyens normalvektor, der går i retning af pågældende normalvektor
+        - Hvorfor er der forskel på, hvordan du regner på kollision med et punkt i forhold til kollision med en cirkel
+          .. er et punkt ikke bare en cirkel med radius 0?
+  - En npc kan vel være en "circular boundary"
+  - Måske kan en dør være et specielt liniestykke med en bounding box, rummer alle de mulig placeringer..
   - Introducer en body, som er et punkt, og som blokerer bodies, lige som den gamle punkt boundary gør
   - Introducer en body, som er et liniestykke, og som blokerer bodies, lige som den gamle line boundary gør
   - Refaktorer body, så man kan have en statisk en af slagsen
