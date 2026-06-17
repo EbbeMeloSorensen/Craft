@@ -160,6 +160,10 @@ In progress:
           2) eliminerer den del af bodyens normalvektor, der går i retning af pågældende normalvektor
         - Hvorfor er der forskel på, hvordan du regner på kollision med et punkt i forhold til kollision med en cirkel
           .. er et punkt ikke bare en cirkel med radius 0?
+  - Lav en general purpose funktion, som tager følgende input: 2 punkter, 2 radii og 2 hastighedsvektorer.
+    ..den skal så opstille en funktion over deres afstand som funktion af tiden, hvilket vil være et andengradspolynomium
+    ..den skal så beregne den tid, der går, før de kolliderer samt det punkt, de kolliderer i
+    .. brug funktionen til håndtering af kollision mellem bodies samt mellem en body og et punkt.
   - En npc kan vel være en "circular boundary"
   - Måske kan en dør være et specielt liniestykke med en bounding box, rummer alle de mulig placeringer..
   - Introducer en body, som er et punkt, og som blokerer bodies, lige som den gamle punkt boundary gør
