@@ -304,7 +304,9 @@ namespace Craft.UIElements.Reborn.GuiTest
                 var geometricObjects = _geometryDataSource.Query(
                     GeometryViewModel.WorldWindowExpanded);
 
-                GeometryViewModel.ReplaceStaticGeometryLayer(
+                GeometryViewModel.ClearLayer(false);
+
+                GeometryViewModel.AddStaticGeometryLayer(
                     geometricObjects);
             }
         }

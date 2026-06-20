@@ -233,15 +233,15 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             GeometryLayers.Add(new GeometryLayer(geometricObjects, true));
         }
 
-        public void ReplaceStaticGeometryLayer(
+        public void AddStaticGeometryLayer(
             IEnumerable geometricObjects)
         {
-            ClearLayer(false);
+            //ClearLayer(false);
 
             GeometryLayers.Add(new GeometryLayer(geometricObjects, false));
         }
 
-        private void ClearLayer(
+        public void ClearLayer(
             bool frameDependent)
         {
             var remainingLayers = GeometryLayers

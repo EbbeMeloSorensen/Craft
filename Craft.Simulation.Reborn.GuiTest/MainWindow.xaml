@@ -13,19 +13,30 @@
         KeyDown="MainWindow_KeyDown"
         KeyUp="MainWindow_KeyUp">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <reborn:GeometryView
-            DataContext="{Binding}"
-            FrameHandler="{Binding}"/>
-
-        <StackPanel>
-            <Button Content="{Binding StartResumeButtonText}"
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Button Content="{Binding StartOrResumeButtonText}"
                     Width="60" Height="20" Margin="10"
                     HorizontalAlignment="Left" VerticalAlignment="Top"
-                    Command="{Binding StartAnimationCommand}"/>
+                    Command="{Binding StartOrResumeAnimationCommand}"/>
             <Button Content="Pause" Width="60" Height="20" Margin="10, 0, 10, 10"
                     HorizontalAlignment="Left" VerticalAlignment="Top"
                     Command="{Binding PauseAnimationCommand}"/>
         </StackPanel>
+
+        <local:SceneListView Grid.Row="1" Grid.Column="0" DataContext="{Binding SceneListViewModel}"/>
+
+        <reborn:GeometryView Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                             DataContext="{Binding}"
+                             FrameHandler="{Binding}"/>
+
     </Grid>
 </Window>

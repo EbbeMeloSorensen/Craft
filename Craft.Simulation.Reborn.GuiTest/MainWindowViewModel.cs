@@ -17,15 +17,16 @@ namespace Craft.Simulation.Reborn.GuiTest
     {
         private RelayCommand _startAnimationCommand;
         private RelayCommand _pauseAnimationCommand;
-        private string _startResumeButtonText = "Start";
+        private string _startOrResumeButtonText = "Start";
         private GeometryDataStore _geometryDataStore;
-        private Scene _scene;
 
         public Engine.Engine Engine { get; }
 
+        public SceneListViewModel SceneListViewModel { get; }
+
         public GeometryViewModel GeometryViewModel { get; }
 
-        public RelayCommand StartAnimationCommand
+        public RelayCommand StartOrResumeAnimationCommand
         {
             get
             {
@@ -41,12 +42,12 @@ namespace Craft.Simulation.Reborn.GuiTest
             }
         }
 
-        public string StartResumeButtonText
+        public string StartOrResumeButtonText
         {
-            get => _startResumeButtonText;
+            get => _startOrResumeButtonText;
             set
             {
-                _startResumeButtonText = value;
+                _startOrResumeButtonText = value;
                 RaisePropertyChanged();
             }
         }
@@ -55,71 +56,11 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             Engine = new Engine.Engine(new DummyLogger());
 
-            Engine.CurrentStateChanged += Engine_CurrentStateChanged;
+            SceneListViewModel = new SceneListViewModel();
+            SceneListViewModel.AddScene(GenerateScene1());
+            SceneListViewModel.AddScene(GenerateScene2());
+            SceneListViewModel.AddScene(GenerateScene3(true, 10, 10));
 
-            //_scene = GenerateScene1();
-            //_scene = GenerateScene2();
-            //_scene = GenerateScene3(true, 1, 1); // The bigger values, the more computationally intensive the scene is
-            //_scene = GenerateScene3(true, 3, 3); // The bigger values, the more computationally intensive the scene is
-            _scene = GenerateScene3(true, 10, 10); // The bigger values, the more computationally intensive the scene is
-            //_scene = GenerateScene3(true, 50, 50); // The bigger values, the more computationally intensive the scene is
-            //_scene = GenerateScene3(true, 300, 300); // The bigger values, the more computationally intensive the scene is
-            // (Det tager lang tid at loade med store værdier såsom 300 x 300, men når først det er loadet, kører det ret hurtigt)
-
-            var staticGeometryObjects = new List<object>();
-
-            _scene.Boundaries.ForEach(boundary =>
-            {
-                if (!boundary.Visible) return;
-
-                switch (boundary)
-                {
-                    case HorizontalLineSegment horizontalLineSegment:
-                        staticGeometryObjects.Add(new LineModel
-                        {
-                            P1 = new Point(horizontalLineSegment.X0, horizontalLineSegment.Y),
-                            P2 = new Point(horizontalLineSegment.X1, horizontalLineSegment.Y)
-                        });
-                        break;
-                    case VerticalLineSegment verticalLineSegment:
-                        staticGeometryObjects.Add(new LineModel
-                        {
-                            P1 = new Point(verticalLineSegment.X, verticalLineSegment.Y0),
-                            P2 = new Point(verticalLineSegment.X, verticalLineSegment.Y1)
-                        });
-                        break;
-                    case LineSegment lineSegment:
-                        staticGeometryObjects.Add(new LineModel
-                        {
-                            P1 = new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
-                            P2 = new Point(lineSegment.Point2.X, lineSegment.Point2.Y)
-                        });
-                        break;
-                    default:
-                        throw new ArgumentException();
-                }
-            });
-
-            var boundingBoxes = staticGeometryObjects.Select(geometryObject =>
-            {
-                return geometryObject switch
-                {
-                    LineModel line => line.ComputeBoundingBox(),
-                    _ => throw new InvalidOperationException(),
-                };
-            });
-
-            _geometryDataStore = new GeometryDataStore(
-                new BoundingBox(
-                    boundingBoxes.Min(b => b.MinX),
-                    boundingBoxes.Max(b => b.MaxX),
-                    boundingBoxes.Min(b => b.MinY),
-                    boundingBoxes.Max(b => b.MaxY)),
-                    8);
-
-            staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
-
-            //GeometryViewModel = new GeometryViewModel(_geometryDataStore)
             GeometryViewModel = new GeometryViewModel()
             {
                 ShowCoordinateSystem = true,
@@ -127,9 +68,36 @@ namespace Craft.Simulation.Reborn.GuiTest
                 DampFocusShifts = false
             };
 
+            SceneListViewModel.PropertyChanged += SceneListViewModel_PropertyChanged;
             GeometryViewModel.PropertyChanged += GeometryViewModel_PropertyChanged;
+            Engine.CurrentStateChanged += Engine_CurrentStateChanged;
+            //Engine.EngineCore.Scene = _scene;
+        }
 
-            Engine.EngineCore.Scene = _scene;
+        public void HandleLoaded()
+        {
+            //var initialWorldWindowFocus = _scene.InitialWorldWindowFocus();
+            //var initialWorldWindowSize = _scene.InitialWorldWindowSize();
+
+            //GeometryViewModel.RequestedWorldWindow = new BoundingBox(
+            //    initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
+            //    initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
+            //    initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
+            //    initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
+
+            //var initialState = Engine.EngineCore.SpawnNewThread();
+
+            //UpdateGeometricObjects(initialState);
+
+            //if (_scene.ViewMode == SceneViewMode.FocusOnFirstBody)
+            //{
+            //    UpdateFocus(_scene.InitialState.BodyStates.First().Position);
+            //}
+        }
+
+        public void HandleClosing()
+        {
+            Engine.HandleClosing();
         }
 
         public void OnFrame(
@@ -138,32 +106,6 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             // Bemærk, at man ikke bruger parametrene her
             Engine.UpdateModel();
-        }
-
-        public void HandleLoaded()
-        {
-            var initialWorldWindowFocus = _scene.InitialWorldWindowFocus();
-            var initialWorldWindowSize = _scene.InitialWorldWindowSize();
-
-            GeometryViewModel.RequestedWorldWindow = new BoundingBox(
-                initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
-                initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
-                initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
-                initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
-
-            var initialState = Engine.EngineCore.SpawnNewThread();
-
-            UpdateGeometricObjects(initialState);
-
-            if (_scene.ViewMode == SceneViewMode.FocusOnFirstBody)
-            {
-                UpdateFocus(_scene.InitialState.BodyStates.First().Position);
-            }
-        }
-
-        public void HandleClosing()
-        {
-            Engine.HandleClosing();
         }
 
         private Scene GenerateScene1()
@@ -372,38 +314,58 @@ namespace Craft.Simulation.Reborn.GuiTest
 
         private void StartAnimation()
         {
+            if (Engine.EngineCore.Scene == null)
+            {
+                Engine.EngineCore.Scene = SceneListViewModel.ActiveScene;
+                Engine.EngineCore.SpawnNewThread();
+            }
+
             Engine.StartOrResumeAnimation();
-            StartAnimationCommand.RaiseCanExecuteChanged();
-            PauseAnimationCommand.RaiseCanExecuteChanged();
+            RefreshButtons();
         }
 
         private bool CanStartAnimation()
         {
-            return !Engine.AnimationRunning;
+            return SceneListViewModel.ActiveScene != null &&
+                   !Engine.AnimationRunning;
         }
 
         private void PauseAnimation()
         {
             Engine.PauseAnimation();
-            StartResumeButtonText = "Resume";
-            StartAnimationCommand.RaiseCanExecuteChanged();
-            PauseAnimationCommand.RaiseCanExecuteChanged();
+            StartOrResumeButtonText = "Resume";
+            RefreshButtons();
         }
 
         private bool CanPauseAnimation()
         {
-            return Engine.AnimationRunning;
+            return SceneListViewModel.ActiveScene != null &&
+                   Engine.AnimationRunning;
         }
 
-        private void Engine_CurrentStateChanged(
+        private void SceneListViewModel_PropertyChanged(
             object? sender,
-            Engine.CurrentStateChangedEventArgs e)
+            System.ComponentModel.PropertyChangedEventArgs e)
         {
-            UpdateGeometricObjects(e.State);
-
-            if (_scene.ViewMode == SceneViewMode.FocusOnFirstBody)
+            if (e.PropertyName == nameof(SceneListViewModel.ActiveScene))
             {
-                UpdateFocus(e.State.BodyStates.First().Position);
+                if (Engine.EngineCore.Scene != null)
+                {
+                    Engine.ResetEngine();
+                    Engine.EngineCore.Scene = null;
+                    StartOrResumeButtonText = "Start";
+                }
+
+                if (SceneListViewModel.ActiveScene == null)
+                {
+                    GeometryViewModel.ClearLayer(true);
+                    GeometryViewModel.ClearLayer(false);
+                    _geometryDataStore = null;
+                }
+                else
+                {
+                    InitializeAnimation(SceneListViewModel.ActiveScene);
+                }
             }
         }
 
@@ -413,10 +375,24 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             if (e.PropertyName == nameof(GeometryViewModel.WorldWindowExpanded))
             {
-                var geometricObjects = _geometryDataStore.Query(GeometryViewModel.WorldWindowExpanded);
+                UpdateStaticGeometricObjects();
+            }
+        }
 
-                GeometryViewModel.ReplaceStaticGeometryLayer(
-                    geometricObjects);
+        private void Engine_CurrentStateChanged(
+            object? sender,
+            Engine.CurrentStateChangedEventArgs e)
+        {
+            if (SceneListViewModel.ActiveScene == null)
+            {
+                return;
+            }
+
+            UpdateGeometricObjects(e.State);
+
+            if (SceneListViewModel.ActiveScene.ViewMode == SceneViewMode.FocusOnFirstBody)
+            {
+                UpdateFocus(e.State.BodyStates.First().Position);
             }
         }
 
@@ -432,6 +408,17 @@ namespace Craft.Simulation.Reborn.GuiTest
             GeometryViewModel.ReplaceDynamicGeometryLayer(geometricObjects);
         }
 
+        private void UpdateStaticGeometricObjects()
+        {
+            GeometryViewModel.ClearLayer(false);
+
+            if (_geometryDataStore != null)
+            {
+                GeometryViewModel.AddStaticGeometryLayer(
+                    _geometryDataStore.Query(GeometryViewModel.WorldWindowExpanded));
+            }
+        }
+
         private void UpdateFocus(
             Vector2D focus)
         {
@@ -440,6 +427,90 @@ namespace Craft.Simulation.Reborn.GuiTest
                 WorldPoint = new Point(focus.X, focus.Y),
                 ViewportRatio = new System.Windows.Size(0.5, 0.5)
             };
+        }
+
+        private void InitializeAnimation(
+            Scene scene)
+        {
+            var staticGeometryObjects = new List<object>();
+
+            scene.Boundaries.ForEach(boundary =>
+            {
+                if (!boundary.Visible) return;
+
+                switch (boundary)
+                {
+                    case HorizontalLineSegment horizontalLineSegment:
+                        staticGeometryObjects.Add(new LineModel
+                        {
+                            P1 = new Point(horizontalLineSegment.X0, horizontalLineSegment.Y),
+                            P2 = new Point(horizontalLineSegment.X1, horizontalLineSegment.Y)
+                        });
+                        break;
+                    case VerticalLineSegment verticalLineSegment:
+                        staticGeometryObjects.Add(new LineModel
+                        {
+                            P1 = new Point(verticalLineSegment.X, verticalLineSegment.Y0),
+                            P2 = new Point(verticalLineSegment.X, verticalLineSegment.Y1)
+                        });
+                        break;
+                    case LineSegment lineSegment:
+                        staticGeometryObjects.Add(new LineModel
+                        {
+                            P1 = new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
+                            P2 = new Point(lineSegment.Point2.X, lineSegment.Point2.Y)
+                        });
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            });
+
+            var boundingBoxes = staticGeometryObjects.Select(geometryObject =>
+            {
+                return geometryObject switch
+                {
+                    LineModel line => line.ComputeBoundingBox(),
+                    _ => throw new InvalidOperationException(),
+                };
+            });
+
+            _geometryDataStore = new GeometryDataStore(
+                new BoundingBox(
+                    boundingBoxes.Min(b => b.MinX),
+                    boundingBoxes.Max(b => b.MaxX),
+                    boundingBoxes.Min(b => b.MinY),
+                    boundingBoxes.Max(b => b.MaxY)),
+                8);
+
+            staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
+
+            var initialWorldWindowFocus = scene.InitialWorldWindowFocus();
+            var initialWorldWindowSize = scene.InitialWorldWindowSize();
+
+            GeometryViewModel.RequestedWorldWindow = new BoundingBox(
+                initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
+                initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
+                initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
+                initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
+
+            //var initialState = Engine.EngineCore.SpawnNewThread();
+
+            UpdateStaticGeometricObjects();
+            UpdateGeometricObjects(scene.InitialState);
+
+            if (scene.ViewMode == SceneViewMode.FocusOnFirstBody)
+            {
+                UpdateFocus(scene.InitialState.BodyStates.First().Position);
+            }
+
+            RefreshButtons();
+        }
+
+        private void RefreshButtons()
+        {
+            StartOrResumeAnimationCommand.RaiseCanExecuteChanged();
+            PauseAnimationCommand.RaiseCanExecuteChanged();
         }
     }
 }
