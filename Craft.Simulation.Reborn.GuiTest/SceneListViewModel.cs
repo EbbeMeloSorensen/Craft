@@ -45,6 +45,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             AddScene(GenerateSceneBallTrain1());
             AddScene(GenerateSceneBallTrain2());
             AddScene(GenerateSceneBallTrain3());
+            AddScene(GenerateSceneBodyFollowingPath());
         }
 
         private void AddScene(
@@ -575,5 +576,53 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             return scene;
         }
+
+        private static Scene GenerateSceneBodyFollowingPath()
+        {
+            var initialState = new State();
+
+            var path = new Path
+            {
+                WayPoints = new List<Vector2D>
+                {
+                    new Vector2D(1, -1),
+                    new Vector2D(-1, -1),
+                    new Vector2D(1, 1),
+                    new Vector2D(-1, 1)
+                }
+            };
+
+            initialState.AddBodyState(
+                new BodyStateEnemy(
+                    new CircularBody(1, 0.125, 1, true),
+                    new Vector2D(0, 0))
+                {
+                    Path = path,
+                    Speed = 1,
+                    NaturalVelocity = new Vector2D(1, 0)
+                });
+
+            var standardGravity = 0.0;
+            var gravitationalConstant = 0.0;
+            var handleBoundaryCollisions = false;
+            var handleBodyCollisions = false;
+            var coefficientOfFriction = 0.0;
+
+            var scene = new Scene(
+                "Auto: Body Following route",
+                new Point2D(-2, -3),
+                new Point2D(5, 3),
+                initialState,
+                standardGravity,
+                gravitationalConstant,
+                coefficientOfFriction,
+                1,
+                handleBoundaryCollisions,
+                handleBodyCollisions,
+                0.005);
+
+            return scene;
+        }
+
     }
 }

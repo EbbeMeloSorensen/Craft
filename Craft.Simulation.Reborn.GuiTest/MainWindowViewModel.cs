@@ -274,13 +274,22 @@ namespace Craft.Simulation.Reborn.GuiTest
                 };
             });
 
-            _geometryDataStore = new GeometryDataStore(
-                new BoundingBox(
-                    boundingBoxes.Min(b => b.MinX),
-                    boundingBoxes.Max(b => b.MaxX),
-                    boundingBoxes.Min(b => b.MinY),
-                    boundingBoxes.Max(b => b.MaxY)),
-                8);
+            if (boundingBoxes.Any())
+            {
+                _geometryDataStore = new GeometryDataStore(
+                    new BoundingBox(
+                        boundingBoxes.Min(b => b.MinX),
+                        boundingBoxes.Max(b => b.MaxX),
+                        boundingBoxes.Min(b => b.MinY),
+                        boundingBoxes.Max(b => b.MaxY)),
+                    8);
+            }
+            else
+            {
+                _geometryDataStore = new GeometryDataStore(
+                    new BoundingBox(-1, 1, -1, 1),
+                    8);
+            }
 
             staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
 
@@ -292,8 +301,6 @@ namespace Craft.Simulation.Reborn.GuiTest
                 initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
                 initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
                 initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
-
-            //var initialState = Engine.EngineCore.SpawnNewThread();
 
             UpdateStaticGeometricObjects();
             UpdateGeometricObjects(scene.InitialState);
