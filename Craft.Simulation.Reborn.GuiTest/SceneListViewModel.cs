@@ -1,6 +1,7 @@
 ﻿using Craft.Math;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
+using Craft.Simulation.Boundaries;
 using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
 
@@ -28,9 +29,22 @@ namespace Craft.Simulation.Reborn.GuiTest
             _sceneDictionary = new Dictionary<string, Scene>();
             Scenes = new ObservableCollection<Scene>();
 
-            AddScene(GenerateScene1());
-            AddScene(GenerateScene2());
-            AddScene(GenerateScene3(true, 10, 10));
+            AddScene(GenerateSceneBouncingBall());
+            AddScene(GenerateSceneExploringRoom());
+            AddScene(GenerateSceneExploringMaze(true, 10, 10));
+            AddScene(GenerateSceneNewtonsCradle1());
+            AddScene(GenerateSceneNewtonsCradle2());
+            AddScene(GenerateSceneNewtonsCradle3());
+            AddScene(GenerateSceneNewtonsCradle4());
+            AddScene(GenerateSceneSimultaneousCollisionsWithBoundary());
+            AddScene(GenerateScenePoolTableWithOneBall());
+            AddScene(GenerateScenePoolTableWithTwoBalls());
+            AddScene(GenerateScenePoolTableWithOneBallAndThreeBoundaryPoints());
+            AddScene(GenerateScenePoolTableWithTwoBallsAnd1LineSegment());
+            AddScene(GenerateScenePoolTableWith1BallAnd1LineSegment());
+            AddScene(GenerateSceneBallTrain1());
+            AddScene(GenerateSceneBallTrain2());
+            AddScene(GenerateSceneBallTrain3());
         }
 
         private void AddScene(
@@ -47,7 +61,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             Scenes.Add(scene);
         }
 
-        private Scene GenerateScene1()
+        private Scene GenerateSceneBouncingBall()
         {
             var ballRadius = 0.125;
             var initialBallPosition = new Vector2D(1, -0.125);
@@ -93,7 +107,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
-        private Scene GenerateScene2()
+        private Scene GenerateSceneExploringRoom()
         {
             var initialState = new State();
             initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, 1.7))
@@ -103,7 +117,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             var handleBoundaryCollisions = true;
 
-            var scene = new Scene("Interactive: Exploration", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, false, 0.005);
+            var scene = new Scene("Interactive: Exploring room", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, false, 0.005);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
@@ -150,6 +164,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             };
 
             scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
+            scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
             scene.AddRectangularBoundary(-0.2, 2.2, 0.6, 1.1, false);
 
             scene.InitializeBoundaryDataStore();
@@ -157,7 +172,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
-        private Scene GenerateScene3(
+        private Scene GenerateSceneExploringMaze(
             bool handleBoundaryCollisions,
             int rows,
             int cols)
@@ -170,7 +185,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             });
 
             var scene = new Scene(
-                "Interactive: Maze",
+                "Interactive: Exploring maze",
                 new Point2D(-1.4, -1.3),
                 new Point2D(5, 3),
                 initialState,
@@ -247,6 +262,316 @@ namespace Craft.Simulation.Reborn.GuiTest
             }
 
             scene.InitializeBoundaryDataStore();
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneNewtonsCradle1()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(0, 0)) { NaturalVelocity = new Vector2D(3, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true), new Vector2D(1, 0)));
+
+            var scene = new Scene("Auto: Newtons cradle I", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneNewtonsCradle2()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(0, 0)) { NaturalVelocity = new Vector2D(3, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true), new Vector2D(1, 0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(3, 0.1, 1, true), new Vector2D(1.2, 0)));
+
+            var scene = new Scene("Auto: Newtons cradle II", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneNewtonsCradle3()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(0, 0)) { NaturalVelocity = new Vector2D(3, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true), new Vector2D(1, 0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(3, 0.1, 1, true), new Vector2D(1.2, 0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(4, 0.1, 1, true), new Vector2D(1.4, 0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(5, 0.1, 1, true), new Vector2D(1.6, 0)));
+
+            var scene = new Scene("Auto: Newtons cradle III", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneNewtonsCradle4()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(0, 0)) { NaturalVelocity = new Vector2D(3, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true), new Vector2D(0.2, 0)) { NaturalVelocity = new Vector2D(3, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(3, 0.1, 1, true), new Vector2D(1.2, 0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(4, 0.1, 1, true), new Vector2D(1.4, 0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(5, 0.1, 1, true), new Vector2D(1.6, 0)));
+
+            var scene = new Scene("Auto: Newtons cradle IV", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneSimultaneousCollisionsWithBoundary()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(-0.8, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true), new Vector2D(-0.5, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(3, 0.1, 1, true), new Vector2D(-0.2, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(4, 0.1, 1, true), new Vector2D(0.1, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(5, 0.1, 1, true), new Vector2D(0.4, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(6, 0.1, 1, true), new Vector2D(0.7, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(7, 0.1, 1, true), new Vector2D(1.0, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(8, 0.1, 1, true), new Vector2D(1.3, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
+
+            var scene = new Scene("Auto: Simultaneous collisions with boundary", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateScenePoolTableWithOneBall()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, -0.125)) { NaturalVelocity = new Vector2D(2, 1) });
+
+            var scene = new Scene("Auto: Pool table, 1 ball", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateScenePoolTableWithTwoBalls()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, 0)) { NaturalVelocity = new Vector2D(2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.125, 1, true), new Vector2D(2, 0)));
+
+            var scene = new Scene("Auto: Pool table, 2 balls", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateScenePoolTableWithOneBallAndThreeBoundaryPoints()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, -0.125)) { NaturalVelocity = new Vector2D(2, 1) });
+
+            var scene = new Scene("Auto: Pool table, 1 ball, 3 boundary points", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddBoundary(new BoundaryPoint(new Vector2D(1, 0.35)));
+            scene.AddBoundary(new BoundaryPoint(new Vector2D(0, 0.35)));
+            scene.AddBoundary(new BoundaryPoint(new Vector2D(2, 0.35)));
+            return scene;
+        }
+
+        private static Scene GenerateScenePoolTableWithTwoBallsAnd1LineSegment()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, -0.125)) { NaturalVelocity = new Vector2D(2, 1) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.125, 1, true), new Vector2D(1, 0.7)) { NaturalVelocity = new Vector2D(2, 1) });
+
+            var scene = new Scene("Auto: Pool table, 2 balls, 1 boundary line segment", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddBoundary(new LineSegment(new Vector2D(-0.95, 0.35), new Vector2D(2.95, 0.35)));
+
+            return scene;
+        }
+
+        private static Scene GenerateScenePoolTableWith1BallAnd1LineSegment()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, -0.125)) { NaturalVelocity = new Vector2D(2, 1) });
+
+            var scene = new Scene("Auto: Pool table, 1 ball, 1 boundary line segment", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddBoundary(new LineSegment(new Vector2D(0, 0.35), new Vector2D(2, 0.35)));
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneBallTrain1(
+            //UpdateAuxFields updateAuxFields
+            )
+        {
+            var initialState = new State();
+
+            var scene = new Scene("Auto: Ball train I (no gravity)", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.005);
+
+            scene.InteractionCallBack += (state, events, position, collisions, currentState) =>
+            {
+                var totalEnergy = currentState.CalculateTotalEnergy(0);
+
+                //updateAuxFields($"E: {totalEnergy}", "");
+
+                return false;
+            };
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+
+            scene.AddBoundary(new HorizontalLineSegment(-1, 0, 2.5));
+            scene.AddBoundary(new LineSegment(new Vector2D(2.5, -1), new Vector2D(3, -0.5)));
+            scene.AddBoundary(new LineSegment(new Vector2D(3, -0.5), new Vector2D(2.5, 0)));
+            scene.AddBoundary(new LineSegment(new Vector2D(2.5, 0), new Vector2D(3, 0.5)));
+            scene.AddBoundary(new LineSegment(new Vector2D(3, 0.5), new Vector2D(2.5, 1)));
+            scene.AddBoundary(new LineSegment(new Vector2D(2.5, 1), new Vector2D(3, 1.5)));
+            scene.AddBoundary(new LineSegment(new Vector2D(3, 1.5), new Vector2D(2.5, 2)));
+            scene.AddBoundary(new HorizontalLineSegment(2, 0, 2.5));
+            scene.AddBoundary(new LineSegment(new Vector2D(0, -1), new Vector2D(0.5, -0.5)));
+            scene.AddBoundary(new LineSegment(new Vector2D(0.5, -0.5), new Vector2D(0, 0)));
+            scene.AddBoundary(new LineSegment(new Vector2D(0, 0), new Vector2D(0.5, 0.5)));
+            scene.AddBoundary(new LineSegment(new Vector2D(0.5, 0.5), new Vector2D(0, 1)));
+            scene.AddBoundary(new LineSegment(new Vector2D(0, 1), new Vector2D(0.5, 1.5)));
+            scene.AddBoundary(new LineSegment(new Vector2D(0.5, 1.5), new Vector2D(0, 2)));
+
+            var extraBodies = Enumerable.Range(1, 60)
+                .Select(i => new
+                {
+                    StateIndex = i * 60,
+                    BodyState = new BodyState(new CircularBody(i, 0.1, 1, true), new Vector2D(0.5, -0.75)) { NaturalVelocity = new Vector2D(1, 0) }
+                })
+                .ToDictionary(x => x.StateIndex, x => x.BodyState);
+
+            scene.PostPropagationCallBack = (propagatedState, boundaryCollisionReports, bodyCollisionReports) =>
+            {
+                if (extraBodies.ContainsKey(propagatedState.Index))
+                {
+                    propagatedState.AddBodyState(extraBodies[propagatedState.Index]);
+                }
+
+                return new PostPropagationResponse();
+            };
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneBallTrain2(
+            //UpdateAuxFields updateAuxFields
+            )
+        {
+            var standardGravity = 9.82;
+
+            var initialState = new State();
+
+            var scene = new Scene("Auto: Ball train II (with gravity)", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, standardGravity, 0, 0, 1, true, true, 0.005);
+
+            scene.InteractionCallBack += (state, events, position, collisions, currentState) =>
+            {
+                var totalEnergy = currentState.CalculateTotalEnergy(standardGravity);
+
+                //updateAuxFields($"E: {totalEnergy}", "");
+
+                return false;
+            };
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            var extraBodies = Enumerable.Range(1, 16)
+                .Select(i => new
+                {
+                    StateIndex = i * 150,
+                    BodyState = new BodyState(new CircularBody(i, 0.1, 1, true), new Vector2D(-0.8, 0)) { NaturalVelocity = new Vector2D(0.3, 0) }
+                })
+                .ToDictionary(x => x.StateIndex, x => x.BodyState);
+
+            scene.PostPropagationCallBack = (propagatedState, boundaryCollisionReports, bodyCollisionReports) =>
+            {
+                if (extraBodies.ContainsKey(propagatedState.Index))
+                {
+                    propagatedState.AddBodyState(extraBodies[propagatedState.Index]);
+                }
+
+                return new PostPropagationResponse();
+            };
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneBallTrain3(
+            //UpdateAuxFields updateAuxFields
+            )
+        {
+            var standardGravity = 9.82;
+            var initialState = new State();
+
+            var scene = new Scene("Auto: Ball train III (with gravity)", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, standardGravity, 0, 0, 1, true, true, 0.005);
+
+            scene.InteractionCallBack += (state, events, position, collisions, currentState) =>
+            {
+                var totalEnergy = currentState.CalculateTotalEnergy(standardGravity);
+
+                //updateAuxFields($"E: {totalEnergy}", "");
+
+                return false;
+            };
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddRectangularBoundary(0, 0.5, 0.2, 0.7, false);
+            scene.AddRectangularBoundary(1.5, 2, 0.2, 0.7, false);
+
+            var extraBodies = Enumerable.Range(1, 20)
+                .Select(i => new
+                {
+                    StateIndex = i * 20,
+                    BodyState = new BodyState(new CircularBody(i, 0.1, 1, true), new Vector2D(-0.8, 0.8)) { NaturalVelocity = new Vector2D(2.7, -4) }
+                })
+                .ToDictionary(x => x.StateIndex, x => x.BodyState);
+
+            scene.PostPropagationCallBack = (propagatedState, boundaryCollisionReports, bodyCollisionReports) =>
+            {
+                if (extraBodies.ContainsKey(propagatedState.Index))
+                {
+                    propagatedState.BodyStates.Add(extraBodies[propagatedState.Index]);
+                }
+
+                return new PostPropagationResponse();
+            };
 
             return scene;
         }

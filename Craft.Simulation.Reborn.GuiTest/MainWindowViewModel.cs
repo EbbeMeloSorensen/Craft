@@ -253,6 +253,12 @@ namespace Craft.Simulation.Reborn.GuiTest
                             P2 = new Point(lineSegment.Point2.X, lineSegment.Point2.Y)
                         });
                         break;
+                    case BoundaryPoint boundaryPoint:
+                        staticGeometryObjects.Add(new PointModel()
+                        {
+                            P = new Point(boundaryPoint.Point.X, boundaryPoint.Point.Y)
+                        });
+                        break;
                     default:
                         throw new ArgumentException();
                 }
@@ -263,6 +269,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 return geometryObject switch
                 {
                     LineModel line => line.ComputeBoundingBox(),
+                    PointModel point => point.ComputeBoundingBox(),
                     _ => throw new InvalidOperationException(),
                 };
             });

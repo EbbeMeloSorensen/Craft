@@ -493,7 +493,9 @@ namespace Craft.Simulation.Engine
                         // Denne konstruktion gør, at f.eks. shoot 'em up 7 virker (der mister man energi, når man kolliderer med en enemy)
                         // men det fucker f.eks. scenerne med Newtons Cradle op..
                         // Måske skal det være scene-specifikt, om den skal gøre dette eller ej..
-                        continue;
+                        //continue;
+
+                        // Lige pt er det altså mere vigtigt, at Newtons cradle virker...
                     }
 
                     // There is a collision
