@@ -31,12 +31,13 @@ namespace Craft.Simulation.Reborn.GuiTest
             switch (geometryObject)
             {
                 case LineModel line:
-                    var bbox = line.ComputeBoundingBox();
-                    _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, line));
+                    _mxCifQuadTree.Insert(new SpatialItem<object>(line.ComputeBoundingBox(), line));
+                    break;
+                case PointModel point:
+                    _mxCifQuadTree.Insert(new SpatialItem<object>(point.ComputeBoundingBox(), point));
                     break;
                 default:
-                    // Handle objects that do not have a bounding box if necessary
-                    break;
+                    throw new ArgumentException("Object is not a geometry object");
             }
         }
 

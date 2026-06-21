@@ -46,6 +46,10 @@ namespace Craft.Simulation.Reborn.GuiTest
             AddScene(GenerateSceneBallTrain2());
             AddScene(GenerateSceneBallTrain3());
             AddScene(GenerateSceneBodyFollowingPath());
+            AddScene(GenerateSceneBallInteraction2());
+            AddScene(GenerateSceneBallInteraction3());
+            AddScene(GenerateSceneBallInteraction4());
+            AddScene(GenerateSceneBallInteraction5());
         }
 
         private void AddScene(
@@ -624,5 +628,84 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
+        private static Scene GenerateSceneBallInteraction2()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1.03, -0.125)));
+
+            var scene = new Scene("Interactive: Ball II", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.002);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+
+            scene.StandardInteractionCallback = StandardInteractionCallback.DungeonCrawler8Directions;
+            scene.AddRectangularBoundary(0, 2, -0.3, 1, false);
+            scene.AddBoundary(new BoundaryPoint(new Vector2D(1, 0.4)));
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneBallInteraction3()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(1, 0.0)));
+
+            var scene = new Scene("Interactive: Ball III", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.002);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+            scene.StandardInteractionCallback = StandardInteractionCallback.DungeonCrawler8Directions;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddBoundary(new LineSegment(new Vector2D(0, 0.4), new Vector2D(2, 0.4)));
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneBallInteraction4()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, -0.125)));
+
+            var scene = new Scene("Interactive: Ball IV", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.002);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+            scene.StandardInteractionCallback = StandardInteractionCallback.DungeonCrawler8Directions;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddRectangularBoundary(0, 0.5, 0.2, 0.7, false);
+            scene.AddRectangularBoundary(1.5, 2, 0.2, 0.7, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneBallInteraction5()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, -0.125)));
+
+            var scene = new Scene("Interactive: Ball V", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.002);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+            scene.StandardInteractionCallback = StandardInteractionCallback.DungeonCrawler8Directions;
+
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            var diamondCenter = new Vector2D(0, 0.5);
+            var diamondRadius = 0.4;
+
+            scene.AddBoundary(new LineSegment(
+                diamondCenter + new Vector2D(0, -diamondRadius),
+                diamondCenter + new Vector2D(diamondRadius, 0)));
+            scene.AddBoundary(new LineSegment(
+                diamondCenter + new Vector2D(diamondRadius, 0),
+                diamondCenter + new Vector2D(0, diamondRadius)));
+            scene.AddBoundary(new LineSegment(
+                diamondCenter + new Vector2D(0, diamondRadius),
+                diamondCenter + new Vector2D(-diamondRadius, 0)));
+            scene.AddBoundary(new LineSegment(
+                diamondCenter + new Vector2D(-diamondRadius, 0),
+                diamondCenter + new Vector2D(0, -diamondRadius)));
+
+            return scene;
+        }
     }
 }

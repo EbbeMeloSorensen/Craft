@@ -236,8 +236,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         public void AddStaticGeometryLayer(
             IEnumerable geometricObjects)
         {
-            //ClearLayer(false);
-
             GeometryLayers.Add(new GeometryLayer(geometricObjects, false));
         }
 

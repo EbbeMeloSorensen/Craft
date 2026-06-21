@@ -128,6 +128,8 @@ Done:
   - Pas på, den ikke fucker aspect ratio (OK)
 
 In progress:
+* Fix buggen med at man ikke ser boundary points i reborn
+  - MxCifQadTree'et afleverer ikke points. Kommer de overhovedet i det?
 * Brug Reborn til at håndtere de gamle animationer
   - Lad GeometryViewModel spørge sin datasource om statiske geometriske objekter (OK)
   - Lad MainWindowViewModel subscribe til Enginens CurrentStateChanged og lad den informere GeometryViewModel om nye dynamiske geometriske objekter (OK)
