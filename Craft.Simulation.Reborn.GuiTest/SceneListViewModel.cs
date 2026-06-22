@@ -36,7 +36,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             AddScene(GenerateSceneNewtonsCradle2());
             AddScene(GenerateSceneNewtonsCradle3());
             AddScene(GenerateSceneNewtonsCradle4());
-            AddScene(GenerateSceneSimultaneousCollisionsWithBoundary());
+            AddScene(GenerateSceneBouncingBallsOnALine1());
+            AddScene(GenerateSceneBouncingBallsOnALine2());
             AddScene(GenerateScenePoolTableWithOneBall());
             AddScene(GenerateScenePoolTableWithTwoBalls());
             AddScene(GenerateScenePoolTableWithOneBallAndThreeBoundaryPoints());
@@ -338,7 +339,29 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
-        private static Scene GenerateSceneSimultaneousCollisionsWithBoundary()
+        private static Scene GenerateSceneBouncingBallsOnALine1()
+        {
+            var initialState = new State();
+
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(-0.8, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true), new Vector2D(-0.5, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(3, 0.1, 1, true), new Vector2D(-0.2, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(4, 0.1, 1, true), new Vector2D(0.1, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(5, 0.1, 1, true), new Vector2D(0.4, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(6, 0.1, 1, true), new Vector2D(0.7, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(7, 0.1, 1, true), new Vector2D(1.0, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(8, 0.1, 1, true), new Vector2D(1.3, 0)) { NaturalVelocity = new Vector2D(0.2, 0) });
+
+            var scene = new Scene("Auto: Bouncing balls on a line 1", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+
+            return scene;
+        }
+
+        private static Scene GenerateSceneBouncingBallsOnALine2()
         {
             var initialState = new State();
             initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(-0.8, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
@@ -350,7 +373,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             initialState.AddBodyState(new BodyStateClassic(new CircularBody(7, 0.1, 1, true), new Vector2D(1.0, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
             initialState.AddBodyState(new BodyStateClassic(new CircularBody(8, 0.1, 1, true), new Vector2D(1.3, 0)) { NaturalVelocity = new Vector2D(0.2, -1) });
 
-            var scene = new Scene("Auto: Simultaneous collisions with boundary", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+            var scene = new Scene("Auto: Bouncing balls on a line 2", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
             scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
