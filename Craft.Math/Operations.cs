@@ -292,6 +292,33 @@ namespace Craft.Math
             return dx * dx + dy * dy;
         }
 
+        public static IEnumerable<double> RootsOfQuadraticEquation(
+            double a,
+            double b,
+            double c)
+        {
+            var discriminant = b * b - 4 * a * c;
+
+            if (discriminant > 0)
+            {
+                // Two roots
+                var squareRootOfDiscriminant = System.Math.Sqrt(discriminant);
+
+                yield return (-b - squareRootOfDiscriminant) / (2 * a);
+                yield return (-b + squareRootOfDiscriminant) / (2 * a);
+            }
+            else if (discriminant < 0)
+            {
+                // No roots
+                yield break;
+            }
+            else
+            {
+                // Discriminant is 0, so there is one root
+                yield return -b / (2 * a);
+            }
+        }
+
         // Helper for determining whether 2 line segments intersect. 
         private static int Orientation(
             Point2D p,

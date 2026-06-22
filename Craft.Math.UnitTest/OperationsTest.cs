@@ -239,7 +239,7 @@ namespace Craft.Math.UnitTest
             // Act
             var overlaps1 = timeInterval1.Overlaps(timeInterval2);
             var overlaps2 = timeInterval2.Overlaps(timeInterval1);
-            
+
             // Assert
             overlaps1.Should().BeTrue();
             overlaps2.Should().BeTrue();
@@ -306,6 +306,52 @@ namespace Craft.Math.UnitTest
 
             // Assert
             overlaps.Should().BeFalse();
+        }
+
+        [Fact]
+        public void RootsOfQuadraticEquation_GivenInputWithoutRoots_ReturnsCorrectResult()
+        {
+            // Arrange
+            var a = 1.0;
+            var b = 0.0;
+            var c = 1.0;
+
+            // Act
+            var roots = Operations.RootsOfQuadraticEquation(a, b, c);
+
+            // Assert
+            roots.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RootsOfQuadraticEquation_GivenInputWithTwoRoots_ReturnsCorrectResult()
+        {
+            // Arrange
+            var a = 1.0;
+            var b = 0.0;
+            var c = -1.0;
+
+            // Act
+            var roots = Operations.RootsOfQuadraticEquation(a, b, c);
+
+            // Assert
+            roots.Count().Should().Be(2);
+        }
+
+
+        [Fact]
+        public void RootsOfQuadraticEquation_GivenInputWithOneRoot_ReturnsCorrectResult()
+        {
+            // Arrange
+            var a = 1.0;
+            var b = 0.0;
+            var c = 0.0;
+
+            // Act
+            var roots = Operations.RootsOfQuadraticEquation(a, b, c);
+
+            // Assert
+            roots.Count().Should().Be(1);
         }
     }
 }
