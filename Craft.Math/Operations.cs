@@ -319,6 +319,34 @@ namespace Craft.Math
             }
         }
 
+        public static double TimeOfCollisionBetweenTwoCircles(
+            double p10x,
+            double p10y,
+            double p20x,
+            double p20y,
+            double v1x,
+            double v1y,
+            double v2x,
+            double v2y,
+            double rad1,
+            double rad2)
+        {
+            // Initial relative position of centers
+            var r0x = p20x - p10x;
+            var r0y = p20y - p10y;
+
+            // Relative velocity
+            var vx = v2x - v1x;
+            var vy = v2y - v1y;
+
+            // Express the squared distance between the two circle centers as a quadratic polynomial
+            var a = vx * vx + vy * vy;
+            var b = 2 * (r0x * vx + r0y * vy);
+            var c = r0x * r0x + r0y * r0y - (rad1 + rad2) * (rad1 + rad2);
+
+            return RootsOfQuadraticEquation(a, b, c).FirstOrDefault();
+        }
+
         // Helper for determining whether 2 line segments intersect. 
         private static int Orientation(
             Point2D p,

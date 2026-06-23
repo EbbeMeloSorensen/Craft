@@ -338,7 +338,6 @@ namespace Craft.Math.UnitTest
             roots.Count().Should().Be(2);
         }
 
-
         [Fact]
         public void RootsOfQuadraticEquation_GivenInputWithOneRoot_ReturnsCorrectResult()
         {
@@ -352,6 +351,29 @@ namespace Craft.Math.UnitTest
 
             // Assert
             roots.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void TimeOfCollisionBetweenTwoCircles_GivenSimpleCase_ReturnsCorrectResult()
+        {
+            // Arrange
+            var p10x = 0.0;
+            var p10y = 0.0;
+            var p20x = 12.0;
+            var p20y = 0.0;
+            var v1x = 1.0;
+            var v1y = 0.0;
+            var v2x = -1.0;
+            var v2y = 0.0;
+            var rad1 = 1.0;
+            var rad2 = 1.0;
+
+            // Act
+            var time = Operations.TimeOfCollisionBetweenTwoCircles(
+                p10x, p10y, p20x, p20y, v1x, v1y, v2x, v2y, rad1, rad2);
+
+            // Assert
+            time.Should().BeApproximately(5.0, 0.0000001);
         }
     }
 }
