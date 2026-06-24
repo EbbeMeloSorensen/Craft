@@ -527,18 +527,34 @@ namespace Craft.Simulation.Engine
                     }
 
                     var t = -(-B - System.Math.Sqrt(discriminant)) / (2 * A);
-                    var t1 = -B + System.Math.Sqrt(discriminant) / (2 * A);
-                    var t2 = -B - System.Math.Sqrt(discriminant) / (2 * A);
+
+                    // Hvorfor skal jeg sætte et minstegn her for at det virker?
+                    var tNew = -Operations.TimeOfCollisionBetweenTwoCircles(
+                        p1.X,
+                        p1.Y,
+                        p2.X,
+                        p2.Y,
+                        v1.X,
+                        v1.Y,
+                        v2.X,
+                        v2.Y,
+                        radius1,
+                        radius2);
+
+                    if (System.Math.Abs(t - tNew) > 0.0000001)
+                    {
+                        throw new InvalidDataException("New algorithm apparently doesn't work");
+                    }
 
                     if (!double.IsNaN(timeSinceFirstCollision) &&
-                        !(t > timeSinceFirstCollision))
+                        !(tNew > timeSinceFirstCollision))
                     {
                         continue;
                     }
 
                     bodyState1InvolvedInCollision = bs1After;
                     bodyState2InvolvedInCollision = bs2After;
-                    timeSinceFirstCollision = t;
+                    timeSinceFirstCollision = tNew;
                 }
             }
 
