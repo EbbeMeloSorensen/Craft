@@ -528,6 +528,14 @@ namespace Craft.Simulation.Engine
 
                     var t = -(-B - System.Math.Sqrt(discriminant)) / (2 * A);
 
+                    // Se, jeg satte den nye beregning ind her og checkede, om den gav det samme resultat som den gamle.
+                    // Jeg bemærkede så, at den gjorde, dog med modsat fortegn.
+                    // Ud fra antagelsen om at der er en fortegnsfejl et sted, satte jeg derfor et minus foran.
+                    // Så lader den til at få præcis det samme som den gamle.
+                    // Bemærk dog, at den gamle metode ifølge kommentaren beregner den tid, DER ER GÅET SIDEN CIRKLERNE RØRTE HINANDEN,
+                    // hvorimod intentionen med den nye metode er at beregne den tid, DER GIK FØR CIRKLERNE RØRER HINANDEN.
+                    // Hunden må ligge begravet der..
+
                     // Hvorfor skal jeg sætte et minstegn her for at det virker?
                     var tNew = -Operations.TimeOfCollisionBetweenTwoCircles(
                         p1.X,
