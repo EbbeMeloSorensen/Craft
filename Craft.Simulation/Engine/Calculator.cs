@@ -92,7 +92,6 @@ namespace Craft.Simulation.Engine
                         scene.CheckForCollisionBetweenBodiesCallback,
                         idsOfHandledBodies,
                         handledCollisions,
-                        timeLeftInCurrentIncrement,
                         out bodyState1,
                         out bodyState2,
                         out timeUntilCollisionBetweenBodies);
@@ -413,14 +412,13 @@ namespace Craft.Simulation.Engine
             CheckForCollisionBetweenBodiesCallback checkForCollisionBetweenBodiesCallback,
             HashSet<int> idsOfHandledBodies,
             HashSet<Tuple<int, int>> handledBodyCollisions,
-            double timeLeftInCurrentIncrement,
-            out BodyState bodyState1,
-            out BodyState bodyState2,
+            out BodyState? bodyState1InvolvedInCollision,
+            out BodyState? bodyState2InvolvedInCollision,
             out double timeUntilCollision)
         {
-            BodyState bodyState1InvolvedInCollision = null;
-            BodyState bodyState2InvolvedInCollision = null;
-            var timeSinceFirstCollision = double.NaN;
+            bodyState1InvolvedInCollision = null;
+            bodyState2InvolvedInCollision = null;
+            timeUntilCollision = double.NaN;
             var innerLoopSkipCount = 1;
 
             foreach (var kvp1 in propagatedBodyStateMap)
@@ -483,61 +481,14 @@ namespace Craft.Simulation.Engine
                         continue;
                     }
 
-                    var vectorFrom1To2Before = bs2Before.Position - bs1Before.Position;
-                    var distanceBefore = vectorFrom1To2Before.Length;
-
-                    if (radiusSum >= distanceBefore)
-                    {
-                        // The bodies already intersected to begin with
-                        // Therefore we dont regard the intersection after propagation as a collision
-                        // Denne konstruktion gør, at f.eks. shoot 'em up 7 virker (der mister man energi, når man kolliderer med en enemy)
-                        // men det fucker f.eks. scenerne med Newtons Cradle op..
-                        // Måske skal det være scene-specifikt, om den skal gøre dette eller ej..
-                        //continue;
-
-                        // Lige pt er det altså mere vigtigt, at Newtons cradle virker...
-                    }
-
                     // There is a collision
-                    var p1 = bs1After.Position;
-                    var p2 = bs2After.Position;
+
+                    var p1= bs1Before.Position;
+                    var p2 = bs2Before.Position;
                     var v1 = bs1Before.NaturalVelocity;
                     var v2 = bs2Before.NaturalVelocity;
 
-                    // Determine the time that has passed since the two bodies touched, according to their original velocities
-
-                    // Du har i vanlig stil ikke prioriteret at dokumentere, hvorledes du beregner det, men det er noget med at
-                    // du opstiller en funktion, som er et andengradspolynomium, og som beskriver afstanden mellem de 2 bodies
-                    // som funktion af tiden, og så identificerer du det tidspunkt, hvor afstanden er 0.
-                    // Noget tyder på, at du ikke gør det rigtigt, og endda på, at det skyldes, at du ikke finder de rigtige nulpunkter
-                    // for polynomiet!
-
-                    var dp = p1 - p2;
-                    var dv = v1 - v2;
-
-                    var A = dv.X * dv.X + dv.Y * dv.Y;
-                    var B = 2 * dp.X * dv.X + 2 * dp.Y * dv.Y;
-                    var C = dp.X * dp.X + dp.Y * dp.Y - System.Math.Pow(radius1 + radius2, 2);
-                    var discriminant = B * B - 4 * A * C;
-
-                    if (System.Math.Abs(A) < 0.00001 || discriminant < 0.00001)
-                    {
-                        // no collision (such as if the 2 bodies have identical velocities)
-                        continue;
-                    }
-
-                    var t = -(-B - System.Math.Sqrt(discriminant)) / (2 * A);
-
-                    // Se, jeg satte den nye beregning ind her og checkede, om den gav det samme resultat som den gamle.
-                    // Jeg bemærkede så, at den gjorde, dog med modsat fortegn.
-                    // Ud fra antagelsen om at der er en fortegnsfejl et sted, satte jeg derfor et minus foran.
-                    // Så lader den til at få præcis det samme som den gamle.
-                    // Bemærk dog, at den gamle metode ifølge kommentaren beregner den tid, DER ER GÅET SIDEN CIRKLERNE RØRTE HINANDEN,
-                    // hvorimod intentionen med den nye metode er at beregne den tid, DER GIK FØR CIRKLERNE RØRER HINANDEN.
-                    // Hunden må ligge begravet der..
-
-                    // Hvorfor skal jeg sætte et minstegn her for at det virker?
-                    var tNew = -Operations.TimeOfCollisionBetweenTwoCircles(
+                    var t = Operations.TimeOfCollisionBetweenTwoCircles(
                         p1.X,
                         p1.Y,
                         p2.X,
@@ -549,29 +500,15 @@ namespace Craft.Simulation.Engine
                         radius1,
                         radius2);
 
-                    if (System.Math.Abs(t - tNew) > 0.0000001)
+                    if (double.IsNaN(timeUntilCollision) ||
+                        t < timeUntilCollision)
                     {
-                        throw new InvalidDataException("New algorithm apparently doesn't work");
+                        bodyState1InvolvedInCollision = bs1After;
+                        bodyState2InvolvedInCollision = bs2After;
+                        timeUntilCollision = t;
                     }
-
-                    if (!double.IsNaN(timeSinceFirstCollision) &&
-                        !(tNew > timeSinceFirstCollision))
-                    {
-                        continue;
-                    }
-
-                    bodyState1InvolvedInCollision = bs1After;
-                    bodyState2InvolvedInCollision = bs2After;
-                    timeSinceFirstCollision = tNew;
                 }
             }
-
-            bodyState1 = bodyState1InvolvedInCollision;
-            bodyState2 = bodyState2InvolvedInCollision;
-
-            timeUntilCollision = double.IsNaN(timeSinceFirstCollision)
-                ? double.NaN
-                : timeLeftInCurrentIncrement - timeSinceFirstCollision;
         }
 
         private static void IdentifyFirstCollisionWithABoundary(
