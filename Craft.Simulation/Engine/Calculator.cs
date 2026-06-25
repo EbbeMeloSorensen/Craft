@@ -887,16 +887,17 @@ namespace Craft.Simulation.Engine
                                 throw new ArgumentException();
                         }
 
-                        if (!double.IsNaN(timeSinceFirstCollisionWithBoundary) &&
-                            !(t > timeSinceFirstCollisionWithBoundary)) continue;
-
-                        // The collision happens earlier than any other collision identified so far,
-                        // so we update the output parameters
-                        bodyStateInvolvedInCollision = bsAfter;
-                        boundaryInvolvedInCollision = boundary;
-                        timeSinceFirstCollisionWithBoundary = t;
-                        lineSegmentEndPointInvolvedInCollision = null;
-                        effectiveSurfaceNormalForBoundary = effectiveSurfaceNormalForCurrentBoundary;
+                        if (double.IsNaN(timeSinceFirstCollisionWithBoundary) ||
+                            t > timeSinceFirstCollisionWithBoundary)
+                        {
+                            // The collision happens earlier than any other collision identified so far,
+                            // so we update the output parameters
+                            bodyStateInvolvedInCollision = bsAfter;
+                            boundaryInvolvedInCollision = boundary;
+                            timeSinceFirstCollisionWithBoundary = t;
+                            lineSegmentEndPointInvolvedInCollision = null;
+                            effectiveSurfaceNormalForBoundary = effectiveSurfaceNormalForCurrentBoundary;
+                        }
                     }
                     else
                     {
