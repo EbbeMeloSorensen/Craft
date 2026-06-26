@@ -841,7 +841,7 @@ namespace Craft.Simulation.Engine
                                 {
                                     var p1 = bsBefore.Position;
                                     var p2 = boundaryPoint.Point;
-                                    var v1 = bsBefore.NaturalVelocity;
+                                    var v1 = effectiveVelocity;
                                     var v2 = new Vector2D(0, 0);
                                     var radius1 = body.Radius;
                                     var radius2 = 0.0;
