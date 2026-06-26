@@ -522,11 +522,13 @@ namespace Craft.Simulation.Engine
             out Vector2D lineSegmentEndPointInvolvedInCollision,
             out Vector2D effectiveSurfaceNormalForBoundary)
         {
-            effectiveSurfaceNormalForBoundary = null;
-
             bodyStateInvolvedInCollision = null;
             boundaryInvolvedInCollision = null;
             lineSegmentEndPointInvolvedInCollision = null;
+            timeUntilCollision = double.NaN;
+            effectiveSurfaceNormalForBoundary = null;
+
+            // Deprecated (still used for handling collision with line segment and half plane)
             var timeSinceFirstCollisionWithBoundary = double.NaN;
 
             foreach (var kvp in propagatedBodyStateMap)
@@ -564,6 +566,7 @@ namespace Craft.Simulation.Engine
                 foreach (var temp in potentiallyIntersectingBoundaries)
                 {
                     var boundary = temp as IBoundary;
+
                     if (!boundary.Intersects(bsAfter))
                     {
                         continue;
@@ -783,6 +786,10 @@ namespace Craft.Simulation.Engine
                         timeSinceFirstCollisionWithBoundary = t;
                         lineSegmentEndPointInvolvedInCollision = lineSegmentEndPointInvolvedInCollisionForCurrentBoundary;
                         effectiveSurfaceNormalForBoundary = effectiveSurfaceNormalForCurrentBoundary;
+
+                        timeUntilCollision = double.IsNaN(timeSinceFirstCollisionWithBoundary)
+                            ? double.NaN
+                            : System.Math.Max(0.0, timeLeftInCurrentIncrement - timeSinceFirstCollisionWithBoundary);
                     }
                     else if (boundary is IHalfPlane)
                     {
@@ -818,17 +825,13 @@ namespace Craft.Simulation.Engine
                         timeSinceFirstCollisionWithBoundary = t;
                         lineSegmentEndPointInvolvedInCollision = null;
                         effectiveSurfaceNormalForBoundary = halfPlane.SurfaceNormal;
+
+                        timeUntilCollision = double.IsNaN(timeSinceFirstCollisionWithBoundary)
+                            ? double.NaN
+                            : System.Math.Max(0.0, timeLeftInCurrentIncrement - timeSinceFirstCollisionWithBoundary);
                     }
                     else if (boundary is BoundaryPoint)
                     {
-                        // For at finde afstanden, L mellem boundary punktet og cirklens overflade
-                        // i cirklens bevægelsesretning, gør vi følgende:
-                        // 1) Find afstand mellem body centrum og boundary punktet
-                        // 2) Find vinklen theta1 med prikproduktreglen
-                        // 3) Find vinklen theta2 med sinus-relationen
-                        // 4) Find vinklen theta3 ved at udnytte, at summen af vinkler er 180 grader
-                        // 5) Find den søgte afstanden med sinusrelationen
-
                         var boundaryPoint = boundary as BoundaryPoint;
                         double t;
 
@@ -836,9 +839,24 @@ namespace Craft.Simulation.Engine
                         {
                             case CircularBody body:
                                 {
-                                    // Deprecated
-                                    t = CalculateTimeSinceIntersection(
-                                        bsAfter.Position, body.Radius, boundaryPoint.Point, effectiveVelocity, buffer, out effectiveSurfaceNormalForCurrentBoundary);
+                                    var p1 = bsBefore.Position;
+                                    var p2 = boundaryPoint.Point;
+                                    var v1 = bsBefore.NaturalVelocity;
+                                    var v2 = new Vector2D(0, 0);
+                                    var radius1 = body.Radius;
+                                    var radius2 = 0.0;
+
+                                    t = Operations.TimeOfCollisionBetweenTwoCircles(
+                                        p1.X,
+                                        p1.Y,
+                                        p2.X,
+                                        p2.Y,
+                                        v1.X,
+                                        v1.Y,
+                                        v2.X,
+                                        v2.Y,
+                                        radius1,
+                                        radius2);
 
                                     break;
                                 }
@@ -889,16 +907,20 @@ namespace Craft.Simulation.Engine
                                 throw new ArgumentException();
                         }
 
-                        if (double.IsNaN(timeSinceFirstCollisionWithBoundary) ||
-                            t > timeSinceFirstCollisionWithBoundary)
+                        if (double.IsNaN(timeUntilCollision) ||
+                            t < timeUntilCollision)
                         {
                             // The collision happens earlier than any other collision identified so far,
                             // so we update the output parameters
                             bodyStateInvolvedInCollision = bsAfter;
                             boundaryInvolvedInCollision = boundary;
-                            timeSinceFirstCollisionWithBoundary = t;
+                            timeUntilCollision = t;
                             lineSegmentEndPointInvolvedInCollision = null;
-                            effectiveSurfaceNormalForBoundary = effectiveSurfaceNormalForCurrentBoundary;
+
+                            var circleCenterAtTimeOfCollision =
+                                bsBefore.Position + timeUntilCollision * bsBefore.NaturalVelocity;
+
+                            effectiveSurfaceNormalForBoundary = (circleCenterAtTimeOfCollision - boundaryPoint.Point).Normalize();
                         }
                     }
                     else
@@ -907,10 +929,6 @@ namespace Craft.Simulation.Engine
                     }
                 }
             }
-
-            timeUntilCollision = double.IsNaN(timeSinceFirstCollisionWithBoundary)
-                ? double.NaN
-                : System.Math.Max(0.0, timeLeftInCurrentIncrement - timeSinceFirstCollisionWithBoundary);
         }
 
         // Husk: KEY har den PROPAGEREDE tilstand for hver body, og VALUE-felterne har den OPRINDELIGE 
