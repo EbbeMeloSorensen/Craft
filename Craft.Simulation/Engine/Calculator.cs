@@ -718,6 +718,7 @@ namespace Craft.Simulation.Engine
                             {
                                 case CircularBody circularBody:
                                     {
+                                        // Deprecated
                                         t = CalculateTimeSinceIntersection(bsAfter.Position, circularBody.Radius,
                                             lineSegmentEndPointInvolvedInCollisionForCurrentBoundary,
                                             effectiveVelocity, buffer, out effectiveSurfaceNormalForCurrentBoundary);
@@ -835,6 +836,7 @@ namespace Craft.Simulation.Engine
                         {
                             case CircularBody body:
                                 {
+                                    // Deprecated
                                     t = CalculateTimeSinceIntersection(
                                         bsAfter.Position, body.Radius, boundaryPoint.Point, effectiveVelocity, buffer, out effectiveSurfaceNormalForCurrentBoundary);
 
@@ -932,6 +934,7 @@ namespace Craft.Simulation.Engine
             }
         }
 
+        // Deprecated
         private static double CalculateTimeSinceIntersection(
             Vector2D circleCenter,
             double radius,
