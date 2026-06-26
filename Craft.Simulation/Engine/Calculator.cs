@@ -776,20 +776,21 @@ namespace Craft.Simulation.Engine
                             }
                         }
 
-                        if (!double.IsNaN(timeSinceFirstCollisionWithBoundary) &&
-                            !(t > timeSinceFirstCollisionWithBoundary)) continue;
+                        if (double.IsNaN(timeSinceFirstCollisionWithBoundary) ||
+                            t > timeSinceFirstCollisionWithBoundary)
+                        {
+                            // The collision happens earlier than any other collision identified so far,
+                            // so we update the output parameters
+                            bodyStateInvolvedInCollision = bsAfter;
+                            boundaryInvolvedInCollision = boundary;
+                            timeSinceFirstCollisionWithBoundary = t;
+                            lineSegmentEndPointInvolvedInCollision = lineSegmentEndPointInvolvedInCollisionForCurrentBoundary;
+                            effectiveSurfaceNormalForBoundary = effectiveSurfaceNormalForCurrentBoundary;
 
-                        // The collision happens earlier than any other collision identified so far,
-                        // so we update the output parameters
-                        bodyStateInvolvedInCollision = bsAfter;
-                        boundaryInvolvedInCollision = boundary;
-                        timeSinceFirstCollisionWithBoundary = t;
-                        lineSegmentEndPointInvolvedInCollision = lineSegmentEndPointInvolvedInCollisionForCurrentBoundary;
-                        effectiveSurfaceNormalForBoundary = effectiveSurfaceNormalForCurrentBoundary;
-
-                        timeUntilCollision = double.IsNaN(timeSinceFirstCollisionWithBoundary)
-                            ? double.NaN
-                            : System.Math.Max(0.0, timeLeftInCurrentIncrement - timeSinceFirstCollisionWithBoundary);
+                            timeUntilCollision = double.IsNaN(timeSinceFirstCollisionWithBoundary)
+                                ? double.NaN
+                                : System.Math.Max(0.0, timeLeftInCurrentIncrement - timeSinceFirstCollisionWithBoundary);
+                        }
                     }
                     else if (boundary is IHalfPlane)
                     {
