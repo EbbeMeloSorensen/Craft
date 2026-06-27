@@ -51,6 +51,11 @@ namespace Craft.Simulation.Engine
             var iteration = 1;
             while (timeLeftInCurrentIncrement > 1E-12)
             {
+                if (iteration > 50)
+                {
+                    var a = 0;
+                }
+
                 // Beregn positionsforskydninger givet de gældende kræfter (hvor vi vel at mærke ikke tager højde for boundaries)
                 var propagatedBodyStateMap = CalculatePropagatedBodyStateMap(
                     state,

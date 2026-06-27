@@ -424,7 +424,9 @@ namespace Craft.Simulation.Reborn.GuiTest
             var bounds_y1 = 1.0;
 
             var ballRadius = 0.125;
-            var spacing = 0.12;
+            var ballSpeed = 2.0;
+            var spacing = 0.1;
+            var random = new Random(0);
 
             for (var x = bounds_x0 + spacing + ballRadius;
                  x < bounds_x1 - spacing - ballRadius;
@@ -434,9 +436,15 @@ namespace Craft.Simulation.Reborn.GuiTest
                      y < bounds_y1 - spacing - ballRadius;
                      y += ballRadius * 2 + spacing)
                 {
+                    var angle = 2.0 * random.NextDouble() * System.Math.PI;
+
+                    var velocity = new Vector2D(
+                        ballSpeed * System.Math.Cos(angle),
+                        ballSpeed * System.Math.Sin(angle));
+
                     initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, ballRadius, 1, true), new Vector2D(x, y))
                     {
-                        NaturalVelocity = new Vector2D(2, 1)
+                        NaturalVelocity = velocity
                     });
                 }
             }
