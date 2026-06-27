@@ -126,10 +126,13 @@ Done:
 * For reborn - Ved flyt af fokus skal der også være mulighed for at requeste ny skalering
 * For reborn - Place World window  (OK)
   - Pas på, den ikke fucker aspect ratio (OK)
+* Fix buggen med at man ikke ser boundary points i reborn (OK)
 
 In progress:
-* Fix buggen med at man ikke ser boundary points i reborn
-  - MxCifQadTree'et afleverer ikke points. Kommer de overhovedet i det?
+* Få loggeren på banen igen, evt inspireret af, hvordan du gør med McCifQuadree (og der skal den jo altsp også fixes, så den ikke kun skriver til sidst..)
+* Fix fejlen med kollision mellem body og endepunkt af en linie. Den kan eksponeres med scenen "Interactive: Ball III". Kør generelt fall forward for designet af kollisionshåndtering
+  Bemærk, at scenen "Interactive: Ball II" tilsyneladende virker fint..
+* Ikke bruge BodyStateClassic, medmindre det er nødvendigt
 * Brug Reborn til at håndtere de gamle animationer
   - Lad GeometryViewModel spørge sin datasource om statiske geometriske objekter (OK)
   - Lad MainWindowViewModel subscribe til Enginens CurrentStateChanged og lad den informere GeometryViewModel om nye dynamiske geometriske objekter (OK)

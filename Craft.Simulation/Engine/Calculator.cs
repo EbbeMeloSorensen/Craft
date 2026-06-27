@@ -527,10 +527,7 @@ namespace Craft.Simulation.Engine
             lineSegmentEndPointInvolvedInCollision = null;
             timeUntilCollision = double.NaN;
             effectiveSurfaceNormalForBoundary = null;
-
-            // Deprecated (still used for handling collision with line segment and half plane)
-            var timeSinceFirstCollisionWithBoundary = double.NaN;
-
+            
             foreach (var kvp in propagatedBodyStateMap)
             {
                 if (!kvp.Key.Body.AffectedByBoundaries)
@@ -572,7 +569,6 @@ namespace Craft.Simulation.Engine
                         continue;
                     }
 
-                    var buffer = 0.000001; // Backtrack an additional micro meter to ensure we don't have intersection due to rounding errors
                     Vector2D effectiveSurfaceNormalForCurrentBoundary = null;
 
                     if (boundary is ILineSegment)
@@ -582,6 +578,7 @@ namespace Craft.Simulation.Engine
                         var velocityComponentTowardsBoundary = System.Math.Abs(lineSegment.ProjectVectorOntoSurfaceNormal(effectiveVelocity));
 
                         var t = double.NaN;
+                        var tNew = double.NaN;
                         Vector2D lineSegmentEndPointInvolvedInCollisionForCurrentBoundary = null;
 
                         // Hvis denne evaluerer til true er kuglens hastighed PARALLEL med væggen,
@@ -593,7 +590,7 @@ namespace Craft.Simulation.Engine
                             // den har ramt en af liniestykkets ender
                             lineSegmentEndPointInvolvedInCollisionForCurrentBoundary =
                                 lineSegment.IsVectorPointingInSameDirectionAsLineSegmentVector(
-                                    bsBefore.NaturalVelocity)
+                                    effectiveVelocity)
                                     ? lineSegment.Point1
                                     : lineSegment.Point2;
                         }
@@ -613,13 +610,16 @@ namespace Craft.Simulation.Engine
                                     {
                                         var vPointOnLineToBodyCenter = bsAfter.Position - lineSegment.Point1;
                                         var distanceFromBodyCenterToLineForLineSegment = System.Math.Abs(Vector2D.DotProduct(lineSegment.SurfaceNormal, vPointOnLineToBodyCenter));
-                                        t = (circularBody.Radius + buffer - distanceFromBodyCenterToLineForLineSegment) / velocityComponentTowardsBoundary;
+                                        //t = (circularBody.Radius + buffer - distanceFromBodyCenterToLineForLineSegment) / velocityComponentTowardsBoundary;
+                                        tNew = (distanceFromBodyCenterToLineForLineSegment - circularBody.Radius) / velocityComponentTowardsBoundary;
 
                                         // Nu regner vi så lige ud, hvor kuglens centrum ville være, hvis vi førte den tilbage med dette t
-                                        var backtrackedPosition = bsAfter.Position - effectiveVelocity * t;
+                                        //var backtrackedPosition = bsAfter.Position - effectiveVelocity * t;
+                                        var backtrackedPosition2 = bsBefore.Position + effectiveVelocity * tNew;
 
                                         // Nu skal vi så finde ud af, om dette punkt er tættest på liniestykket eller et af dens endepunkter
-                                        var lineSegmentPart = lineSegment.ClosestPartOfLineSegment(backtrackedPosition);
+                                        //var lineSegmentPart = lineSegment.ClosestPartOfLineSegment(backtrackedPosition);
+                                        var lineSegmentPart = lineSegment.ClosestPartOfLineSegment(backtrackedPosition2);
 
                                         switch (lineSegmentPart)
                                         {
@@ -646,6 +646,8 @@ namespace Craft.Simulation.Engine
                                         // Hvad med at lave en generel metode for BodyState, der beregner dens position efter tilbageføring langs hastighedsvektoren
                                         // Så kan du også gøre det polymorfisk i stedet for at bruge en switch case ladder
                                         var overshootDistance = lineSegment.CalculateOvershootDistance(bsAfter);
+                                        var buffer = 0.000001; // Backtrack an additional micro meter to ensure we don't have intersection due to rounding errors
+
                                         t = (overshootDistance + buffer) / velocityComponentTowardsBoundary;
 
                                         var backtrackedPosition = bsAfter.Position - effectiveVelocity * t;
@@ -721,10 +723,29 @@ namespace Craft.Simulation.Engine
                             {
                                 case CircularBody circularBody:
                                     {
-                                        // Deprecated
-                                        t = CalculateTimeSinceIntersection(bsAfter.Position, circularBody.Radius,
-                                            lineSegmentEndPointInvolvedInCollisionForCurrentBoundary,
-                                            effectiveVelocity, buffer, out effectiveSurfaceNormalForCurrentBoundary);
+                                        var p1 = bsBefore.Position;
+                                        var p2 = lineSegmentEndPointInvolvedInCollisionForCurrentBoundary;
+                                        var v1 = effectiveVelocity;
+                                        var v2 = new Vector2D(0, 0);
+                                        var radius1 = circularBody.Radius;
+                                        var radius2 = 0.0;
+
+                                        tNew = Operations.TimeOfCollisionBetweenTwoCircles(
+                                            p1.X,
+                                            p1.Y,
+                                            p2.X,
+                                            p2.Y,
+                                            v1.X,
+                                            v1.Y,
+                                            v2.X,
+                                            v2.Y,
+                                            radius1,
+                                            radius2);
+
+                                        var circleCenterAtTimeOfCollision =
+                                            bsBefore.Position + tNew * effectiveVelocity;
+
+                                        effectiveSurfaceNormalForCurrentBoundary = (circleCenterAtTimeOfCollision - lineSegmentEndPointInvolvedInCollisionForCurrentBoundary).Normalize();
 
                                         break;
                                     }
@@ -745,6 +766,8 @@ namespace Craft.Simulation.Engine
 
                                         var tx = double.MaxValue;
                                         var ty = double.MaxValue;
+
+                                        var buffer = 0.000001; // Backtrack an additional micro meter to ensure we don't have intersection due to rounding errors
 
                                         // Beregn også den normalvektoren for boundaryen, der gør sig gældende for kollisionen
                                         // sikr, at tx ikke bliver negativ
@@ -776,24 +799,23 @@ namespace Craft.Simulation.Engine
                             }
                         }
 
-                        if (double.IsNaN(timeSinceFirstCollisionWithBoundary) ||
-                            t > timeSinceFirstCollisionWithBoundary)
+                        if (double.IsNaN(timeUntilCollision) ||
+                            tNew < timeUntilCollision)
                         {
                             // The collision happens earlier than any other collision identified so far,
                             // so we update the output parameters
+                            timeUntilCollision = tNew;
                             bodyStateInvolvedInCollision = bsAfter;
                             boundaryInvolvedInCollision = boundary;
-                            timeSinceFirstCollisionWithBoundary = t;
                             lineSegmentEndPointInvolvedInCollision = lineSegmentEndPointInvolvedInCollisionForCurrentBoundary;
                             effectiveSurfaceNormalForBoundary = effectiveSurfaceNormalForCurrentBoundary;
-
-                            timeUntilCollision = double.IsNaN(timeSinceFirstCollisionWithBoundary)
-                                ? double.NaN
-                                : System.Math.Max(0.0, timeLeftInCurrentIncrement - timeSinceFirstCollisionWithBoundary);
                         }
                     }
                     else if (boundary is IHalfPlane)
                     {
+                        // Deprecated (still used for handling collision with half plane)
+                        var timeSinceFirstCollisionWithBoundary = double.NaN;
+
                         // Denne blok håndterer både circular bodies og rectangular bodies
                         var halfPlane = boundary as IHalfPlane;
 
@@ -814,6 +836,8 @@ namespace Craft.Simulation.Engine
 
                         // Tiden er lig med den "dybde", som kuglen har opnået divideret med størrelsen
                         // af dens hastighed i retning af væggen
+                        var buffer = 0.000001; // Backtrack an additional micro meter to ensure we don't have intersection due to rounding errors
+
                         var t = (buffer - halfPlane.DistanceToBody(bsAfter)) / velocityComponentTowardsBoundary;
 
                         if (!double.IsNaN(timeSinceFirstCollisionWithBoundary) &&
@@ -878,6 +902,9 @@ namespace Craft.Simulation.Engine
                                     var ty = double.MaxValue;
 
                                     // Beregn også den normalvektoren for boundaryen, der gør sig gældende for kollisionen
+
+                                    var buffer = 0.000001; // Backtrack an additional micro meter to ensure we don't have intersection due to rounding errors
+
                                     if (vx > 0)
                                     {
                                         tx = (x1 - x + buffer) / vx;
@@ -919,7 +946,7 @@ namespace Craft.Simulation.Engine
                             lineSegmentEndPointInvolvedInCollision = null;
 
                             var circleCenterAtTimeOfCollision =
-                                bsBefore.Position + timeUntilCollision * bsBefore.NaturalVelocity;
+                                bsBefore.Position + timeUntilCollision * effectiveVelocity;
 
                             effectiveSurfaceNormalForBoundary = (circleCenterAtTimeOfCollision - boundaryPoint.Point).Normalize();
                         }
@@ -942,58 +969,11 @@ namespace Craft.Simulation.Engine
 
             foreach (var kvp in propagatedBodyStateMap)
             {
-                kvp.Value.Position += fraction * (kvp.Key.Position - kvp.Value.Position);
-                //kvp.Key.NaturalVelocity = kvp.Value.NaturalVelocity; // Hvad Fanden er rationalet for det her lige? SATANS OGSÅ, MAND!!
-                // Du vurderede, at det var uhensigtsmæssigt at ændre på hastigheden, hvis den kun propagerede delvist..
-                // men det lader jo altså til at have nogle implikationer, som du ikke er skide glad for..
+                var displacement = fraction * (kvp.Key.Position - kvp.Value.Position);
+                kvp.Value.Position += displacement;
 
-                // For eksemplet med den hoppende bold vil jeg altså mene, at du må være bedst tjent med at håndtere hastighed ligesom position
-                // Så må du tage hånd om evt problemer på en anden måde
                 kvp.Value.NaturalVelocity += fraction * (kvp.Key.NaturalVelocity - kvp.Value.NaturalVelocity);
             }
-        }
-
-        // Deprecated
-        private static double CalculateTimeSinceIntersection(
-            Vector2D circleCenter,
-            double radius,
-            Vector2D point,
-            Vector2D circleVelocity,
-            double buffer,
-            out Vector2D effectiveSurfaceNormal)
-        {
-            var speed = circleVelocity.Length;
-
-            if (speed < 0.000001)
-            {
-                effectiveSurfaceNormal = null;
-                return 0;
-            }
-
-            var vectorFromBoundaryPointToBodyCenter = circleCenter - point;
-            var distance = vectorFromBoundaryPointToBodyCenter.Length;
-            var normalizedCircleVelocity = circleVelocity.Normalize();
-
-            double overshootDistance;
-
-            if (distance < 0.000001)
-            {
-                overshootDistance = radius;
-                effectiveSurfaceNormal = -normalizedCircleVelocity;
-            }
-            else
-            {
-                var theta1 = System.Math.Acos(Vector2D.DotProduct(normalizedCircleVelocity, vectorFromBoundaryPointToBodyCenter) / distance);
-                var theta2 = System.Math.Asin(distance * System.Math.Sin(theta1) / radius);
-                var theta3 = System.Math.PI - theta1 - theta2;
-                overshootDistance = System.Math.Sqrt(distance * distance + radius * radius - 2 * distance * radius * System.Math.Cos(theta3));
-
-                effectiveSurfaceNormal = (circleCenter - (point + overshootDistance * normalizedCircleVelocity)).Normalize();
-            }
-
-            overshootDistance += buffer;
-
-            return overshootDistance / speed;
         }
     }
 }

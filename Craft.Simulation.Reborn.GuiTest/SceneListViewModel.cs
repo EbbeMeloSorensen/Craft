@@ -40,6 +40,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             AddScene(GenerateSceneBouncingBallsOnALine2());
             AddScene(GenerateScenePoolTableWithOneBall());
             AddScene(GenerateScenePoolTableWithTwoBalls());
+            AddScene(GenerateScenePoolTableWithManyBalls());
             AddScene(GenerateScenePoolTableWithOneBallAndThreeBoundaryPoints());
             AddScene(GenerateScenePoolTableWithTwoBallsAnd1LineSegment());
             AddScene(GenerateScenePoolTableWith1BallAnd1LineSegment());
@@ -118,7 +119,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             var initialState = new State();
             initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, 1.7))
             {
-                Orientation = 0.5 * System.Math.PI
+                Orientation = 0.25 * System.Math.PI
             });
 
             var handleBoundaryCollisions = true;
@@ -413,6 +414,42 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
+        private static Scene GenerateScenePoolTableWithManyBalls()
+        {
+            var initialState = new State();
+
+            var bounds_x0 = -1.0;
+            var bounds_x1 = 3.0;
+            var bounds_y0 = -0.3;
+            var bounds_y1 = 1.0;
+
+            var ballRadius = 0.125;
+            var spacing = 0.12;
+
+            for (var x = bounds_x0 + spacing + ballRadius;
+                 x < bounds_x1 - spacing - ballRadius;
+                 x += ballRadius * 2 + spacing)
+            {
+                for (var y = bounds_y0 + spacing + ballRadius;
+                     y < bounds_y1 - spacing - ballRadius;
+                     y += ballRadius * 2 + spacing)
+                {
+                    initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, ballRadius, 1, true), new Vector2D(x, y))
+                    {
+                        NaturalVelocity = new Vector2D(2, 1)
+                    });
+                }
+            }
+
+            var scene = new Scene("Auto: Pool table, many balls", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+            scene.AddRectangularBoundary(bounds_x0, bounds_x1, bounds_y0, bounds_y1, false);
+
+            return scene;
+        }
+
         private static Scene GenerateScenePoolTableWithOneBallAndThreeBoundaryPoints()
         {
             var initialState = new State();
@@ -673,7 +710,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         private static Scene GenerateSceneBallInteraction3()
         {
             var initialState = new State();
-            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(1, 0.0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(-0.5, 0.4)));
 
             var scene = new Scene("Interactive: Ball III", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.002);
 

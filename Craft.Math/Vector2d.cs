@@ -122,5 +122,10 @@
                 length,
                 System.Math.Atan2(Y, X));
         }
+
+        public override string ToString()
+        {
+            return $"(X: {X}, Y: {Y})";
+        }
     }
 }
