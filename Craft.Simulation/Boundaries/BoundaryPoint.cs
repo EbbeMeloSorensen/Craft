@@ -17,9 +17,9 @@ namespace Craft.Simulation.Boundaries
             Vector2D point,
             string tag = null)
         {
-            Visible = true;
             Point = point;
             Tag = tag;
+            Visible = true;
         }
 
         public double DistanceToPoint(
