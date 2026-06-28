@@ -985,6 +985,60 @@ namespace Craft.Simulation.Engine
                             effectiveSurfaceNormalForBoundary = (circleCenterAtTimeOfCollision - boundaryPoint.Point).Normalize();
                         }
                     }
+                    else if (boundary is CircularBoundary)
+                    {
+                        var circularBoundary = boundary as CircularBoundary;
+                        double t;
+
+                        switch (bsAfter.Body)
+                        {
+                            case CircularBody body:
+                                {
+                                    var p1 = bsBefore.Position;
+                                    var p2 = circularBoundary.Center;
+                                    var v1 = effectiveVelocity;
+                                    var v2 = new Vector2D(0, 0);
+                                    var radius1 = body.Radius;
+                                    var radius2 = circularBoundary.Radius;
+
+                                    t = Operations.TimeOfCollisionBetweenTwoCircles(
+                                        p1.X,
+                                        p1.Y,
+                                        p2.X,
+                                        p2.Y,
+                                        v1.X,
+                                        v1.Y,
+                                        v2.X,
+                                        v2.Y,
+                                        radius1 + 0.000000000001,
+                                        radius2);
+
+                                    break;
+                                }
+                            case RectangularBody body:
+                            {
+                                throw new NotImplementedException();
+                            }
+                            default:
+                                throw new ArgumentException();
+                        }
+
+                        if (double.IsNaN(timeUntilCollision) ||
+                            t < timeUntilCollision)
+                        {
+                            // The collision happens earlier than any other collision identified so far,
+                            // so we update the output parameters
+                            bodyStateInvolvedInCollision = bsAfter;
+                            boundaryInvolvedInCollision = boundary;
+                            timeUntilCollision = t;
+                            lineSegmentEndPointInvolvedInCollision = null;
+
+                            var circleCenterAtTimeOfCollision =
+                                bsBefore.Position + timeUntilCollision * effectiveVelocity;
+
+                            effectiveSurfaceNormalForBoundary = (circleCenterAtTimeOfCollision - circularBoundary.Center).Normalize();
+                        }
+                    }
                     else
                     {
                         throw new ArgumentException();

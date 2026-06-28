@@ -36,6 +36,9 @@ namespace Craft.Simulation.Reborn.GuiTest
                 case PointModel point:
                     _mxCifQuadTree.Insert(new SpatialItem<object>(point.ComputeBoundingBox(), point));
                     break;
+                case CircleModel circle:
+                    _mxCifQuadTree.Insert(new SpatialItem<object>(circle.ComputeBoundingBox(), circle));
+                    break;
                 default:
                     throw new ArgumentException("Object is not a geometry object");
             }

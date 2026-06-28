@@ -259,6 +259,13 @@ namespace Craft.Simulation.Reborn.GuiTest
                             P = new Point(boundaryPoint.Point.X, boundaryPoint.Point.Y)
                         });
                         break;
+                    case CircularBoundary circularBoundary:
+                        staticGeometryObjects.Add(new CircleModel()
+                        {
+                            Center = new Point(circularBoundary.Center.X, circularBoundary.Center.Y),
+                            Radius = circularBoundary.Radius
+                        });
+                        break;
                     default:
                         throw new ArgumentException();
                 }
@@ -270,6 +277,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 {
                     LineModel line => line.ComputeBoundingBox(),
                     PointModel point => point.ComputeBoundingBox(),
+                    CircleModel circle => circle.ComputeBoundingBox(),
                     _ => throw new InvalidOperationException(),
                 };
             });

@@ -49,6 +49,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             AddScene(GenerateSceneBallTrain2());
             AddScene(GenerateSceneBallTrain3());
             AddScene(GenerateSceneBodyFollowingPath());
+            AddScene(GenerateSceneBallInteraction1());
             AddScene(GenerateSceneBallInteraction2());
             AddScene(GenerateSceneBallInteraction3());
             AddScene(GenerateSceneBallInteraction4());
@@ -720,6 +721,22 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
+        private static Scene GenerateSceneBallInteraction1()
+        {
+            var initialState = new State();
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1.03, -0.125)));
+
+            var scene = new Scene("Interactive: Ball I", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, false, 0.002);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+
+            scene.StandardInteractionCallback = StandardInteractionCallback.DungeonCrawler8Directions;
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddBoundary(new BoundaryPoint(new Vector2D(1, 0.4)));
+
+            return scene;
+        }
+
         private static Scene GenerateSceneBallInteraction2()
         {
             var initialState = new State();
@@ -730,8 +747,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
             scene.StandardInteractionCallback = StandardInteractionCallback.DungeonCrawler8Directions;
-            scene.AddRectangularBoundary(0, 2, -0.3, 1, false);
-            scene.AddBoundary(new BoundaryPoint(new Vector2D(1, 0.4)));
+            scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
+            scene.AddBoundary(new CircularBoundary(new Vector2D(1, 0.4), 0.1));
 
             return scene;
         }
