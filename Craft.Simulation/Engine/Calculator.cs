@@ -51,8 +51,9 @@ namespace Craft.Simulation.Engine
             var iteration = 1;
             while (timeLeftInCurrentIncrement > 1E-12)
             {
-                if (iteration > 50)
+                if (iteration > 1000)
                 {
+                    // trouble
                     var a = 0;
                 }
 
@@ -475,10 +476,20 @@ namespace Craft.Simulation.Engine
 
                     var radius1 = (body1 as CircularBody).Radius;
                     var radius2 = (body2 as CircularBody).Radius;
+                    var radiusSum = radius1 + radius2;
+
+                    var vectorFrom1To2Before = bs2Before.Position - bs1Before.Position;
+                    var distanceBefore= vectorFrom1To2Before.Length;
+
+                    if (radiusSum >= distanceBefore)
+                    {
+                        // Trouble intersection at the start of the iteration
+                        // Det sker for Pool table, many balls, selv om den ellers virker stabil..
+                        var a = 0;
+                    }
 
                     var vectorFrom1To2After = bs2After.Position - bs1After.Position;
                     var distanceAfter = vectorFrom1To2After.Length;
-                    var radiusSum = radius1 + radius2;
 
                     if (radiusSum < distanceAfter)
                     {
@@ -502,7 +513,7 @@ namespace Craft.Simulation.Engine
                         v1.Y,
                         v2.X,
                         v2.Y,
-                        radius1,
+                        radius1 + 0.000000000001,
                         radius2);
 
                     if (double.IsNaN(timeUntilCollision) ||
@@ -569,6 +580,12 @@ namespace Craft.Simulation.Engine
                 {
                     var boundary = temp as IBoundary;
 
+                    if (boundary.Intersects(bsBefore))
+                    {
+                        // Trouble..
+                        var a = 0;
+                    }
+
                     if (!boundary.Intersects(bsAfter))
                     {
                         continue;
@@ -582,7 +599,6 @@ namespace Craft.Simulation.Engine
 
                         var velocityComponentTowardsBoundary = System.Math.Abs(lineSegment.ProjectVectorOntoSurfaceNormal(effectiveVelocity));
 
-                        var t = double.NaN;
                         var tNew = double.NaN;
                         Vector2D lineSegmentEndPointInvolvedInCollisionForCurrentBoundary = null;
 
@@ -613,10 +629,18 @@ namespace Craft.Simulation.Engine
                             {
                                 case CircularBody circularBody:
                                     {
-                                        var vPointOnLineToBodyCenter = bsAfter.Position - lineSegment.Point1;
+                                        //var vPointOnLineToBodyCenter = bsAfter.Position - lineSegment.Point1;
+                                        var vPointOnLineToBodyCenter = bsBefore.Position - lineSegment.Point1;
                                         var distanceFromBodyCenterToLineForLineSegment = System.Math.Abs(Vector2D.DotProduct(lineSegment.SurfaceNormal, vPointOnLineToBodyCenter));
                                         //t = (circularBody.Radius + buffer - distanceFromBodyCenterToLineForLineSegment) / velocityComponentTowardsBoundary;
-                                        tNew = (distanceFromBodyCenterToLineForLineSegment - circularBody.Radius) / velocityComponentTowardsBoundary;
+                                        tNew = (distanceFromBodyCenterToLineForLineSegment - (circularBody.Radius + 0.000000000001)) / velocityComponentTowardsBoundary;
+
+                                        if (tNew < 0.0)
+                                        {
+                                            // Trouble
+                                            // Det sker for ball train I, selv om den ellers virker stabil..
+                                            var a = 0;
+                                        }
 
                                         // Nu regner vi så lige ud, hvor kuglens centrum ville være, hvis vi førte den tilbage med dette t
                                         //var backtrackedPosition = bsAfter.Position - effectiveVelocity * t;
@@ -653,7 +677,7 @@ namespace Craft.Simulation.Engine
                                         var overshootDistance = lineSegment.CalculateOvershootDistance(bsAfter);
                                         var buffer = 0.000001; // Backtrack an additional micro meter to ensure we don't have intersection due to rounding errors
 
-                                        t = (overshootDistance + buffer) / velocityComponentTowardsBoundary;
+                                        var t = (overshootDistance + buffer) / velocityComponentTowardsBoundary;
 
                                         var backtrackedPosition = bsAfter.Position - effectiveVelocity * t;
 
@@ -744,8 +768,13 @@ namespace Craft.Simulation.Engine
                                             v1.Y,
                                             v2.X,
                                             v2.Y,
-                                            radius1,
+                                            radius1 + 0.000000000001,
                                             radius2);
+
+                                        if (tNew < 0.0)
+                                        {
+                                            var a = 0;
+                                        }
 
                                         var circleCenterAtTimeOfCollision =
                                             bsBefore.Position + tNew * effectiveVelocity;
@@ -798,7 +827,7 @@ namespace Craft.Simulation.Engine
                                             ? vy > 0 ? new Vector2D(0, -1) : new Vector2D(0, 1)
                                             : vx > 0 ? new Vector2D(-1, 0) : new Vector2D(1, 0);
 
-                                        t = ty < tx ? ty : tx;
+                                        var t = ty < tx ? ty : tx;
                                         break;
                                     }
                             }
@@ -885,7 +914,7 @@ namespace Craft.Simulation.Engine
                                         v1.Y,
                                         v2.X,
                                         v2.Y,
-                                        radius1,
+                                        radius1 + 0.000000000001,
                                         radius2);
 
                                     break;

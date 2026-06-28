@@ -392,6 +392,11 @@ namespace Craft.Simulation.Engine
                 // Slip state sekvensen, så andre kan tage noget fra den
                 _stateSequenceMutex.ReleaseMutex();
 
+                if (_lastIndexGenerated == 1354)
+                {
+                    var a = 0;
+                }
+
                 // Propager staten
                 var propagatedState = Calculator.PropagateState(
                     Scene,

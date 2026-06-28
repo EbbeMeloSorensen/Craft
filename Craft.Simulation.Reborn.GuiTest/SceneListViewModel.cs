@@ -4,6 +4,7 @@ using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
 using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
@@ -425,7 +426,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             var ballRadius = 0.125;
             var ballSpeed = 2.0;
-            var spacing = 0.1;
+            var spacing = 0.05;
             var random = new Random(0);
 
             for (var x = bounds_x0 + spacing + ballRadius;
@@ -453,7 +454,27 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
             scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.ElasticCollision;
+
             scene.AddRectangularBoundary(bounds_x0, bounds_x1, bounds_y0, bounds_y1, false);
+
+            scene.PostPropagationCallBack = (propagatedState, boundaryCollisionReports, bodyCollisionReports) =>
+            {
+                var response = new PostPropagationResponse();
+
+                foreach (var bs in propagatedState.BodyStates)
+                {
+                    if (bs.Position.X - ballRadius < bounds_x0 ||
+                        bs.Position.X + ballRadius > bounds_x1 ||
+                        bs.Position.Y - ballRadius < bounds_y0 ||
+                        bs.Position.Y + ballRadius > bounds_y1)
+                    {
+                        response.Outcome = "Invalid data";
+                        response.IndexOfLastState = propagatedState.Index;
+                    }
+                }
+
+                return response;
+            };
 
             return scene;
         }
