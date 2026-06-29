@@ -3,6 +3,7 @@ using Craft.Math;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
+using Craft.Simulation.Props;
 using Craft.ViewModels.Geometry2D.ScrollFree;
 using Craft.ViewModels.Simulation;
 using GalaSoft.MvvmLight;
@@ -81,7 +82,7 @@ namespace Craft.Simulation.GuiTest
             var ball = new CircularBody(1, ballRadius, 1, affectedByGravity, affectedByBoundaries);
             initialState.AddBodyState(new BodyState(ball, initialBallPosition) { NaturalVelocity = initialBallVelocity });
 
-            var name = "Simple Game";
+            var name = "Bouncing Ball";
             var standardGravity = 9.82;
             var initialWorldWindowUpperLeft = new Point2D(-1.4, -1.3);
             var initialWorldWindowLowerRight = new Point2D(5, 3);
@@ -110,6 +111,11 @@ namespace Craft.Simulation.GuiTest
             scene.AddBoundary(new HalfPlane(new Vector2D(3, -0.3), new Vector2D(-1, 0)));
             scene.AddBoundary(new HalfPlane(new Vector2D(3, 1), new Vector2D(0, -1)));
             scene.AddBoundary(new HalfPlane(new Vector2D(-1, 1), new Vector2D(1, 0)));
+
+            // This peculiar construction is because for animations, shapes are reserved for bodies and props
+            var radiusCircularBoundary = 0.5;
+            scene.AddBoundary(new CircularBoundary(new Vector2D(2, -0.125), radiusCircularBoundary));
+            scene.Props.Add(new PropCircle(2, radiusCircularBoundary * 2, new Vector2D(2, -0.125)));
 
             return scene;
         }
