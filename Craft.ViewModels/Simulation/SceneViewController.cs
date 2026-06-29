@@ -156,13 +156,8 @@ namespace Craft.ViewModels.Simulation
                 scene.WorldWindowBottomRightLimit.X,
                 scene.WorldWindowBottomRightLimit.Y);
 
-            // Vi vil helst ikke gøre det allerede her, da vi så ikke kan "slide"
-            //_geometryEditorViewModel.InitializeWorldWindow(
-            //    scene.InitialWorldWindowFocus(),
-            //    scene.InitialWorldWindowSize(),
-            //    false);
-
             var lineThickness = 1;
+            var shapeId = 1000;
 
             _engine.EngineCore.Scene.Boundaries.ForEach(b =>
             {
@@ -230,6 +225,14 @@ namespace Craft.ViewModels.Simulation
                         break;
                     case BoundaryPoint boundaryPoint:
                         _geometryEditorViewModel.AddPoint(boundaryPoint.Point.AsPointD(), 3, new SolidColorBrush(Colors.Black));
+                        break;
+                    case CircularBoundary circularBoundary:
+                        _geometryEditorViewModel.AddShape(shapeId++, new EllipseViewModel
+                        {
+                            Point = new PointD(circularBoundary.Center.X, circularBoundary.Center.Y),
+                            Width = circularBoundary.Radius * 2,
+                            Height = circularBoundary.Radius * 2
+                        });
                         break;
                     default:
                         throw new ArgumentException();
