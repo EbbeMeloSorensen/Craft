@@ -26,6 +26,11 @@ internal static class Helpers
                 System.Math.Max(lineSegment.Point1.X, lineSegment.Point2.X),
                 System.Math.Min(lineSegment.Point1.Y, lineSegment.Point2.Y),
                 System.Math.Max(lineSegment.Point1.Y, lineSegment.Point2.Y)),
+            CircularBoundary circularBoundary => new BoundingBox(
+                circularBoundary.Center.X - circularBoundary.Radius,
+                circularBoundary.Center.X + circularBoundary.Radius,
+                circularBoundary.Center.Y - circularBoundary.Radius,
+                circularBoundary.Center.Y + circularBoundary.Radius),
             _ => throw new ArgumentException("Unknown boundary type")
         };
     }

@@ -750,6 +750,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             scene.AddRectangularBoundary(-1, 3, -0.3, 1, false);
             scene.AddBoundary(new CircularBoundary(new Vector2D(1, 0.4), 0.1));
 
+            scene.InitializeBoundaryDataStore();
+
             return scene;
         }
 
