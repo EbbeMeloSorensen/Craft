@@ -13,6 +13,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private const double _zoomingFactor = 1.2;
         private WorldWindowLimiter _worldWindowLimiter;
 
+        private bool _isRenderingSubscribed;
         private bool _isPanning;
         private System.Windows.Point _panStartMouse;
         private System.Windows.Point _panStartWorldOrigin;
@@ -269,8 +270,39 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         public GeometryCanvas()
         {
+            Loaded += GeometryCanvas_Loaded;
+            Unloaded += GeometryCanvas_Unloaded;
+
             CompositionTarget.Rendering += OnRendering;
             Unloaded += (s, e) => CompositionTarget.Rendering -= OnRendering;
+        }
+
+        private void GeometryCanvas_Loaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            if (_isRenderingSubscribed)
+            {
+                return;
+            }
+
+            CompositionTarget.Rendering += OnRendering;
+
+            _isRenderingSubscribed = true;
+        }
+
+        private void GeometryCanvas_Unloaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            if (!_isRenderingSubscribed)
+            {
+                return;
+            }
+
+            CompositionTarget.Rendering -= OnRendering;
+
+            _isRenderingSubscribed = false;
         }
 
         // =============================
@@ -1121,8 +1153,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
-            //Debug.WriteLine("WorldWindow changed!");
-
             var canvas = (GeometryCanvas)d;
             canvas.OnWorldWindowChanged((BoundingBox)e.NewValue);
         }
@@ -1152,8 +1182,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
         }
 
         private void OnWorldWindowChanged(
-            BoundingBox worldWindow)
+            BoundingBox? worldWindow)
         {
+            if (worldWindow == null)
+            {
+                return;
+            }
+
             if (WorldWindowExpanded == null ||
                 !WorldWindowExpanded.Contains(worldWindow) ||
                 WorldWindowExpanded.Width / worldWindow.Width > 2.0)
@@ -1293,7 +1328,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
             EventArgs e)
         {
             if (e is not RenderingEventArgs args)
+            {
                 return;
+            }
+
+            if (!IsLoaded)
+            {
+                return;
+            }
 
             if (_lastTime == TimeSpan.Zero)
             {

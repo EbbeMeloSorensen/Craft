@@ -6,9 +6,14 @@ namespace Craft.ViewModels.Geometry2D.Reborn;
 public static class Helpers
 {
     public static bool Contains(
-        this BoundingBox boundingBox,
-        BoundingBox otherBoundingBox)
+        this BoundingBox? boundingBox,
+        BoundingBox? otherBoundingBox)
     {
+        if (boundingBox == null || otherBoundingBox == null)
+        {
+            return false;
+        }
+
         return boundingBox.MinX <= otherBoundingBox.MinX &&
                otherBoundingBox.MaxX <= boundingBox.MaxX &&
                boundingBox.MinY <= otherBoundingBox.MinY &&
