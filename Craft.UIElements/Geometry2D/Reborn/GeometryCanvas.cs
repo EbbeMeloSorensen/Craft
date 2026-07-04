@@ -1317,8 +1317,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
         }
 
         private void OnWorldWindowBoundsChanged(
-            BoundingBox worldWindowBounds)
+            BoundingBox? worldWindowBounds)
         {
+            if (worldWindowBounds == null)
+            {
+                return;
+            }
+
             _worldWindowLimiter = new WorldWindowLimiter(worldWindowBounds);
             UpdateViewState(ComputeWorldWindow());
         }
