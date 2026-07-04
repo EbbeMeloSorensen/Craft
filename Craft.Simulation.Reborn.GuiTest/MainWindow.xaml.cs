@@ -18,18 +18,11 @@ namespace Craft.Simulation.Reborn.GuiTest
             DataContext = new MainWindowViewModel();
         }
 
-        private void MainWindow_OnLoaded(
-            object sender,
-            RoutedEventArgs e)
-        {
-            ViewModel.HandleLoaded();
-        }
-
         private void MainWindow_OnClosing(
             object sender,
             CancelEventArgs e)
         {
-            ViewModel.HandleClosing();
+            ViewModel.SimulationLaboratoryViewModel.HandleClosing();
         }
 
         private void MainWindow_KeyDown(
@@ -44,19 +37,19 @@ namespace Craft.Simulation.Reborn.GuiTest
             switch (e.Key)
             {
                 case System.Windows.Input.Key.Up:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyPressed);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyPressed);
                     break;
                 case System.Windows.Input.Key.Down:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyPressed);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyPressed);
                     break;
                 case System.Windows.Input.Key.Left:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyPressed);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyPressed);
                     break;
                 case System.Windows.Input.Key.Right:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyPressed);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyPressed);
                     break;
                 case System.Windows.Input.Key.Space:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyPressed);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyPressed);
                     break;
             }
         }
@@ -68,19 +61,19 @@ namespace Craft.Simulation.Reborn.GuiTest
             switch (e.Key)
             {
                 case System.Windows.Input.Key.Up:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyReleased);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyReleased);
                     break;
                 case System.Windows.Input.Key.Down:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyReleased);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyReleased);
                     break;
                 case System.Windows.Input.Key.Left:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyReleased);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyReleased);
                     break;
                 case System.Windows.Input.Key.Right:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyReleased);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyReleased);
                     break;
                 case System.Windows.Input.Key.Space:
-                    ViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyReleased);
+                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyReleased);
                     break;
             }
         }
