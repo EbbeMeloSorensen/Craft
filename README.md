@@ -1,5 +1,17 @@
 # Craft
 
+For at kunne publicere til GitHub:
+1) Lav en personal access token i GitHub, og gem den i en miljøvariabel ved navn GITHUB_TOKEN
+2) Start Powershell (ikke sikker på at det nødvendigvis skal være som administrator, men det skader ikke)
+3) I Powershell: Naviger hen til roden af det lokale Git repo og eksekver: dotnet nuget add source --username Ebbe.Melo.Sorensen --password ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --store-password-in-clear-text --name GitHub "https://nuget.pkg.github.com/EbbeMeloSorensen/index.json"
+   (Det er vistnok for at associere det lokale repo med det sted i GitHub, hvor pakker skal pushes hen..)
+4) I Power shell: Eksekver: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   (Det er for overhovedet at kunne eksekvere scripts i PowerShell, hvilket man som udgangspunkt ikke kan
+5) Bump Version-nummeret i filen Directory.Build.props
+6) Slet gamle pakker, dvs indholdet af folderen Craft/artifacts/packages
+7) Byg solutionen i Release mode og sikr, at folderen Craft/artifacts/packages fyldes op.
+8) Eksekver scriptet publish-packages, og sikr, at den for alle pakkerne skriver "your package was published"
+
 ### Old
 
 Notice that all utility projects are based on .Net Standard 2.1, so they don't depend on the .Net Framework.
