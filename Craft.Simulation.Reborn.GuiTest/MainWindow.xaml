@@ -6,12 +6,30 @@
         xmlns:local="clr-namespace:Craft.Simulation.Reborn.GuiTest"
         xmlns:scrollFree="clr-namespace:Craft.UIElements.Geometry2D.ScrollFree;assembly=Craft.UIElements"
         xmlns:reborn="clr-namespace:Craft.UIElements.Geometry2D.Reborn;assembly=Craft.UIElements"
+        xmlns:behaviors="clr-namespace:Craft.UI.Utils.Behaviors;assembly=Craft.UI.Utils"
         mc:Ignorable="d"
         Title="Simulator and Reborn" Height="450" Width="800"
         Closing="MainWindow_OnClosing"
         KeyDown="MainWindow_KeyDown"
         KeyUp="MainWindow_KeyUp">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:SimulationLaboratoryViewModel}">
+            <local:SimulationLaboratoryView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:DummyViewModel}">
+            <local:DummyView/>
+        </DataTemplate>
+    </Window.Resources>
+
     <Grid>
-        <local:SimulationLaboratoryView DataContext="{Binding SimulationLaboratoryViewModel}"/>
+        <!--<local:SimulationLaboratoryView DataContext="{Binding SimulationLaboratoryViewModel}"/>-->
+
+        <ContentControl Content="{Binding CurrentViewModel}"
+                        behaviors:FocusOnLoadBehavior.Enabled="True"/>
+
+        <Button Content="Switch ViewModel" Margin="10"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Command="{Binding SwitchViewModelCommand}"/>
     </Grid>
 </Window>

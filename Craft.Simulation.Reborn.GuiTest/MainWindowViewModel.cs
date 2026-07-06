@@ -15,11 +15,40 @@ namespace Craft.Simulation.Reborn.GuiTest
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public SimulationLaboratoryViewModel SimulationLaboratoryViewModel { get; }
+        private object _currentViewModel;
+        private RelayCommand _switchViewModelCommand;
+
+        public object CurrentViewModel
+        {
+            get => _currentViewModel;
+            set
+            {
+                _currentViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        //public SimulationLaboratoryViewModel SimulationLaboratoryViewModel { get; }
+
+        public RelayCommand SwitchViewModelCommand
+        {
+            get
+            {
+                return _switchViewModelCommand ?? (_switchViewModelCommand = new RelayCommand(SwitchViewModel));
+            }
+        }
 
         public MainWindowViewModel()
         {
-            SimulationLaboratoryViewModel = new SimulationLaboratoryViewModel();
+            //SimulationLaboratoryViewModel = new SimulationLaboratoryViewModel();
+
+            CurrentViewModel = new SimulationLaboratoryViewModel();
+            //CurrentViewModel = new DummyViewModel();
+        }
+
+        private void SwitchViewModel()
+        {
+            CurrentViewModel = new DummyViewModel();
         }
     }
 }

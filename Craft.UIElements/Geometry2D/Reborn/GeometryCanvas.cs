@@ -1200,8 +1200,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
         }
 
         private void OnRequestedWorldWindowChanged(
-            BoundingBox requestedWorldWindow)
+            BoundingBox? requestedWorldWindow)
         {
+            if (requestedWorldWindow == null)
+            {
+                return;
+            }
+
             var proposedWorldWindow = _worldWindowLimiter.Limit(requestedWorldWindow);
 
             if (LockAspectRatio)
@@ -1285,8 +1290,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
         }
 
         private void OnRequestedWorldFocusChanged(
-            WorldFocusRequest requestedWorldFocus)
+            WorldFocusRequest? requestedWorldFocus)
         {
+            if (requestedWorldFocus == null)
+            {
+                return;
+            }
+
             var worldWindow = ComputeWorldWindow();
 
             var proposedWidth = worldWindow.Width;

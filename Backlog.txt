@@ -129,6 +129,9 @@ Done:
 * Fix buggen med at man ikke ser boundary points i reborn (OK)
 
 In progress:
+* Eksponer det med at den crasher under TearDown, hvis den løbende sætter fokus
+* Reparer Newtons cradle
+* Fix det med at ContentControl setuppet ikke virker i Craft.Simulation.Reborn.GuiTest
 * Få loggeren på banen igen, evt inspireret af, hvordan du gør med McCifQuadree (og der skal den jo altsp også fixes, så den ikke kun skriver til sidst..)
 * Fix fejlen med kollision mellem body og endepunkt af en linie. Den kan eksponeres med scenen "Interactive: Ball III". Kør generelt fall forward for designet af kollisionshåndtering
   Bemærk, at scenen "Interactive: Ball II" tilsyneladende virker fint..

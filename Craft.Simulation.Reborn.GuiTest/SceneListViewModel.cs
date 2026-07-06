@@ -105,7 +105,8 @@ namespace Craft.Simulation.Reborn.GuiTest
                 timeFactor,
                 handleBoundaryCollisions,
                 handleBodyCollisions,
-                deltaT);
+                deltaT,
+                SceneViewMode.FocusOnFirstBody);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Reflect;
 
