@@ -501,6 +501,23 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     switch (geometricObject)
                     {
+                        case Math.LineSegment2D lineSegment:
+                            dc.DrawLine(
+                                drawingPen,
+                                new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
+                                new Point(lineSegment.Point2.X, lineSegment.Point2.Y));
+                            break;
+
+                        case Math.Point2D point:
+                            dc.DrawEllipse(drawingBrush, null, new Point(point.X, point.Y), 3, 3);
+                            break;
+
+                        case Math.Circle2D circle:
+                            dc.DrawEllipse(drawingBrush, null,
+                                new Point(circle.Center.X, circle.Center.Y),
+                                circle.Radius, circle.Radius);
+                            break;
+
                         case LineModel line:
                             var p1 = worldToViewportTransform.Transform(line.P1);
                             var p2 = worldToViewportTransform.Transform(line.P2);
