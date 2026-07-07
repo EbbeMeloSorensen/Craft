@@ -23,11 +23,13 @@ public class TemperatureDataSource : IGeometryDataSource
     public IEnumerable Query(
         BoundingBox window)
     {
-        return _temperatureMeasurements.Select(tm => new PointModel
-        {
-            P = new System.Windows.Point(
-                TimeCoordinates.ToWorldTicks(tm.Item1),
-                tm.Item2)
-        });
+        throw new NotImplementedException("TemperatureDataSource.Query is not implemented yet.");
+
+        //return _temperatureMeasurements.Select(tm => new PointModel
+        //{
+        //    P = new System.Windows.Point(
+        //        TimeCoordinates.ToWorldTicks(tm.Item1),
+        //        tm.Item2)
+        //});
     }
 }

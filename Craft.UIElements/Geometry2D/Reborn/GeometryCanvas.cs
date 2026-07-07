@@ -502,35 +502,36 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     switch (geometricObject)
                     {
                         case Math.LineSegment2D lineSegment:
-                            dc.DrawLine(
-                                drawingPen,
-                                new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
-                                new Point(lineSegment.Point2.X, lineSegment.Point2.Y));
+                            var p1 = worldToViewportTransform.Transform(new Point(lineSegment.Point1.X, lineSegment.Point1.Y));
+                            var p2 = worldToViewportTransform.Transform(new Point(lineSegment.Point2.X, lineSegment.Point2.Y));
+                            dc.DrawLine(drawingPen, p1, p2);
                             break;
 
                         case Math.Point2D point:
-                            dc.DrawEllipse(drawingBrush, null, new Point(point.X, point.Y), 3, 3);
+                            var p = worldToViewportTransform.Transform(new Point(point.X, point.Y));
+                            dc.DrawEllipse(drawingBrush, null, p, 3, 3);
                             break;
 
                         case Math.Circle2D circle:
-                            dc.DrawEllipse(drawingBrush, null,
-                                new Point(circle.Center.X, circle.Center.Y),
-                                circle.Radius, circle.Radius);
+                            var c = worldToViewportTransform.Transform(new Point(circle.Center.X, circle.Center.Y));
+                            var radiusX = ViewState.Scaling.Width * circle.Radius;
+                            var radiusY = ViewState.Scaling.Height * circle.Radius;
+                            dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
                             break;
 
-                        case LineModel line:
-                            var p1 = worldToViewportTransform.Transform(line.P1);
-                            var p2 = worldToViewportTransform.Transform(line.P2);
-                            dc.DrawLine(drawingPen, p1, p2);
-                            break;
+                        //case LineModel line:
+                        //    var p1 = worldToViewportTransform.Transform(line.P1);
+                        //    var p2 = worldToViewportTransform.Transform(line.P2);
+                        //    dc.DrawLine(drawingPen, p1, p2);
+                        //    break;
 
                         case VerticalLineModel verticalLine:
                             var screenX = (verticalLine.X - worldWindow.MinX) * ViewState.Scaling.Width;
 
                             dc.DrawLine(
                                 drawingPen,
-                                new System.Windows.Point(screenX, 0),
-                                new System.Windows.Point(screenX, ActualHeight));
+                                new Point(screenX, 0),
+                                new Point(screenX, ActualHeight));
                             break;
 
                         case HorizontalLineModel horizontalLine:
@@ -538,14 +539,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                             dc.DrawLine(
                                 drawingPen,
-                                new System.Windows.Point(0, screenY),
-                                new System.Windows.Point(ActualWidth, screenY));
+                                new Point(0, screenY),
+                                new Point(ActualWidth, screenY));
                             break;
 
-                        case PointModel point:
-                            var p = worldToViewportTransform.Transform(point.P);
-                            dc.DrawEllipse(drawingBrush, null, p, 3, 3);
-                            break;
+                        //case PointModel point:
+                        //    var p = worldToViewportTransform.Transform(point.P);
+                        //    dc.DrawEllipse(drawingBrush, null, p, 3, 3);
+                        //    break;
 
                         case PolyLineModel polyLineModel:
 
@@ -570,12 +571,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             dc.DrawGeometry(null, drawingPen, sg);
                             break;
 
-                        case CircleModel circle:
-                            var c = worldToViewportTransform.Transform(circle.Center);
-                            var radiusX = ViewState.Scaling.Width * circle.Radius;
-                            var radiusY = ViewState.Scaling.Height * circle.Radius;
-                            dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
-                            break;
+                        //case CircleModel circle:
+                        //    var c = worldToViewportTransform.Transform(circle.Center);
+                        //    var radiusX = ViewState.Scaling.Width * circle.Radius;
+                        //    var radiusY = ViewState.Scaling.Height * circle.Radius;
+                        //    dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
+                        //    break;
                     }
                 }
             }
@@ -594,8 +595,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     switch (geometricObject)
                     {
-                        case LineModel line:
-                            dc.DrawLine(drawingPen, line.P1, line.P2);
+                        case Math.LineSegment2D lineSegment:
+                            dc.DrawLine(
+                                drawingPen,
+                                new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
+                                new Point(lineSegment.Point2.X, lineSegment.Point2.Y));
                             break;
 
                         //case VerticalLineModel verticalLine:
@@ -616,8 +620,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         //        new System.Windows.Point(ActualWidth, screenY));
                         //    break;
 
-                        case PointModel point:
-                            dc.DrawEllipse(drawingBrush, null, point.P, 3, 3);
+                        case Math.Point2D point:
+                            dc.DrawEllipse(drawingBrush, null, new Point(point.X, point.Y), 3, 3);
                             break;
 
                         case PolyLineModel polyLineModel:
@@ -641,9 +645,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             dc.DrawGeometry(null, drawingPen, sg);
                             break;
 
-                        case CircleModel circle:
+                        case Math.Circle2D circle:
                             dc.DrawEllipse(drawingBrush, null,
-                                circle.Center, circle.Radius, circle.Radius);
+                                new Point(circle.Center.X, circle.Center.Y),
+                                circle.Radius, circle.Radius);
                             break;
                     }
                 }

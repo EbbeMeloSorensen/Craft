@@ -37,34 +37,65 @@ public static class Helpers
             boundingBox.MaxY + expandY);
     }
 
+    //public static BoundingBox ComputeBoundingBox(
+    //    this LineModel lineModel)
+    //{
+    //    var minX = System.Math.Min(lineModel.P1.X, lineModel.P2.X);
+    //    var maxX = System.Math.Max(lineModel.P1.X, lineModel.P2.X);
+    //    var minY = System.Math.Min(lineModel.P1.Y, lineModel.P2.Y);
+    //    var maxY = System.Math.Max(lineModel.P1.Y, lineModel.P2.Y);
+    //    return new BoundingBox(minX, maxX, minY, maxY);
+    //}
+
+    //public static BoundingBox ComputeBoundingBox(
+    //    this PointModel pointModel)
+    //{
+    //    return new BoundingBox(
+    //        pointModel.P.X,
+    //        pointModel.P.X,
+    //        pointModel.P.Y,
+    //        pointModel.P.Y);
+    //}
+
+    //public static BoundingBox ComputeBoundingBox(
+    //    this CircleModel circleModel)
+    //{
+    //    return new BoundingBox(
+    //        circleModel.Center.X - circleModel.Radius,
+    //        circleModel.Center.X + circleModel.Radius,
+    //        circleModel.Center.Y - circleModel.Radius,
+    //        circleModel.Center.Y + circleModel.Radius);
+    //}
+
     public static BoundingBox ComputeBoundingBox(
-        this LineModel lineModel)
+        this Craft.Math.Point2D point)
     {
-        var minX = System.Math.Min(lineModel.P1.X, lineModel.P2.X);
-        var maxX = System.Math.Max(lineModel.P1.X, lineModel.P2.X);
-        var minY = System.Math.Min(lineModel.P1.Y, lineModel.P2.Y);
-        var maxY = System.Math.Max(lineModel.P1.Y, lineModel.P2.Y);
+        return new BoundingBox(
+            point.X,
+            point.X,
+            point.Y,
+            point.Y);
+    }
+
+    public static BoundingBox ComputeBoundingBox(
+        this Craft.Math.LineSegment2D lineSegment)
+    {
+        var minX = System.Math.Min(lineSegment.Point1.X, lineSegment.Point2.X);
+        var maxX = System.Math.Max(lineSegment.Point1.X, lineSegment.Point2.X);
+        var minY = System.Math.Min(lineSegment.Point1.Y, lineSegment.Point2.Y);
+        var maxY = System.Math.Max(lineSegment.Point1.Y, lineSegment.Point2.Y);
+
         return new BoundingBox(minX, maxX, minY, maxY);
     }
 
     public static BoundingBox ComputeBoundingBox(
-        this PointModel pointModel)
+        this Craft.Math.Circle2D circle)
     {
         return new BoundingBox(
-            pointModel.P.X,
-            pointModel.P.X,
-            pointModel.P.Y,
-            pointModel.P.Y);
-    }
-
-    public static BoundingBox ComputeBoundingBox(
-        this CircleModel circleModel)
-    {
-        return new BoundingBox(
-            circleModel.Center.X - circleModel.Radius,
-            circleModel.Center.X + circleModel.Radius,
-            circleModel.Center.Y - circleModel.Radius,
-            circleModel.Center.Y + circleModel.Radius);
+            circle.Center.X - circle.Radius,
+            circle.Center.X + circle.Radius,
+            circle.Center.Y - circle.Radius,
+            circle.Center.Y + circle.Radius);
     }
 
     public static BoundingBox ComputeBoundingBox(

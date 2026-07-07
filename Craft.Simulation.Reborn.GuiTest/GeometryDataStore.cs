@@ -24,15 +24,20 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             switch (geometryObject)
             {
-                case LineModel line:
-                    _mxCifQuadTree.Insert(new SpatialItem<object>(line.ComputeBoundingBox(), line));
+                //case LineModel line:
+                //    _mxCifQuadTree.Insert(new SpatialItem<object>(line.ComputeBoundingBox(), line));
+                //    break;
+                //case PointModel point:
+                //    _mxCifQuadTree.Insert(new SpatialItem<object>(point.ComputeBoundingBox(), point));
+                //    break;
+                //case CircleModel circle:
+                //    _mxCifQuadTree.Insert(new SpatialItem<object>(circle.ComputeBoundingBox(), circle));
+                //    break;
+
+                case Math.LineSegment2D lineSegment:
+                    _mxCifQuadTree.Insert(new SpatialItem<object>(lineSegment.ComputeBoundingBox(), lineSegment));
                     break;
-                case PointModel point:
-                    _mxCifQuadTree.Insert(new SpatialItem<object>(point.ComputeBoundingBox(), point));
-                    break;
-                case CircleModel circle:
-                    _mxCifQuadTree.Insert(new SpatialItem<object>(circle.ComputeBoundingBox(), circle));
-                    break;
+
                 default:
                     throw new ArgumentException("Object is not a geometry object");
             }

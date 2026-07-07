@@ -169,13 +169,13 @@ namespace Craft.Simulation.Reborn.GuiTest
         private void UpdateGeometricObjects(
             State state)
         {
-            var geometricObjects = state.BodyStates.Select(bs => new CircleModel
-            {
-                Center = new Point(bs.Position.X, bs.Position.Y),
-                Radius = (bs.Body as CircularBody)!.Radius
-            });
+            //var geometricObjects = state.BodyStates.Select(bs => new CircleModel
+            //{
+            //    Center = new Point(bs.Position.X, bs.Position.Y),
+            //    Radius = (bs.Body as CircularBody)!.Radius
+            //});
 
-            GeometryViewModel.ReplaceDynamicGeometryLayer(geometricObjects);
+            //GeometryViewModel.ReplaceDynamicGeometryLayer(geometricObjects);
         }
 
         private void UpdateStaticGeometricObjects()
@@ -202,101 +202,101 @@ namespace Craft.Simulation.Reborn.GuiTest
         private void InitializeAnimation(
             Scene scene)
         {
-            var staticGeometryObjects = new List<object>();
+            //var staticGeometryObjects = new List<object>();
 
-            scene.Boundaries.ForEach(boundary =>
-            {
-                if (!boundary.Visible) return;
+            //scene.Boundaries.ForEach(boundary =>
+            //{
+            //    if (!boundary.Visible) return;
 
-                switch (boundary)
-                {
-                    case HorizontalLineSegment horizontalLineSegment:
-                        staticGeometryObjects.Add(new LineModel
-                        {
-                            P1 = new Point(horizontalLineSegment.X0, horizontalLineSegment.Y),
-                            P2 = new Point(horizontalLineSegment.X1, horizontalLineSegment.Y)
-                        });
-                        break;
-                    case VerticalLineSegment verticalLineSegment:
-                        staticGeometryObjects.Add(new LineModel
-                        {
-                            P1 = new Point(verticalLineSegment.X, verticalLineSegment.Y0),
-                            P2 = new Point(verticalLineSegment.X, verticalLineSegment.Y1)
-                        });
-                        break;
-                    case LineSegment lineSegment:
-                        staticGeometryObjects.Add(new LineModel
-                        {
-                            P1 = new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
-                            P2 = new Point(lineSegment.Point2.X, lineSegment.Point2.Y)
-                        });
-                        break;
-                    case BoundaryPoint boundaryPoint:
-                        staticGeometryObjects.Add(new PointModel()
-                        {
-                            P = new Point(boundaryPoint.Point.X, boundaryPoint.Point.Y)
-                        });
-                        break;
-                    case CircularBoundary circularBoundary:
-                        staticGeometryObjects.Add(new CircleModel()
-                        {
-                            Center = new Point(circularBoundary.Center.X, circularBoundary.Center.Y),
-                            Radius = circularBoundary.Radius
-                        });
-                        break;
-                    default:
-                        throw new ArgumentException();
-                }
-            });
+            //    switch (boundary)
+            //    {
+            //        case HorizontalLineSegment horizontalLineSegment:
+            //            staticGeometryObjects.Add(new LineModel
+            //            {
+            //                P1 = new Point(horizontalLineSegment.X0, horizontalLineSegment.Y),
+            //                P2 = new Point(horizontalLineSegment.X1, horizontalLineSegment.Y)
+            //            });
+            //            break;
+            //        case VerticalLineSegment verticalLineSegment:
+            //            staticGeometryObjects.Add(new LineModel
+            //            {
+            //                P1 = new Point(verticalLineSegment.X, verticalLineSegment.Y0),
+            //                P2 = new Point(verticalLineSegment.X, verticalLineSegment.Y1)
+            //            });
+            //            break;
+            //        case LineSegment lineSegment:
+            //            staticGeometryObjects.Add(new LineModel
+            //            {
+            //                P1 = new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
+            //                P2 = new Point(lineSegment.Point2.X, lineSegment.Point2.Y)
+            //            });
+            //            break;
+            //        case BoundaryPoint boundaryPoint:
+            //            staticGeometryObjects.Add(new PointModel()
+            //            {
+            //                P = new Point(boundaryPoint.Point.X, boundaryPoint.Point.Y)
+            //            });
+            //            break;
+            //        case CircularBoundary circularBoundary:
+            //            staticGeometryObjects.Add(new CircleModel()
+            //            {
+            //                Center = new Point(circularBoundary.Center.X, circularBoundary.Center.Y),
+            //                Radius = circularBoundary.Radius
+            //            });
+            //            break;
+            //        default:
+            //            throw new ArgumentException();
+            //    }
+            //});
 
-            var boundingBoxes = staticGeometryObjects.Select(geometryObject =>
-            {
-                return geometryObject switch
-                {
-                    LineModel line => line.ComputeBoundingBox(),
-                    PointModel point => point.ComputeBoundingBox(),
-                    CircleModel circle => circle.ComputeBoundingBox(),
-                    _ => throw new InvalidOperationException(),
-                };
-            });
+            //var boundingBoxes = staticGeometryObjects.Select(geometryObject =>
+            //{
+            //    return geometryObject switch
+            //    {
+            //        LineModel line => line.ComputeBoundingBox(),
+            //        PointModel point => point.ComputeBoundingBox(),
+            //        CircleModel circle => circle.ComputeBoundingBox(),
+            //        _ => throw new InvalidOperationException(),
+            //    };
+            //});
 
-            if (boundingBoxes.Any())
-            {
-                _geometryDataStore = new GeometryDataStore(
-                    new BoundingBox(
-                        boundingBoxes.Min(b => b.MinX),
-                        boundingBoxes.Max(b => b.MaxX),
-                        boundingBoxes.Min(b => b.MinY),
-                        boundingBoxes.Max(b => b.MaxY)),
-                    8);
-            }
-            else
-            {
-                _geometryDataStore = new GeometryDataStore(
-                    new BoundingBox(-1, 1, -1, 1),
-                    8);
-            }
+            //if (boundingBoxes.Any())
+            //{
+            //    _geometryDataStore = new GeometryDataStore(
+            //        new BoundingBox(
+            //            boundingBoxes.Min(b => b.MinX),
+            //            boundingBoxes.Max(b => b.MaxX),
+            //            boundingBoxes.Min(b => b.MinY),
+            //            boundingBoxes.Max(b => b.MaxY)),
+            //        8);
+            //}
+            //else
+            //{
+            //    _geometryDataStore = new GeometryDataStore(
+            //        new BoundingBox(-1, 1, -1, 1),
+            //        8);
+            //}
 
-            staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
+            //staticGeometryObjects.ForEach(_geometryDataStore.AddStaticGeometryObject);
 
-            var initialWorldWindowFocus = scene.InitialWorldWindowFocus();
-            var initialWorldWindowSize = scene.InitialWorldWindowSize();
+            //var initialWorldWindowFocus = scene.InitialWorldWindowFocus();
+            //var initialWorldWindowSize = scene.InitialWorldWindowSize();
 
-            GeometryViewModel.RequestedWorldWindow = new BoundingBox(
-                initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
-                initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
-                initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
-                initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
+            //GeometryViewModel.RequestedWorldWindow = new BoundingBox(
+            //    initialWorldWindowFocus.X - initialWorldWindowSize.Width / 2,
+            //    initialWorldWindowFocus.X + initialWorldWindowSize.Width / 2,
+            //    initialWorldWindowFocus.Y - initialWorldWindowSize.Height / 2,
+            //    initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
 
-            UpdateStaticGeometricObjects();
-            UpdateGeometricObjects(scene.InitialState);
+            //UpdateStaticGeometricObjects();
+            //UpdateGeometricObjects(scene.InitialState);
 
-            if (scene.ViewMode == SceneViewMode.FocusOnFirstBody)
-            {
-                UpdateFocus(scene.InitialState.BodyStates.First().Position);
-            }
+            //if (scene.ViewMode == SceneViewMode.FocusOnFirstBody)
+            //{
+            //    UpdateFocus(scene.InitialState.BodyStates.First().Position);
+            //}
 
-            RefreshButtons();
+            //RefreshButtons();
         }
 
         private void RefreshButtons()

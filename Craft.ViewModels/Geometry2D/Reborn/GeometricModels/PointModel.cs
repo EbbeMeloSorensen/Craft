@@ -1,8 +1,8 @@
-﻿using System.Windows;
+﻿//using System.Windows;
 
-namespace Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
+//namespace Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 
-public class PointModel
-{
-    public Point P { get; set; }
-}
+//public class PointModel
+//{
+//    public Point P { get; set; }
+//}
