@@ -7,7 +7,6 @@ using Craft.DataStructures.Geometry;
 using Craft.Simulation.Bodies;
 using Craft.Simulation.Boundaries;
 using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using Craft.ViewModels.Simulation;
 
 namespace Craft.Simulation.Reborn.GuiTest
@@ -158,7 +157,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 return;
             }
 
-            UpdateGeometricObjects(e.State);
+            UpdateDynamicGeometricObjects(e.State);
 
             if (SceneListViewModel.ActiveScene.ViewMode == SceneViewMode.FocusOnFirstBody)
             {
@@ -166,7 +165,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             }
         }
 
-        private void UpdateGeometricObjects(
+        private void UpdateDynamicGeometricObjects(
             State state)
         {
             var geometricObjects = state.BodyStates.Select(bs => new Circle2D(
@@ -277,7 +276,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 initialWorldWindowFocus.Y + initialWorldWindowSize.Height / 2);
 
             UpdateStaticGeometricObjects();
-            UpdateGeometricObjects(scene.InitialState);
+            UpdateDynamicGeometricObjects(scene.InitialState);
 
             if (scene.ViewMode == SceneViewMode.FocusOnFirstBody)
             {
