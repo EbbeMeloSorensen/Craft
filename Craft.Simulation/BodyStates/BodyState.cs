@@ -1,13 +1,15 @@
 ﻿using Craft.Math;
+using Craft.Simulation.BodyStates.Interfaces;
 using Craft.Simulation.Bodies;
 
 namespace Craft.Simulation.BodyStates
 {
-    public class BodyState
+    public class BodyState : IBodyState
     {
         protected static readonly Vector2D _zeroVector = new Vector2D(0, 0);
 
         public Body Body { get; }
+
         public Vector2D Position { get; set; }
         
         // Dette er den velocity, man initialiserer en bodystate med, og derudover er det den,

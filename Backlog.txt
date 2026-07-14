@@ -141,7 +141,11 @@ In progress:
     Husk på det, som ChatGpt sagde om at man ikke behøver at skelne hårdt mellem bodies og boundaries.
     I princippet kunne man gøre det, om den er dynamisk, til en property på objekterne
     Essensen er i hvert fald, at statiske objekter placeres i en indekserbar container alla et MxCifQuadTree,
-    mens dynamiske objekter placeres i en container, der ikke nødvendigvis er indekserbar
+    mens dynamiske objekter placeres i en container, der ikke nødvendigvis er indekserbar.
+    Hvad med at lave det sådan, at når man laver et nyt layer til dynamiske objekter, så skal man også kun tage dem, der ligger inden for World Window.
+    Man kunne også gøre det muligt for States collection af bodies at indeholde "boundaries".
+    Husk på, at en State essentielt er en collection af body states, der bare indeholder position og hastighed for bodies
+    Skulle man mon generalisere det noget mere, så en BodyState som udgangspunkt
 
 * Reparer Newtons cradle (den knækkede i forbindelse med at du refaktorerede simulation koden og f.eks. fjernede buffere)
 * Fix det med at ContentControl setuppet ikke virker i Craft.Simulation.Reborn.GuiTest

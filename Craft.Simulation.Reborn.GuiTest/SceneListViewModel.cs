@@ -30,6 +30,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             _sceneDictionary = new Dictionary<string, Scene>();
             Scenes = new ObservableCollection<Scene>();
 
+            AddScene(GenerateSceneDoor());
             AddScene(GenerateSceneBouncingBall());
             AddScene(GenerateSceneExploringRoom());
             AddScene(GenerateSceneExploringMaze(true, 10, 10));
@@ -68,6 +69,55 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             _sceneDictionary[scene.Name] = scene;
             Scenes.Add(scene);
+        }
+
+        // Denne skal som udgangspunkt minde om den scene, hvor man bare roterer en kugle.
+        // .. den kan du passende genoplive, og i den forbindelse skal du finde ud af,
+        // hvordan man tegner noget alla den der gule pacman kugle
+        private Scene GenerateSceneDoor()
+        {
+            var mass = 1.0;
+            var affectedByGravity = true;
+            var affectedByBoundaries = true;
+            var percentageOpen = 0.0;
+
+            var initialState = new State();
+
+            var door = new BodyLineSegment(1, mass, affectedByGravity, affectedByBoundaries, null)
+            {
+                Point1 = new Vector2D(1, 1),
+                Point2 = new Vector2D(2, 1),
+            };
+            initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
+
+            var name = "Auto: Door";
+            var standardGravity = 9.82;
+            var initialWorldWindowUpperLeft = new Point2D(-1.4, -1.3);
+            var initialWorldWindowLowerRight = new Point2D(5, 3);
+            var gravitationalConstant = 0.0;
+            var coefficientOfFriction = 0.0;
+            var timeFactor = 1.0;
+            var handleBoundaryCollisions = true;
+            var handleBodyCollisions = false;
+            var deltaT = 0.001;
+
+            var scene = new Scene(
+                name,
+                initialWorldWindowUpperLeft,
+                initialWorldWindowLowerRight,
+                initialState,
+                standardGravity,
+                gravitationalConstant,
+                coefficientOfFriction,
+                timeFactor,
+                handleBoundaryCollisions,
+                handleBodyCollisions,
+                deltaT,
+                SceneViewMode.Stationary);
+
+            scene.InitializeBoundaryDataStore();
+
+            return scene;
         }
 
         private Scene GenerateSceneBouncingBall()

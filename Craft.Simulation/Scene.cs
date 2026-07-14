@@ -225,6 +225,11 @@ namespace Craft.Simulation
 
         public void InitializeBoundaryDataStore()
         {
+            if (!Boundaries.Any())
+            {
+                return;
+            }
+
             var boundingBoxes = Boundaries.Select(
                 boundary => boundary.ComputeBoundingBox());
 

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections;
+using System.Windows;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Craft.Logging;
@@ -168,9 +169,19 @@ namespace Craft.Simulation.Reborn.GuiTest
         private void UpdateDynamicGeometricObjects(
             State state)
         {
-            var geometricObjects = state.BodyStates.Select(bs => new Circle2D(
-                new Point2D(bs.Position.X, bs.Position.Y),
-                (bs.Body as CircularBody)!.Radius));
+            var geometricObjects = new ArrayList();
+
+            state.BodyStates.ForEach(bs =>
+            {
+                switch (bs.Body)
+                {
+                    case CircularBody circularBody:
+                        geometricObjects.Add(new Circle2D(
+                            new Point2D(bs.Position.X, bs.Position.Y),
+                            circularBody.Radius));
+                        break;
+                }
+            });
 
             GeometryViewModel.ReplaceDynamicGeometryLayer(geometricObjects);
         }
