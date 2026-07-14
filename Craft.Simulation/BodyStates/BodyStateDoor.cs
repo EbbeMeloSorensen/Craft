@@ -31,4 +31,16 @@ public class BodyStateDoor : BodyState
             NaturalVelocity = NaturalVelocity,
         };
     }
+
+    public override BodyState Propagate(
+        double time,
+        Vector2D force)
+    {
+        return new BodyStateDoor(Body)
+        {
+            Position = Position,
+            NaturalVelocity = NaturalVelocity,
+            PercentageOpen = PercentageOpen
+        };
+    }
 }

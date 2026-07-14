@@ -83,14 +83,14 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             var initialState = new State();
 
-            var door = new BodyLineSegment(1, mass, affectedByGravity, affectedByBoundaries, null)
+            var door = new BodyDoor(1, mass, affectedByGravity, affectedByBoundaries, null)
             {
                 Point1 = new Vector2D(1, 1),
                 Point2 = new Vector2D(2, 1),
             };
             initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
 
-            var name = "Auto: Door";
+            var name = "Interactive: Door, Simple";
             var standardGravity = 9.82;
             var initialWorldWindowUpperLeft = new Point2D(-1.4, -1.3);
             var initialWorldWindowLowerRight = new Point2D(5, 3);
@@ -114,6 +114,34 @@ namespace Craft.Simulation.Reborn.GuiTest
                 handleBodyCollisions,
                 deltaT,
                 SceneViewMode.Stationary);
+
+            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            {
+                var currentStateOfDoor = currentState.BodyStates.First() as BodyStateDoor;
+
+                var newPercentageOpen = currentStateOfDoor.PercentageOpen;
+
+                if (keyboardState.LeftArrowDown)
+                {
+                    // Door is closing
+                    newPercentageOpen = System.Math.Max(newPercentageOpen - 4, 0);
+                }
+
+                if (keyboardState.RightArrowDown)
+                {
+                    // Door is opening
+                    newPercentageOpen = System.Math.Min(newPercentageOpen + 4, 100);
+                }
+
+                if (System.Math.Abs(newPercentageOpen - currentStateOfDoor.PercentageOpen) < 0.01)
+                {
+                    return false;
+                }
+
+                currentStateOfDoor.PercentageOpen = newPercentageOpen;
+
+                return true;
+            };
 
             scene.InitializeBoundaryDataStore();
 

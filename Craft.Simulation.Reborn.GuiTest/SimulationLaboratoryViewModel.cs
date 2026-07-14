@@ -9,6 +9,7 @@ using Craft.Simulation.Bodies;
 using Craft.Simulation.Boundaries;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Simulation;
+using Craft.Simulation.BodyStates;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
@@ -179,6 +180,33 @@ namespace Craft.Simulation.Reborn.GuiTest
                         geometricObjects.Add(new Circle2D(
                             new Point2D(bs.Position.X, bs.Position.Y),
                             circularBody.Radius));
+                        break;
+                    case BodyDoor bodyDoor:
+                        var doorAsVector = new Vector2D(
+                            bodyDoor.Point2.X - bodyDoor.Point1.X,
+                            bodyDoor.Point2.Y - bodyDoor.Point1.Y);
+                        var hatted = doorAsVector.Hat();
+                        var doorWidth = doorAsVector.Length;
+                        var bodyStateDoor = bs as BodyStateDoor;
+                        var angle = (bodyStateDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
+
+                        var pt2_x = 
+                            bodyDoor.Point1.X +
+                            System.Math.Cos(angle) * doorAsVector.X +
+                            System.Math.Sin(angle) * hatted.X;
+
+                        var pt2_y =
+                            bodyDoor.Point1.Y +
+                            System.Math.Cos(angle) * doorAsVector.Y +
+                            System.Math.Sin(angle) * hatted.Y;
+
+                        geometricObjects.Add(new LineSegment2D(
+                            new Point2D(
+                                bodyDoor.Point1.X,
+                                bodyDoor.Point1.Y),
+                            new Point2D(
+                                pt2_x,
+                                pt2_y)));
                         break;
                 }
             });

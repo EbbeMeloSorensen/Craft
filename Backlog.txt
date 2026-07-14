@@ -128,9 +128,19 @@ Done:
   - Pas på, den ikke fucker aspect ratio (OK)
 * Fix buggen med at man ikke ser boundary points i reborn (OK)
 * Eksponer det med at den crasher under TearDown, hvis den løbende sætter fokus
+* Lav en scene i laboratoriet med en dør, hvor venstre og højre piletast styrer, hvor meget døren er åben
 
 In progress:
-* Eksperimenter med døre
+
+Next:
+* Lav en scene i laboratoriet med en dør, hvor ÈT tryk på højre piletast gør, at døren åbnes
+* Lav en scene i laboratoriet, hvor der både er en dør og en bold, som man styrer, og hvor
+  døren spærrer for bolden som hvis den var et (Boundary) LineSegment
+* Lav en scene, hvor spilleren kan skyde en probe på døren og derved trigge, at den åbnes.
+  .. døren kan ikke lukkes igen (ligesom i Dark Alliance)
+  .. døren åbner sig altid væk fra spilleren (ligesom i Dark Alliance)
+  ..det vil nok være hensigtsmæssigt, hvis spilleren fryses, mens døren åbnes, så man undgår vanskelige edge cases
+* Overvejelser vedr døre
   - Pt har du BOUNDARIES, som puttes ind i et data store, som er MxCidQuadTree baseret.
     Derudover har du BODIES, som placeres i en liste.
     Når WorldWindowExpanded ændres, hentes statiske objekter fra GeometryDataStore, som bor hos den view model, der også er host for GeometryViewModel

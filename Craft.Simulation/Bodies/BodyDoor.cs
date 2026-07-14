@@ -2,12 +2,12 @@
 
 namespace Craft.Simulation.Bodies;
 
-public class BodyLineSegment : Body
+public class BodyDoor : Body
 {
     public Vector2D Point1 { get; set; }
     public Vector2D Point2 { get; set; }
 
-    public BodyLineSegment(
+    public BodyDoor(
         int id,
         double mass,
         bool affectedByGravity,
