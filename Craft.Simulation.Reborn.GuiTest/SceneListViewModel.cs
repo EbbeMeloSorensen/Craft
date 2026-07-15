@@ -33,7 +33,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             AddScene(GenerateSceneDoor1());
             AddScene(GenerateSceneDoor2());
             AddScene(GenerateSceneBouncingBall());
-            AddScene(GenerateSceneExploringRoom());
+            AddScene(GenerateSceneExploringRoom1());
+            AddScene(GenerateSceneExploringRoom2());
             AddScene(GenerateSceneExploringMaze(true, 10, 10));
             AddScene(GenerateSceneNewtonsCradle1());
             AddScene(GenerateSceneNewtonsCradle2());
@@ -77,18 +78,19 @@ namespace Craft.Simulation.Reborn.GuiTest
         // hvordan man tegner noget alla den der gule pacman kugle
         private Scene GenerateSceneDoor1()
         {
+            var initialState = new State();
+
             var mass = 1.0;
             var affectedByGravity = true;
             var affectedByBoundaries = true;
             var percentageOpen = 0.0;
-
-            var initialState = new State();
 
             var door = new BodyDoor(1, mass, affectedByGravity, affectedByBoundaries, null)
             {
                 Point1 = new Vector2D(1, 1),
                 Point2 = new Vector2D(2, 1),
             };
+
             initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
 
             var name = "Interactive: Door, Simple";
@@ -151,18 +153,19 @@ namespace Craft.Simulation.Reborn.GuiTest
 
         private Scene GenerateSceneDoor2()
         {
+            var initialState = new State();
+
             var mass = 1.0;
             var affectedByGravity = true;
             var affectedByBoundaries = true;
             var percentageOpen = 0.0;
-
-            var initialState = new State();
 
             var door = new BodyDoor(1, mass, affectedByGravity, affectedByBoundaries, null)
             {
                 Point1 = new Vector2D(1, 1),
                 Point2 = new Vector2D(2, 1),
             };
+
             initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
 
             var name = "Interactive: Door, opening by itself when triggered";
@@ -288,17 +291,17 @@ namespace Craft.Simulation.Reborn.GuiTest
             return scene;
         }
 
-        private Scene GenerateSceneExploringRoom()
+        private Scene GenerateSceneExploringRoom1()
         {
             var initialState = new State();
             initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, 1.7))
             {
-                Orientation = 0.25 * System.Math.PI
+                Orientation = 0.5 * System.Math.PI
             });
 
             var handleBoundaryCollisions = true;
 
-            var scene = new Scene("Interactive: Exploring room", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, false, 0.005);
+            var scene = new Scene("Interactive: Exploring room I", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, false, 0.005);
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
@@ -345,8 +348,91 @@ namespace Craft.Simulation.Reborn.GuiTest
             };
 
             scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
-            scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
             scene.AddRectangularBoundary(-0.2, 2.2, 0.6, 1.1, false);
+
+            scene.InitializeBoundaryDataStore();
+
+            return scene;
+        }
+
+        private Scene GenerateSceneExploringRoom2()
+        {
+            var initialState = new State();
+
+            // Add bodies to initial state
+
+            // Player
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, 1.7))
+            {
+                Orientation = 0.5 * System.Math.PI
+            });
+
+            // Door
+            var mass = 1.0;
+            var affectedByGravity = true;
+            var affectedByBoundaries = true;
+            var percentageOpen = 0.0;
+
+            var door = new BodyDoor(1, mass, affectedByGravity, affectedByBoundaries, null)
+            {
+                Point1 = new Vector2D(0.5, 1.2),
+                Point2 = new Vector2D(1.5, 1.2),
+            };
+
+            initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
+
+            var handleBoundaryCollisions = true;
+            var handleBodyCollisions = true;
+
+            var scene = new Scene("Interactive: Exploring room II", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, handleBodyCollisions, 0.005);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.Block;
+
+            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            {
+                var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
+                var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
+                var currentArtificialSpeed = currentStateOfMainBody.ArtificialVelocity.Length;
+
+                var newRotationalSpeed = 0.0;
+
+                if (keyboardState.LeftArrowDown)
+                {
+                    newRotationalSpeed += System.Math.PI;
+                }
+
+                if (keyboardState.RightArrowDown)
+                {
+                    newRotationalSpeed -= System.Math.PI;
+                }
+
+                var newArtificialSpeed = 0.0;
+
+                if (keyboardState.UpArrowDown)
+                {
+                    newArtificialSpeed += 1.5;
+                }
+
+                if (keyboardState.DownArrowDown)
+                {
+                    newArtificialSpeed -= 1.5;
+                }
+
+                currentStateOfMainBody.RotationalSpeed = newRotationalSpeed;
+                currentStateOfMainBody.ArtificialVelocity = new Vector2D(newArtificialSpeed, 0);
+
+                if (System.Math.Abs(newRotationalSpeed - currentRotationalSpeed) < 0.01 &&
+                    System.Math.Abs(newArtificialSpeed - currentArtificialSpeed) < 0.01)
+                {
+                    return false;
+                }
+
+                return true;
+            };
+
+            // Walls
+            scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
 
             scene.InitializeBoundaryDataStore();
 

@@ -130,16 +130,17 @@ Done:
 * Eksponer det med at den crasher under TearDown, hvis den løbende sætter fokus
 * Lav en scene i laboratoriet med en dør, hvor venstre og højre piletast styrer, hvor meget døren er åben
 * Lav en scene i laboratoriet med en dør, hvor ÈT tryk på højre eller venstre piletast gør, at døren åbnes eller lukkes
+* Lav en scene i laboratoriet, hvor der både er en dør og en bold, som man styrer, og hvor
+  døren spærrer for bolden som hvis den var et (Boundary) LineSegment
 
 In progress:
 
 Next:
-* Lav en scene i laboratoriet, hvor der både er en dør og en bold, som man styrer, og hvor
-  døren spærrer for bolden som hvis den var et (Boundary) LineSegment
 * Lav en scene, hvor spilleren kan skyde en probe på døren og derved trigge, at den åbnes.
   .. døren kan ikke lukkes igen (ligesom i Dark Alliance)
   .. døren åbner sig altid væk fra spilleren (ligesom i Dark Alliance)
   ..det vil nok være hensigtsmæssigt, hvis spilleren fryses, mens døren åbnes, så man undgår vanskelige edge cases
+* Gør det samme, men hvor der er TO døre, spilleren kan interagere med
 * Overvejelser vedr døre
   - Pt har du BOUNDARIES, som puttes ind i et data store, som er MxCidQuadTree baseret.
     Derudover har du BODIES, som placeres i en liste.
