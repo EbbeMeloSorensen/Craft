@@ -30,7 +30,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             _sceneDictionary = new Dictionary<string, Scene>();
             Scenes = new ObservableCollection<Scene>();
 
-            AddScene(GenerateSceneDoor());
+            AddScene(GenerateSceneDoor1());
+            AddScene(GenerateSceneDoor2());
             AddScene(GenerateSceneBouncingBall());
             AddScene(GenerateSceneExploringRoom());
             AddScene(GenerateSceneExploringMaze(true, 10, 10));
@@ -74,7 +75,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         // Denne skal som udgangspunkt minde om den scene, hvor man bare roterer en kugle.
         // .. den kan du passende genoplive, og i den forbindelse skal du finde ud af,
         // hvordan man tegner noget alla den der gule pacman kugle
-        private Scene GenerateSceneDoor()
+        private Scene GenerateSceneDoor1()
         {
             var mass = 1.0;
             var affectedByGravity = true;
@@ -141,6 +142,97 @@ namespace Craft.Simulation.Reborn.GuiTest
                 currentStateOfDoor.PercentageOpen = newPercentageOpen;
 
                 return true;
+            };
+
+            scene.InitializeBoundaryDataStore();
+
+            return scene;
+        }
+
+        private Scene GenerateSceneDoor2()
+        {
+            var mass = 1.0;
+            var affectedByGravity = true;
+            var affectedByBoundaries = true;
+            var percentageOpen = 0.0;
+
+            var initialState = new State();
+
+            var door = new BodyDoor(1, mass, affectedByGravity, affectedByBoundaries, null)
+            {
+                Point1 = new Vector2D(1, 1),
+                Point2 = new Vector2D(2, 1),
+            };
+            initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
+
+            var name = "Interactive: Door, opening by itself when triggered";
+            var standardGravity = 9.82;
+            var initialWorldWindowUpperLeft = new Point2D(-1.4, -1.3);
+            var initialWorldWindowLowerRight = new Point2D(5, 3);
+            var gravitationalConstant = 0.0;
+            var coefficientOfFriction = 0.0;
+            var timeFactor = 1.0;
+            var handleBoundaryCollisions = true;
+            var handleBodyCollisions = false;
+            var deltaT = 0.001;
+
+            var scene = new Scene(
+                name,
+                initialWorldWindowUpperLeft,
+                initialWorldWindowLowerRight,
+                initialState,
+                standardGravity,
+                gravitationalConstant,
+                coefficientOfFriction,
+                timeFactor,
+                handleBoundaryCollisions,
+                handleBodyCollisions,
+                deltaT,
+                SceneViewMode.Stationary);
+
+            // ~These variables are part of a closure
+            var doorActivationMaxCount = 20;
+            var doorActivationCounter = 0;
+            var doorIsOpen = false;
+
+            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            {
+                var currentStateOfDoor = currentState.BodyStates.First() as BodyStateDoor;
+
+                if (doorActivationCounter > 0)
+                {
+                    // Door is activated
+                    doorActivationCounter--;
+
+                    var percentageOpen = 100.0 * (doorActivationMaxCount - doorActivationCounter) / doorActivationMaxCount;
+
+                    if (doorIsOpen)
+                    {
+                        percentageOpen = 100 - percentageOpen;
+                    }
+
+                    currentStateOfDoor.PercentageOpen = percentageOpen;
+
+                    if (doorActivationCounter == 0)
+                    {
+                        // Final step of activation, so store the state
+                        doorIsOpen = System.Math.Abs(percentageOpen - 100) < 0.01;
+                    }
+
+                    return true;
+                }
+                else if (keyboardState.LeftArrowDown && doorIsOpen)
+                {
+                    // Activate door (close)
+                    doorActivationCounter = doorActivationMaxCount;
+                }
+                else if (keyboardState.RightArrowDown && !doorIsOpen)
+                {
+                    // Activate door (open)
+                    doorActivationCounter = doorActivationMaxCount;
+                }
+
+                return false;
             };
 
             scene.InitializeBoundaryDataStore();

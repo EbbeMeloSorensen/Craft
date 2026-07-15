@@ -129,11 +129,11 @@ Done:
 * Fix buggen med at man ikke ser boundary points i reborn (OK)
 * Eksponer det med at den crasher under TearDown, hvis den løbende sætter fokus
 * Lav en scene i laboratoriet med en dør, hvor venstre og højre piletast styrer, hvor meget døren er åben
+* Lav en scene i laboratoriet med en dør, hvor ÈT tryk på højre eller venstre piletast gør, at døren åbnes eller lukkes
 
 In progress:
 
 Next:
-* Lav en scene i laboratoriet med en dør, hvor ÈT tryk på højre piletast gør, at døren åbnes
 * Lav en scene i laboratoriet, hvor der både er en dør og en bold, som man styrer, og hvor
   døren spærrer for bolden som hvis den var et (Boundary) LineSegment
 * Lav en scene, hvor spilleren kan skyde en probe på døren og derved trigge, at den åbnes.
