@@ -134,12 +134,12 @@ Done:
   døren spærrer for bolden som hvis den var et (Boundary) LineSegment
 
 In progress:
-
-Next:
 * Lav en scene, hvor spilleren kan skyde en probe på døren og derved trigge, at den åbnes.
   .. døren kan ikke lukkes igen (ligesom i Dark Alliance)
   .. døren åbner sig altid væk fra spilleren (ligesom i Dark Alliance)
-  ..det vil nok være hensigtsmæssigt, hvis spilleren fryses, mens døren åbnes, så man undgår vanskelige edge cases
+  .. spilleren skal fryses, mens døren åbnes, så man undgår vanskelige edge cases
+
+Next:
 * Gør det samme, men hvor der er TO døre, spilleren kan interagere med
 * Overvejelser vedr døre
   - Pt har du BOUNDARIES, som puttes ind i et data store, som er MxCidQuadTree baseret.
