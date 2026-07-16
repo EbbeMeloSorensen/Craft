@@ -4,7 +4,6 @@ using Craft.Simulation.BodyStates;
 using Craft.Simulation.Boundaries;
 using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
-using System.IO;
 
 namespace Craft.Simulation.Reborn.GuiTest
 {
@@ -458,7 +457,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             var affectedByBoundaries = true;
             var percentageOpen = 0.0;
 
-            var door = new BodyDoor(1, mass, affectedByGravity, affectedByBoundaries, null)
+            var door = new BodyDoor(2, mass, affectedByGravity, affectedByBoundaries, null)
             {
                 Point1 = new Vector2D(0.5, 1.2),
                 Point2 = new Vector2D(1.5, 1.2),
@@ -474,8 +473,23 @@ namespace Craft.Simulation.Reborn.GuiTest
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
             scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.Block;
 
+            scene.CheckForCollisionBetweenBodiesCallback = (body1, body2) =>
+            {
+                if (body1 is BodyDoor && body2 is BodyDoor)
+                {
+                    // Dette burde ikke være nødvendigt
+                    return false;
+                }
+
+                return body1 is BodyDoor || body2 is BodyDoor;
+            };
+
+            var spaceKeyWasPressed = false;
+
             scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
             {
+                spaceKeyWasPressed = keyboardEvents.SpaceDown && keyboardState.SpaceDown;
+
                 var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
                 var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
                 var currentArtificialSpeed = currentStateOfMainBody.ArtificialVelocity.Length;
@@ -514,6 +528,45 @@ namespace Craft.Simulation.Reborn.GuiTest
                 }
 
                 return true;
+            };
+
+            var nextBodyId = 1000;
+            var bodyDisposalMap = new Dictionary<int, int>();
+
+            scene.PostPropagationCallBack = (propagatedState, boundaryCollisionReports, bodyCollisionReports) =>
+            {
+                // Possibly remove projectile
+                if (bodyDisposalMap.ContainsKey(propagatedState.Index))
+                {
+                    var projectile = propagatedState.TryGetBodyState(bodyDisposalMap[propagatedState.Index]);
+                    propagatedState?.RemoveBodyState(projectile);
+                }
+
+                var currentStateOfPlayer = propagatedState.TryGetBodyState(1) as BodyStateClassic;
+
+                // Determine if a projectile should be launched
+                if (spaceKeyWasPressed)
+                {
+                    spaceKeyWasPressed = false;
+
+                    var lookDirection = new Vector2D(
+                        System.Math.Cos(currentStateOfPlayer!.Orientation),
+                        -System.Math.Sin(currentStateOfPlayer!.Orientation));
+
+                    bodyDisposalMap[propagatedState.Index + 50] = nextBodyId;
+
+                    var probeRadius = 0.05;
+
+                    propagatedState.AddBodyState(new BodyState(
+                        new Projectile(nextBodyId++, probeRadius), currentStateOfPlayer!.Position)
+                    {
+                        NaturalVelocity = 3.0 * lookDirection
+                    });
+                }
+
+                var response = new PostPropagationResponse();
+
+                return response;
             };
 
             // Walls

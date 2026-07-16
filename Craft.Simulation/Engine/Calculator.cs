@@ -460,6 +460,17 @@ namespace Craft.Simulation.Engine
                     var bs2After = kvp2.Key;
                     var body2 = bs2Before.Body;
 
+                    if (body1 is Projectile || body2 is Projectile)
+                    {
+                        var a = 0;
+                    }
+
+                    if (body1 is BodyDoor &&
+                        body2 is BodyDoor)
+                    {
+                        var a = 0;
+                    }
+
                     if (idsOfHandledBodies.Contains(body2.Id))
                     {
                         continue;
