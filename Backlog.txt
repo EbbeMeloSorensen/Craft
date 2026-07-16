@@ -135,9 +135,11 @@ Done:
 
 In progress:
 * Lav en scene, hvor spilleren kan skyde en probe på døren og derved trigge, at den åbnes.
-  .. døren kan ikke lukkes igen (ligesom i Dark Alliance)
+  .. Skyde en probe afsted (OK)
+  .. registrere, at den rammer en dør (OK)
+  .. døren kan ikke lukkes igen (ligesom i Dark Alliance) 
   .. døren åbner sig altid væk fra spilleren (ligesom i Dark Alliance)
-  .. spilleren skal fryses, mens døren åbnes, så man undgår vanskelige edge cases
+  .. spilleren skal fryses, mens døren åbnes, så man undgår vanskelige edge cases (OK)
 
 Next:
 * Gør det samme, men hvor der er TO døre, spilleren kan interagere med

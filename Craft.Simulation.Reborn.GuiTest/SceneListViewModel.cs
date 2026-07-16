@@ -459,8 +459,8 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             var door = new BodyDoor(2, mass, affectedByGravity, affectedByBoundaries, null)
             {
-                Point1 = new Vector2D(0.5, 1.2),
-                Point2 = new Vector2D(1.5, 1.2),
+                Point1 = new Vector2D(1.5, 0.85),
+                Point2 = new Vector2D(0.5, 0.85),
             };
 
             initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
@@ -484,6 +484,10 @@ namespace Craft.Simulation.Reborn.GuiTest
                 return body1 is BodyDoor || body2 is BodyDoor;
             };
 
+            var doorActivationMaxCount = 20;
+            var doorActivationCounter = 0;
+            var doorIsOpen = false;
+
             var spaceKeyWasPressed = false;
 
             scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
@@ -491,8 +495,34 @@ namespace Craft.Simulation.Reborn.GuiTest
                 spaceKeyWasPressed = keyboardEvents.SpaceDown && keyboardState.SpaceDown;
 
                 var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
+                var currentStateOfDoor = currentState.BodyStates.Skip(1).First() as BodyStateDoor;
                 var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
                 var currentArtificialSpeed = currentStateOfMainBody.ArtificialVelocity.Length;
+
+                if (doorActivationCounter > 0)
+                {
+                    // Door is activated
+                    doorActivationCounter--;
+
+                    var percentageOpen = 100.0 * (doorActivationMaxCount - doorActivationCounter) / doorActivationMaxCount;
+
+                    if (doorIsOpen)
+                    {
+                        percentageOpen = 100 - percentageOpen;
+                    }
+
+                    currentStateOfMainBody.RotationalSpeed = 0;
+                    currentStateOfMainBody.ArtificialVelocity = new Vector2D(0, 0);
+                    currentStateOfDoor.PercentageOpen = percentageOpen;
+
+                    if (doorActivationCounter == 0)
+                    {
+                        // Final step of activation, so store the state
+                        doorIsOpen = System.Math.Abs(percentageOpen - 100) < 0.01;
+                    }
+
+                    return true;
+                }
 
                 var newRotationalSpeed = 0.0;
 
@@ -566,11 +596,30 @@ namespace Craft.Simulation.Reborn.GuiTest
 
                 var response = new PostPropagationResponse();
 
+                // Determine if we triggered an event (activating a door)
+                if (!doorIsOpen && bodyCollisionReports.Any())
+                {
+                    var bodyCollisionReport = bodyCollisionReports.First();
+
+                    if ((bodyCollisionReport.Body1 is BodyDoor && bodyCollisionReport.Body2 is Projectile) ||
+                        (bodyCollisionReport.Body2 is BodyDoor && bodyCollisionReport.Body1 is Projectile))
+                    {
+                        doorActivationCounter = doorActivationMaxCount;
+                    }
+                }
+
                 return response;
             };
 
+            scene.InitializationCallback = (initialState, message) =>
+            {
+                doorIsOpen = false;
+            };
+
             // Walls
-            scene.AddRectangularBoundary(-1, 3, -0.3, 2, false);
+            scene.AddRectangularBoundary(-1, 3, -1, 2, false);
+            scene.AddRectangularBoundary(-1, 0.5, 0.75, 0.95, false);
+            scene.AddRectangularBoundary(1.5, 3, 0.75, 0.95, false);
 
             scene.InitializeBoundaryDataStore();
 

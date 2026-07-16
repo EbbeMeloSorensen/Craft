@@ -468,6 +468,7 @@ namespace Craft.Simulation.Engine
                     if (body1 is BodyDoor &&
                         body2 is BodyDoor)
                     {
+                        // Dette burde ikke ske, men det gør det - måske fordi Skip ikke opfører sig som du tror..
                         var a = 0;
                     }
 
@@ -567,9 +568,33 @@ namespace Craft.Simulation.Engine
                             var circularBody = bsCircularBodyAfter.Body as CircularBody;
                             var door = bsDoor.Body as BodyDoor;
 
+                            Vector2D point2 = door.Point2;
+
+                            if (bsDoor.PercentageOpen > 99)
+                            {
+                                var doorAsVector = new Vector2D(
+                                    door.Point2.X - door.Point1.X,
+                                    door.Point2.Y - door.Point1.Y);
+                                var hatted = doorAsVector.Hat();
+                                var doorWidth = doorAsVector.Length;
+                                var angle = (bsDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
+
+                                var pt2_x =
+                                    door.Point1.X +
+                                    System.Math.Cos(angle) * doorAsVector.X +
+                                    System.Math.Sin(angle) * hatted.X;
+
+                                var pt2_y =
+                                    door.Point1.Y +
+                                    System.Math.Cos(angle) * doorAsVector.Y +
+                                    System.Math.Sin(angle) * hatted.Y;
+
+                                point2 = new Vector2D(pt2_x, pt2_y);
+                            }
+
                             var lineSegment = new LineSegment(
                                 door.Point1,
-                                door.Point2);
+                                point2);
 
                             if (!lineSegment.Intersects(bsCircularBodyAfter))
                             {
