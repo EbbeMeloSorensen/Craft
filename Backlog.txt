@@ -132,14 +132,14 @@ Done:
 * Lav en scene i laboratoriet med en dør, hvor ÈT tryk på højre eller venstre piletast gør, at døren åbnes eller lukkes
 * Lav en scene i laboratoriet, hvor der både er en dør og en bold, som man styrer, og hvor
   døren spærrer for bolden som hvis den var et (Boundary) LineSegment
-
-In progress:
 * Lav en scene, hvor spilleren kan skyde en probe på døren og derved trigge, at den åbnes.
   .. Skyde en probe afsted (OK)
   .. registrere, at den rammer en dør (OK)
-  .. døren kan ikke lukkes igen (ligesom i Dark Alliance) 
-  .. døren åbner sig altid væk fra spilleren (ligesom i Dark Alliance)
+  .. døren kan ikke lukkes igen (ligesom i Dark Alliance) (OK)
+  .. døren åbner sig altid væk fra spilleren (ligesom i Dark Alliance) (OK)
   .. spilleren skal fryses, mens døren åbnes, så man undgår vanskelige edge cases (OK)
+
+In progress:
 
 Next:
 * Gør det samme, men hvor der er TO døre, spilleren kan interagere med

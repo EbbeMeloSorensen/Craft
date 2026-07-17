@@ -182,13 +182,20 @@ namespace Craft.Simulation.Reborn.GuiTest
                             circularBody.Radius));
                         break;
                     case BodyDoor bodyDoor:
+                        var bodyStateDoor = bs as BodyStateDoor;
+                        var angle = (bodyStateDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
+
                         var doorAsVector = new Vector2D(
                             bodyDoor.Point2.X - bodyDoor.Point1.X,
                             bodyDoor.Point2.Y - bodyDoor.Point1.Y);
-                        var hatted = doorAsVector.Hat();
+
                         var doorWidth = doorAsVector.Length;
-                        var bodyStateDoor = bs as BodyStateDoor;
-                        var angle = (bodyStateDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
+                        var hatted = doorAsVector.Hat();
+
+                        if (!bodyStateDoor.OpenClockWise)
+                        {
+                            hatted = -hatted;
+                        }
 
                         var pt2_x = 
                             bodyDoor.Point1.X +

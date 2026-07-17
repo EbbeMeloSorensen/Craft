@@ -91,7 +91,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 Point2 = new Vector2D(2, 1),
             };
 
-            initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
+            initialState.AddBodyState(new BodyStateDoor(door, true, percentageOpen));
 
             var name = "Interactive: Door, Simple";
             var standardGravity = 9.82;
@@ -166,7 +166,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 Point2 = new Vector2D(2, 1),
             };
 
-            initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
+            initialState.AddBodyState(new BodyStateDoor(door, true, percentageOpen));
 
             var name = "Interactive: Door, opening by itself when triggered";
             var standardGravity = 9.82;
@@ -379,7 +379,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 Point2 = new Vector2D(1.5, 1.2),
             };
 
-            initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
+            initialState.AddBodyState(new BodyStateDoor(door, true, percentageOpen));
 
             var handleBoundaryCollisions = true;
             var handleBodyCollisions = true;
@@ -463,7 +463,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 Point2 = new Vector2D(0.5, 0.85),
             };
 
-            initialState.AddBodyState(new BodyStateDoor(door, percentageOpen));
+            initialState.AddBodyState(new BodyStateDoor(door, true, percentageOpen));
 
             var handleBoundaryCollisions = true;
             var handleBodyCollisions = true;
@@ -477,7 +477,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             {
                 if (body1 is BodyDoor && body2 is BodyDoor)
                 {
-                    // Dette burde ikke være nødvendigt
+                    // Denne guard burde ikke være nødvendigt, da der kun er én dør i scenen,
+                    // men det er den indtil videre
                     return false;
                 }
 
@@ -511,9 +512,16 @@ namespace Craft.Simulation.Reborn.GuiTest
                         percentageOpen = 100 - percentageOpen;
                     }
 
+                    // Dette skal afhænge af, hvor spilleren er i forhold til døren
+                    // Det skulle du kunne regne ud med et prikprodukt
+                    currentStateOfDoor.SetOpeningDirection(
+                        currentStateOfMainBody.Position);
+
+                    currentStateOfDoor.PercentageOpen = percentageOpen;
+
+                    // Freeze the player while the door opens
                     currentStateOfMainBody.RotationalSpeed = 0;
                     currentStateOfMainBody.ArtificialVelocity = new Vector2D(0, 0);
-                    currentStateOfDoor.PercentageOpen = percentageOpen;
 
                     if (doorActivationCounter == 0)
                     {
@@ -594,8 +602,6 @@ namespace Craft.Simulation.Reborn.GuiTest
                     });
                 }
 
-                var response = new PostPropagationResponse();
-
                 // Determine if we triggered an event (activating a door)
                 if (!doorIsOpen && bodyCollisionReports.Any())
                 {
@@ -608,7 +614,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                     }
                 }
 
-                return response;
+                return new PostPropagationResponse();
             };
 
             scene.InitializationCallback = (initialState, message) =>
@@ -618,7 +624,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             // Walls
             scene.AddRectangularBoundary(-1, 3, -1, 2, false);
-            scene.AddRectangularBoundary(-1, 0.5, 0.75, 0.95, false);
+            scene.AddRectangularBoundary(0.3, 0.5, 0.75, 0.95, false);
             scene.AddRectangularBoundary(1.5, 3, 0.75, 0.95, false);
 
             scene.InitializeBoundaryDataStore();

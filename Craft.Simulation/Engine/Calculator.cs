@@ -572,12 +572,19 @@ namespace Craft.Simulation.Engine
 
                             if (bsDoor.PercentageOpen > 99)
                             {
+                                var angle = (bsDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
+
                                 var doorAsVector = new Vector2D(
                                     door.Point2.X - door.Point1.X,
                                     door.Point2.Y - door.Point1.Y);
-                                var hatted = doorAsVector.Hat();
+
                                 var doorWidth = doorAsVector.Length;
-                                var angle = (bsDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
+                                var hatted = doorAsVector.Hat();
+
+                                if (!bsDoor.OpenClockWise)
+                                {
+                                    hatted = -hatted;
+                                }
 
                                 var pt2_x =
                                     door.Point1.X +
