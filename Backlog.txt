@@ -138,28 +138,11 @@ Done:
   .. døren kan ikke lukkes igen (ligesom i Dark Alliance) (OK)
   .. døren åbner sig altid væk fra spilleren (ligesom i Dark Alliance) (OK)
   .. spilleren skal fryses, mens døren åbnes, så man undgår vanskelige edge cases (OK)
+* Gør det samme, men hvor der er TO døre, spilleren kan interagere med
 
 In progress:
 
 Next:
-* Gør det samme, men hvor der er TO døre, spilleren kan interagere med
-* Overvejelser vedr døre
-  - Pt har du BOUNDARIES, som puttes ind i et data store, som er MxCidQuadTree baseret.
-    Derudover har du BODIES, som placeres i en liste.
-    Når WorldWindowExpanded ændres, hentes statiske objekter fra GeometryDataStore, som bor hos den view model, der også er host for GeometryViewModel
-    (Det sker ikke super tit)
-    Når Engine melder, at der er en ny state, laves der på basis af de bodies, der er i den nye state, et nyt layer til visning i Geometry viewet
-    (det sker for hver eneste frame)
-    En dør, som åbnes, er et dynamisk fænomen. Det kunne tale for at en dør laves som en body
-    Husk på det, som ChatGpt sagde om at man ikke behøver at skelne hårdt mellem bodies og boundaries.
-    I princippet kunne man gøre det, om den er dynamisk, til en property på objekterne
-    Essensen er i hvert fald, at statiske objekter placeres i en indekserbar container alla et MxCifQuadTree,
-    mens dynamiske objekter placeres i en container, der ikke nødvendigvis er indekserbar.
-    Hvad med at lave det sådan, at når man laver et nyt layer til dynamiske objekter, så skal man også kun tage dem, der ligger inden for World Window.
-    Man kunne også gøre det muligt for States collection af bodies at indeholde "boundaries".
-    Husk på, at en State essentielt er en collection af body states, der bare indeholder position og hastighed for bodies
-    Skulle man mon generalisere det noget mere, så en BodyState som udgangspunkt
-
 * Reparer Newtons cradle (den knækkede i forbindelse med at du refaktorerede simulation koden og f.eks. fjernede buffere)
 * Fix det med at ContentControl setuppet ikke virker i Craft.Simulation.Reborn.GuiTest
 * Få loggeren på banen igen, evt inspireret af, hvordan du gør med McCifQuadree (og der skal den jo altsp også fixes, så den ikke kun skriver til sidst..)

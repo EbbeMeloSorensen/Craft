@@ -35,6 +35,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             AddScene(GenerateSceneExploringRoom1());
             AddScene(GenerateSceneExploringRoom2());
             AddScene(GenerateSceneExploringRoom3());
+            AddScene(GenerateSceneExploringRoom4());
             AddScene(GenerateSceneExploringMaze(true, 10, 10));
             AddScene(GenerateSceneNewtonsCradle1());
             AddScene(GenerateSceneNewtonsCradle2());
@@ -626,6 +627,211 @@ namespace Craft.Simulation.Reborn.GuiTest
             scene.AddRectangularBoundary(-1, 3, -1, 2, false);
             scene.AddRectangularBoundary(0.3, 0.5, 0.75, 0.95, false);
             scene.AddRectangularBoundary(1.5, 3, 0.75, 0.95, false);
+
+            scene.InitializeBoundaryDataStore();
+
+            return scene;
+        }
+
+        private Scene GenerateSceneExploringRoom4()
+        {
+            var initialState = new State();
+
+            // Add bodies to initial state
+
+            // Player
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.125, 1, true), new Vector2D(1, 1.7))
+            {
+                Orientation = 0.5 * System.Math.PI
+            });
+
+            // Doors
+            var mass = 1.0;
+            var affectedByGravity = true;
+            var affectedByBoundaries = true;
+            var percentageOpen = 0.0;
+
+            var door1 = new BodyDoor(2, mass, affectedByGravity, affectedByBoundaries, null)
+            {
+                Point1 = new Vector2D(0.7, 0.85),
+                Point2 = new Vector2D(-0.3, 0.85),
+            };
+
+            var door2 = new BodyDoor(2, mass, affectedByGravity, affectedByBoundaries, null)
+            {
+                Point1 = new Vector2D(2.3, 0.85),
+                Point2 = new Vector2D(1.3, 0.85),
+            };
+
+            initialState.AddBodyState(new BodyStateDoor(door1, true, percentageOpen));
+            initialState.AddBodyState(new BodyStateDoor(door2, true, percentageOpen));
+
+            var handleBoundaryCollisions = true;
+            var handleBodyCollisions = true;
+
+            var scene = new Scene("Interactive: Exploring room IV", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, handleBoundaryCollisions, handleBodyCollisions, 0.005);
+
+            scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
+            scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.Block;
+
+            scene.CheckForCollisionBetweenBodiesCallback = (body1, body2) =>
+            {
+                if (body1 is BodyDoor && body2 is BodyDoor)
+                {
+                    // Denne guard burde ikke være nødvendigt, da der kun er én dør i scenen,
+                    // men det er den indtil videre
+                    return false;
+                }
+
+                return body1 is BodyDoor || body2 is BodyDoor;
+            };
+
+            Body activatedDoor = null;
+            var doorActivationMaxCount = 20;
+            var doorActivationCounter = 0;
+            //var doorIsOpen = false;
+
+            var spaceKeyWasPressed = false;
+
+            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            {
+                spaceKeyWasPressed = keyboardEvents.SpaceDown && keyboardState.SpaceDown;
+
+                var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
+                var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
+                var currentArtificialSpeed = currentStateOfMainBody.ArtificialVelocity.Length;
+
+                if (doorActivationCounter > 0)
+                {
+                    // Door is activated
+                    doorActivationCounter--;
+
+                    var percentageOpen = 100.0 * (doorActivationMaxCount - doorActivationCounter) / doorActivationMaxCount;
+
+                    //if (doorIsOpen)
+                    //{
+                    //    percentageOpen = 100 - percentageOpen;
+                    //}
+
+                    var currentStateOfDoor = currentState.BodyStates.First(bs => bs.Body == activatedDoor) as BodyStateDoor;
+
+                    // Dette skal afhænge af, hvor spilleren er i forhold til døren
+                    // Det skulle du kunne regne ud med et prikprodukt
+                    currentStateOfDoor.SetOpeningDirection(
+                        currentStateOfMainBody.Position);
+
+                    currentStateOfDoor.PercentageOpen = percentageOpen;
+
+                    // Freeze the player while the door opens
+                    currentStateOfMainBody.RotationalSpeed = 0;
+                    currentStateOfMainBody.ArtificialVelocity = new Vector2D(0, 0);
+
+                    if (doorActivationCounter == 0)
+                    {
+                        // Final step of activation, so store the state
+                        //doorIsOpen = System.Math.Abs(percentageOpen - 100) < 0.01;
+                        activatedDoor = null;
+                    }
+
+                    return true;
+                }
+
+                var newRotationalSpeed = 0.0;
+
+                if (keyboardState.LeftArrowDown)
+                {
+                    newRotationalSpeed += System.Math.PI;
+                }
+
+                if (keyboardState.RightArrowDown)
+                {
+                    newRotationalSpeed -= System.Math.PI;
+                }
+
+                var newArtificialSpeed = 0.0;
+
+                if (keyboardState.UpArrowDown)
+                {
+                    newArtificialSpeed += 1.5;
+                }
+
+                if (keyboardState.DownArrowDown)
+                {
+                    newArtificialSpeed -= 1.5;
+                }
+
+                currentStateOfMainBody.RotationalSpeed = newRotationalSpeed;
+                currentStateOfMainBody.ArtificialVelocity = new Vector2D(newArtificialSpeed, 0);
+
+                if (System.Math.Abs(newRotationalSpeed - currentRotationalSpeed) < 0.01 &&
+                    System.Math.Abs(newArtificialSpeed - currentArtificialSpeed) < 0.01)
+                {
+                    return false;
+                }
+
+                return true;
+            };
+
+            var nextBodyId = 1000;
+            var bodyDisposalMap = new Dictionary<int, int>();
+
+            scene.PostPropagationCallBack = (propagatedState, boundaryCollisionReports, bodyCollisionReports) =>
+            {
+                // Possibly remove projectile
+                if (bodyDisposalMap.ContainsKey(propagatedState.Index))
+                {
+                    var projectile = propagatedState.TryGetBodyState(bodyDisposalMap[propagatedState.Index]);
+                    propagatedState?.RemoveBodyState(projectile);
+                }
+
+                var currentStateOfPlayer = propagatedState.TryGetBodyState(1) as BodyStateClassic;
+
+                // Determine if a projectile should be launched
+                if (spaceKeyWasPressed)
+                {
+                    spaceKeyWasPressed = false;
+
+                    var lookDirection = new Vector2D(
+                        System.Math.Cos(currentStateOfPlayer!.Orientation),
+                        -System.Math.Sin(currentStateOfPlayer!.Orientation));
+
+                    bodyDisposalMap[propagatedState.Index + 50] = nextBodyId;
+
+                    var probeRadius = 0.05;
+
+                    propagatedState.AddBodyState(new BodyState(
+                        new Projectile(nextBodyId++, probeRadius), currentStateOfPlayer!.Position)
+                    {
+                        NaturalVelocity = 3.0 * lookDirection
+                    });
+                }
+
+                // Determine if we triggered an event (activating a door)
+                if (doorActivationCounter == 0 && bodyCollisionReports.Any())
+                {
+                    var bodyCollisionReport = bodyCollisionReports.First();
+
+                    if ((bodyCollisionReport.Body1 is BodyDoor && bodyCollisionReport.Body2 is Projectile) ||
+                        (bodyCollisionReport.Body2 is BodyDoor && bodyCollisionReport.Body1 is Projectile))
+                    {
+                        activatedDoor = bodyCollisionReport.Body2;
+                        doorActivationCounter = doorActivationMaxCount;
+                    }
+                }
+
+                return new PostPropagationResponse();
+            };
+
+            scene.InitializationCallback = (initialState, message) =>
+            {
+                //doorIsOpen = false;
+            };
+
+            // Walls
+            scene.AddRectangularBoundary(-1, 3, -1, 2, false);
+            scene.AddRectangularBoundary(-1, -0.3, 0.75, 0.95, false);
+            scene.AddRectangularBoundary(0.7, 1.3, 0.75, 0.95, false);
+            scene.AddRectangularBoundary(2.3, 3, 0.75, 0.95, false);
 
             scene.InitializeBoundaryDataStore();
 
