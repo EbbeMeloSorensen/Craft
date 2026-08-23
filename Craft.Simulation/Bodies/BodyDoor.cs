@@ -12,12 +12,14 @@ public class BodyDoor : Body
         double mass,
         bool affectedByGravity,
         bool affectedByBoundaries,
-        string? tag) : base(
+        string? tag,
+        bool visible = true) : base(
             id,
             mass,
             affectedByGravity,
             affectedByBoundaries,
-            tag)
+            tag,
+            visible)
     {
     }
 }
