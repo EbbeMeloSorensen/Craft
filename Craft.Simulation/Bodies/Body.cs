@@ -3,6 +3,7 @@
     public abstract class Body
     {
         public int Id { get; }
+        public bool Visible { get; private set; }
 
         public double Mass { get; private set; }
         public bool AffectedByGravity { get; private set; }
@@ -14,13 +15,15 @@
             double mass,
             bool affectedByGravity,
             bool affectedByBoundaries,
-            string? tag)
+            string? tag,
+            bool visible = true)
         {
             Id = id;
             Mass = mass;
             AffectedByGravity = affectedByGravity;
             AffectedByBoundaries = affectedByBoundaries;
             Tag = tag;
+            Visible = visible;
         }
     }
 }

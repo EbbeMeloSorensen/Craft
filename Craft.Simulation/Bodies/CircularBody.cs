@@ -10,7 +10,8 @@
             double mass,
             bool affectedByGravity,
             bool affectedByBoundaries = true,
-            string? tag = null) : base(id, mass, affectedByGravity, affectedByBoundaries, tag)
+            string? tag = null,
+            bool visible = true) : base(id, mass, affectedByGravity, affectedByBoundaries, tag, visible)
         {
             Radius = radius;
         }

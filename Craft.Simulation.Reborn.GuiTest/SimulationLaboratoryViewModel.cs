@@ -174,6 +174,11 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             state.BodyStates.ForEach(bs =>
             {
+                if (!bs.Body.Visible)
+                {
+                    return;
+                }
+
                 switch (bs.Body)
                 {
                     case CircularBody circularBody:

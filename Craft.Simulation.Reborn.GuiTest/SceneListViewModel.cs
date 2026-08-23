@@ -936,7 +936,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             var initialState = new State();
             initialState.AddBodyState(new BodyStateClassic(new CircularBody(1, 0.1, 1, true), new Vector2D(0, 0)) { NaturalVelocity = new Vector2D(3, 0) });
-            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true), new Vector2D(1, 0)));
+            initialState.AddBodyState(new BodyStateClassic(new CircularBody(2, 0.1, 1, true, true, null, false), new Vector2D(1, 0)));
 
             var scene = new Scene("Auto: Newtons cradle I", new Point2D(-1.4, -1.3), new Point2D(5, 3), initialState, 0, 0, 0, 1, true, true, 0.001);
 
