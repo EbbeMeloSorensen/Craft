@@ -425,4 +425,27 @@ public class MxCifQuadTreeTest
         var elapsed = stopWatch.Elapsed;
         mxCifQuadTree.IsEmpty().Should().BeTrue();
     }
+
+    [Fact]
+    public void Test13_InsertARectangleThatDoesNotOverlapTheBaseRectangle_ThenRemoveItAgain()
+    {
+        var logger = new TestLogger();
+        logger.IsEnabled = true;
+
+        // Arrange
+        var spatialItem1 = new SpatialItem<object>(new BoundingBox(120, 130, 120, 130), new DummyGeometricObject());
+
+        // Act
+        var mxCifQuadTree1 = new MxCifQuadTree<object>(new BoundingBox(0, 100, 0, 100), logger);
+
+        mxCifQuadTree1.Insert(spatialItem1);
+
+        // Act
+        //mxCifQuadTree1.Remove(spatialItem1);
+
+        logger.Complete();
+
+        // Assert
+        mxCifQuadTree1.IsEmpty().Should().BeFalse();
+    }
 }
