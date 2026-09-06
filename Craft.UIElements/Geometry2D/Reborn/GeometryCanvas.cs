@@ -15,11 +15,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         private bool _isRenderingSubscribed;
         private bool _isPanning;
-        private System.Windows.Point _panStartMouse;
-        private System.Windows.Point _panStartWorldOrigin;
+        private bool _isDrawing;
+        private Point _mouseDownPosition;
+        private Point _panStartWorldOrigin;
         private TimeSpan _lastTime;
         private BoundingBox _current;
         private BoundingBox _target;
+        private List<Point> _drawingStrokePoints;
 
         // =============================
         // Items (your geometries)
@@ -51,18 +53,18 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(ViewState),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(
-                    new ViewState(new System.Windows.Point(0, 0), new Size(1, 1)), FrameworkPropertyMetadataOptions.AffectsRender));
+                    new ViewState(new Point(0, 0), new Size(1, 1)), FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public System.Windows.Point? CursorWorldPosition
+        public Point? CursorWorldPosition
         {
-            get => (System.Windows.Point)GetValue(CursorWorldPositionProperty);
+            get => (Point)GetValue(CursorWorldPositionProperty);
             set => SetValue(CursorWorldPositionProperty, value);
         }
 
         public static readonly DependencyProperty CursorWorldPositionProperty =
             DependencyProperty.Register(
                 nameof(CursorWorldPosition),
-                typeof(System.Windows.Point?),
+                typeof(Point?),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(null));
 
@@ -270,6 +272,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         public GeometryCanvas()
         {
+            _drawingStrokePoints = new List<Point>();
+
             Loaded += GeometryCanvas_Loaded;
             Unloaded += GeometryCanvas_Unloaded;
 
@@ -340,9 +344,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
             base.OnRender(dc);
 
             dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, ActualWidth, ActualHeight));
-            
-            //if (Items == null /*|| WorldWindow == null*/)
-            //    return;
 
             if (GeometryLayers == null)
             {
@@ -410,8 +411,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                             dc.DrawLine(
                                 gridLinePen,
-                                new System.Windows.Point(tick.X, 0),
-                                new System.Windows.Point(tick.X, ActualHeight));
+                                new Point(tick.X, 0),
+                                new Point(tick.X, ActualHeight));
                         }
 
                         if (ShowCoordinateSystem)
@@ -445,7 +446,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 // Center text under grid line
                                 dc.DrawText(
                                     text,
-                                    new System.Windows.Point(x, y));
+                                    new Point(x, y));
                             }
                         }
                     }
@@ -519,12 +520,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
                             break;
 
-                        //case LineModel line:
-                        //    var p1 = worldToViewportTransform.Transform(line.P1);
-                        //    var p2 = worldToViewportTransform.Transform(line.P2);
-                        //    dc.DrawLine(drawingPen, p1, p2);
-                        //    break;
-
                         case VerticalLineModel verticalLine:
                             var screenX = (verticalLine.X - worldWindow.MinX) * ViewState.Scaling.Width;
 
@@ -542,11 +537,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 new Point(0, screenY),
                                 new Point(ActualWidth, screenY));
                             break;
-
-                        //case PointModel point:
-                        //    var p = worldToViewportTransform.Transform(point.P);
-                        //    dc.DrawEllipse(drawingBrush, null, p, 3, 3);
-                        //    break;
 
                         case PolyLineModel polyLineModel:
 
@@ -570,15 +560,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             sg.Freeze();
                             dc.DrawGeometry(null, drawingPen, sg);
                             break;
-
-                        //case CircleModel circle:
-                        //    var c = worldToViewportTransform.Transform(circle.Center);
-                        //    var radiusX = ViewState.Scaling.Width * circle.Radius;
-                        //    var radiusY = ViewState.Scaling.Height * circle.Radius;
-                        //    dc.DrawEllipse(drawingBrush, null, c, radiusX, radiusY);
-                        //    break;
                     }
                 }
+            }
+
+            if (_isDrawing)
+            {
+                _drawingStrokePoints.ForEach(point =>
+                {
+                    var p = worldToViewportTransform.Transform(new Point(point.X, point.Y));
+                    dc.DrawEllipse(drawingBrush, null, p, 3, 3);
+                });
             }
         }
 
@@ -601,24 +593,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 new Point(lineSegment.Point1.X, lineSegment.Point1.Y),
                                 new Point(lineSegment.Point2.X, lineSegment.Point2.Y));
                             break;
-
-                        //case VerticalLineModel verticalLine:
-                        //    var screenX = (verticalLine.X - worldWindow.MinX) * ViewState.Scaling.Width;
-
-                        //    dc.DrawLine(
-                        //        drawingPen,
-                        //        new System.Windows.Point(screenX, 0),
-                        //        new System.Windows.Point(screenX, ActualHeight));
-                        //    break;
-
-                        //case HorizontalLineModel horizontalLine:
-                        //    var screenY = (horizontalLine.Y - worldWindow.MinY) * ViewState.Scaling.Height;
-
-                        //    dc.DrawLine(
-                        //        drawingPen,
-                        //        new System.Windows.Point(0, screenY),
-                        //        new System.Windows.Point(ActualWidth, screenY));
-                        //    break;
 
                         case Math.Point2D point:
                             dc.DrawEllipse(drawingBrush, null, new Point(point.X, point.Y), 3, 3);
@@ -682,21 +656,33 @@ namespace Craft.UIElements.Geometry2D.Reborn
         {
             base.OnMouseDown(e);
 
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (_target != null)
             {
-                if (_target != null)
-                {
-                    _target = null;
-                    _current = null;
-                }
+                // The window is sliding towards a target, but the user intercepts that by clicking
+                _target = null;
+                _current = null;
+            }
 
+            _mouseDownPosition = e.GetPosition(this);
+
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                // Panning
                 Mouse.OverrideCursor = Cursors.Hand;
                 _isPanning = true;
-                _panStartMouse = e.GetPosition(this);
                 _panStartWorldOrigin = ViewState.WorldOrigin;
-
-                CaptureMouse();
             }
+            else
+            {
+                // Drawing
+                Mouse.OverrideCursor = Cursors.Pen;
+                _isDrawing = true;
+
+                var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
+            }
+
+            CaptureMouse();
         }
 
         protected override void OnMouseMove(
@@ -708,7 +694,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (_isPanning)
             {
-                var deltaPixel = _panStartMouse - mousePos;
+                var deltaPixel = _mouseDownPosition - mousePos;
 
                 var deltaWorld = new Vector(
                     deltaPixel.X / ViewState.Scaling.Width,
@@ -726,17 +712,24 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else
             {
+                // Show the cursor position
                 if (IsMouseOver)
                 {
                     var scaleX = ViewState.Scaling.Width;
                     var scaleY = ViewState.Scaling.Height;
                     var worldX = ViewState.WorldOrigin.X + mousePos.X / scaleX;
                     var worldY = ViewState.WorldOrigin.Y + mousePos.Y / scaleY;
-                    CursorWorldPosition = new System.Windows.Point(worldX, worldY);
+                    CursorWorldPosition = new Point(worldX, worldY);
                 }
                 else
                 {
                     CursorWorldPosition = null;
+                }
+
+                if (_isDrawing)
+                {
+                    var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                    _drawingStrokePoints.Add(transform.Transform(mousePos));
                 }
             }
         }
@@ -748,10 +741,16 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (_isPanning)
             {
-                Mouse.OverrideCursor = Cursors.Arrow;
                 _isPanning = false;
-                ReleaseMouseCapture();
             }
+            else if (_isDrawing)
+            {
+                _isDrawing = false;
+                _drawingStrokePoints.Clear();
+            }
+
+            Mouse.OverrideCursor = Cursors.Arrow;
+            ReleaseMouseCapture();
         }
 
         protected override void OnMouseLeave(
@@ -911,7 +910,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             var newScalingY = ActualHeight / newWorldWindow.Height;
 
             ViewState = new ViewState(
-                new System.Windows.Point(
+                new Point(
                     newWorldWindow.MinX,
                     newWorldWindow.MinY),
                 new Size(
@@ -937,8 +936,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 dc.DrawLine(
                     pen,
-                    new System.Windows.Point(0, screenY),
-                    new System.Windows.Point(ActualWidth, screenY));
+                    new Point(0, screenY),
+                    new Point(ActualWidth, screenY));
             }
         }
 
@@ -959,8 +958,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 dc.DrawLine(
                     pen,
-                    new System.Windows.Point(screenX, 0),
-                    new System.Windows.Point(screenX, ActualHeight));
+                    new Point(screenX, 0),
+                    new Point(screenX, ActualHeight));
             }
         }
 
@@ -978,8 +977,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 dc.DrawLine(
                     pen,
-                    new System.Windows.Point(screenX, 0),
-                    new System.Windows.Point(screenX, ActualHeight));
+                    new Point(screenX, 0),
+                    new Point(screenX, ActualHeight));
             }
 
             if (horizontalAxis && world.MinY <= 0 && world.MaxY >= 0)
@@ -988,8 +987,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 dc.DrawLine(
                     pen,
-                    new System.Windows.Point(0, screenY),
-                    new System.Windows.Point(ActualWidth, screenY));
+                    new Point(0, screenY),
+                    new Point(ActualWidth, screenY));
             }
         }
 
@@ -1016,8 +1015,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     dc.DrawLine(
                         pen,
-                        new System.Windows.Point(sx, y - tickSize),
-                        new System.Windows.Point(sx, y + tickSize));
+                        new Point(sx, y - tickSize),
+                        new Point(sx, y + tickSize));
                 }
             }
 
@@ -1031,8 +1030,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     dc.DrawLine(
                         pen,
-                        new System.Windows.Point(x - tickSize, sy),
-                        new System.Windows.Point(x + tickSize, sy));
+                        new Point(x - tickSize, sy),
+                        new Point(x + tickSize, sy));
                 }
             }
         }
@@ -1071,7 +1070,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 dc.DrawText(
                     formattedText,
-                    new System.Windows.Point(xScreen, sy - formattedText.Height / 2));
+                    new Point(xScreen, sy - formattedText.Height / 2));
             }
         }
 
@@ -1111,7 +1110,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 // Center text under grid line
                 dc.DrawText(
                     formattedText,
-                    new System.Windows.Point(sx - formattedText.Width / 2, yScreen - formattedText.Height));
+                    new Point(sx - formattedText.Width / 2, yScreen - formattedText.Height));
             }
         }
 
@@ -1167,8 +1166,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
             BoundingBox box)
         {
             return new Rect(
-                new System.Windows.Point(box.MinX, box.MinY),
-                new System.Windows.Point(box.MaxX, box.MaxY));
+                new Point(box.MinX, box.MinY),
+                new Point(box.MaxX, box.MaxY));
         }
 
         private static void OnWorldWindowChanged(
