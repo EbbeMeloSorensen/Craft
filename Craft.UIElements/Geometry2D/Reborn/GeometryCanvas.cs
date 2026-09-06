@@ -680,6 +680,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
                 _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
+                InvalidateVisual();
             }
 
             CaptureMouse();
@@ -730,6 +731,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
                     _drawingStrokePoints.Add(transform.Transform(mousePos));
+                    InvalidateVisual();
                 }
             }
         }
@@ -747,6 +749,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 _isDrawing = false;
                 _drawingStrokePoints.Clear();
+                InvalidateVisual();
             }
 
             Mouse.OverrideCursor = Cursors.Arrow;
