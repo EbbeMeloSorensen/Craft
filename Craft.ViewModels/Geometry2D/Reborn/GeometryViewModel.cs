@@ -14,7 +14,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private BoundingBox _requestedWorldWindow;
         private WorldFocusRequest _requestedWorldFocus;
         private BoundingBox _worldWindowBounds;
-        private BoundingBox _expandedWorldWindow;
         private System.Windows.Point? _cursorWorldPosition;
         private bool _lockAspectRatio;
         private bool _lockXAxis;
@@ -25,6 +24,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _showGrid;
         private bool _showCoordinateSystem;
         private bool _timeAxisMode;
+        private List<System.Windows.Point> _drawingStrokePoints;
 
         public ViewState ViewState
         {
@@ -52,16 +52,6 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _worldWindowExpanded = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public BoundingBox ExpandedWorldWindow
-        {
-            get => _expandedWorldWindow;
-            set
-            {
-                _expandedWorldWindow = value;
                 OnPropertyChanged();
             }
         }
@@ -205,6 +195,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
                     // Lock aspect ratio and time axis mode are incompatible, so disable
                     LockAspectRatio = false;
                 }
+            }
+        }
+
+        public List<System.Windows.Point> DrawingStrokePoints
+        {
+            get => _drawingStrokePoints;
+            set
+            {
+                _drawingStrokePoints = value;
+                OnPropertyChanged();
             }
         }
 

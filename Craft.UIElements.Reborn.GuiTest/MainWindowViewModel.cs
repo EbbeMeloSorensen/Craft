@@ -1,20 +1,23 @@
-﻿using System.ComponentModel;
+﻿using Craft.DataStructures.Geometry;
+using Craft.DataStructures.MxCifQuadTree;
+using Craft.UIElements.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
+using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
+using GalaSoft.MvvmLight.Command;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using GalaSoft.MvvmLight.Command;
-using Craft.DataStructures.Geometry;
-using Craft.UIElements.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
+using System.Windows.Shapes;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
 {
     public class MainWindowViewModel : INotifyPropertyChanged, IFrameAware
     {
-        private IGeometryDataSource _geometryDataSource;
+        private IGeometryDataStore _geometryDataSource;
 
         private string _requestedWwBoundsXMin;
         private string _requestedWwBoundsXMax;
@@ -237,11 +240,14 @@ namespace Craft.UIElements.Reborn.GuiTest
             //var geometryDataSource = new EmptyDataSource();
             //var geometryDataSource = new SimpleGeometryDataSource();
             //var geometryDataSource = new FunctionCurveDataSource();
-            _geometryDataSource = new MxCifQuadTreeGeometryDataSource(
-                new BoundingBox(-2000, 2000, -2000, 2000), 8);
+            //_geometryDataSource = new MxCifQuadTreeGeometryDataSource(
+            //    new BoundingBox(-2000, 2000, -2000, 2000), 8);
 
             //_geometryDataSource = new TimeStampDataSource();
             //_geometryDataSource = new TemperatureDataSource();
+
+            _geometryDataSource = new MxCifQuadTreeGeometryDataStore(
+                new BoundingBox(-2000, 2000, -2000, 2000), 8);
 
             GeometryViewModel = new GeometryViewModel()
             {
@@ -308,6 +314,22 @@ namespace Craft.UIElements.Reborn.GuiTest
 
                 GeometryViewModel.AddStaticGeometryLayer(
                     geometricObjects);
+            }
+            else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
+            {
+                if (GeometryViewModel.DrawingStrokePoints == null)
+                {
+                    return;
+                }
+
+                var polyLine = new PolyLineModel
+                {
+                    Points = GeometryViewModel.DrawingStrokePoints
+                };
+
+                var bbox = polyLine.ComputeBoundingBox();
+
+                _geometryDataSource.AddGeometricObject(polyLine, bbox);
             }
         }
 

@@ -268,6 +268,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public List<Point> DrawingStrokePoints
+        {
+            get => (List<Point>)GetValue(DrawingStrokePointsProperty);
+            set => SetValue(DrawingStrokePointsProperty, value);
+        }
+
+        public static readonly DependencyProperty DrawingStrokePointsProperty =
+            DependencyProperty.Register(
+                nameof(DrawingStrokePoints),
+                typeof(List<Point>),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(null));
+
         public event EventHandler<FrameEventArgs> FrameRendering;
 
         public GeometryCanvas()
@@ -747,6 +760,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else if (_isDrawing)
             {
+                SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
                 _isDrawing = false;
                 _drawingStrokePoints.Clear();
                 InvalidateVisual();

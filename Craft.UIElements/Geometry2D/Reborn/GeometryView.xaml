@@ -17,6 +17,7 @@
                               RequestedWorldFocus="{Binding RequestedWorldFocus, Mode=TwoWay}"
                               WorldWindowBounds="{Binding WorldWindowBounds, Mode=TwoWay}"
                               CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
+                              DrawingStrokePoints="{Binding DrawingStrokePoints, Mode=OneWayToSource}"
                               LockAspectRatio="{Binding LockAspectRatio}"
                               LockXAxis="{Binding LockXAxis}"
                               LockYAxis="{Binding LockYAxis}"
