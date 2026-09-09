@@ -307,13 +307,7 @@ namespace Craft.UIElements.Reborn.GuiTest
         {
             if (e.PropertyName == nameof(GeometryViewModel.WorldWindowExpanded))
             {
-                var geometricObjects = _geometryDataSource.Query(
-                    GeometryViewModel.WorldWindowExpanded);
-
-                GeometryViewModel.ClearLayer(false);
-
-                GeometryViewModel.AddStaticGeometryLayer(
-                    geometricObjects);
+                UpdateStaticGeometryLayer();
             }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
             {
@@ -330,6 +324,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                 var bbox = polyLine.ComputeBoundingBox();
 
                 _geometryDataSource.AddGeometricObject(polyLine, bbox);
+
+                UpdateStaticGeometryLayer();
             }
         }
 
@@ -427,6 +423,17 @@ namespace Craft.UIElements.Reborn.GuiTest
             };
 
             return worldFocusRequest;
+        }
+
+        private void UpdateStaticGeometryLayer()
+        {
+            var geometricObjects = _geometryDataSource.Query(
+                GeometryViewModel.WorldWindowExpanded);
+
+            GeometryViewModel.ClearLayer(false);
+
+            GeometryViewModel.AddStaticGeometryLayer(
+                geometricObjects);
         }
     }
 }
