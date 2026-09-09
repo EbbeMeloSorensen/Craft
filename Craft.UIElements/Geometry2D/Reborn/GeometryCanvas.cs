@@ -1,4 +1,6 @@
 ﻿using Craft.DataStructures.Geometry;
+using Craft.Simulation.Boundaries;
+using Craft.Utils.Linq;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using System.Collections.Specialized;
@@ -579,10 +581,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (_isDrawing)
             {
-                _drawingStrokePoints.ForEach(point =>
+                _drawingStrokePoints.AdjacentPairs().ToList().ForEach(_ =>
                 {
-                    var p = worldToViewportTransform.Transform(new Point(point.X, point.Y));
-                    dc.DrawEllipse(drawingBrush, null, p, 3, 3);
+                    var p1 = worldToViewportTransform.Transform(new Point(_.Item1.X, _.Item1.Y));
+                    var p2 = worldToViewportTransform.Transform(new Point(_.Item2.X, _.Item2.Y));
+                    dc.DrawLine(drawingPen, p1, p2);
+
                 });
             }
         }
