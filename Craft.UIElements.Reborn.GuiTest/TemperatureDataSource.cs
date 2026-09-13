@@ -1,8 +1,5 @@
 ﻿using System.Collections;
 using Craft.DataStructures.Geometry;
-using Craft.UIElements.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
-using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 namespace Craft.UIElements.Reborn.GuiTest;
 
@@ -20,7 +17,12 @@ public class TemperatureDataSource : IGeometryDataSource
         };
     }
 
-    public IEnumerable GetGeometries(
+    public IEnumerable GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable GetIntersecting(
         BoundingBox window)
     {
         throw new NotImplementedException("TemperatureDataSource.Query is not implemented yet.");

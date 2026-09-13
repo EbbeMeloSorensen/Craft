@@ -3,7 +3,7 @@ using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using System.Collections;
-using System.Windows.Shapes;
+using System.Windows;
 
 namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
 {
@@ -39,11 +39,19 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
             _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, polyLine));
         }
 
-        public IEnumerable GetGeometries(
+        public IEnumerable GetAll()
+        {
+            return _mxCifQuadTree
+                .GetAll()
+                .Select(_ => _.Item);
+        }
+
+        public IEnumerable GetIntersecting(
             BoundingBox window)
         {
-            var result = _mxCifQuadTree.GetAllIntersecting(window);
-            return result.Select(_ => _.Item);
+            return _mxCifQuadTree
+                .GetIntersecting(window)
+                .Select(_ => _.Item);
         }
     }
 }

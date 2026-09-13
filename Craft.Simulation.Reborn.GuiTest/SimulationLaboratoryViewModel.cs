@@ -233,7 +233,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             if (_geometryDataStore != null)
             {
                 GeometryViewModel.AddStaticGeometryLayer(
-                    _geometryDataStore.GetGeometries(GeometryViewModel.WorldWindowExpanded));
+                    _geometryDataStore.GetIntersecting(GeometryViewModel.WorldWindowExpanded));
             }
         }
 

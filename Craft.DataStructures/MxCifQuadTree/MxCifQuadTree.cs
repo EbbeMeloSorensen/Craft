@@ -424,7 +424,7 @@ public class MxCifQuadTree<T>
             : _root.CIF_GET_ALL();
     }
 
-    public IEnumerable<SpatialItem<T>> GetAllIntersecting(
+    public IEnumerable<SpatialItem<T>> GetIntersecting(
         BoundingBox rectangle)
     {
         return _root == null

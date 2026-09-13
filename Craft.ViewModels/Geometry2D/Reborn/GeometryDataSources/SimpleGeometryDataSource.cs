@@ -6,7 +6,12 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class SimpleGeometryDataSource : IGeometryDataSource
 {
-    public IEnumerable GetGeometries(BoundingBox window)
+    public IEnumerable GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable GetIntersecting(BoundingBox window)
     {
         yield return new VerticalLineModel
         {

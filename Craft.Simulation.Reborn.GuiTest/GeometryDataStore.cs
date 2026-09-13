@@ -2,7 +2,6 @@
 using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
 using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using System.Collections;
 
 namespace Craft.Simulation.Reborn.GuiTest
@@ -41,10 +40,15 @@ namespace Craft.Simulation.Reborn.GuiTest
             }
         }
 
-        public IEnumerable GetGeometries(
+        public IEnumerable GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable GetIntersecting(
             BoundingBox window)
         {
-            var result = _mxCifQuadTree.GetAllIntersecting(window);
+            var result = _mxCifQuadTree.GetIntersecting(window);
             return result.Select(_ => _.Item);
         }
     }

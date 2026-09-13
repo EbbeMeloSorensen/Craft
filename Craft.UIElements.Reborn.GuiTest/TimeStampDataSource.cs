@@ -23,7 +23,12 @@ public class TimeStampDataSource : IGeometryDataSource
         };
     }
 
-    public IEnumerable GetGeometries(
+    public IEnumerable GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable GetIntersecting(
         BoundingBox window)
     {
         return _birthdays.Select(birthday => new VerticalLineModel

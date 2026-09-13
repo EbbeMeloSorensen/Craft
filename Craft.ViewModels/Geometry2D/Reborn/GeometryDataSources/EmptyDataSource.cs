@@ -5,7 +5,12 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class EmptyDataSource : IGeometryDataSource
 {
-    public IEnumerable GetGeometries(
+    public IEnumerable GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable GetIntersecting(
         BoundingBox window)
     {
         return Enumerable.Empty<object>();

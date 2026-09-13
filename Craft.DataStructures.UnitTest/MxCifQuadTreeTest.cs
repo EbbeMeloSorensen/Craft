@@ -158,7 +158,7 @@ public class MxCifQuadTreeTest
         }
 
         var intersectingSpatialItems = mxCifQuadTree
-            .GetAllIntersecting(areaOfIntereset)
+            .GetIntersecting(areaOfIntereset)
             .ToList();
 
         foreach (var spatialItem in intersectingSpatialItems)
@@ -234,7 +234,7 @@ public class MxCifQuadTreeTest
         var intersection = mxCifQuadTree1.Intersects(rectangleQ);
         intersection.Should().BeTrue();
 
-        var intersectingRectangles1 = mxCifQuadTree1.GetAllIntersecting(rectangleQ);
+        var intersectingRectangles1 = mxCifQuadTree1.GetIntersecting(rectangleQ);
         var rectangle = intersectingRectangles1.FirstOrDefault();
         rectangle.Should().NotBeNull();
         rectangle.Bounds.Should().BeEquivalentTo(new BoundingBox(4.25, 8.25, 4.25, 8.25));
@@ -243,7 +243,7 @@ public class MxCifQuadTreeTest
         mxCifQuadTree1.Remove(spatialItem1);
         mxCifQuadTree1.Remove(spatialItem2);
 
-        var intersectingRectangles2 = mxCifQuadTree1.GetAllIntersecting(rectangleQ);
+        var intersectingRectangles2 = mxCifQuadTree1.GetIntersecting(rectangleQ);
         intersectingRectangles2.Count().Should().Be(0);
 
         logger.Complete();
@@ -291,7 +291,7 @@ public class MxCifQuadTreeTest
 
         logger.Complete();
 
-        mxCifQuadTree.GetAllIntersecting(new BoundingBox(0, 100, 0, 100)).Count().Should().Be(0);
+        mxCifQuadTree.GetIntersecting(new BoundingBox(0, 100, 0, 100)).Count().Should().Be(0);
     }
 
     [Fact]

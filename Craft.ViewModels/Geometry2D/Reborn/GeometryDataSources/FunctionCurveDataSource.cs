@@ -6,7 +6,12 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 
 public class FunctionCurveDataSource : IGeometryDataSource
 {
-    public IEnumerable GetGeometries(
+    public IEnumerable GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable GetIntersecting(
         BoundingBox window)
     {
         var points = new List<Craft.Math.Point2D>();

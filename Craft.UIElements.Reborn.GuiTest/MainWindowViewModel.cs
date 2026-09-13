@@ -429,23 +429,24 @@ namespace Craft.UIElements.Reborn.GuiTest
                 return;
             }
 
-            var points = new List<List<Point2D>>
+            var polyLines = new List<List<Point2D>>();
+
+            foreach (var spatialObject in _geometryDataSource.GetAll())
             {
-                new List<Point2D>
+                switch (spatialObject)
                 {
-                    new Point2D(1, 2),
-                    new Point2D(3, 4)
-                },
-                new List<Point2D>
-                {
-                    new Point2D(5, 6),
-                    new Point2D(7, 8)
+                    case PolyLineModel polyLineModel:
+                    {
+                        var polyLine = polyLineModel.Points.Select(p => new Point2D(p.X, p.Y)).ToList();
+
+                        polyLines.Add(polyLine);
+
+                        break;
+                    }
                 }
-            };
+            }
 
-            //_geometryDataSource.GetAllGeometries();
-
-            var json = JsonConvert.SerializeObject(points, Formatting.Indented, new DoubleJsonConverter());
+            var json = JsonConvert.SerializeObject(polyLines, Formatting.Indented, new DoubleJsonConverter());
 
             using (var streamWriter = new StreamWriter(dialog.FileName))
             {
@@ -465,7 +466,12 @@ namespace Craft.UIElements.Reborn.GuiTest
                 return;
             }
 
-            throw new NotImplementedException();
+            using (var r = new StreamReader(dialog.FileName))
+            {
+                var jsonData = r.ReadToEnd();
+                var deserializedData = JsonConvert.DeserializeObject<List<List<Point2D>>>(jsonData);
+                var a = 0;
+            }
         }
 
         private WorldFocusRequest ComputeCamera(
@@ -485,7 +491,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         private void UpdateStaticGeometryLayer()
         {
-            var geometricObjects = _geometryDataSource.GetGeometries(
+            var geometricObjects = _geometryDataSource.GetIntersecting(
                 GeometryViewModel.WorldWindowExpanded);
 
             GeometryViewModel.ClearLayer(false);

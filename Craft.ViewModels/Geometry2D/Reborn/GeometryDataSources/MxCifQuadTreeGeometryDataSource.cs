@@ -91,10 +91,15 @@ public class MxCifQuadTreeGeometryDataSource : IGeometryDataSource
         }
     }
 
-    public IEnumerable GetGeometries(
+    public IEnumerable GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable GetIntersecting(
         BoundingBox window)
     {
-        var result = _mxCifQuadTree.GetAllIntersecting(window);
+        var result = _mxCifQuadTree.GetIntersecting(window);
         return result.Select(_ => _.Item);
     }
 }
