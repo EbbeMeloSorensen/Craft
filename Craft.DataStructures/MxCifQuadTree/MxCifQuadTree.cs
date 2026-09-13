@@ -1,5 +1,6 @@
 ﻿using Craft.DataStructures.Geometry;
 using Craft.Logging;
+using System.Drawing;
 
 namespace Craft.DataStructures.MxCifQuadTree;
 
@@ -414,6 +415,15 @@ public class MxCifQuadTree<T>
         BoundingBox rectangle)
     {
         return _root != null && rectangle.CIF_SEARCH(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
+    }
+
+    public IEnumerable<SpatialItem<T>> GetAll()
+    {
+        //return _root == null
+        //    ? Enumerable.Empty<SpatialItem<T>>()
+        //    : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
+
+        throw new NotImplementedException();
     }
 
     public IEnumerable<SpatialItem<T>> GetAllIntersecting(

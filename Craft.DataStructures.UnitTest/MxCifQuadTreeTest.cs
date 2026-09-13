@@ -448,4 +448,33 @@ public class MxCifQuadTreeTest
         // Assert
         mxCifQuadTree1.IsEmpty().Should().BeFalse();
     }
+
+    [Fact]
+    public void Test14_GetAllSpatialItems()
+    {
+        var stopWatch = new Stopwatch();
+
+        var random = new Random(0);
+        var rectanglesInTotal = 1000;
+        var mxCifQuadTree = new MxCifQuadTree<object>(new BoundingBox(0, 100, 0, 100), new DummyLogger());
+
+        stopWatch.Start();
+
+        for (var i = 0; i < rectanglesInTotal; i++)
+        {
+            var width = 10.0;
+            var height = 10.0;
+            var cx = random.NextDouble() * (100 - width) + 0.5 * width;
+            var cy = random.NextDouble() * (100 - height) + 0.5 * height;
+
+            if (i < rectanglesInTotal)
+            {
+                var boundingBox = new BoundingBox(cx - 0.5 * width, cx + 0.5 * width, cy - 0.5 * height, cy + 0.5 * height);
+                var spatialItem = new SpatialItem<object>(boundingBox, new DummyGeometricObject());
+                mxCifQuadTree.Insert(spatialItem);
+            }
+        }
+
+        var allRectangles = mxCifQuadTree.GetAll();
+    }
 }
