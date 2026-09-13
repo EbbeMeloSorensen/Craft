@@ -470,7 +470,26 @@ namespace Craft.UIElements.Reborn.GuiTest
             {
                 var jsonData = r.ReadToEnd();
                 var deserializedData = JsonConvert.DeserializeObject<List<List<Point2D>>>(jsonData);
-                var a = 0;
+
+                // Not using this
+                //var xMin = deserializedData.Min(pointList => pointList.Min(point => point.X));
+                //var xMax = deserializedData.Max(pointList => pointList.Max(point => point.X));
+                //var yMin = deserializedData.Min(pointList => pointList.Min(point => point.Y));
+                //var yMax = deserializedData.Max(pointList => pointList.Max(point => point.Y));
+
+                foreach (var pointList in deserializedData)
+                {
+                    var polyLine = new PolyLineModel
+                    {
+                        Points =  pointList.Select(p => new Point(p.X, p.Y))
+                    };
+
+                    var bbox = polyLine.ComputeBoundingBox();
+
+                    _geometryDataSource.AddGeometricObject(polyLine, bbox);
+                }
+
+                UpdateStaticGeometryLayer();
             }
         }
 
