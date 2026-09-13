@@ -203,34 +203,6 @@ public static class Helpers
                 yield return rect;
             }
         }
-
-        //return rectangle.CROSS_AXIS_ALL(quadNode._axis[1], cy, ly, AXIS.YA);
-        //return rectangle.CROSS_AXIS_ALL(quadNode._axis[0], cx, lx, AXIS.XA);
-
-        //lx /= 2;
-        //ly /= 2;
-
-        /*
-        if (CIF_SEARCH(rectangle, quadNode._child[0], cx + g_XF[0] * lx, cy + g_YF[0] * ly, lx, ly))
-        {
-            return true;
-        }
-
-        if (CIF_SEARCH(rectangle, quadNode._child[1], cx + g_XF[1] * lx, cy + g_YF[1] * ly, lx, ly))
-        {
-            return true;
-        }
-
-        if (CIF_SEARCH(rectangle, quadNode._child[2], cx + g_XF[2] * lx, cy + g_YF[2] * ly, lx, ly))
-        {
-            return true;
-        }
-
-        if (CIF_SEARCH(rectangle, quadNode._child[3], cx + g_XF[3] * lx, cy + g_YF[3] * ly, lx, ly))
-        {
-            return true;
-        }
-        */
     }
 
     public static IEnumerable<SpatialItem<T>> CROSS_AXIS_ALL<T>(
@@ -270,33 +242,6 @@ public static class Helpers
                 }
             }
         }
-
-
-        //return rectangle.CROSS_AXIS(binNode.Child[(int)d], cv + g_VF[(int)d] * lv, lv, v);
-
-
-        //// Is there a quadnode in the first place?
-        //if (binNode == null)
-        //{
-        //    return false;
-        //}
-
-        //// Does the rectangle intersect any of the rectangles of the bin node
-        //if (binNode.Rectangles.Any(_ => _.Intersects(rectangle)))
-        //{
-        //    return true;
-        //}
-
-        //lv /= 2;
-        //var d = rectangle.BIN_COMPARE(cv, v);
-
-        //if (d == DIRECTION.BOTH)
-        //{
-        //    return rectangle.CROSS_AXIS(binNode.Child[0], cv - lv, lv, v) ||
-        //           rectangle.CROSS_AXIS(binNode.Child[1], cv + lv, lv, v);
-        //}
-
-        //return rectangle.CROSS_AXIS(binNode.Child[(int)d], cv + g_VF[(int)d] * lv, lv, v);
     }
 
     public static QUADRANT OPQUAD(
