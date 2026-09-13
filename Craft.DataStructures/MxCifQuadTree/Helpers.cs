@@ -1,4 +1,5 @@
 ﻿using Craft.DataStructures.Geometry;
+using System.Drawing;
 
 namespace Craft.DataStructures.MxCifQuadTree;
 
@@ -103,13 +104,6 @@ public static class Helpers
             return true;
         }
 
-        // Does the rectangle intersect any rectangles in any of the two bintrees of the quadnode?
-        //if (rectangle.CROSS_AXIS(quadNode._axis[1], cy, ly, AXIS.YA) ||
-        //    rectangle.CROSS_AXIS(quadNode._axis[0], cx, lx, AXIS.XA))
-        //{
-        //    return true;
-        //}
-
         if (rectangle.CROSS_AXIS(quadNode._axis[1], cy, ly, AXIS.YA))
         {
             return true;
@@ -122,14 +116,6 @@ public static class Helpers
 
         lx /= 2;
         ly /= 2;
-
-        //if (CIF_SEARCH(rectangle, quadNode._child[0], cx + g_XF[0] * lx, cy + g_YF[0] * ly, lx, ly) ||
-        //    CIF_SEARCH(rectangle, quadNode._child[1], cx + g_XF[1] * lx, cy + g_YF[1] * ly, lx, ly) ||
-        //    CIF_SEARCH(rectangle, quadNode._child[2], cx + g_XF[2] * lx, cy + g_YF[2] * ly, lx, ly) ||
-        //    CIF_SEARCH(rectangle, quadNode._child[3], cx + g_XF[3] * lx, cy + g_YF[3] * ly, lx, ly))
-        //{
-        //    return true;
-        //}
 
         if (CIF_SEARCH(rectangle, quadNode._child[0], cx + g_XF[0] * lx, cy + g_YF[0] * ly, lx, ly))
         {
@@ -154,9 +140,51 @@ public static class Helpers
         return false;
     }
 
+    public static IEnumerable<SpatialItem<T>> CIF_GET_ALL<T>(
+        this QuadNode<T> quadNode)
+    {
+        if (quadNode != null)
+        {
+            foreach (var rect in quadNode.SpatialItems)
+            {
+                yield return rect;
+            }
+
+            foreach (var rect in quadNode._axis[0].CROSS_AXIS_GET_ALL())
+            {
+                yield return rect;
+            }
+
+            foreach (var rect in quadNode._axis[1].CROSS_AXIS_GET_ALL())
+            {
+                yield return rect;
+            }
+
+            foreach (var rect in quadNode._child[0].CIF_GET_ALL())
+            {
+                yield return rect;
+            }
+
+            foreach (var rect in quadNode._child[1].CIF_GET_ALL())
+            {
+                yield return rect;
+            }
+
+            foreach (var rect in quadNode._child[2].CIF_GET_ALL())
+            {
+                yield return rect;
+            }
+
+            foreach (var rect in quadNode._child[3].CIF_GET_ALL())
+            {
+                yield return rect;
+            }
+        }
+    }
+
     public static IEnumerable<SpatialItem<T>> CIF_SEARCH_ALL<T>(
-        this BoundingBox rectangle,
-        QuadNode<T> quadNode,
+        this QuadNode<T> quadNode,
+        BoundingBox rectangle,
         double cx,
         double cy,
         double lx,
@@ -170,12 +198,12 @@ public static class Helpers
                 yield return rect;
             }
 
-            foreach (var rect in rectangle.CROSS_AXIS_ALL(quadNode._axis[1], cy, ly, AXIS.YA))
+            foreach (var rect in quadNode._axis[1].CROSS_AXIS_SEARCH_ALL(rectangle, cy, ly, AXIS.YA))
             {
                 yield return rect;
             }
 
-            foreach (var rect in rectangle.CROSS_AXIS_ALL(quadNode._axis[0], cx, lx, AXIS.XA))
+            foreach (var rect in quadNode._axis[0].CROSS_AXIS_SEARCH_ALL(rectangle, cx, lx, AXIS.XA))
             {
                 yield return rect;
             }
@@ -183,31 +211,53 @@ public static class Helpers
             lx /= 2;
             ly /= 2;
 
-            foreach (var rect in CIF_SEARCH_ALL(rectangle, quadNode._child[0], cx + g_XF[0] * lx, cy + g_YF[0] * ly, lx, ly))
+            foreach (var rect in quadNode._child[0].CIF_SEARCH_ALL(rectangle, cx + g_XF[0] * lx, cy + g_YF[0] * ly, lx, ly))
             {
                 yield return rect;
             }
 
-            foreach (var rect in CIF_SEARCH_ALL(rectangle, quadNode._child[1], cx + g_XF[1] * lx, cy + g_YF[1] * ly, lx, ly))
+            foreach (var rect in quadNode._child[1].CIF_SEARCH_ALL(rectangle, cx + g_XF[1] * lx, cy + g_YF[1] * ly, lx, ly))
             {
                 yield return rect;
             }
 
-            foreach (var rect in CIF_SEARCH_ALL(rectangle, quadNode._child[2], cx + g_XF[2] * lx, cy + g_YF[2] * ly, lx, ly))
+            foreach (var rect in quadNode._child[2].CIF_SEARCH_ALL(rectangle, cx + g_XF[2] * lx, cy + g_YF[2] * ly, lx, ly))
             {
                 yield return rect;
             }
 
-            foreach (var rect in CIF_SEARCH_ALL(rectangle, quadNode._child[3], cx + g_XF[3] * lx, cy + g_YF[3] * ly, lx, ly))
+            foreach (var rect in quadNode._child[3].CIF_SEARCH_ALL(rectangle, cx + g_XF[3] * lx, cy + g_YF[3] * ly, lx, ly))
             {
                 yield return rect;
             }
         }
     }
 
-    public static IEnumerable<SpatialItem<T>> CROSS_AXIS_ALL<T>(
-        this BoundingBox rectangle,
-        BinNode<T> binNode,
+    public static IEnumerable<SpatialItem<T>> CROSS_AXIS_GET_ALL<T>(
+        this BinNode<T> binNode)
+    {
+        if (binNode != null)
+        {
+            foreach (var spatialItem in binNode.SpatialItems)
+            {
+                yield return spatialItem;
+            }
+
+            foreach (var rect in binNode.Child[0].CROSS_AXIS_GET_ALL())
+            {
+                yield return rect;
+            }
+
+            foreach (var rect in binNode.Child[1].CROSS_AXIS_GET_ALL())
+            {
+                yield return rect;
+            }
+        }
+    }
+
+    public static IEnumerable<SpatialItem<T>> CROSS_AXIS_SEARCH_ALL<T>(
+        this BinNode<T> binNode,
+        BoundingBox rectangle,
         double cv,
         double lv,
         AXIS v)
@@ -224,19 +274,19 @@ public static class Helpers
 
             if (d == DIRECTION.BOTH)
             {
-                foreach (var rect in rectangle.CROSS_AXIS_ALL(binNode.Child[0], cv - lv, lv, v))
+                foreach (var rect in binNode.Child[0].CROSS_AXIS_SEARCH_ALL(rectangle, cv - lv, lv, v))
                 {
                     yield return rect;
                 }
 
-                foreach (var rect in rectangle.CROSS_AXIS_ALL(binNode.Child[1], cv + lv, lv, v))
+                foreach (var rect in binNode.Child[1].CROSS_AXIS_SEARCH_ALL(rectangle, cv + lv, lv, v))
                 {
                     yield return rect;
                 }
             }
             else
             {
-                foreach (var rect in rectangle.CROSS_AXIS_ALL(binNode.Child[(int)d], cv + g_VF[(int)d] * lv, lv, v))
+                foreach (var rect in binNode.Child[(int)d].CROSS_AXIS_SEARCH_ALL(rectangle, cv + g_VF[(int)d] * lv, lv, v))
                 {
                     yield return rect;
                 }

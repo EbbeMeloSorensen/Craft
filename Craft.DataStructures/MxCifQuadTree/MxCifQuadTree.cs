@@ -419,11 +419,9 @@ public class MxCifQuadTree<T>
 
     public IEnumerable<SpatialItem<T>> GetAll()
     {
-        //return _root == null
-        //    ? Enumerable.Empty<SpatialItem<T>>()
-        //    : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
-
-        throw new NotImplementedException();
+        return _root == null
+            ? Enumerable.Empty<SpatialItem<T>>()
+            : _root.CIF_GET_ALL();
     }
 
     public IEnumerable<SpatialItem<T>> GetAllIntersecting(
@@ -431,7 +429,7 @@ public class MxCifQuadTree<T>
     {
         return _root == null
             ? Enumerable.Empty<SpatialItem<T>>()
-            : rectangle.CIF_SEARCH_ALL(_root, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
+            : _root.CIF_SEARCH_ALL(rectangle, _p.CenterX, _p.CenterY, (_p.MaxX - _p.MinX) / 2, (_p.MaxY - _p.MinY) / 2);
     }
 
     public void Clear()

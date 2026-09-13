@@ -476,5 +476,6 @@ public class MxCifQuadTreeTest
         }
 
         var allRectangles = mxCifQuadTree.GetAll();
+        allRectangles.Count().Should().Be(rectanglesInTotal);
     }
 }
