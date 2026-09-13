@@ -4,6 +4,6 @@ namespace Craft.DataStructures.Geometry;
 
 public interface IGeometryDataSource
 {
-    IEnumerable Query(
+    IEnumerable GetGeometries(
         BoundingBox window);
 }

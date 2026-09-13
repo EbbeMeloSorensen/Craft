@@ -39,7 +39,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
             _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, polyLine));
         }
 
-        public IEnumerable Query(
+        public IEnumerable GetGeometries(
             BoundingBox window)
         {
             var result = _mxCifQuadTree.GetAllIntersecting(window);

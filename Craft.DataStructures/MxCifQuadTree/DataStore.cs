@@ -15,7 +15,7 @@ public class DataStore : IGeometryDataStore
         _mxCifQuadTree = new MxCifQuadTree<object>(region, maxDepth, new DummyLogger());
     }
 
-    public IEnumerable Query(
+    public IEnumerable GetGeometries(
         BoundingBox window)
     {
         var result = _mxCifQuadTree.GetAllIntersecting(window);

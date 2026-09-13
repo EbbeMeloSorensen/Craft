@@ -25,7 +25,6 @@ namespace Craft.IO.Utils
             foreach (var prop in jsonPropertyNames)
             {
                 _ignores[type].Add(prop);
-
             }
         }
 

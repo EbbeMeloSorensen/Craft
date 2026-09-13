@@ -1,16 +1,19 @@
 ﻿using Craft.DataStructures.Geometry;
-using Craft.DataStructures.MxCifQuadTree;
+using Craft.IO.Utils;
+using Craft.Math;
 using Craft.UIElements.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using GalaSoft.MvvmLight.Command;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
@@ -230,6 +233,8 @@ namespace Craft.UIElements.Reborn.GuiTest
         public ICommand SetWorldWindowCommand { get; }
         public ICommand SetTimeIntervalCommand { get; }
         public ICommand SetWorldFocusCommand { get; }
+        public ICommand SaveGeometryCommand { get; }
+        public ICommand LoadGeometryCommand { get; }
 
         public GeometryViewModel GeometryViewModel { get; }
 
@@ -264,6 +269,8 @@ namespace Craft.UIElements.Reborn.GuiTest
             SetWorldWindowCommand = new RelayCommand(SetWorldWindow);
             SetTimeIntervalCommand = new RelayCommand(SetTimeInterval);
             SetWorldFocusCommand = new RelayCommand(SetWorldFocus);
+            SaveGeometryCommand = new RelayCommand(SaveGeometry);
+            LoadGeometryCommand = new RelayCommand(LoadGeometry);
 
             // Default values for the world window bounds input fields
             RequestedWWBounds_XMin = "-300";
@@ -410,6 +417,57 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
+        private void SaveGeometry()
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = "Json Files(*.json)|*.json"
+            };
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var points = new List<List<Point2D>>
+            {
+                new List<Point2D>
+                {
+                    new Point2D(1, 2),
+                    new Point2D(3, 4)
+                },
+                new List<Point2D>
+                {
+                    new Point2D(5, 6),
+                    new Point2D(7, 8)
+                }
+            };
+
+            //_geometryDataSource.GetAllGeometries();
+
+            var json = JsonConvert.SerializeObject(points, Formatting.Indented, new DoubleJsonConverter());
+
+            using (var streamWriter = new StreamWriter(dialog.FileName))
+            {
+                streamWriter.WriteLine(json);
+            }
+        }
+
+        private void LoadGeometry()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "Json Files(*.json)|*.json"
+            };
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            throw new NotImplementedException();
+        }
+
         private WorldFocusRequest ComputeCamera(
             TimeSpan time)
         {
@@ -427,7 +485,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         private void UpdateStaticGeometryLayer()
         {
-            var geometricObjects = _geometryDataSource.Query(
+            var geometricObjects = _geometryDataSource.GetGeometries(
                 GeometryViewModel.WorldWindowExpanded);
 
             GeometryViewModel.ClearLayer(false);

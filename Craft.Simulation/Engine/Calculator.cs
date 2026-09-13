@@ -776,7 +776,7 @@ namespace Craft.Simulation.Engine
                         bsAfter.Position.Y - bodySize.Height,
                         bsAfter.Position.Y + bodySize.Height);
 
-                    potentiallyIntersectingBoundaries = boundaryDataStore.Query(boundingBoxOfBody);
+                    potentiallyIntersectingBoundaries = boundaryDataStore.GetGeometries(boundingBoxOfBody);
                 }
 
                 foreach (var temp in potentiallyIntersectingBoundaries)

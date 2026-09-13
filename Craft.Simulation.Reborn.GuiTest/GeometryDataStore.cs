@@ -41,7 +41,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             }
         }
 
-        public IEnumerable Query(
+        public IEnumerable GetGeometries(
             BoundingBox window)
         {
             var result = _mxCifQuadTree.GetAllIntersecting(window);

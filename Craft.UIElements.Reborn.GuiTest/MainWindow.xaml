@@ -7,7 +7,7 @@
         xmlns:reborn="clr-namespace:Craft.UIElements.Geometry2D.Reborn;assembly=Craft.UIElements"
         mc:Ignorable="d"
         Title="Craft.UIElements.Reborn.GuiTest" Height="600" Width="900"
-        Loaded="MainWindow_OnLoaded">
+        Loaded="MainWindow_OnLoaded" d:DataContext="{d:DesignInstance local:MainWindowViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,9 +20,8 @@
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <MenuItem Header="Bamse">
-            </MenuItem>
-               
+            <MenuItem Header="Save" Command="{Binding SaveGeometryCommand}"/>
+            <MenuItem Header="Load" Command="{Binding LoadGeometryCommand}"/>
         </Menu>
 
         <Border Grid.Row="1" Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">

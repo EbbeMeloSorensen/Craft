@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Craft.IO.Utils\Craft.IO.Utils.csproj" />
     <ProjectReference Include="..\Craft.UIElements\Craft.UIElements.csproj" />
     <ProjectReference Include="..\Craft.ViewModels\Craft.ViewModels.csproj" />
   </ItemGroup>

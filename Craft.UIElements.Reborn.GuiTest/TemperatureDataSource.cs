@@ -20,7 +20,7 @@ public class TemperatureDataSource : IGeometryDataSource
         };
     }
 
-    public IEnumerable Query(
+    public IEnumerable GetGeometries(
         BoundingBox window)
     {
         throw new NotImplementedException("TemperatureDataSource.Query is not implemented yet.");
