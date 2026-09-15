@@ -22,7 +22,12 @@
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <MenuItem Header="Save" Command="{Binding SaveGeometryCommand}"/>
             <MenuItem Header="Load" Command="{Binding LoadGeometryCommand}"/>
-            <MenuItem Header="Change Mode" Command="{Binding ChangeCanvasModeCommand}"/>
+            <MenuItem Header="Select"
+                      Command="{Binding ChangeCanvasModeCommand}"
+                      CommandParameter="Select"/>
+            <MenuItem Header="Draw"
+                      Command="{Binding ChangeCanvasModeCommand}"
+                      CommandParameter="Draw"/>
         </Menu>
 
         <Border Grid.Row="1" Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">

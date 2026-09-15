@@ -272,7 +272,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             SetWorldFocusCommand = new RelayCommand(SetWorldFocus);
             SaveGeometryCommand = new RelayCommand(SaveGeometry);
             LoadGeometryCommand = new RelayCommand(LoadGeometry);
-            ChangeCanvasModeCommand = new RelayCommand(ChangeCanvasMode);
+            ChangeCanvasModeCommand = new RelayCommand<object>(ChangeCanvasMode);
 
             // Default values for the world window bounds input fields
             RequestedWWBounds_XMin = "-300";
@@ -495,9 +495,13 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
-        private void ChangeCanvasMode()
+        private void ChangeCanvasMode(
+            object parameter)
         {
-            GeometryViewModel.CanvasMode = CanvasMode.Draw;
+            if (Enum.TryParse((string)parameter, out CanvasMode canvasMode))
+            {
+                GeometryViewModel.CanvasMode = canvasMode;
+            }
         }
 
         private WorldFocusRequest ComputeCamera(
