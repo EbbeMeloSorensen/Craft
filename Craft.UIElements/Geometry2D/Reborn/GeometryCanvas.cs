@@ -1,12 +1,11 @@
-﻿using Craft.DataStructures.Geometry;
-using Craft.Simulation.Boundaries;
-using Craft.Utils.Linq;
-using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Craft.Utils.Linq;
+using Craft.DataStructures.Geometry;
+using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -269,6 +268,21 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(bool),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public CanvasMode CanvasMode
+        {
+            get => (CanvasMode)GetValue(CanvasModeProperty);
+            set => SetValue(CanvasModeProperty, value);
+        }
+
+        public static readonly DependencyProperty CanvasModeProperty =
+            DependencyProperty.Register(
+                nameof(CanvasMode),
+                typeof(CanvasMode),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(
+                    default(CanvasMode),
+                    OnCanvasModeChanged));
 
         public List<Point> DrawingStrokePoints
         {
@@ -1378,6 +1392,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             _worldWindowLimiter = new WorldWindowLimiter(worldWindowBounds);
             UpdateViewState(ComputeWorldWindow());
+        }
+
+        private static void OnCanvasModeChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            var canvas = (GeometryCanvas)d;
+            canvas.OnCanvasModeChanged((CanvasMode)e.NewValue);
+        }
+
+        private void OnCanvasModeChanged(
+            CanvasMode canvasMode)
+        {
+            var a = 0;
         }
 
         private void OnRendering(

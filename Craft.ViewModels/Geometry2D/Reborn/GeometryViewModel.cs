@@ -6,6 +6,12 @@ using Craft.DataStructures.Geometry;
 
 namespace Craft.ViewModels.Geometry2D.Reborn
 {
+    public enum CanvasMode
+    {
+        Select,
+        Draw
+    }
+
     public class GeometryViewModel : INotifyPropertyChanged
     {
         private ViewState _viewState;
@@ -25,6 +31,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _showCoordinateSystem;
         private bool _timeAxisMode;
         private List<System.Windows.Point> _drawingStrokePoints;
+        private CanvasMode _canvasMode;
 
         public ViewState ViewState
         {
@@ -204,6 +211,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _drawingStrokePoints = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public CanvasMode CanvasMode
+        {
+            get => _canvasMode;
+            set
+            {
+                _canvasMode = value;
                 OnPropertyChanged();
             }
         }

@@ -26,7 +26,8 @@
                               ShowGrid="{Binding ShowGrid}"
                               ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
                               TimeAxisMode="{Binding TimeAxisMode}"
-                              DebugMode="{Binding DebugMode}">
+                              DebugMode="{Binding DebugMode}"
+                              CanvasMode="{Binding CanvasMode, Mode=TwoWay}">
         </local:GeometryCanvas>
     </Grid>
 </UserControl>
