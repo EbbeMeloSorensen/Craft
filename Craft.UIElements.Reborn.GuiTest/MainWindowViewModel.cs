@@ -318,6 +318,15 @@ namespace Craft.UIElements.Reborn.GuiTest
             {
                 UpdateStaticGeometryLayer();
             }
+            else if (e.PropertyName == nameof(GeometryViewModel.ClickedWorldPosition))
+            {
+                if (GeometryViewModel.ClickedWorldPosition == null)
+                {
+                    return;
+                }
+
+                var a = 0;
+            }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
             {
                 if (GeometryViewModel.DrawingStrokePoints == null)

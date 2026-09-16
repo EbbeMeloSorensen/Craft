@@ -69,6 +69,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(null));
 
+        public Point? ClickedWorldPosition
+        {
+            get => (Point?)GetValue(ClickedWorldPositionProperty);
+            set => SetValue(ClickedWorldPositionProperty, value);
+        }
+
+        public static readonly DependencyProperty ClickedWorldPositionProperty =
+            DependencyProperty.Register(
+                nameof(ClickedWorldPosition),
+                typeof(Point?),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(null));
+
         public bool LockAspectRatio
         {
             get => (bool)GetValue(LockAspectRatioProperty);
@@ -786,17 +799,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 // Select mode
                 var mouseUpPosition = e.GetPosition(this);
-
                 var delta = mouseUpPosition - _mouseDownPosition;
 
                 if (delta.X < 2 && delta.Y < 2)
                 {
-                    // Todo: Handle user click, where he might have selected a stroke
+                    var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                    ClickedWorldPosition = transform.Transform(_mouseDownPosition);
                 }
                 else
                 {
                     // Todo: Handle select region, where he might have selected a collection of strokes
-                    throw new NotImplementedException();
+                    //throw new NotImplementedException();
                 }
             }
 

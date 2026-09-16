@@ -21,6 +21,7 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private WorldFocusRequest _requestedWorldFocus;
         private BoundingBox _worldWindowBounds;
         private System.Windows.Point? _cursorWorldPosition;
+        private System.Windows.Point? _clickedWorldPosition;
         private bool _lockAspectRatio;
         private bool _lockXAxis;
         private bool _lockYAxis;
@@ -99,6 +100,16 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _cursorWorldPosition = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public System.Windows.Point? ClickedWorldPosition
+        {
+            get => _clickedWorldPosition;
+            set
+            {
+                _clickedWorldPosition = value;
                 OnPropertyChanged();
             }
         }
