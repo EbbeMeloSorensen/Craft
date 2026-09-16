@@ -600,7 +600,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     var p1 = worldToViewportTransform.Transform(new Point(_.Item1.X, _.Item1.Y));
                     var p2 = worldToViewportTransform.Transform(new Point(_.Item2.X, _.Item2.Y));
                     dc.DrawLine(drawingPen, p1, p2);
-
                 });
             }
         }
@@ -705,13 +704,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else
             {
-                // Drawing
-                Mouse.OverrideCursor = Cursors.Pen;
-                _isDrawing = true;
+                if (CanvasMode == CanvasMode.Draw)
+                {
+                    _isDrawing = true;
 
-                var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-                _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
-                InvalidateVisual();
+                    var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                    _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
+                }
             }
 
             CaptureMouse();
@@ -783,8 +782,25 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 _drawingStrokePoints.Clear();
                 InvalidateVisual();
             }
+            else
+            {
+                // Select mode
+                var mouseUpPosition = e.GetPosition(this);
 
-            Mouse.OverrideCursor = Cursors.Arrow;
+                var delta = mouseUpPosition - _mouseDownPosition;
+
+                if (delta.X < 2 && delta.Y < 2)
+                {
+                    // Todo: Handle user click, where he might have selected a stroke
+                }
+                else
+                {
+                    // Todo: Handle select region, where he might have selected a collection of strokes
+                    throw new NotImplementedException();
+                }
+            }
+
+            ShowDefaultCursorForMode();
             ReleaseMouseCapture();
         }
 
@@ -1405,7 +1421,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void OnCanvasModeChanged(
             CanvasMode canvasMode)
         {
-            var a = 0;
+            ShowDefaultCursorForMode();
+        }
+
+        private void ShowDefaultCursorForMode()
+        {
+            switch (CanvasMode)
+            {
+                case CanvasMode.Select:
+                    Mouse.OverrideCursor = Cursors.Arrow;
+                    break;
+                case CanvasMode.Draw:
+                    Mouse.OverrideCursor = Cursors.Pen;
+                    break;
+            }
         }
 
         private void OnRendering(
