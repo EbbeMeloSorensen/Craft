@@ -325,6 +325,12 @@ namespace Craft.UIElements.Reborn.GuiTest
                     return;
                 }
 
+                // Todo: make a bounding box that takes the current magnification into account
+                var sX = GeometryViewModel.ViewState.Scaling.Width;
+                var sY = GeometryViewModel.ViewState.Scaling.Height;
+
+                //var a = _geometryDataSource.GetIntersecting()
+
                 var a = 0;
             }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
