@@ -325,13 +325,27 @@ namespace Craft.UIElements.Reborn.GuiTest
                     return;
                 }
 
-                // Todo: make a bounding box that takes the current magnification into account
+                // Make a bounding box that takes the current magnification into account
+                var x = GeometryViewModel.ClickedWorldPosition.Value.X;
+                var y = GeometryViewModel.ClickedWorldPosition.Value.Y;
                 var sX = GeometryViewModel.ViewState.Scaling.Width;
                 var sY = GeometryViewModel.ViewState.Scaling.Height;
 
-                //var a = _geometryDataSource.GetIntersecting()
+                var bbox = new BoundingBox(
+                    x - 2 / sX,
+                    x + 2 / sX,
+                    y - 2 / sY,
+                    y + 2 / sY);
 
-                var a = 0;
+                var temp = _geometryDataSource.GetIntersecting(bbox);
+
+                foreach (var t in temp)
+                {
+                    // Her har du en PolyLineModel eller en LineModel eller...
+                    // Man skal vælge den, der er tættest på og tilføje den til selection
+                    GeometryViewModel.SelectedGeometricObjects.Clear();
+                    GeometryViewModel.SelectedGeometricObjects.Add(t);
+                }
             }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
             {
@@ -339,6 +353,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                 {
                     return;
                 }
+
+                // Her er vi, når brugeren lige er blevet færdig med at tegne et stroke
 
                 var polyLine = new PolyLineModel
                 {

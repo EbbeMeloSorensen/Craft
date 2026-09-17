@@ -239,6 +239,9 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         public ObservableCollection<GeometryLayer> GeometryLayers { get; }
             = new ObservableCollection<GeometryLayer>();
 
+        public ObservableCollection<object> SelectedGeometricObjects { get; }
+            = new ObservableCollection<object>();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public GeometryViewModel()

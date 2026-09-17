@@ -10,6 +10,7 @@
         <local:GeometryCanvas ClipToBounds="True"
                               x:Name="GeometryCanvas"
                               GeometryLayers="{Binding GeometryLayers}"
+                              SelectedGeometricObjects="{Binding SelectedGeometricObjects}"
                               ViewState="{Binding ViewState, Mode=OneWayToSource}"
                               WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
                               WorldWindowExpanded="{Binding WorldWindowExpanded, Mode=TwoWay}"

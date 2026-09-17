@@ -28,6 +28,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
         // Items (your geometries)
         // =============================
 
+        public IEnumerable<object> SelectedGeometricObjects
+        {
+            get => (IEnumerable<object>)GetValue(SelectedGeometricObjectsProperty);
+            set => SetValue(SelectedGeometricObjectsProperty, value);
+        }
+
+        public static readonly DependencyProperty SelectedGeometricObjectsProperty =
+            DependencyProperty.Register(
+                nameof(SelectedGeometricObjects),
+                typeof(IEnumerable<object>),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(null, OnSelectedGeometricObjectsChanged));
+
         public IEnumerable<GeometryLayer> GeometryLayers
         {
             get => (IEnumerable<GeometryLayer>)GetValue(GeometryLayersProperty);
@@ -370,6 +383,21 @@ namespace Craft.UIElements.Geometry2D.Reborn
             canvas.InvalidateVisual();
         }
 
+        private static void OnSelectedGeometricObjectsChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            var canvas = (GeometryCanvas)d;
+
+            if (e.OldValue is INotifyCollectionChanged oldCollection)
+                oldCollection.CollectionChanged -= canvas.OnCollectionChanged;
+
+            if (e.NewValue is INotifyCollectionChanged newCollection)
+                newCollection.CollectionChanged += canvas.OnCollectionChanged;
+
+            canvas.InvalidateVisual();
+        }
+
         private void OnCollectionChanged(
             object sender,
             NotifyCollectionChangedEventArgs e)
@@ -535,6 +563,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             // which is not what we want.
 
             var drawingPen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
+            var selectedPen = new Pen(Brushes.Blue, 3); // always 3 pixels
             var drawingBrush = Brushes.IndianRed;
             //pen.Freeze(); // What does this do? ChatGpt talked about it
 
@@ -600,7 +629,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             }
 
                             sg.Freeze();
-                            dc.DrawGeometry(null, drawingPen, sg);
+
+                            var pen = SelectedGeometricObjects.Contains(polyLineModel)
+                                ? selectedPen
+                                : drawingPen;
+
+                            dc.DrawGeometry(null, pen, sg);
                             break;
                     }
                 }
