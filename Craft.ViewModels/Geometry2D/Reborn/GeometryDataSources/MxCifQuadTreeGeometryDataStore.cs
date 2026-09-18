@@ -22,21 +22,21 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
             object geometricObject,
             BoundingBox boundingBox)
         {
-            var temp = geometricObject as PolyLineModel;
-            var points = new List<System.Windows.Point>();
+            var line = geometricObject as Math.LineSegment2D;
+            //var points = new List<System.Windows.Point>();
 
-            foreach (var point in temp.Points)
-            {
-                points.Add(point);
-            }
+            //foreach (var point in temp.Points)
+            //{
+            //    points.Add(point);
+            //}
 
-            var polyLine = new PolyLineModel
-            {
-                Points = points
-            };
+            //var polyLine = new PolyLineModel
+            //{
+            //    Points = points
+            //};
 
-            var bbox = polyLine.ComputeBoundingBox();
-            _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, polyLine));
+            var bbox = line.ComputeBoundingBox();
+            _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, line));
         }
 
         public IEnumerable GetAll()

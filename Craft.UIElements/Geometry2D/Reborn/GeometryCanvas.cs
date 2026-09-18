@@ -577,7 +577,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         case Math.LineSegment2D lineSegment:
                             var p1 = worldToViewportTransform.Transform(new Point(lineSegment.Point1.X, lineSegment.Point1.Y));
                             var p2 = worldToViewportTransform.Transform(new Point(lineSegment.Point2.X, lineSegment.Point2.Y));
-                            dc.DrawLine(drawingPen, p1, p2);
+
+                            var pen1 = SelectedGeometricObjects.Contains(lineSegment)
+                                ? selectedPen
+                                : drawingPen;
+
+                            dc.DrawLine(pen1, p1, p2);
                             break;
 
                         case Math.Point2D point:
@@ -631,11 +636,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                             sg.Freeze();
 
-                            var pen = SelectedGeometricObjects.Contains(polyLineModel)
+                            var pen2 = SelectedGeometricObjects.Contains(polyLineModel)
                                 ? selectedPen
                                 : drawingPen;
 
-                            dc.DrawGeometry(null, pen, sg);
+                            dc.DrawGeometry(null, pen2, sg);
                             break;
                     }
                 }

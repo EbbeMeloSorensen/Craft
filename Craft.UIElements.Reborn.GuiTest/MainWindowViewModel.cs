@@ -1,6 +1,7 @@
 ﻿using Craft.DataStructures.Geometry;
 using Craft.IO.Utils;
 using Craft.Math;
+using Craft.Utils.Linq;
 using Craft.UIElements.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
@@ -360,15 +361,23 @@ namespace Craft.UIElements.Reborn.GuiTest
                 }
 
                 // Her er vi, når brugeren lige er blevet færdig med at tegne et stroke
-
-                var polyLine = new PolyLineModel
+                GeometryViewModel.DrawingStrokePoints.AdjacentPairs().ToList().ForEach(_ =>
                 {
-                    Points = GeometryViewModel.DrawingStrokePoints
-                };
+                    var line = new LineSegment2D(
+                        new Point2D(_.Item1.X, _.Item1.Y),
+                        new Point2D(_.Item2.X, _.Item2.Y));
 
-                var bbox = polyLine.ComputeBoundingBox();
+                    _geometryDataSource.AddGeometricObject(line, line.ComputeBoundingBox());
+                });
 
-                _geometryDataSource.AddGeometricObject(polyLine, bbox);
+                //var polyLine = new PolyLineModel
+                //{
+                //    Points = GeometryViewModel.DrawingStrokePoints
+                //};
+
+                //var bbox = polyLine.ComputeBoundingBox();
+
+                //_geometryDataSource.AddGeometricObject(polyLine, bbox);
 
                 UpdateStaticGeometryLayer();
             }
