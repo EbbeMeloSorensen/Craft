@@ -332,25 +332,55 @@ namespace Craft.UIElements.Reborn.GuiTest
                 var sX = GeometryViewModel.ViewState.Scaling.Width;
                 var sY = GeometryViewModel.ViewState.Scaling.Height;
 
+                var bbHalfWidth = 4 / System.Math.Min(sX, sY);
+
                 var bbox = new BoundingBox(
-                    x - 2 / sX,
-                    x + 2 / sX,
-                    y - 2 / sY,
-                    y + 2 / sY);
+                    x - bbHalfWidth,
+                    x + bbHalfWidth,
+                    y - bbHalfWidth,
+                    y + bbHalfWidth);
 
-                var temp = _geometryDataSource.GetIntersecting(bbox);
+                var geometricObjects = _geometryDataSource.GetIntersecting(bbox);
 
-                if (!Keyboard.IsKeyDown(Key.LeftShift))
+                var clickedPosition = new Point2D(
+                    GeometryViewModel.ClickedWorldPosition.Value.X,
+                    GeometryViewModel.ClickedWorldPosition.Value.Y);
+
+                object closestGeometricObject = null;
+                var squaredDistanceToClosestGeometricObject = double.NaN;
+
+                foreach (var geometricObject in geometricObjects)
+                {
+                    switch (geometricObject)
+                    {
+                        case LineSegment2D lineSegment2D:
+                            var squaredDistance = lineSegment2D.SquaredDistanceTo(clickedPosition);
+
+                            if (closestGeometricObject == null ||
+                                squaredDistance < squaredDistanceToClosestGeometricObject)
+                            {
+                                closestGeometricObject = geometricObject;
+                                squaredDistanceToClosestGeometricObject = squaredDistance;
+                            }
+
+                            break;
+
+                        default:
+                            throw new InvalidDataException("unsupported geometric object type");
+                    }
+                }
+
+                if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
                     GeometryViewModel.SelectedGeometricObjects.Clear();
                 }
 
-                foreach (var t in temp)
+                if (closestGeometricObject != null && squaredDistanceToClosestGeometricObject < bbHalfWidth * bbHalfWidth)
                 {
-                    // Her har du en PolyLineModel eller en LineModel eller...
-                    // Man skal vælge den, der er tættest på og tilføje den til selection
-
-                    GeometryViewModel.SelectedGeometricObjects.Add(t);
+                    if (!GeometryViewModel.SelectedGeometricObjects.Contains(closestGeometricObject))
+                    {
+                        GeometryViewModel.SelectedGeometricObjects.Add(closestGeometricObject);
+                    }
                 }
             }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
