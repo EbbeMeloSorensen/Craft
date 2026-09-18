@@ -339,11 +339,16 @@ namespace Craft.UIElements.Reborn.GuiTest
 
                 var temp = _geometryDataSource.GetIntersecting(bbox);
 
+                if (!Keyboard.IsKeyDown(Key.LeftShift))
+                {
+                    GeometryViewModel.SelectedGeometricObjects.Clear();
+                }
+
                 foreach (var t in temp)
                 {
                     // Her har du en PolyLineModel eller en LineModel eller...
                     // Man skal vælge den, der er tættest på og tilføje den til selection
-                    GeometryViewModel.SelectedGeometricObjects.Clear();
+
                     GeometryViewModel.SelectedGeometricObjects.Add(t);
                 }
             }
