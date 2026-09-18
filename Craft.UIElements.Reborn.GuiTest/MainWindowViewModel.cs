@@ -476,24 +476,19 @@ namespace Craft.UIElements.Reborn.GuiTest
                 return;
             }
 
-            var polyLines = new List<List<Point2D>>();
+            var lines = new List<LineSegment2D>();
 
             foreach (var spatialObject in _geometryDataSource.GetAll())
             {
                 switch (spatialObject)
                 {
-                    case PolyLineModel polyLineModel:
-                    {
-                        var polyLine = polyLineModel.Points.Select(p => new Point2D(p.X, p.Y)).ToList();
-
-                        polyLines.Add(polyLine);
-
+                    case LineSegment2D lineSegment2D:
+                        lines.Add(lineSegment2D);
                         break;
-                    }
                 }
             }
 
-            var json = JsonConvert.SerializeObject(polyLines, Formatting.Indented, new DoubleJsonConverter());
+            var json = JsonConvert.SerializeObject(lines, Formatting.Indented, new DoubleJsonConverter());
 
             using (var streamWriter = new StreamWriter(dialog.FileName))
             {
@@ -516,24 +511,13 @@ namespace Craft.UIElements.Reborn.GuiTest
             using (var r = new StreamReader(dialog.FileName))
             {
                 var jsonData = r.ReadToEnd();
-                var deserializedData = JsonConvert.DeserializeObject<List<List<Point2D>>>(jsonData);
+                var deserializedData = JsonConvert.DeserializeObject<List<LineSegment2D>>(jsonData);
 
-                // Not using this
-                //var xMin = deserializedData.Min(pointList => pointList.Min(point => point.X));
-                //var xMax = deserializedData.Max(pointList => pointList.Max(point => point.X));
-                //var yMin = deserializedData.Min(pointList => pointList.Min(point => point.Y));
-                //var yMax = deserializedData.Max(pointList => pointList.Max(point => point.Y));
-
-                foreach (var pointList in deserializedData)
+                foreach (var lineSegment2D in deserializedData)
                 {
-                    var polyLine = new PolyLineModel
-                    {
-                        Points =  pointList.Select(p => new Point(p.X, p.Y))
-                    };
+                    var bbox = lineSegment2D.ComputeBoundingBox();
 
-                    var bbox = polyLine.ComputeBoundingBox();
-
-                    _geometryDataSource.AddGeometricObject(polyLine, bbox);
+                    _geometryDataSource.AddGeometricObject(lineSegment2D, bbox);
                 }
 
                 UpdateStaticGeometryLayer();
