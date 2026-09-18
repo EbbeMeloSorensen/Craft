@@ -233,6 +233,11 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             {
                 _canvasMode = value;
                 OnPropertyChanged();
+
+                if (_canvasMode != CanvasMode.Select)
+                {
+                    SelectedGeometricObjects.Clear();
+                }
             }
         }
 
