@@ -23,6 +23,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private BoundingBox _current;
         private BoundingBox _target;
         private List<Point> _drawingStrokePoints;
+        private Point? _nextPotentialDrawingStrokePoint;
 
         // =============================
         // Items (your geometries)
@@ -642,11 +643,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (_isDrawing)
             {
-                _drawingStrokePoints.AdjacentPairs().ToList().ForEach(_ =>
+                var drawingStrokePointsWorld = _drawingStrokePoints
+                    .Select(p => worldToViewportTransform.Transform(new Point(p.X, p.Y)))
+                    .ToList();
+
+                if (_nextPotentialDrawingStrokePoint.HasValue)
                 {
-                    var p1 = worldToViewportTransform.Transform(new Point(_.Item1.X, _.Item1.Y));
-                    var p2 = worldToViewportTransform.Transform(new Point(_.Item2.X, _.Item2.Y));
-                    dc.DrawLine(drawingPen, p1, p2);
+                    drawingStrokePointsWorld.Add(worldToViewportTransform.Transform(new Point(
+                        _nextPotentialDrawingStrokePoint.Value.X,
+                        _nextPotentialDrawingStrokePoint.Value.Y)));
+                }
+
+                drawingStrokePointsWorld.AdjacentPairs().ToList().ForEach(_ =>
+                {
+                    dc.DrawLine(drawingPen, _.Item1, _.Item2);
                 });
             }
         }
@@ -742,25 +752,85 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             _mouseDownPosition = e.GetPosition(this);
 
-            if (e.RightButton == MouseButtonState.Pressed)
+            switch (CanvasMode)
             {
-                // Panning
-                Mouse.OverrideCursor = Cursors.Hand;
-                _isPanning = true;
-                _panStartWorldOrigin = ViewState.WorldOrigin;
-            }
-            else
-            {
-                if (CanvasMode == CanvasMode.Draw)
-                {
-                    _isDrawing = true;
+                case CanvasMode.Select:
 
-                    var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-                    _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
-                }
+                    if (e.RightButton == MouseButtonState.Pressed)
+                    {
+                        // Start panning
+                        Mouse.OverrideCursor = Cursors.Hand;
+                        _isPanning = true;
+                        _panStartWorldOrigin = ViewState.WorldOrigin;
+                        CaptureMouse();
+                    }
+
+                    break;
+
+                case CanvasMode.Draw:
+
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        // Add a point to the current drawing stroke
+                        var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                        _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
+
+                        if (!_isDrawing)
+                        {
+                            _isDrawing = true;
+                            CaptureMouse();
+                        }
+                    }
+                    else if (e.RightButton == MouseButtonState.Pressed)
+                    {
+                        if (_isDrawing)
+                        {
+                            // Complete the current drawing stroke
+
+                            if (_nextPotentialDrawingStrokePoint.HasValue)
+                            {
+                                _drawingStrokePoints.Add(_nextPotentialDrawingStrokePoint.Value);
+                            }
+
+                            SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
+
+                            _drawingStrokePoints.Clear();
+                            _isDrawing = false;
+                            ReleaseMouseCapture();
+                            InvalidateVisual();
+                        }
+                        else
+                        {
+                            // Start panning
+                            Mouse.OverrideCursor = Cursors.Hand;
+                            _isPanning = true;
+                            _panStartWorldOrigin = ViewState.WorldOrigin;
+                            CaptureMouse();
+                        }
+                    }
+
+                    break;
             }
 
-            CaptureMouse();
+            //if (e.RightButton == MouseButtonState.Pressed)
+            //{
+            //    // Panning
+            //    Mouse.OverrideCursor = Cursors.Hand;
+            //    _isPanning = true;
+            //    _panStartWorldOrigin = ViewState.WorldOrigin;
+            //}
+            //else
+            //{
+            //    if (CanvasMode == CanvasMode.Draw)
+            //    {
+            //        _isDrawing = true;
+
+            //        var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+            //        _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
+            //    }
+            //}
+
+            //CaptureMouse();
         }
 
         protected override void OnMouseMove(
@@ -807,7 +877,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 if (_isDrawing)
                 {
                     var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-                    _drawingStrokePoints.Add(transform.Transform(mousePos));
+                    _nextPotentialDrawingStrokePoint = transform.Transform(mousePos);
+                    //_drawingStrokePoints.Add(transform.Transform(mousePos));
                     InvalidateVisual();
                 }
             }
@@ -822,28 +893,33 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 _isPanning = false;
             }
-            else if (_isDrawing)
-            {
-                SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
-                _isDrawing = false;
-                _drawingStrokePoints.Clear();
-                InvalidateVisual();
-            }
             else
             {
-                // Select mode
-                var mouseUpPosition = e.GetPosition(this);
-                var delta = mouseUpPosition - _mouseDownPosition;
+                switch (CanvasMode)
+                {
+                    case CanvasMode.Select:
 
-                if (delta.X < 2 && delta.Y < 2)
-                {
-                    var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-                    ClickedWorldPosition = transform.Transform(_mouseDownPosition);
-                }
-                else
-                {
-                    // Todo: Handle select region, where he might have selected a collection of strokes
-                    //throw new NotImplementedException();
+                        if (e.LeftButton == MouseButtonState.Released)
+                        {
+                            var mouseUpPosition = e.GetPosition(this);
+                            var delta = mouseUpPosition - _mouseDownPosition;
+
+                            if (delta.X < 2 && delta.Y < 2)
+                            {
+                                var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                                ClickedWorldPosition = transform.Transform(_mouseDownPosition);
+                            }
+                            else
+                            {
+                                // Todo: Handle select region, where he might have selected a collection of strokes
+                                //throw new NotImplementedException();
+                            }
+                        }
+
+                        break;
+
+                    case CanvasMode.Draw:
+                        break;
                 }
             }
 
