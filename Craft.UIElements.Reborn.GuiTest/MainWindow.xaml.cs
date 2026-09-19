@@ -32,18 +32,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                 return;
             }
 
-            switch (e.Key)
-            {
-                case System.Windows.Input.Key.Delete:
-                    var a = 0;
-                    break;
-                case System.Windows.Input.Key.Enter:
-                    var b = 0;
-                    break;
-                case System.Windows.Input.Key.Escape:
-                    var c = 0;
-                    break;
-            }
+            ViewModel.HandleKeyEvent(e.Key);
         }
     }
 }

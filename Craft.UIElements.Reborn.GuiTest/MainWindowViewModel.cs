@@ -1,12 +1,9 @@
 ﻿using Craft.DataStructures.Geometry;
 using Craft.IO.Utils;
 using Craft.Math;
-using Craft.Simulation;
-using Craft.Simulation.Engine;
 using Craft.UIElements.Geometry2D.Reborn;
 using Craft.Utils.Linq;
 using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
@@ -23,7 +20,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 {
     public class MainWindowViewModel : INotifyPropertyChanged, IFrameAware
     {
-        private IGeometryDataStore _geometryDataSource;
+        private IGeometryDataStore _geometryDataStore;
 
         private string _requestedWwBoundsXMin;
         private string _requestedWwBoundsXMax;
@@ -255,7 +252,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             //_geometryDataSource = new TimeStampDataSource();
             //_geometryDataSource = new TemperatureDataSource();
 
-            _geometryDataSource = new MxCifQuadTreeGeometryDataStore(
+            _geometryDataStore = new MxCifQuadTreeGeometryDataStore(
                 new BoundingBox(-2000, 2000, -2000, 2000), 8);
 
             GeometryViewModel = new GeometryViewModel()
@@ -342,7 +339,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                     y - bbHalfWidth,
                     y + bbHalfWidth);
 
-                var geometricObjects = _geometryDataSource.GetIntersecting(bbox);
+                var geometricObjects = _geometryDataStore.GetIntersecting(bbox);
 
                 var clickedPosition = new Point2D(
                     GeometryViewModel.ClickedWorldPosition.Value.X,
@@ -399,17 +396,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                         new Point2D(_.Item1.X, _.Item1.Y),
                         new Point2D(_.Item2.X, _.Item2.Y));
 
-                    _geometryDataSource.AddGeometricObject(line, line.ComputeBoundingBox());
+                    _geometryDataStore.AddGeometricObject(line, line.ComputeBoundingBox());
                 });
-
-                //var polyLine = new PolyLineModel
-                //{
-                //    Points = GeometryViewModel.DrawingStrokePoints
-                //};
-
-                //var bbox = polyLine.ComputeBoundingBox();
-
-                //_geometryDataSource.AddGeometricObject(polyLine, bbox);
 
                 UpdateStaticGeometryLayer();
             }
@@ -441,35 +429,23 @@ namespace Craft.UIElements.Reborn.GuiTest
             };
         }
 
-        public void HandleKeyEvent(Key key)
+        public void HandleKeyEvent(
+            Key key)
         {
             switch (key)
             {
                 case Key.Delete:
-                    var a = 0;
+
+                    if (GeometryViewModel.SelectedGeometricObjects.Any())
+                    {
+                        _geometryDataStore.RemoveGeometricObjects(
+                            GeometryViewModel.SelectedGeometricObjects);
+
+                        UpdateStaticGeometryLayer();
+                    }
+
                     break;
             }
-
-            //switch (keyboardKey)
-            //{
-            //    case KeyboardKey.:
-            //        var a = 0;
-            //        break;
-            //    case KeyboardKey.RightArrow:
-            //        KeyboardState.RightArrowDown = keyEventType == KeyEventType.KeyPressed;
-            //        break;
-            //    case KeyboardKey.UpArrow:
-            //        KeyboardState.UpArrowDown = keyEventType == KeyEventType.KeyPressed;
-            //        break;
-            //    case KeyboardKey.DownArrow:
-            //        KeyboardState.DownArrowDown = keyEventType == KeyEventType.KeyPressed;
-            //        break;
-            //    case KeyboardKey.Space:
-            //        KeyboardState.SpaceDown = keyEventType == KeyEventType.KeyPressed;
-            //        break;
-            //}
-
-            //OnKeyEventOccured(keyboardKey, keyEventType);
         }
 
         protected void OnPropertyChanged(
@@ -541,7 +517,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 
             var lines = new List<LineSegment2D>();
 
-            foreach (var spatialObject in _geometryDataSource.GetAll())
+            foreach (var spatialObject in _geometryDataStore.GetAll())
             {
                 switch (spatialObject)
                 {
@@ -580,7 +556,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                 {
                     var bbox = lineSegment2D.ComputeBoundingBox();
 
-                    _geometryDataSource.AddGeometricObject(lineSegment2D, bbox);
+                    _geometryDataStore.AddGeometricObject(lineSegment2D, bbox);
                 }
 
                 UpdateStaticGeometryLayer();
@@ -613,7 +589,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 
         private void UpdateStaticGeometryLayer()
         {
-            var geometricObjects = _geometryDataSource.GetIntersecting(
+            var geometricObjects = _geometryDataStore.GetIntersecting(
                 GeometryViewModel.WorldWindowExpanded);
 
             GeometryViewModel.ClearLayer(false);

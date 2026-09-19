@@ -35,5 +35,11 @@ public class DataStore : IGeometryDataStore
     {
         _mxCifQuadTree.Insert(new SpatialItem<object>(boundingBox, geometricObject));
     }
+
+    public void RemoveGeometricObjects(
+        IEnumerable<object> geometricObjects)
+    {
+        throw new NotImplementedException();
+    }
 }
 

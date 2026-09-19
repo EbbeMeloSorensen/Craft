@@ -1,21 +1,21 @@
-﻿using Craft.DataStructures.Geometry;
+﻿using System.Collections;
+using Craft.DataStructures.Geometry;
 using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
-using System.Collections;
-using System.Windows;
 
 namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
 {
     public class MxCifQuadTreeGeometryDataStore : IGeometryDataStore
     {
         private MxCifQuadTree<object> _mxCifQuadTree;
+        private Dictionary<object, SpatialItem<object>> _spatialItemMap;
 
         public MxCifQuadTreeGeometryDataStore(
             BoundingBox region,
             int maxDepth = 8)
         {
             _mxCifQuadTree = new MxCifQuadTree<object>(region, maxDepth, new DummyLogger());
+            _spatialItemMap = new Dictionary<object, SpatialItem<object>>();
         }
 
         public void AddGeometricObject(
@@ -23,20 +23,21 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
             BoundingBox boundingBox)
         {
             var line = geometricObject as Math.LineSegment2D;
-            //var points = new List<System.Windows.Point>();
-
-            //foreach (var point in temp.Points)
-            //{
-            //    points.Add(point);
-            //}
-
-            //var polyLine = new PolyLineModel
-            //{
-            //    Points = points
-            //};
-
             var bbox = line.ComputeBoundingBox();
-            _mxCifQuadTree.Insert(new SpatialItem<object>(bbox, line));
+            var spatialItem = new SpatialItem<object>(bbox, line);
+            _mxCifQuadTree.Insert(spatialItem);
+            _spatialItemMap[geometricObject] = spatialItem;
+        }
+
+        public void RemoveGeometricObjects(
+            IEnumerable<object> geometricObjects)
+        {
+            foreach (var geometricObject in geometricObjects)
+            {
+                var spatialItem = _spatialItemMap[geometricObject];
+                _mxCifQuadTree.Remove(spatialItem);
+                _spatialItemMap.Remove(geometricObject);
+            }
         }
 
         public IEnumerable GetAll()
