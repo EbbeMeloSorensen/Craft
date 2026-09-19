@@ -1,8 +1,10 @@
 ﻿using Craft.DataStructures.Geometry;
 using Craft.IO.Utils;
 using Craft.Math;
-using Craft.Utils.Linq;
+using Craft.Simulation;
+using Craft.Simulation.Engine;
 using Craft.UIElements.Geometry2D.Reborn;
+using Craft.Utils.Linq;
 using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
@@ -437,6 +439,37 @@ namespace Craft.UIElements.Reborn.GuiTest
                 WorldPoint = new Point(0, 0),
                 ViewportRatio = new Size(0.5, 0.5),
             };
+        }
+
+        public void HandleKeyEvent(Key key)
+        {
+            switch (key)
+            {
+                case Key.Delete:
+                    var a = 0;
+                    break;
+            }
+
+            //switch (keyboardKey)
+            //{
+            //    case KeyboardKey.:
+            //        var a = 0;
+            //        break;
+            //    case KeyboardKey.RightArrow:
+            //        KeyboardState.RightArrowDown = keyEventType == KeyEventType.KeyPressed;
+            //        break;
+            //    case KeyboardKey.UpArrow:
+            //        KeyboardState.UpArrowDown = keyEventType == KeyEventType.KeyPressed;
+            //        break;
+            //    case KeyboardKey.DownArrow:
+            //        KeyboardState.DownArrowDown = keyEventType == KeyEventType.KeyPressed;
+            //        break;
+            //    case KeyboardKey.Space:
+            //        KeyboardState.SpaceDown = keyEventType == KeyEventType.KeyPressed;
+            //        break;
+            //}
+
+            //OnKeyEventOccured(keyboardKey, keyEventType);
         }
 
         protected void OnPropertyChanged(
