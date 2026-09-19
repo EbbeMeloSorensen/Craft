@@ -23,11 +23,6 @@ namespace Craft.Simulation.Reborn.GuiTest
             CancelEventArgs e)
         {
             ViewModel.SimulationLaboratoryViewModel.HandleClosing();
-
-            //if (ViewModel.CurrentViewModel is SimulationLaboratoryViewModel simulationLaboratoryViewModel)
-            //{
-            //    simulationLaboratoryViewModel.HandleClosing();
-            //}
         }
 
         private void MainWindow_KeyDown(
@@ -57,28 +52,6 @@ namespace Craft.Simulation.Reborn.GuiTest
                     ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyPressed);
                     break;
             }
-
-            //if (ViewModel.CurrentViewModel is SimulationLaboratoryViewModel simulationLaboratoryViewModel)
-            //{
-            //    switch (e.Key)
-            //    {
-            //        case System.Windows.Input.Key.Up:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyPressed);
-            //            break;
-            //        case System.Windows.Input.Key.Down:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyPressed);
-            //            break;
-            //        case System.Windows.Input.Key.Left:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyPressed);
-            //            break;
-            //        case System.Windows.Input.Key.Right:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyPressed);
-            //            break;
-            //        case System.Windows.Input.Key.Space:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyPressed);
-            //            break;
-            //    }
-            //}
         }
 
         private void MainWindow_KeyUp(
