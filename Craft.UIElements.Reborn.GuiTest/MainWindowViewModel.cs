@@ -399,6 +399,13 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
             else if (e.PropertyName == nameof(GeometryViewModel.SelectionWindow))
             {
+                if (GeometryViewModel.SelectionWindow == null)
+                {
+                    return;
+                }
+
+                var geometricObjects = _geometryDataStore.GetIntersecting(GeometryViewModel.SelectionWindow);
+
                 var a = 0;
             }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
