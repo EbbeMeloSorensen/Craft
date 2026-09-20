@@ -67,4 +67,14 @@ public class BoundingBox
 
         return false;
     }
+
+    public bool Encloses(
+        BoundingBox boundingBox)
+    {
+        return
+            MinX < boundingBox.MinX &&
+            MinY < boundingBox.MinY &&
+            MaxX > boundingBox.MaxX &&
+            MaxY > boundingBox.MaxY;
+    }
 }

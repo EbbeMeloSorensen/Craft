@@ -406,7 +406,26 @@ namespace Craft.UIElements.Reborn.GuiTest
 
                 var geometricObjects = _geometryDataStore.GetIntersecting(GeometryViewModel.SelectionWindow);
 
-                var a = 0;
+                foreach (var geometricObject in geometricObjects)
+                {
+                    switch (geometricObject)
+                    {
+                        case LineSegment2D lineSegment2D:
+
+                            if (GeometryViewModel.SelectionWindow.Encloses(lineSegment2D.ComputeBoundingBox()))
+                            {
+                                if (!GeometryViewModel.SelectedGeometricObjects.Contains(lineSegment2D))
+                                {
+                                    GeometryViewModel.SelectedGeometricObjects.Add(lineSegment2D);
+                                }
+                            }
+
+                            break;
+
+                        default:
+                            throw new InvalidDataException("unsupported geometric object type");
+                    }
+                }
             }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
             {
