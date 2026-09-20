@@ -780,38 +780,35 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
                         _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
 
-                        if (!_isDrawing)
+                        switch (e.ClickCount)
                         {
-                            _isDrawing = true;
-                            CaptureMouse();
+                            case 1:
+
+                                if (!_isDrawing)
+                                {
+                                    _isDrawing = true;
+                                    CaptureMouse();
+                                }
+                                
+                                break;
+
+                            case 2:
+
+                                SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
+                                _drawingStrokePoints.Clear();
+                                _isDrawing = false;
+                                ReleaseMouseCapture();
+                                InvalidateVisual();
+                                break;
                         }
                     }
                     else if (e.RightButton == MouseButtonState.Pressed)
                     {
-                        if (_isDrawing)
-                        {
-                            // Complete the current drawing stroke
-
-                            if (_nextPotentialDrawingStrokePoint.HasValue)
-                            {
-                                _drawingStrokePoints.Add(_nextPotentialDrawingStrokePoint.Value);
-                            }
-
-                            SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
-
-                            _drawingStrokePoints.Clear();
-                            _isDrawing = false;
-                            ReleaseMouseCapture();
-                            InvalidateVisual();
-                        }
-                        else
-                        {
-                            // Start panning
-                            Mouse.OverrideCursor = Cursors.Hand;
-                            _isPanning = true;
-                            _panStartWorldOrigin = ViewState.WorldOrigin;
-                            CaptureMouse();
-                        }
+                        // Start panning
+                        Mouse.OverrideCursor = Cursors.Hand;
+                        _isPanning = true;
+                        _panStartWorldOrigin = ViewState.WorldOrigin;
+                        CaptureMouse();
                     }
 
                     break;
@@ -916,7 +913,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             }
                             else
                             {
-                                // Todo: Handle select region, where he might have selected a collection of strokes
+                                // Todo: Handle select region, where the user might have selected a collection of strokes
                                 //throw new NotImplementedException();
                             }
                         }

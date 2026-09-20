@@ -371,14 +371,29 @@ namespace Craft.UIElements.Reborn.GuiTest
 
                 if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
+                    // No modifier keys pressed, so clear any existing selection
                     GeometryViewModel.SelectedGeometricObjects.Clear();
                 }
 
                 if (closestGeometricObject != null && squaredDistanceToClosestGeometricObject < bbHalfWidth * bbHalfWidth)
                 {
-                    if (!GeometryViewModel.SelectedGeometricObjects.Contains(closestGeometricObject))
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     {
-                        GeometryViewModel.SelectedGeometricObjects.Add(closestGeometricObject);
+                        if (GeometryViewModel.SelectedGeometricObjects.Contains(closestGeometricObject))
+                        {
+                            GeometryViewModel.SelectedGeometricObjects.Remove(closestGeometricObject);
+                        }
+                        else
+                        {
+                            GeometryViewModel.SelectedGeometricObjects.Add(closestGeometricObject);
+                        }
+                    }
+                    else
+                    {
+                        if (!GeometryViewModel.SelectedGeometricObjects.Contains(closestGeometricObject))
+                        {
+                            GeometryViewModel.SelectedGeometricObjects.Add(closestGeometricObject);
+                        }
                     }
                 }
             }
