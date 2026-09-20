@@ -397,6 +397,10 @@ namespace Craft.UIElements.Reborn.GuiTest
                     }
                 }
             }
+            else if (e.PropertyName == nameof(GeometryViewModel.SelectionWindow))
+            {
+                var a = 0;
+            }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
             {
                 if (GeometryViewModel.DrawingStrokePoints == null)

@@ -22,7 +22,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private TimeSpan _lastTime;
         private BoundingBox _current;
         private BoundingBox _target;
-        private BoundingBox? _selectionWindow;
+        private BoundingBox? _potentialSelectionWindow;
         private List<Point> _drawingStrokePoints;
         private Point? _nextPotentialDrawingStrokePoint;
 
@@ -84,6 +84,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
             DependencyProperty.Register(
                 nameof(CursorWorldPosition),
                 typeof(Point?),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(null));
+
+        public BoundingBox SelectionWindow
+        {
+            get => (BoundingBox)GetValue(SelectionWindowProperty);
+            set => SetValue(SelectionWindowProperty, value);
+        }
+
+        public static readonly DependencyProperty SelectionWindowProperty =
+            DependencyProperty.Register(
+                nameof(SelectionWindow),
+                typeof(BoundingBox),
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(null));
 
@@ -670,14 +683,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
             else
             {
-                if (_selectionWindow != null)
+                if (_potentialSelectionWindow != null)
                 {
                     var selectionWindowRect = new Rect(new Point(
-                            _selectionWindow.CenterX,
-                            _selectionWindow.CenterY),
+                            _potentialSelectionWindow.MinX,
+                            _potentialSelectionWindow.MinY),
                         new Size(
-                            _selectionWindow.Width,
-                            _selectionWindow.Height));
+                            _potentialSelectionWindow.Width,
+                            _potentialSelectionWindow.Height));
 
                     dc.DrawRectangle(_selectionWindowBrush, _selectionWindowPen, selectionWindowRect);
                 }
@@ -885,11 +898,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                             if (System.Math.Abs(deltaViewport.X) > 1 || System.Math.Abs(deltaViewport.Y) > 1)
                             {
-                                _selectionWindow = BoundingBox.FromCenter(
+                                _potentialSelectionWindow = new BoundingBox(
                                     System.Math.Min(_mouseDownPosition.X, mousePos.X),
+                                    System.Math.Max(_mouseDownPosition.X, mousePos.X),
                                     System.Math.Min(_mouseDownPosition.Y, mousePos.Y),
-                                    System.Math.Abs(deltaViewport.X),
-                                    System.Math.Abs(deltaViewport.Y));
+                                    System.Math.Max(_mouseDownPosition.Y, mousePos.Y));
+
+                                //_potentialSelectionWindow = BoundingBox.FromCenter(
+                                //    System.Math.Min(_mouseDownPosition.X, mousePos.X),
+                                //    System.Math.Min(_mouseDownPosition.Y, mousePos.Y),
+                                //    System.Math.Abs(deltaViewport.X),
+                                //    System.Math.Abs(deltaViewport.Y));
 
                                 InvalidateVisual();
                             }
@@ -929,21 +948,31 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         if (e.LeftButton == MouseButtonState.Released)
                         {
                             var mouseUpPosition = e.GetPosition(this);
+                            var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
                             var delta = mouseUpPosition - _mouseDownPosition;
 
                             if (System.Math.Abs(delta.X) > 1 || System.Math.Abs(delta.Y) > 1)
                             {
-                                // Todo: Handle selection window complete
+                                var point1 = transform.Transform(new Point(
+                                    _potentialSelectionWindow.MinX,
+                                    _potentialSelectionWindow.MinY));
+
+                                var point2 = transform.Transform(new Point(
+                                    _potentialSelectionWindow.MaxX,
+                                    _potentialSelectionWindow.MaxY));
+
+                                SetCurrentValue(
+                                    SelectionWindowProperty,
+                                    new BoundingBox(point1.X, point2.X, point1.Y, point2.Y));
 
                                 ReleaseMouseCapture();
                             }
                             else
                             {
-                                var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
                                 ClickedWorldPosition = transform.Transform(_mouseDownPosition);
                             }
 
-                            _selectionWindow = null;
+                            _potentialSelectionWindow = null;
                             InvalidateVisual();
                         }
 

@@ -14,6 +14,7 @@
                               ViewState="{Binding ViewState, Mode=OneWayToSource}"
                               WorldWindow="{Binding WorldWindow, Mode=TwoWay}"
                               WorldWindowExpanded="{Binding WorldWindowExpanded, Mode=TwoWay}"
+                              SelectionWindow="{Binding SelectionWindow, Mode=TwoWay}"
                               RequestedWorldWindow="{Binding RequestedWorldWindow, Mode=TwoWay}"
                               RequestedWorldFocus="{Binding RequestedWorldFocus, Mode=TwoWay}"
                               WorldWindowBounds="{Binding WorldWindowBounds, Mode=TwoWay}"
