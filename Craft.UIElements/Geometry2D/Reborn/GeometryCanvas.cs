@@ -22,8 +22,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private TimeSpan _lastTime;
         private BoundingBox _current;
         private BoundingBox _target;
+        private BoundingBox? _selectionWindow;
         private List<Point> _drawingStrokePoints;
         private Point? _nextPotentialDrawingStrokePoint;
+
+        private Brush _selectionWindowBrush = new SolidColorBrush(Color.FromArgb(38, 0, 120, 215));
+        private Pen _selectionWindowPen = new Pen(new SolidColorBrush(Color.FromRgb(0, 120, 215)), 1);
 
         // =============================
         // Items (your geometries)
@@ -664,6 +668,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     dc.DrawLine(drawingPen, _.Item1, _.Item2);
                 });
             }
+            else
+            {
+                if (_selectionWindow != null)
+                {
+                    var selectionWindowRect = new Rect(new Point(
+                            _selectionWindow.CenterX,
+                            _selectionWindow.CenterY),
+                        new Size(
+                            _selectionWindow.Width,
+                            _selectionWindow.Height));
+
+                    dc.DrawRectangle(_selectionWindowBrush, _selectionWindowPen, selectionWindowRect);
+                }
+            }
         }
 
         private void DrawGeometriesDebug(
@@ -767,8 +785,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         Mouse.OverrideCursor = Cursors.Hand;
                         _isPanning = true;
                         _panStartWorldOrigin = ViewState.WorldOrigin;
-                        CaptureMouse();
                     }
+
+                    CaptureMouse();
 
                     break;
 
@@ -813,26 +832,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     break;
             }
-
-            //if (e.RightButton == MouseButtonState.Pressed)
-            //{
-            //    // Panning
-            //    Mouse.OverrideCursor = Cursors.Hand;
-            //    _isPanning = true;
-            //    _panStartWorldOrigin = ViewState.WorldOrigin;
-            //}
-            //else
-            //{
-            //    if (CanvasMode == CanvasMode.Draw)
-            //    {
-            //        _isDrawing = true;
-
-            //        var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-            //        _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
-            //    }
-            //}
-
-            //CaptureMouse();
         }
 
         protected override void OnMouseMove(
@@ -844,11 +843,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (_isPanning)
             {
-                var deltaPixel = _mouseDownPosition - mousePos;
+                var deltaViewport = _mouseDownPosition - mousePos;
 
                 var deltaWorld = new Vector(
-                    deltaPixel.X / ViewState.Scaling.Width,
-                    deltaPixel.Y / ViewState.Scaling.Height);
+                    deltaViewport.X / ViewState.Scaling.Width,
+                    deltaViewport.Y / ViewState.Scaling.Height);
 
                 var worldWindow = ComputeWorldWindow();
 
@@ -876,12 +875,38 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     CursorWorldPosition = null;
                 }
 
-                if (_isDrawing)
+                switch (CanvasMode)
                 {
-                    var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-                    _nextPotentialDrawingStrokePoint = transform.Transform(mousePos);
-                    //_drawingStrokePoints.Add(transform.Transform(mousePos));
-                    InvalidateVisual();
+                    case CanvasMode.Select:
+
+                        if (e.LeftButton == MouseButtonState.Pressed)
+                        {
+                            var deltaViewport = _mouseDownPosition - mousePos;
+
+                            if (System.Math.Abs(deltaViewport.X) > 1 || System.Math.Abs(deltaViewport.Y) > 1)
+                            {
+                                _selectionWindow = BoundingBox.FromCenter(
+                                    System.Math.Min(_mouseDownPosition.X, mousePos.X),
+                                    System.Math.Min(_mouseDownPosition.Y, mousePos.Y),
+                                    System.Math.Abs(deltaViewport.X),
+                                    System.Math.Abs(deltaViewport.Y));
+
+                                InvalidateVisual();
+                            }
+                        }
+
+                        break;
+
+                    case CanvasMode.Draw:
+
+                        if (_isDrawing)
+                        {
+                            var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                            _nextPotentialDrawingStrokePoint = transform.Transform(mousePos);
+                            InvalidateVisual();
+                        }
+
+                        break;
                 }
             }
         }
@@ -906,16 +931,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             var mouseUpPosition = e.GetPosition(this);
                             var delta = mouseUpPosition - _mouseDownPosition;
 
-                            if (delta.X < 2 && delta.Y < 2)
+                            if (System.Math.Abs(delta.X) > 1 || System.Math.Abs(delta.Y) > 1)
+                            {
+                                // Todo: Handle selection window complete
+
+                                ReleaseMouseCapture();
+                            }
+                            else
                             {
                                 var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
                                 ClickedWorldPosition = transform.Transform(_mouseDownPosition);
                             }
-                            else
-                            {
-                                // Todo: Handle select region, where the user might have selected a collection of strokes
-                                //throw new NotImplementedException();
-                            }
+
+                            _selectionWindow = null;
+                            InvalidateVisual();
                         }
 
                         break;
