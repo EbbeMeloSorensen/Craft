@@ -842,8 +842,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             selectedWorldPoint = SnapPointToGrid(selectedWorldPoint);
                         }
 
-                        // Add a point to the current drawing stroke
-                        _drawingStrokePoints.Add(selectedWorldPoint);
+                        if (!_drawingStrokePoints.Any() ||
+                            NotCoinciding(_drawingStrokePoints.Last(), selectedWorldPoint))
+                        {
+                            // Add a point to the current drawing stroke
+                            _drawingStrokePoints.Add(selectedWorldPoint);
+                        }
 
                         switch (e.ClickCount)
                         {
@@ -1734,6 +1738,15 @@ namespace Craft.UIElements.Geometry2D.Reborn
             return new Point(
                 System.Math.Round(point.X / GridSpacing) * GridSpacing,
                 System.Math.Round(point.Y / GridSpacing) * GridSpacing);
+        }
+
+        private bool NotCoinciding(
+            Point point1,
+            Point point2)
+        {
+            return
+                System.Math.Abs(point1.X - point2.X) > 0.0000001 ||
+                System.Math.Abs(point1.Y - point2.Y) > 0.0000001;
         }
     }
 }
