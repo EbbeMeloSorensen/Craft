@@ -29,6 +29,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _dampFocusShifts;
         private double _focusShiftDamping;
         private bool _debugMode;
+        private bool _snapToGrid;
+        private double _gridSpacing;
         private bool _showGrid;
         private bool _showCoordinateSystem;
         private bool _timeAxisMode;
@@ -187,6 +189,26 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             set
             {
                 _debugMode = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool SnapToGrid
+        {
+            get => _snapToGrid;
+            set
+            {
+                _snapToGrid = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double GridSpacing
+        {
+            get => _gridSpacing;
+            set
+            {
+                _gridSpacing = value;
                 OnPropertyChanged();
             }
         }

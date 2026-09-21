@@ -41,6 +41,7 @@ namespace Craft.UIElements.Reborn.GuiTest
         private string _requestedWwScalingY;
 
         private string _focusShiftDamping;
+        private string _gridSpacing;
         private bool _continuallyMoveFocus;
 
         public string RequestedWWBounds_XMin
@@ -219,6 +220,22 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
+        public string GridSpacing
+        {
+            get => _gridSpacing;
+            set
+            {
+                _gridSpacing = value;
+
+                if (double.TryParse(_gridSpacing, CultureInfo.InvariantCulture, out var gridSpacing))
+                {
+                    GeometryViewModel.GridSpacing = gridSpacing;
+                }
+
+                OnPropertyChanged();
+            }
+        }
+
         public bool ContinuallyMoveFocus
         {
             get => _continuallyMoveFocus;
@@ -261,7 +278,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                 LockAspectRatio = true,
                 DampFocusShifts = false,
                 TimeAxisMode = false,
-                FocusShiftDamping = 5.0
+                FocusShiftDamping = 5.0,
+                GridSpacing = 50.0
             };
 
             GeometryViewModel.PropertyChanged += GeometryViewModel_PropertyChanged;
@@ -308,6 +326,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_ScalingY = "1";
 
             FocusShiftDamping = GeometryViewModel.FocusShiftDamping.ToString();
+            GridSpacing = GeometryViewModel.GridSpacing.ToString();
         }
 
         private void GeometryViewModel_PropertyChanged(

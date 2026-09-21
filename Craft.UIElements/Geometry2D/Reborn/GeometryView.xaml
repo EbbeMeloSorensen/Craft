@@ -26,6 +26,8 @@
                               LockYAxis="{Binding LockYAxis}"
                               DampFocusShifts="{Binding DampFocusShifts}"
                               FocusShiftDamping="{Binding FocusShiftDamping}"
+                              SnapToGrid="{Binding SnapToGrid}"
+                              GridSpacing="{Binding GridSpacing}"
                               ShowGrid="{Binding ShowGrid}"
                               ShowCoordinateSystem="{Binding ShowCoordinateSystem}"
                               TimeAxisMode="{Binding TimeAxisMode}"

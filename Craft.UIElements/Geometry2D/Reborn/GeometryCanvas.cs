@@ -274,6 +274,32 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 typeof(GeometryCanvas),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public bool SnapToGrid
+        {
+            get => (bool)GetValue(SnapToGridProperty);
+            set => SetValue(SnapToGridProperty, value);
+        }
+
+        public static readonly DependencyProperty SnapToGridProperty =
+            DependencyProperty.Register(
+                nameof(SnapToGrid),
+                typeof(bool),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(false));
+
+        public double GridSpacing
+        {
+            get => (double)GetValue(GridSpacingProperty);
+            set => SetValue(GridSpacingProperty, value);
+        }
+
+        public static readonly DependencyProperty GridSpacingProperty =
+            DependencyProperty.Register(
+                nameof(GridSpacing),
+                typeof(double),
+                typeof(GeometryCanvas),
+                new FrameworkPropertyMetadata(50.0));
+
         public bool ShowGrid
         {
             get => (bool)GetValue(ShowGridProperty);
@@ -808,9 +834,16 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     if (e.LeftButton == MouseButtonState.Pressed)
                     {
-                        // Add a point to the current drawing stroke
                         var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-                        _drawingStrokePoints.Add(transform.Transform(_mouseDownPosition));
+                        var selectedWorldPoint = transform.Transform(_mouseDownPosition);
+
+                        if (SnapToGrid)
+                        {
+                            selectedWorldPoint = SnapPointToGrid(selectedWorldPoint);
+                        }
+
+                        // Add a point to the current drawing stroke
+                        _drawingStrokePoints.Add(selectedWorldPoint);
 
                         switch (e.ClickCount)
                         {
@@ -904,12 +937,6 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                     System.Math.Min(_mouseDownPosition.Y, mousePos.Y),
                                     System.Math.Max(_mouseDownPosition.Y, mousePos.Y));
 
-                                //_potentialSelectionWindow = BoundingBox.FromCenter(
-                                //    System.Math.Min(_mouseDownPosition.X, mousePos.X),
-                                //    System.Math.Min(_mouseDownPosition.Y, mousePos.Y),
-                                //    System.Math.Abs(deltaViewport.X),
-                                //    System.Math.Abs(deltaViewport.Y));
-
                                 InvalidateVisual();
                             }
                         }
@@ -922,6 +949,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         {
                             var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
                             _nextPotentialDrawingStrokePoint = transform.Transform(mousePos);
+
+                            if (SnapToGrid && _nextPotentialDrawingStrokePoint.HasValue)
+                            {
+                                _nextPotentialDrawingStrokePoint = SnapPointToGrid(
+                                    _nextPotentialDrawingStrokePoint.Value);
+                            }
+
                             InvalidateVisual();
                         }
 
@@ -1692,6 +1726,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 _current = null;
             }
+        }
+
+        private Point SnapPointToGrid(
+            Point point)
+        {
+            return new Point(
+                System.Math.Round(point.X / GridSpacing) * GridSpacing,
+                System.Math.Round(point.Y / GridSpacing) * GridSpacing);
         }
     }
 }
