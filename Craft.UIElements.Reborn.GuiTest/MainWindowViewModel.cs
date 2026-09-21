@@ -486,6 +486,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                         _geometryDataStore.RemoveGeometricObjects(
                             GeometryViewModel.SelectedGeometricObjects);
 
+                        GeometryViewModel.SelectedGeometricObjects.Clear();
+
                         UpdateStaticGeometryLayer();
                     }
 
