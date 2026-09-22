@@ -1,11 +1,12 @@
-﻿using System.Collections.Specialized;
+﻿using Craft.DataStructures.Geometry;
+using Craft.Simulation.Boundaries;
+using Craft.Utils.Linq;
+using Craft.ViewModels.Geometry2D.Reborn;
+using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Craft.Utils.Linq;
-using Craft.DataStructures.Geometry;
-using Craft.ViewModels.Geometry2D.Reborn;
-using Craft.ViewModels.Geometry2D.Reborn.GeometricModels;
 
 namespace Craft.UIElements.Geometry2D.Reborn
 {
@@ -607,8 +608,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
             // which is not what we want.
 
             var drawingPen = new Pen(Brushes.IndianRed, 2); // always 2 pixels
-            var selectedPen = new Pen(Brushes.Blue, 3); // always 3 pixels
+            var selectedPen = new Pen(Brushes.Blue, 2); // always 3 pixels
             var drawingBrush = Brushes.IndianRed;
+            var selectedBrush = Brushes.Blue;
+
             //pen.Freeze(); // What does this do? ChatGpt talked about it
 
             foreach (var geometryLayer in GeometryLayers)
@@ -630,7 +633,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                         case Math.Point2D point:
                             var p = worldToViewportTransform.Transform(new Point(point.X, point.Y));
-                            dc.DrawEllipse(drawingBrush, null, p, 3, 3);
+
+                            var brush1 = SelectedGeometricObjects.Contains(point)
+                                ? selectedBrush
+                                : drawingBrush;
+
+                            dc.DrawEllipse(brush1, null, p, 3, 3);
                             break;
 
                         case Math.Circle2D circle:
@@ -830,6 +838,40 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     break;
 
+                case CanvasMode.Dot:
+
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+                        var selectedWorldPoint = transform.Transform(_mouseDownPosition);
+
+                        if (SnapToGrid)
+                        {
+                            selectedWorldPoint = SnapPointToGrid(selectedWorldPoint);
+                        }
+
+                        _drawingStrokePoints.Add(selectedWorldPoint);
+
+                        // Request adding a point to the data store
+                        SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
+
+                        // End current point drawing operation
+                        _drawingStrokePoints.Clear();
+                        _isDrawing = false;
+                        ReleaseMouseCapture();
+                        InvalidateVisual();
+                    }
+                    else if (e.RightButton == MouseButtonState.Pressed)
+                    {
+                        // Start panning
+                        Mouse.OverrideCursor = Cursors.Hand;
+                        _isPanning = true;
+                        _panStartWorldOrigin = ViewState.WorldOrigin;
+                        CaptureMouse();
+                    }
+
+                    break;
+
                 case CanvasMode.Draw:
 
                     if (e.LeftButton == MouseButtonState.Pressed)
@@ -863,7 +905,13 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                             case 2:
 
-                                SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
+                                if (_drawingStrokePoints.Count() > 1)
+                                {
+                                    // Stroke is valid, so request adding it to the data store
+                                    SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
+                                }
+
+                                // End current stroke drawing operation
                                 _drawingStrokePoints.Clear();
                                 _isDrawing = false;
                                 ReleaseMouseCapture();
@@ -1653,6 +1701,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     Mouse.OverrideCursor = Cursors.Arrow;
                     break;
                 case CanvasMode.Draw:
+                    Mouse.OverrideCursor = Cursors.Pen;
+                    break;
+                case CanvasMode.Dot:
                     Mouse.OverrideCursor = Cursors.Pen;
                     break;
             }

@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using Craft.DataStructures.Geometry;
+﻿using Craft.DataStructures.Geometry;
 using Craft.DataStructures.MxCifQuadTree;
 using Craft.Logging;
+using System.Collections;
+using System.Windows.Shapes;
 
 namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
 {
@@ -22,11 +23,19 @@ namespace Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources
             object geometricObject,
             BoundingBox boundingBox)
         {
-            var line = geometricObject as Math.LineSegment2D;
-            var bbox = line.ComputeBoundingBox();
-            var spatialItem = new SpatialItem<object>(bbox, line);
-            _mxCifQuadTree.Insert(spatialItem);
-            _spatialItemMap[geometricObject] = spatialItem;
+            switch (geometricObject)
+            {
+                case Math.Point2D point:
+                    var spatialItemPoint = new SpatialItem<object>(point.ComputeBoundingBox(), point);
+                    _mxCifQuadTree.Insert(spatialItemPoint);
+                    _spatialItemMap[geometricObject] = spatialItemPoint;
+                    break;
+                case Math.LineSegment2D line:
+                    var spatialItemLine = new SpatialItem<object>(line.ComputeBoundingBox(), line);
+                    _mxCifQuadTree.Insert(spatialItemLine);
+                    _spatialItemMap[geometricObject] = spatialItemLine;
+                    break;
+            }
         }
 
         public void RemoveGeometricObjects(

@@ -33,6 +33,9 @@
             <ToggleButton Content="Draw"
                     Command="{Binding ChangeCanvasModeCommand}"
                     CommandParameter="Draw"/>
+            <ToggleButton Content="Dot"
+                    Command="{Binding ChangeCanvasModeCommand}"
+                    CommandParameter="Dot"/>
         </ToolBar>
 
         <Border Grid.Row="2" Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">

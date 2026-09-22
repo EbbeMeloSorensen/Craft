@@ -9,7 +9,8 @@ namespace Craft.ViewModels.Geometry2D.Reborn
     public enum CanvasMode
     {
         Select,
-        Draw
+        Draw,
+        Dot
     }
 
     public class GeometryViewModel : INotifyPropertyChanged

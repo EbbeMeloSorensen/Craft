@@ -14,6 +14,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
@@ -371,14 +372,26 @@ namespace Craft.UIElements.Reborn.GuiTest
                 {
                     switch (geometricObject)
                     {
-                        case LineSegment2D lineSegment2D:
-                            var squaredDistance = lineSegment2D.SquaredDistanceTo(clickedPosition);
+                        case Point2D point2D:
+                            var squaredDistanceToPoint = point2D.SquaredDistanceTo(clickedPosition);
 
                             if (closestGeometricObject == null ||
-                                squaredDistance < squaredDistanceToClosestGeometricObject)
+                                squaredDistanceToPoint < squaredDistanceToClosestGeometricObject)
                             {
                                 closestGeometricObject = geometricObject;
-                                squaredDistanceToClosestGeometricObject = squaredDistance;
+                                squaredDistanceToClosestGeometricObject = squaredDistanceToPoint;
+                            }
+
+                            break;
+
+                        case LineSegment2D lineSegment2D:
+                            var squaredDistanceToLine = lineSegment2D.SquaredDistanceTo(clickedPosition);
+
+                            if (closestGeometricObject == null ||
+                                squaredDistanceToLine < squaredDistanceToClosestGeometricObject)
+                            {
+                                closestGeometricObject = geometricObject;
+                                squaredDistanceToClosestGeometricObject = squaredDistanceToLine;
                             }
 
                             break;
@@ -423,12 +436,30 @@ namespace Craft.UIElements.Reborn.GuiTest
                     return;
                 }
 
+                if (!Keyboard.IsKeyDown(Key.LeftShift))
+                {
+                    // Shift key is not pressed, so clear any existing selection
+                    GeometryViewModel.SelectedGeometricObjects.Clear();
+                }
+
                 var geometricObjects = _geometryDataStore.GetIntersecting(GeometryViewModel.SelectionWindow);
 
                 foreach (var geometricObject in geometricObjects)
                 {
                     switch (geometricObject)
                     {
+                        case Point2D point2D:
+
+                            if (GeometryViewModel.SelectionWindow.Encloses(point2D.ComputeBoundingBox()))
+                            {
+                                if (!GeometryViewModel.SelectedGeometricObjects.Contains(point2D))
+                                {
+                                    GeometryViewModel.SelectedGeometricObjects.Add(point2D);
+                                }
+                            }
+
+                            break;
+
                         case LineSegment2D lineSegment2D:
 
                             if (GeometryViewModel.SelectionWindow.Encloses(lineSegment2D.ComputeBoundingBox()))
@@ -453,15 +484,25 @@ namespace Craft.UIElements.Reborn.GuiTest
                     return;
                 }
 
-                // Her er vi, når brugeren lige er blevet færdig med at tegne et stroke
-                GeometryViewModel.DrawingStrokePoints.AdjacentPairs().ToList().ForEach(_ =>
+                if (GeometryViewModel.DrawingStrokePoints.Skip(1).Any())
                 {
-                    var line = new LineSegment2D(
-                        new Point2D(_.Item1.X, _.Item1.Y),
-                        new Point2D(_.Item2.X, _.Item2.Y));
+                    // The user has finished a poly line
+                    GeometryViewModel.DrawingStrokePoints.AdjacentPairs().ToList().ForEach(_ =>
+                    {
+                        var line = new LineSegment2D(
+                            new Point2D(_.Item1.X, _.Item1.Y),
+                            new Point2D(_.Item2.X, _.Item2.Y));
 
-                    _geometryDataStore.AddGeometricObject(line, line.ComputeBoundingBox());
-                });
+                        _geometryDataStore.AddGeometricObject(line, line.ComputeBoundingBox());
+                    });
+                }
+                else
+                {
+                    // The user has finished a point
+                    var temp = GeometryViewModel.DrawingStrokePoints.First();
+                    var point = new Point2D(temp.X, temp.Y);
+                    _geometryDataStore.AddGeometricObject(point, point.ComputeBoundingBox());
+                }
 
                 UpdateStaticGeometryLayer();
             }
