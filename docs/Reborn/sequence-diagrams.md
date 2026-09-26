@@ -8,7 +8,7 @@ These are source-derived sequences, not runtime traces.
 
 1. Each Draw-mode left click is immediately converted to world coordinates and optionally snapped.
 2. Mouse movement updates a candidate world point. OnRender transforms stored and candidate points back to viewport coordinates for the preview.
-3. Double-click publishes DrawingStrokePoints if at least two vertices exist.
+3. Double-click or Enter publishes DrawingStrokePoints if at least two vertices exist. Enter uses only clicked vertices, not the preview endpoint; clicking the canvas gives it keyboard focus.
 4. The host inserts independent LineSegment2D objects and refreshes its static layer.
 5. The canvas clears its transient stroke state.
 

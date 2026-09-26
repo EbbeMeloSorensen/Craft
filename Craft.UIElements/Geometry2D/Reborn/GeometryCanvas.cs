@@ -372,6 +372,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         public GeometryCanvas()
         {
+            Focusable = true;
             _drawingStrokePoints = new List<Point>();
 
             Loaded += GeometryCanvas_Loaded;
@@ -812,6 +813,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
             MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
+            Focus();
 
             if (_target != null)
             {
@@ -904,18 +906,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 break;
 
                             case 2:
-
-                                if (_drawingStrokePoints.Count() > 1)
-                                {
-                                    // Stroke is valid, so request adding it to the data store
-                                    SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
-                                }
-
-                                // End current stroke drawing operation
-                                _drawingStrokePoints.Clear();
-                                _isDrawing = false;
-                                ReleaseMouseCapture();
-                                InvalidateVisual();
+                                CompletePolyline();
                                 break;
                         }
                     }
@@ -930,6 +921,37 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                     break;
             }
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Key == Key.Enter && CanvasMode == CanvasMode.Draw && _isDrawing)
+            {
+                if (!e.IsRepeat)
+                {
+                    CompletePolyline();
+                }
+
+                e.Handled = true;
+            }
+        }
+
+        private void CompletePolyline()
+        {
+            if (_drawingStrokePoints.Count > 1)
+            {
+                // Publish a fresh snapshot so every completion notifies the binding,
+                // and clearing the preview does not mutate the published vertices.
+                SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints.ToList());
+            }
+
+            _drawingStrokePoints.Clear();
+            _nextPotentialDrawingStrokePoint = null;
+            _isDrawing = false;
+            ReleaseMouseCapture();
+            InvalidateVisual();
         }
 
         protected override void OnMouseMove(

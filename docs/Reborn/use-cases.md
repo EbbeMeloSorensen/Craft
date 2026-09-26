@@ -22,7 +22,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 | ID | Outcome | UI entry point | Supporting code |
 | --- | --- | --- | --- |
-| UC1 | Draw a polyline | Draw; left clicks; double-click | Canvas.OnMouseDown/OnMouseMove; Bindings.DrawingStrokePoints; Host.GeometryViewModel_PropertyChanged; Store |
+| UC1 | Draw a polyline | Draw; left clicks; double-click or Enter | Canvas.OnMouseDown/OnMouseMove/OnKeyDown; Bindings.DrawingStrokePoints; Host.GeometryViewModel_PropertyChanged; Store |
 | UC2 | Draw a point | Dot; left click | Canvas.OnMouseDown; Host.GeometryViewModel_PropertyChanged; Store |
 | UC3 | Select geometry | Select; click or left drag | Canvas.OnMouseUp; Host clicked-position/selection-window handlers |
 | UC4 | Delete selection | Delete key | Keys.MainWindow_KeyDown; Host.HandleKeyEvent; Store |
@@ -37,7 +37,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Trigger/preconditions:** User selects Draw and clicks the canvas.
 
-**Main flow:** Left clicks add vertices, immediately transformed to world coordinates and optionally snapped. Mouse movement previews the next segment. A double-click finishes and publishes DrawingStrokePoints through the binding. The host creates a LineSegment2D for each adjacent pair, inserts them into the store, and refreshes its static layer.
+**Main flow:** Left clicks add vertices, immediately transformed to world coordinates and optionally snapped. Mouse movement previews the next segment. Double-click or Enter finishes and publishes DrawingStrokePoints through the binding. Enter commits only clicked vertices, excluding the mouse-preview endpoint, while the canvas has keyboard focus. The host creates a LineSegment2D for each adjacent pair, inserts them into the store, and refreshes its static layer.
 
 **Alternates/limits:** Consecutive coincident vertices are suppressed using a small world-coordinate tolerance. Completion with fewer than two vertices adds no polyline. Mouse release does not finish drawing. Right drag supports panning in Draw mode. Cancellation and mode switching during unfinished drawing are open product questions.
 

@@ -13,7 +13,7 @@ alt Draw mode
   User -> Canvas : mouse move
   Canvas -> Canvas : update candidate world point; invalidate
   note over Canvas : OnRender draws transformed preview
-  User -> Canvas : double-click to finish
+  User -> Canvas : double-click or Enter to finish
   opt At least two vertices
     Canvas -> State : DrawingStrokePoints (binding)
     State -> Host : PropertyChanged

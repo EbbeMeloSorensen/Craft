@@ -4,7 +4,7 @@ This repository contains a geometry viewer that is being extended with drawing a
 
 ## Design intent to preserve
 
-- Reborn drawing is click-by-click polyline drawing (double-click to finish), plus individual point creation in Dot mode. The owner confirmed that this replaced the earlier freehand workflow. Keep documentation aligned with this decision.
+- Reborn drawing is click-by-click polyline drawing (double-click or Enter to finish), plus individual point creation in Dot mode. The owner confirmed that this replaced the earlier freehand workflow. Keep documentation aligned with this decision.
 - Keep world coordinates distinct from viewport coordinates. Use explicit transforms and their inverse for rendering, pointer positions, panning, and zooming.
 - Keep WPF presentation and input concerns separate from view-model and geometry/domain logic. Follow the repository's existing MVVM conventions.
 - Preserve the intended rendering behavior: clipping to the viewport, grid and axes, stable pan and zoom, and strokes that remain about one screen pixel wide where specified. The project may support non-uniform scaling and an option to preserve aspect ratio.
