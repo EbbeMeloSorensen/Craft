@@ -4,11 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Craft.UIElements.Reborn.GuiTest"
+        xmlns:valueConverters="clr-namespace:Craft.UI.Utils.ValueConverters;assembly=Craft.UI.Utils"
         xmlns:reborn="clr-namespace:Craft.UIElements.Geometry2D.Reborn;assembly=Craft.UIElements"
         mc:Ignorable="d"
         Title="Craft.UIElements.Reborn.GuiTest" Height="600" Width="900"
         Loaded="MainWindow_OnLoaded" d:DataContext="{d:DesignInstance local:MainWindowViewModel}"
         KeyDown="MainWindow_KeyDown">
+    <Window.Resources>
+        <valueConverters:EnumMatchToBooleanConverter x:Key="EnumMatchToBooleanConverter"/>
+        <Style x:Key="CanvasModeButtonStyle" TargetType="RadioButton"
+               BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}">
+            <Setter Property="GroupName" Value="CanvasMode"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -27,13 +35,16 @@
         </Menu>
 
         <ToolBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-            <ToggleButton Content="Select"
+            <RadioButton Content="Select" Style="{StaticResource CanvasModeButtonStyle}"
+                    IsChecked="{Binding GeometryViewModel.CanvasMode, Mode=OneWay, Converter={StaticResource EnumMatchToBooleanConverter}, ConverterParameter=Select}"
                     Command="{Binding ChangeCanvasModeCommand}"
                     CommandParameter="Select"/>
-            <ToggleButton Content="Draw"
+            <RadioButton Content="Draw" Style="{StaticResource CanvasModeButtonStyle}"
+                    IsChecked="{Binding GeometryViewModel.CanvasMode, Mode=OneWay, Converter={StaticResource EnumMatchToBooleanConverter}, ConverterParameter=Draw}"
                     Command="{Binding ChangeCanvasModeCommand}"
                     CommandParameter="Draw"/>
-            <ToggleButton Content="Dot"
+            <RadioButton Content="Dot" Style="{StaticResource CanvasModeButtonStyle}"
+                    IsChecked="{Binding GeometryViewModel.CanvasMode, Mode=OneWay, Converter={StaticResource EnumMatchToBooleanConverter}, ConverterParameter=Dot}"
                     Command="{Binding ChangeCanvasModeCommand}"
                     CommandParameter="Dot"/>
         </ToolBar>
