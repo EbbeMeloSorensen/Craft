@@ -1,0 +1,25 @@
+@startuml
+participant "WPF composition" as WPF
+participant GeometryCanvas as Canvas
+participant GeometryView as View
+participant "IFrameAware host" as Host
+WPF -> Canvas : OnRendering
+opt Loaded and timing initialized
+  Canvas -> Canvas : compute delta time; UpdateCamera
+  Canvas -> View : FrameRendering
+  View -> Host : OnFrame(time, deltaSeconds)
+  opt Host requests a view change
+    Host -> Canvas : bound view request
+  end
+end
+== Separate scheduled visual rendering ==
+WPF -> Canvas : OnRender(DrawingContext)
+Canvas -> Canvas : paint background
+alt DebugMode
+  Canvas -> Canvas : debug transforms and geometry
+else Normal rendering
+  Canvas -> Canvas : grid / axes / optional time labels
+  Canvas -> Canvas : transform and draw layer geometry
+  Canvas -> Canvas : drawing preview or selection rectangle
+end
+@enduml

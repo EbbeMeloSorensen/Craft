@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant GeometryCanvas as Canvas
+participant WorldWindowLimiter as Limiter
+participant GeometryViewModel as State
+participant MainWindowViewModel as Host
+participant IGeometryDataStore as Store
+alt Right drag
+  User -> Canvas : right down; mouse move
+  Canvas -> Canvas : viewport delta / scaling -> proposed window
+else Wheel
+  User -> Canvas : wheel (optional Ctrl/Alt)
+  Canvas -> Canvas : propose scale and cursor-anchored origin
+end
+Canvas -> Canvas : UpdateViewState; apply axis locks
+Canvas -> Limiter : Limit(proposed window)
+Limiter --> Canvas : fitted and clamped window
+Canvas -> State : WorldWindow (binding)
+opt Expanded query region needs updating
+  Canvas -> State : WorldWindowExpanded (binding)
+  State -> Host : PropertyChanged
+  Host -> Store : GetIntersecting(expanded window)
+  Host -> State : refresh static layer
+end
+Canvas -> State : recalculated ViewState (binding)
+note over Canvas : WPF redraw uses the updated view
+@enduml

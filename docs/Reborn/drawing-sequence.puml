@@ -1,0 +1,37 @@
+@startuml
+actor User
+participant GeometryCanvas as Canvas
+participant GeometryViewModel as State
+participant MainWindowViewModel as Host
+participant IGeometryDataStore as Store
+alt Draw mode
+  loop Left clicks add vertices
+    User -> Canvas : left click
+    Canvas -> Canvas : viewport to world; optional snap
+    Canvas -> Canvas : append noncoincident vertex
+  end
+  User -> Canvas : mouse move
+  Canvas -> Canvas : update candidate world point; invalidate
+  note over Canvas : OnRender draws transformed preview
+  User -> Canvas : double-click to finish
+  opt At least two vertices
+    Canvas -> State : DrawingStrokePoints (binding)
+    State -> Host : PropertyChanged
+    loop Adjacent vertex pairs
+      Host -> Store : AddGeometricObject(LineSegment2D, bounds)
+    end
+    Host -> Store : GetIntersecting(WorldWindowExpanded)
+    Host -> State : refresh static layer
+  end
+  Canvas -> Canvas : clear transient drawing state
+else Dot mode
+  User -> Canvas : left click
+  Canvas -> Canvas : viewport to world; optional snap
+  Canvas -> State : DrawingStrokePoints (one point)
+  State -> Host : PropertyChanged
+  Host -> Store : AddGeometricObject(Point2D, bounds)
+  Host -> Store : GetIntersecting(WorldWindowExpanded)
+  Host -> State : refresh static layer
+  Canvas -> Canvas : clear transient drawing state
+end
+@enduml

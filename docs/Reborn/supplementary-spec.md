@@ -1,48 +1,38 @@
-# Reborn Geometry Viewer - Supplementary Specification (Nonfunctional Requirements)
+# Reborn constraints and verification
 
-This document captures nonfunctional requirements, constraints, and quality attributes for the Reborn geometry viewer component.
+This replaces the earlier generated supplementary specification. These are source observations and development guidance, not measured performance guarantees.
 
-1. Performance and Responsiveness
-- Interactive operations (panning, zooming, drawing) must remain responsive at 60 fps for typical desktop hardware. Heavy scenes may drop below this; the viewer should degrade gracefully.
-- Live drawing feedback must render in screen-space with minimal latency to follow mouse movement.
-- Zoom and pan operations should avoid expensive allocations on the UI thread.
+## Coordinates and rendering
 
-2. Memory and Resource Usage
-- The viewer should avoid retaining large intermediate copies of geometry unnecessarily.
-- Long-lived data sources (e.g., quadtree-based) must expose mechanisms to limit memory usage (clipping, LRU caching).
+[GeometryCanvas](../../Craft.UIElements/Geometry2D/Reborn/GeometryCanvas.cs) keeps world and viewport coordinates distinct. For each axis:
 
-3. Scalability
-- The viewer must display arbitrarily large coordinate ranges using floating-point world coordinates and view transforms. Practical rendering limits will be hardware-dependent.
+- viewport = (world - worldOrigin) * scaling
+- world = worldOrigin + viewport / scaling
 
-4. Accuracy
-- Coordinate transforms between world and viewport must be invertible within the limits of double-precision arithmetic used by .NET.
+Y currently increases downward, matching the viewport. These transforms do not invert Y. Invertibility assumes valid nonzero scales and viewport dimensions; exhaustive numerical behavior was not tested here.
 
-5. Threading and Concurrency
-- All UI updates and drawing occur on the UI thread. Background data loading (data sources) must marshal final updates to the UI thread.
+[GeometryView](../../Craft.UIElements/Geometry2D/Reborn/GeometryView.xaml) sets ClipToBounds. The normal renderer explicitly transforms positions, keeping stroke widths independent of zoom. Current segment/polyline pens are 2 WPF device-independent units wide; point markers have radius 3. These are not physical-pixel guarantees. Grid/axis pens and debug rendering have their own handling.
 
-6. Compatibility
-- Target platform: .NET 8 / WPF on Windows desktop.
-- The viewer must interoperate with ViewModel classes and dependency properties used elsewhere in the application.
+Independent X/Y scales are supported. Axis locks and bounds constrain navigation. Aspect locking and time mode are mutually exclusive in [GeometryViewModel](../../Craft.ViewModels/Geometry2D/Reborn/GeometryViewModel.cs).
 
-7. Testability
-- Core coordinate transform logic and world-window computations should be unit-tested.
+## Platform and separation of responsibilities
 
-8. Accessibility
-- Visual elements (grid lines, axes, labels) should use high-contrast brushes where appropriate and follow system font settings when feasible.
+[Craft.UIElements](../../Craft.UIElements/Craft.UIElements.csproj) and [Craft.ViewModels](../../Craft.ViewModels/Craft.ViewModels.csproj) target net8.0-windows7.0 with WPF. [The editor harness](../../Craft.UIElements.Reborn.GuiTest/Craft.UIElements.Reborn.GuiTest.csproj) targets net8.0-windows. These declarations are not a tested OS compatibility matrix.
 
-9. Maintainability
-- Diagrams and design docs must be kept in repository under docs/Reborn; PlantUML source kept editable.
+Preserve the separation of presentation/input, exposed state, and geometry/storage described in [architecture](class-diagram.md), acknowledging existing WPF dependencies.
 
-10. Logging and Diagnostics
-- The viewer should expose optional diagnostic tracing for transforms and rendering metrics (frame time), toggled via DebugMode.
+## Unestablished claims
 
-11. Security
-- The viewer displays local data only; no network privileges are required. If external data sources are used they must sanitize inputs if any parsing occurs.
+This inspection does not establish a 60 fps guarantee, arbitrary-coordinate-range guarantee, memory-cache policy, accessibility conformance, or frame-time logging contract. DebugMode selects a visual debug branch; it is not documented here as a metrics logger.
 
-12. Operational Constraints
-- The viewer relies on WPF composition and CompositionTarget.Rendering for frame timing; environments that block the UI thread will affect rendering.
+The inspected input paths use WPF event handling. A general background-loading/thread-marshalling contract has not been established.
 
-Appendix: Metrics to collect
-- Average frame time for render loop (ms)
-- Number of visible geometries and primitives
-- Memory used by geometry caches
+## Verification
+
+This is a documentation-only update. No build, test suite, GUI session, benchmark, or PlantUML rendering was run.
+
+[MxCifQuadTreeTest.cs](../../Craft.DataStructures.UnitTest/MxCifQuadTreeTest.cs) exercises the underlying spatial index, including insertion and removal. It does not validate canvas interaction or transforms. No dedicated Reborn unit-test project was found.
+
+Suggested future checks include transform round trips, constrained cursor-centred zoom, non-uniform scaling, repeated drawing, modifier selection, mode changes mid-drawing, and persistence. These are not claims of existing tests.
+
+See [use cases](use-cases.md) for unresolved product decisions.

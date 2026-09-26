@@ -1,0 +1,45 @@
+@startuml
+class GeometryView
+class GeometryCanvas
+class GeometryViewModel
+class ViewState {
+  WorldOrigin
+  Scaling
+}
+class BoundingBox
+class WorldWindowLimiter
+class GeometryLayer {
+  GeometricObjects : IEnumerable
+  IsFrameDependent : bool
+}
+class MainWindowViewModel
+interface IFrameAware
+interface IGeometryDataStore
+class MxCifQuadTreeGeometryDataStore
+class TimeTickEngine
+interface ITimeStepStrategy
+class FixedStepStrategy
+class MonthStepStrategy
+class YearStepStrategy
+GeometryView *-- GeometryCanvas
+GeometryView --> GeometryViewModel : bindings
+GeometryView --> IFrameAware : forwards frames
+GeometryCanvas --> ViewState
+GeometryCanvas --> BoundingBox : WorldWindow
+GeometryCanvas --> WorldWindowLimiter
+GeometryCanvas --> GeometryLayer : renders
+GeometryViewModel o-- GeometryLayer
+MainWindowViewModel *-- GeometryViewModel
+MainWindowViewModel --> IGeometryDataStore
+MainWindowViewModel ..|> IFrameAware
+MxCifQuadTreeGeometryDataStore ..|> IGeometryDataStore
+GeometryCanvas --> TimeTickEngine
+TimeTickEngine --> ITimeStepStrategy
+FixedStepStrategy ..|> ITimeStepStrategy
+MonthStepStrategy ..|> ITimeStepStrategy
+YearStepStrategy ..|> ITimeStepStrategy
+note bottom of MxCifQuadTreeGeometryDataStore
+Stores Point2D and LineSegment2D.
+Renderer supports additional types.
+end note
+@enduml

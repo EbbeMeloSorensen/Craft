@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+actor User
+actor "Host application" as Host
+rectangle "Reborn editor harness" {
+  usecase "Draw a polyline" as Draw
+  usecase "Draw a point" as Dot
+  usecase "Select geometry" as Select
+  usecase "Delete selection" as Delete
+  usecase "Pan and zoom" as Navigate
+  usecase "Configure snapping\nand overlays" as Settings
+  usecase "Set region or focus" as Focus
+  usecase "Inspect a time interval" as Time
+  usecase "Save/load segments" as Files
+}
+rectangle "Reusable Reborn viewer" {
+  usecase "Display host geometry" as Display
+}
+User --> Draw
+User --> Dot
+User --> Select
+User --> Delete
+User --> Navigate
+User --> Settings
+User --> Focus
+User --> Time
+User --> Files
+Host --> Display
+note bottom of Draw
+Stored as independent segments.
+Cancellation and editing workflows remain open.
+end note
+@enduml

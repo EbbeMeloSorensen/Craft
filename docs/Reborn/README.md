@@ -1,25 +1,26 @@
-# Reborn Geometry Viewer Documentation
+# Reborn geometry editor
 
-This folder contains documentation, diagrams and specification for the Reborn geometry viewer component.
+This is an as-built reference based on source inspection on 2026-09-26, replacing an earlier generated description of freehand drawing. The owner has confirmed click-by-click polyline drawing and individual point drawing as the intended current behavior.
 
-Files
-- use-cases.md, use-cases.puml — use case descriptions and PlantUML source
-- supplementary-spec.md — nonfunctional requirements and constraints
-- class-diagram.md, class-diagram.puml — static design and PlantUML source
-- sequence-diagrams.md, *.puml — sequence diagrams for drawing, panning/zooming, and render pipeline
+The descriptions are traced from code, not verified by running the GUI. They are not a complete agreed product specification.
 
-Rendering PlantUML
-- Install PlantUML (or a PlantUML extension in your editor) and Graphviz for diagram rendering.
-- To generate PNG from a .puml file using plantuml CLI:
+- [Use cases](use-cases.md): UI entry points, flows, limitations, and open decisions.
+- [Architecture](class-diagram.md): presentation, state, host, and storage responsibilities.
+- [Interaction sequences](sequence-diagrams.md): drawing, navigation, and frames.
+- [Constraints and verification](supplementary-spec.md): coordinates, rendering, and test coverage.
 
-  plantuml class-diagram.puml
+## Scope
 
-or to render all .puml files in this directory:
+[Craft.sln](../../Craft.sln) contains several generations of geometry UI. These documents concern:
 
-  plantuml *.puml
+- [GeometryCanvas](../../Craft.UIElements/Geometry2D/Reborn/GeometryCanvas.cs) and its reusable WPF view.
+- [GeometryViewModel](../../Craft.ViewModels/Geometry2D/Reborn/GeometryViewModel.cs) and supporting Reborn types.
+- [The editor GUI harness](../../Craft.UIElements.Reborn.GuiTest/MainWindow.xaml), including selection, deletion, and persistence.
 
-Contribution guidance
-- Keep PlantUML sources as the canonical editable sources. Commit rendered images only when you want to freeze a version for e.g. a README or release.
+[The Reborn simulation host](../../Craft.Simulation.Reborn.GuiTest/SimulationLaboratoryViewModel.cs) is a separate consumer. The editor harness's storage and persistence policies should not be assumed for every host.
 
-Questions or changes
-- If you prefer alternative diagram formats (draw.io, Mermaid), tell me and I can produce those as well.
+## Maintenance
+
+Follow [AGENTS.md](../../AGENTS.md). Verify descriptions against code and keep proposed behavior separate until the owner settles it. Update prose and the accompanying editable PlantUML sources together.
+
+The PlantUML files were previously empty. They now describe the inspected relationships and interactions; they have not been rendered during this update.
