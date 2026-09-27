@@ -31,3 +31,5 @@ The renderer also supports Circle2D, PolyLineModel, HorizontalLineModel, and Ver
 [TimeTickEngine](../../Craft.UIElements/Geometry2D/Reborn/TimeAxis/TimeTickEngine.cs) selects fixed-duration, month, or year strategies. [TimeCoordinates](../../Craft.UIElements/Geometry2D/Reborn/TimeAxis/TimeCoordinates.cs) defines the epoch.
 
 CompositionTarget.Rendering drives camera damping and host frame notifications. WPF OnRender draws the visual when scheduled. Drawing-tool state and time-tick generation are separate concerns.
+
+Arrow update (2026-09-27): Arrow2D is a directed LineSegment2D subtype, preserving segment-based spatial queries, shaft selection, rectangle selection, and deletion. The canvas publishes DrawnArrow through GeometryView to the host. Normal rendering draws a fixed-size arrowhead in viewport coordinates. Segment persistence carries an IsArrow flag; old segment files remain readable.

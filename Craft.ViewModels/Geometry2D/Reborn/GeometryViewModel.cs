@@ -37,6 +37,17 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _timeAxisMode;
         private List<System.Windows.Point> _drawingStrokePoints;
         private CanvasMode _canvasMode;
+        private Craft.Math.Arrow2D? _drawnArrow;
+
+        public Craft.Math.Arrow2D? DrawnArrow
+        {
+            get => _drawnArrow;
+            set
+            {
+                _drawnArrow = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ViewState ViewState
         {

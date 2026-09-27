@@ -4,6 +4,8 @@ This repository contains a geometry viewer that is being extended with drawing a
 
 ## Design intent to preserve
 
+- Dot mode creates a point on release for a click, or a permanent arrow from press to release for a drag, with a live preview. The owner confirmed that dragged arrows remain as geometry.
+
 - Reborn drawing is click-by-click polyline drawing (double-click or Enter to finish), plus individual point creation in Dot mode. The owner confirmed that this replaced the earlier freehand workflow. Keep documentation aligned with this decision.
 - Keep world coordinates distinct from viewport coordinates. Use explicit transforms and their inverse for rendering, pointer positions, panning, and zooming.
 - Keep WPF presentation and input concerns separate from view-model and geometry/domain logic. Follow the repository's existing MVVM conventions.

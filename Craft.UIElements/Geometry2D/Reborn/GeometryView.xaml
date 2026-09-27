@@ -21,6 +21,7 @@
                               CursorWorldPosition="{Binding CursorWorldPosition, Mode=OneWayToSource}"
                               ClickedWorldPosition="{Binding ClickedWorldPosition, Mode=OneWayToSource}"
                               DrawingStrokePoints="{Binding DrawingStrokePoints, Mode=OneWayToSource}"
+                              DrawnArrow="{Binding DrawnArrow, Mode=OneWayToSource}"
                               LockAspectRatio="{Binding LockAspectRatio}"
                               LockXAxis="{Binding LockXAxis}"
                               LockYAxis="{Binding LockYAxis}"

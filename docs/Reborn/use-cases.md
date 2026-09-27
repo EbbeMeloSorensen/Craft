@@ -23,7 +23,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 | ID | Outcome | UI entry point | Supporting code |
 | --- | --- | --- | --- |
 | UC1 | Draw a polyline | Draw; left clicks; double-click or Enter | Canvas.OnMouseDown/OnMouseMove/OnKeyDown; Bindings.DrawingStrokePoints; Host.GeometryViewModel_PropertyChanged; Store |
-| UC2 | Draw a point | Dot; left click | Canvas.OnMouseDown; Host.GeometryViewModel_PropertyChanged; Store |
+| UC2 | Draw a point or arrow | Dot; left click/release or drag | Canvas.OnMouseDown; Host.GeometryViewModel_PropertyChanged; Store |
 | UC3 | Select geometry | Select; click or left drag | Canvas.OnMouseUp; Host clicked-position/selection-window handlers |
 | UC4 | Delete selection | Delete key | Keys.MainWindow_KeyDown; Host.HandleKeyEvent; Store |
 | UC5 | Pan and zoom | Right drag; wheel; axis controls | Canvas mouse handlers and UpdateViewState |
@@ -43,15 +43,15 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Result:** Independent line segments are stored and displayed. The drawn polyline is not stored as a single editable aggregate or PolyLineModel.
 
-## UC2: Draw a point
+## UC2: Draw a point or arrow
 
-**Trigger/preconditions:** User selects Dot and left-clicks.
+**Trigger/preconditions:** User selects Dot and presses the left mouse button.
 
-**Main flow:** The canvas transforms the click to world coordinates, applies optional snapping, and publishes a one-point list. The host inserts a Point2D and refreshes the layer.
+**Main flow:** The canvas captures the mouse and previews the position. Releasing without exceeding the system drag threshold publishes a fresh one-point list. Dragging previews an arrow from the press position to the current position; release publishes DrawnArrow and the host stores an Arrow2D. Both endpoints use world coordinates and optional snapping. The static layer refreshes after creation.
 
-**Alternates/limits:** Right drag pans. No double-click is needed. Save does not persist points.
+**Alternates/limits:** Right drag pans when no left-button gesture is active. Losing mouse capture or switching modes cancels the pending gesture. A drag whose snapped endpoints coincide creates a point. Save persists arrows but still omits points.
 
-**Result:** An individual point is stored and displayed.
+**Result:** An individual point or directed arrow is stored and displayed. Arrows can be selected by their shaft or by a rectangle enclosing both endpoints, and deleted like segments.
 
 ## UC3: Select geometry
 
@@ -117,7 +117,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Trigger/preconditions:** User chooses Save or Load.
 
-**Main flow:** Save opens a file dialog and serializes stored LineSegment2D objects to JSON. Load opens a dialog, deserializes a list of segments, adds them to the existing store, and refreshes the layer.
+**Main flow:** Save opens a file dialog and serializes stored segments and arrows to JSON; IsArrow distinguishes arrows. Load opens a dialog, deserializes segments and arrows (older files without IsArrow remain plain segments), adds them to the existing store, and refreshes the layer.
 
 **Alternates/limits:** Cancelling the dialog leaves data unchanged. Load appends rather than replaces. Save omits points. These methods have no dedicated recovery flow for malformed JSON or file I/O failures.
 

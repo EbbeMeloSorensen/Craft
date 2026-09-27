@@ -26,6 +26,20 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private BoundingBox? _potentialSelectionWindow;
         private List<Point> _drawingStrokePoints;
         private Point? _nextPotentialDrawingStrokePoint;
+        private Point? _pointGestureStart;
+        private Point _pointGestureEnd;
+        private Point _pointGestureViewportStart;
+        private bool _pointGestureDragged;
+
+        public Math.Arrow2D? DrawnArrow
+        {
+            get => (Math.Arrow2D?)GetValue(DrawnArrowProperty);
+            set => SetValue(DrawnArrowProperty, value);
+        }
+
+        public static readonly DependencyProperty DrawnArrowProperty =
+            DependencyProperty.Register(nameof(DrawnArrow), typeof(Math.Arrow2D),
+                typeof(GeometryCanvas), new FrameworkPropertyMetadata(null));
 
         private Brush _selectionWindowBrush = new SolidColorBrush(Color.FromArgb(38, 0, 120, 215));
         private Pen _selectionWindowPen = new Pen(new SolidColorBrush(Color.FromRgb(0, 120, 215)), 1);
@@ -629,7 +643,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 ? selectedPen
                                 : drawingPen;
 
-                            dc.DrawLine(pen1, p1, p2);
+                            if (lineSegment is Math.Arrow2D)
+                                DrawArrow(dc, pen1, p1, p2);
+                            else
+                                dc.DrawLine(pen1, p1, p2);
                             break;
 
                         case Math.Point2D point:
@@ -698,6 +715,15 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 }
             }
 
+            if (_pointGestureStart.HasValue)
+            {
+                var start = worldToViewportTransform.Transform(_pointGestureStart.Value);
+                if (_pointGestureDragged)
+                    DrawArrow(dc, drawingPen, start, worldToViewportTransform.Transform(_pointGestureEnd));
+                else
+                    dc.DrawEllipse(drawingBrush, null, start, 3, 3);
+            }
+
             if (_isDrawing)
             {
                 var drawingStrokePointsWorld = _drawingStrokePoints
@@ -745,6 +771,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     switch (geometricObject)
                     {
+                        case Math.Arrow2D arrow:
+                            DrawArrow(dc, drawingPen,
+                                new Point(arrow.Point1.X, arrow.Point1.Y),
+                                new Point(arrow.Point2.X, arrow.Point2.Y));
+                            break;
+
                         case Math.LineSegment2D lineSegment:
                             dc.DrawLine(
                                 drawingPen,
@@ -815,6 +847,10 @@ namespace Craft.UIElements.Geometry2D.Reborn
             base.OnMouseDown(e);
             Focus();
 
+            // A captured point/arrow gesture owns input until the left button is released.
+            if (_pointGestureStart.HasValue)
+                return;
+
             if (_target != null)
             {
                 // The window is sliding towards a target, but the user intercepts that by clicking
@@ -852,15 +888,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             selectedWorldPoint = SnapPointToGrid(selectedWorldPoint);
                         }
 
-                        _drawingStrokePoints.Add(selectedWorldPoint);
-
-                        // Request adding a point to the data store
-                        SetCurrentValue(DrawingStrokePointsProperty, _drawingStrokePoints);
-
-                        // End current point drawing operation
-                        _drawingStrokePoints.Clear();
-                        _isDrawing = false;
-                        ReleaseMouseCapture();
+                        _pointGestureStart = selectedWorldPoint;
+                        _pointGestureEnd = selectedWorldPoint;
+                        _pointGestureViewportStart = _mouseDownPosition;
+                        _pointGestureDragged = false;
+                        CaptureMouse();
                         InvalidateVisual();
                     }
                     else if (e.RightButton == MouseButtonState.Pressed)
@@ -938,6 +970,51 @@ namespace Craft.UIElements.Geometry2D.Reborn
             }
         }
 
+        private static void DrawArrow(DrawingContext dc, Pen pen, Point start, Point end)
+        {
+            var direction = end - start;
+            var length = direction.Length;
+            if (length < 0.000001)
+                return;
+
+            direction /= length;
+            var normal = new Vector(-direction.Y, direction.X);
+            var headLength = System.Math.Min(10, length * 0.4);
+            var headBase = end - direction * headLength;
+            dc.DrawLine(pen, start, end);
+            dc.DrawLine(pen, end, headBase + normal * headLength * 0.5);
+            dc.DrawLine(pen, end, headBase - normal * headLength * 0.5);
+        }
+
+        private void UpdatePointGesture(Point viewportPosition)
+        {
+            var delta = viewportPosition - _pointGestureViewportStart;
+            _pointGestureDragged |=
+                System.Math.Abs(delta.X) >= SystemParameters.MinimumHorizontalDragDistance ||
+                System.Math.Abs(delta.Y) >= SystemParameters.MinimumVerticalDragDistance;
+            var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
+            _pointGestureEnd = transform.Transform(viewportPosition);
+            if (SnapToGrid)
+                _pointGestureEnd = SnapPointToGrid(_pointGestureEnd);
+            InvalidateVisual();
+        }
+
+        private void CancelPointGesture()
+        {
+            if (!_pointGestureStart.HasValue)
+                return;
+            _pointGestureStart = null;
+            _pointGestureDragged = false;
+            ReleaseMouseCapture();
+            InvalidateVisual();
+        }
+
+        protected override void OnLostMouseCapture(MouseEventArgs e)
+        {
+            base.OnLostMouseCapture(e);
+            CancelPointGesture();
+        }
+
         private void CompletePolyline()
         {
             if (_drawingStrokePoints.Count > 1)
@@ -960,6 +1037,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
             base.OnMouseMove(e);
 
             var mousePos = e.GetPosition(this);
+
+            if (_pointGestureStart.HasValue)
+            {
+                UpdatePointGesture(mousePos);
+                return;
+            }
 
             if (_isPanning)
             {
@@ -1042,6 +1125,29 @@ namespace Craft.UIElements.Geometry2D.Reborn
             MouseButtonEventArgs e)
         {
             base.OnMouseUp(e);
+
+            if (_pointGestureStart.HasValue)
+            {
+                if (e.ChangedButton != MouseButton.Left)
+                    return;
+
+                UpdatePointGesture(e.GetPosition(this));
+                var start = _pointGestureStart.Value;
+                var end = _pointGestureEnd;
+                var isArrow = _pointGestureDragged && NotCoinciding(start, end);
+                CancelPointGesture();
+                if (isArrow)
+                {
+                    SetCurrentValue(DrawnArrowProperty, new Math.Arrow2D(
+                        new Math.Point2D(start.X, start.Y), new Math.Point2D(end.X, end.Y)));
+                }
+                else
+                {
+                    SetCurrentValue(DrawingStrokePointsProperty, new List<Point> { start });
+                }
+                e.Handled = true;
+                return;
+            }
 
             if (_isPanning)
             {
@@ -1712,6 +1818,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private void OnCanvasModeChanged(
             CanvasMode canvasMode)
         {
+            CancelPointGesture();
             ShowDefaultCursorForMode();
         }
 

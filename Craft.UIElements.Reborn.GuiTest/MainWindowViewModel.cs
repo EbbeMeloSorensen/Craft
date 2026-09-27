@@ -477,6 +477,15 @@ namespace Craft.UIElements.Reborn.GuiTest
                     }
                 }
             }
+            else if (e.PropertyName == nameof(GeometryViewModel.DrawnArrow))
+            {
+                var arrow = GeometryViewModel.DrawnArrow;
+                if (arrow != null)
+                {
+                    _geometryDataStore.AddGeometricObject(arrow, arrow.ComputeBoundingBox());
+                    UpdateStaticGeometryLayer();
+                }
+            }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
             {
                 if (GeometryViewModel.DrawingStrokePoints == null)
@@ -622,14 +631,19 @@ namespace Craft.UIElements.Reborn.GuiTest
                 return;
             }
 
-            var lines = new List<LineSegment2D>();
+            var lines = new List<StoredSegment>();
 
             foreach (var spatialObject in _geometryDataStore.GetAll())
             {
                 switch (spatialObject)
                 {
                     case LineSegment2D lineSegment2D:
-                        lines.Add(lineSegment2D);
+                        lines.Add(new StoredSegment
+                        {
+                            Point1 = lineSegment2D.Point1,
+                            Point2 = lineSegment2D.Point2,
+                            IsArrow = lineSegment2D is Arrow2D
+                        });
                         break;
                 }
             }
@@ -657,10 +671,13 @@ namespace Craft.UIElements.Reborn.GuiTest
             using (var r = new StreamReader(dialog.FileName))
             {
                 var jsonData = r.ReadToEnd();
-                var deserializedData = JsonConvert.DeserializeObject<List<LineSegment2D>>(jsonData);
+                var deserializedData = JsonConvert.DeserializeObject<List<StoredSegment>>(jsonData);
 
-                foreach (var lineSegment2D in deserializedData)
+                foreach (var stored in deserializedData)
                 {
+                    LineSegment2D lineSegment2D = stored.IsArrow
+                        ? new Arrow2D(stored.Point1, stored.Point2)
+                        : new LineSegment2D(stored.Point1, stored.Point2);
                     var bbox = lineSegment2D.ComputeBoundingBox();
 
                     _geometryDataStore.AddGeometricObject(lineSegment2D, bbox);
@@ -668,6 +685,13 @@ namespace Craft.UIElements.Reborn.GuiTest
 
                 UpdateStaticGeometryLayer();
             }
+        }
+
+        private sealed class StoredSegment
+        {
+            public Point2D Point1 { get; set; } = null!;
+            public Point2D Point2 { get; set; } = null!;
+            public bool IsArrow { get; set; }
         }
 
         private void ChangeCanvasMode(

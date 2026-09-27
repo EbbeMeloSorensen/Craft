@@ -25,8 +25,9 @@ alt Draw mode
   end
   Canvas -> Canvas : clear transient drawing state
 else Dot mode
-  User -> Canvas : left click
+  User -> Canvas : left press; capture and preview
   Canvas -> Canvas : viewport to world; optional snap
+  User -> Canvas : release without dragging
   Canvas -> State : DrawingStrokePoints (one point)
   State -> Host : PropertyChanged
   Host -> Store : AddGeometricObject(Point2D, bounds)
@@ -34,4 +35,8 @@ else Dot mode
   Host -> State : refresh static layer
   Canvas -> Canvas : clear transient drawing state
 end
+note over Canvas, Store
+In Dot mode a drag previews an arrow; release publishes DrawnArrow.
+The host inserts Arrow2D and refreshes the layer.
+end note
 @enduml
