@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -37,14 +37,14 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         private bool _timeAxisMode;
         private List<System.Windows.Point> _drawingStrokePoints;
         private CanvasMode _canvasMode;
-        private Craft.Math.Arrow2D? _drawnArrow;
+        private Craft.Math.OrientedPoint2D? _drawnOrientedPoint;
 
-        public Craft.Math.Arrow2D? DrawnArrow
+        public Craft.Math.OrientedPoint2D? DrawnOrientedPoint
         {
-            get => _drawnArrow;
+            get => _drawnOrientedPoint;
             set
             {
-                _drawnArrow = value;
+                _drawnOrientedPoint = value;
                 OnPropertyChanged();
             }
         }

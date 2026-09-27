@@ -15,12 +15,16 @@ internal static class GeometryFile
         {
             objects.Add(item switch
             {
+                OrientedPoint2D point => new StoredObject
+                {
+                    Point = new Point2D(point.X, point.Y),
+                    AngleDegrees = point.AngleDegrees
+                },
                 Point2D point => new StoredObject { Point = point },
                 LineSegment2D segment => new StoredObject
                 {
                     Point1 = segment.Point1,
-                    Point2 = segment.Point2,
-                    IsArrow = segment is Arrow2D
+                    Point2 = segment.Point2
                 },
                 _ => throw new InvalidDataException("Unsupported geometry type.")
             });
@@ -39,12 +43,12 @@ internal static class GeometryFile
             if (stored == null)
                 throw new InvalidDataException("Geometry entries cannot be null.");
 
-            if (stored.Point != null && stored.Point1 == null && stored.Point2 == null && !stored.IsArrow)
-                result.Add(stored.Point);
-            else if (stored.Point == null && stored.Point1 != null && stored.Point2 != null)
-                result.Add(stored.IsArrow
-                    ? new Arrow2D(stored.Point1, stored.Point2)
-                    : new LineSegment2D(stored.Point1, stored.Point2));
+            if (stored.Point != null && stored.Point1 == null && stored.Point2 == null)
+                result.Add(stored.AngleDegrees.HasValue
+                    ? new OrientedPoint2D(stored.Point.X, stored.Point.Y, stored.AngleDegrees.Value)
+                    : stored.Point);
+            else if (stored.Point == null && stored.Point1 != null && stored.Point2 != null && !stored.AngleDegrees.HasValue)
+                result.Add(new LineSegment2D(stored.Point1, stored.Point2));
             else
                 throw new InvalidDataException("Expected a point or two segment endpoints.");
         }
@@ -60,6 +64,7 @@ internal static class GeometryFile
         public Point2D? Point1 { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Point2D? Point2 { get; set; }
-        public bool IsArrow { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public double? AngleDegrees { get; set; }
     }
 }

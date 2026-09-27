@@ -1,4 +1,4 @@
-﻿using Craft.DataStructures.Geometry;
+using Craft.DataStructures.Geometry;
 using Craft.Simulation.Boundaries;
 using Craft.Utils.Linq;
 using Craft.ViewModels.Geometry2D.Reborn;
@@ -31,14 +31,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private bool _pointGestureDragged;
         private double _pointGestureAngle;
 
-        public Math.Arrow2D? DrawnArrow
+        public Math.OrientedPoint2D? DrawnOrientedPoint
         {
-            get => (Math.Arrow2D?)GetValue(DrawnArrowProperty);
-            set => SetValue(DrawnArrowProperty, value);
+            get => (Math.OrientedPoint2D?)GetValue(DrawnOrientedPointProperty);
+            set => SetValue(DrawnOrientedPointProperty, value);
         }
 
-        public static readonly DependencyProperty DrawnArrowProperty =
-            DependencyProperty.Register(nameof(DrawnArrow), typeof(Math.Arrow2D),
+        public static readonly DependencyProperty DrawnOrientedPointProperty =
+            DependencyProperty.Register(nameof(DrawnOrientedPoint), typeof(Math.OrientedPoint2D),
                 typeof(GeometryCanvas), new FrameworkPropertyMetadata(null));
 
         private Brush _selectionWindowBrush = new SolidColorBrush(Color.FromArgb(38, 0, 120, 215));
@@ -511,9 +511,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 dc.Pop();
                 foreach (var layer in GeometryLayers)
                 {
-                    foreach (var arrow in layer.GeometricObjects.OfType<Math.Arrow2D>())
+                    foreach (var arrow in layer.GeometricObjects.OfType<Math.OrientedPoint2D>())
                     {
-                        var anchor = debugTransform.Transform(new Point(arrow.Point1.X, arrow.Point1.Y));
+                        var anchor = debugTransform.Transform(new Point(arrow.X, arrow.Y));
                         var start = worldToViewportTransform.Transform(anchor);
                         var offset = arrow.ViewportOffset;
                         var pen = new Pen(SelectedGeometricObjects.Contains(arrow) ? Brushes.Blue : Brushes.IndianRed, 2);
@@ -654,13 +654,14 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 ? selectedPen
                                 : drawingPen;
 
-                            if (lineSegment is Math.Arrow2D arrow)
-                            {
-                                var offset = arrow.ViewportOffset;
-                                DrawArrow(dc, pen1, p1, p1 + new Vector(offset.X, offset.Y));
-                            }
-                            else
-                                dc.DrawLine(pen1, p1, p2);
+                            dc.DrawLine(pen1, p1, p2);
+                            break;
+
+                        case Math.OrientedPoint2D orientedPoint:
+                            var origin = worldToViewportTransform.Transform(new Point(orientedPoint.X, orientedPoint.Y));
+                            var offset = orientedPoint.ViewportOffset;
+                            DrawArrow(dc, SelectedGeometricObjects.Contains(orientedPoint) ? selectedPen : drawingPen,
+                                origin, origin + new Vector(offset.X, offset.Y));
                             break;
 
                         case Math.Point2D point:
@@ -734,7 +735,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 var start = worldToViewportTransform.Transform(_pointGestureStart.Value);
                 if (_pointGestureDragged)
                 {
-                    var arrow = Math.Arrow2D.FromAngle(new Math.Point2D(0, 0), _pointGestureAngle);
+                    var arrow = Math.OrientedPoint2D.FromAngle(new Math.Point2D(0, 0), _pointGestureAngle);
                     var offset = arrow.ViewportOffset;
                     DrawArrow(dc, drawingPen, start, start + new Vector(offset.X, offset.Y));
                     var label = new FormattedText($"{_pointGestureAngle:0}°",
@@ -793,7 +794,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 {
                     switch (geometricObject)
                     {
-                        case Math.Arrow2D arrow:
+                        case Math.OrientedPoint2D arrow:
                             // Draw after restoring viewport coordinates to preserve its fixed length.
                             break;
 
@@ -1016,7 +1017,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 .Transform(_pointGestureStart.Value);
             var direction = viewportPosition - start;
             if (direction.LengthSquared > 0.000001)
-                _pointGestureAngle = Math.Arrow2D.SnapAngle(
+                _pointGestureAngle = Math.OrientedPoint2D.SnapAngle(
                     System.Math.Atan2(-direction.Y, direction.X) * 180 / System.Math.PI);
             InvalidateVisual();
         }
@@ -1159,7 +1160,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                 CancelPointGesture();
                 if (isArrow)
                 {
-                    SetCurrentValue(DrawnArrowProperty, Math.Arrow2D.FromAngle(
+                    SetCurrentValue(DrawnOrientedPointProperty, Math.OrientedPoint2D.FromAngle(
                         new Math.Point2D(start.X, start.Y), _pointGestureAngle));
                 }
                 else

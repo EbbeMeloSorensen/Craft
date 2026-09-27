@@ -12,7 +12,7 @@ These are source-derived sequences, not runtime traces.
 4. The host inserts independent LineSegment2D objects and refreshes its static layer.
 5. The canvas clears its transient stroke state.
 
-Mouse release does not commit a polyline. In Dot mode, pressing starts a captured gesture; release publishes a one-point list for a click or DrawnArrow for a drag. The host creates Point2D or stores Arrow2D respectively. Neither path samples a freehand stroke.
+Mouse release does not commit a polyline. In Dot mode, pressing starts a captured gesture; release publishes a one-point list for a click or DrawnOrientedPoint for a drag. The host creates Point2D or stores OrientedPoint2D respectively. Neither path samples a freehand stroke.
 
 Sources: [canvas](../../Craft.UIElements/Geometry2D/Reborn/GeometryCanvas.cs), [bindings](../../Craft.UIElements/Geometry2D/Reborn/GeometryView.xaml), [host](../../Craft.UIElements.Reborn.GuiTest/MainWindowViewModel.cs).
 
@@ -34,4 +34,4 @@ OnRender paints background, overlays, geometry, and drawing/selection feedback. 
 
 Sources: [canvas](../../Craft.UIElements/Geometry2D/Reborn/GeometryCanvas.cs), [view code-behind](../../Craft.UIElements/Geometry2D/Reborn/GeometryView.xaml.cs), [IFrameAware](../../Craft.ViewModels/Geometry2D/Reborn/IFrameAware.cs).
 
-Point-mode update (2026-09-27): Dot input now captures on press and commits on release. Dragging previews and then publishes a permanent DrawnArrow; a click publishes a fresh one-point list. Lost capture or mode change cancels the gesture.
+Point-mode update (2026-09-27): Dot input now captures on press and commits on release. Dragging previews and then publishes a permanent DrawnOrientedPoint; a click publishes a fresh one-point list. Lost capture or mode change cancels the gesture.

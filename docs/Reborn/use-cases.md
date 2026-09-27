@@ -47,7 +47,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Trigger/preconditions:** User selects Dot and presses the left mouse button.
 
-**Main flow:** The canvas captures the mouse and previews the position. Releasing without exceeding the system drag threshold publishes a fresh one-point list. Dragging previews an arrow from the press position to the current position; release publishes DrawnArrow and the host stores an Arrow2D. The tail is stored in world coordinates and optionally grid-snapped. Drag direction snaps to 5-degree polar steps (0 degrees right, 90 degrees up); a live angle label accompanies the preview. Arrows always span 100 WPF viewport units, independent of zoom and axis scaling. The static layer refreshes after creation.
+**Main flow:** The canvas captures the mouse and previews the position. Releasing without exceeding the system drag threshold publishes a fresh one-point list. Dragging previews an arrow from the press position to the current position; release publishes DrawnOrientedPoint and the host stores an OrientedPoint2D. The tail is stored in world coordinates and optionally grid-snapped. Drag direction snaps to 5-degree polar steps (0 degrees right, 90 degrees up); a live angle label accompanies the preview. Arrows always span 100 WPF viewport units, independent of zoom and axis scaling. The static layer refreshes after creation.
 
 **Alternates/limits:** Right drag pans when no left-button gesture is active. Losing mouse capture or switching modes cancels the pending gesture. Save persists points, segments, and arrows.
 
@@ -117,7 +117,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Trigger/preconditions:** User chooses Save or Load.
 
-**Main flow:** Save opens a file dialog and serializes stored points, segments, and arrows to JSON through GeometryFile. A Point record stores an ordinary point; Point1/Point2 and IsArrow describe segments and arrows. Load opens a dialog, deserializes points, segments, and arrows (older files without IsArrow remain plain segments), adds them to the existing store, and refreshes the layer.
+**Main flow:** Save opens a file dialog and serializes stored points, segments, and arrows to JSON through GeometryFile. A Point record stores an ordinary point; Point plus AngleDegrees describes oriented points; Point1/Point2 describes line segments. Load opens a dialog, deserializes points, segments, and arrows, adds them to the existing store, and refreshes the layer.
 
 **Alternates/limits:** Cancelling the dialog leaves data unchanged. Load appends rather than replaces. These methods have no dedicated recovery flow for malformed JSON or file I/O failures.
 
@@ -148,4 +148,4 @@ No dedicated Reborn interaction or transform unit tests were found in the inspec
 
 Manual checks still to run: repeated polyline and point creation; click/rectangle selection with modifiers; deletion; constrained pan/zoom; snapping; time intervals; save/load of mixed geometry. None was executed for this documentation update.
 
-Persistence verification (2026-09-27): a standalone check of GeometryFile passed mixed point/segment/arrow file round trips, point-only and empty scenes, legacy segment loading, and rejection of invalid entries. The GUI project builds; file dialogs were not manually exercised.
+Persistence verification (2026-09-27): a standalone check of GeometryFile passed mixed point/segment/arrow file round trips, point-only and empty scenes, and rejection of invalid entries. The GUI project builds; file dialogs were not manually exercised.

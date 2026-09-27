@@ -36,7 +36,7 @@ else Dot mode
   Canvas -> Canvas : clear transient drawing state
 end
 note over Canvas, Store
-In Dot mode a drag previews an arrow; release publishes DrawnArrow.
-The host inserts Arrow2D and refreshes the layer.
+In Dot mode a drag previews an arrow; release publishes DrawnOrientedPoint.
+The host inserts OrientedPoint2D and refreshes the layer.
 end note
 @enduml

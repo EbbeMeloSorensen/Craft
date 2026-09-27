@@ -372,6 +372,15 @@ namespace Craft.UIElements.Reborn.GuiTest
                 {
                     switch (geometricObject)
                     {
+                        case OrientedPoint2D orientedPoint:
+                            var squaredDistanceToArrow = GetSelectionShaft(orientedPoint).SquaredDistanceTo(clickedPosition);
+                            if (closestGeometricObject == null || squaredDistanceToArrow < squaredDistanceToClosestGeometricObject)
+                            {
+                                closestGeometricObject = orientedPoint;
+                                squaredDistanceToClosestGeometricObject = squaredDistanceToArrow;
+                            }
+                            break;
+
                         case Point2D point2D:
                             var squaredDistanceToPoint = point2D.SquaredDistanceTo(clickedPosition);
 
@@ -385,7 +394,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                             break;
 
                         case LineSegment2D lineSegment2D:
-                            var squaredDistanceToLine = GetSelectionShaft(lineSegment2D).SquaredDistanceTo(clickedPosition);
+                            var squaredDistanceToLine = lineSegment2D.SquaredDistanceTo(clickedPosition);
 
                             if (closestGeometricObject == null ||
                                 squaredDistanceToLine < squaredDistanceToClosestGeometricObject)
@@ -448,6 +457,12 @@ namespace Craft.UIElements.Reborn.GuiTest
                 {
                     switch (geometricObject)
                     {
+                        case OrientedPoint2D orientedPoint:
+                            if (GeometryViewModel.SelectionWindow.Encloses(GetSelectionShaft(orientedPoint).ComputeBoundingBox()) &&
+                                !GeometryViewModel.SelectedGeometricObjects.Contains(orientedPoint))
+                                GeometryViewModel.SelectedGeometricObjects.Add(orientedPoint);
+                            break;
+
                         case Point2D point2D:
 
                             if (GeometryViewModel.SelectionWindow.Encloses(point2D.ComputeBoundingBox()))
@@ -462,7 +477,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 
                         case LineSegment2D lineSegment2D:
 
-                            if (GeometryViewModel.SelectionWindow.Encloses(GetSelectionShaft(lineSegment2D).ComputeBoundingBox()))
+                            if (GeometryViewModel.SelectionWindow.Encloses(lineSegment2D.ComputeBoundingBox()))
                             {
                                 if (!GeometryViewModel.SelectedGeometricObjects.Contains(lineSegment2D))
                                 {
@@ -477,9 +492,9 @@ namespace Craft.UIElements.Reborn.GuiTest
                     }
                 }
             }
-            else if (e.PropertyName == nameof(GeometryViewModel.DrawnArrow))
+            else if (e.PropertyName == nameof(GeometryViewModel.DrawnOrientedPoint))
             {
-                var arrow = GeometryViewModel.DrawnArrow;
+                var arrow = GeometryViewModel.DrawnOrientedPoint;
                 if (arrow != null)
                 {
                     _geometryDataStore.AddGeometricObject(arrow, arrow.ComputeBoundingBox());
@@ -697,14 +712,12 @@ namespace Craft.UIElements.Reborn.GuiTest
         // Arrows have viewport-sized bounds, so their stored world bounds cannot cull them.
         private IEnumerable<object> GetGeometryCandidates(BoundingBox window)
             => _geometryDataStore.GetIntersecting(window).Cast<object>()
-                .Where(item => item is not Arrow2D)
-                .Concat(_geometryDataStore.GetAll().Cast<object>().OfType<Arrow2D>());
+                .Where(item => item is not OrientedPoint2D)
+                .Concat(_geometryDataStore.GetAll().Cast<object>().OfType<OrientedPoint2D>());
 
-        private LineSegment2D GetSelectionShaft(LineSegment2D segment)
-            => segment is Arrow2D arrow
-                ? arrow.GetWorldShaft(GeometryViewModel.ViewState.Scaling.Width,
-                    GeometryViewModel.ViewState.Scaling.Height)
-                : segment;
+        private LineSegment2D GetSelectionShaft(OrientedPoint2D point)
+            => point.GetWorldShaft(GeometryViewModel.ViewState.Scaling.Width,
+                GeometryViewModel.ViewState.Scaling.Height);
         private void UpdateStaticGeometryLayer()
         {
             var geometricObjects = GetGeometryCandidates(GeometryViewModel.WorldWindowExpanded);

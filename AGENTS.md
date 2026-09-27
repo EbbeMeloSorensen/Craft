@@ -32,3 +32,5 @@ When asked to create or update a use case model:
 This file records durable guidance, not a complete specification. Update it when the project owner corrects a recurring assumption or establishes a new design decision.
 
 - Arrows have a fixed length of 100 WPF viewport units. Dragging chooses a polar angle snapped to 5-degree increments; show the candidate angle while dragging. The tail may snap to the grid, but the arrow tip must not be grid-snapped.
+
+- Backwards compatibility with earlier geometry file formats is not currently required. Persist oriented points as a position and angle, without legacy arrow flags or conversion paths.
