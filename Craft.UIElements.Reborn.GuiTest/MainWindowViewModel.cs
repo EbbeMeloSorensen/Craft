@@ -232,17 +232,19 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
+        public IReadOnlyList<string> SnapSpacingPresets { get; } = new[] { "0.01", "0.1", "1", "5", "10", "50" };
+
         public string GridSpacing
         {
             get => _gridSpacing;
             set
             {
-                _gridSpacing = value;
+                if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var gridSpacing) ||
+                    !double.IsFinite(gridSpacing) || gridSpacing <= 0)
+                    throw new ArgumentException("Enter a positive spacing, for example 1, 0.1 or 0.01 (use a decimal point).");
 
-                if (double.TryParse(_gridSpacing, CultureInfo.InvariantCulture, out var gridSpacing))
-                {
-                    GeometryViewModel.GridSpacing = gridSpacing;
-                }
+                _gridSpacing = value;
+                GeometryViewModel.GridSpacing = gridSpacing;
 
                 OnPropertyChanged();
             }
@@ -338,7 +340,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             RequestedWW_ScalingY = "1";
 
             FocusShiftDamping = GeometryViewModel.FocusShiftDamping.ToString();
-            GridSpacing = GeometryViewModel.GridSpacing.ToString();
+            GridSpacing = GeometryViewModel.GridSpacing.ToString(CultureInfo.InvariantCulture);
         }
 
         private void GeometryViewModel_PropertyChanged(

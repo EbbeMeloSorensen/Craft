@@ -86,9 +86,9 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="X:" Margin="0, 0, 10, 0"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GeometryViewModel.CursorWorldPosition.X, StringFormat=N5}"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" ToolTip="{Binding GeometryViewModel.CoordinateReadoutDescription}" Text="{Binding GeometryViewModel.PlacementWorldPosition.X, StringFormat=0.#####}"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Y:" Margin="0, 0, 10, 0"/>
-            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GeometryViewModel.CursorWorldPosition.Y, StringFormat=N5}"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" ToolTip="{Binding GeometryViewModel.CoordinateReadoutDescription}" Text="{Binding GeometryViewModel.PlacementWorldPosition.Y, StringFormat=0.#####}"/>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="X scaling:" Margin="0, 0, 10, 0"/>
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GeometryViewModel.ViewState.Scaling.Width, StringFormat=N5}"/>
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Y scaling:" Margin="0, 0, 10, 0"/>
@@ -331,15 +331,30 @@
                 <GroupBox Grid.Row="1" Header="Drawing"
                           BorderBrush="DarkSlateGray" BorderThickness="1">
                     <StackPanel Orientation="Vertical">
-                        <CheckBox Content="Snap to grid" IsChecked="{Binding GeometryViewModel.SnapToGrid}" />
+                        <CheckBox Content="Snap placement" IsChecked="{Binding GeometryViewModel.SnapToGrid}"
+                                  ToolTip="Snap new positions to multiples of the spacing, even when the grid is hidden."/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Grid spacing:" Margin="0, 0, 10, 0"/>
-                            <TextBox Grid.Column="1" Text="{Binding GridSpacing}" Width="30"/>
+                            <TextBlock Grid.Column="0" Text="Spacing:" Margin="0, 0, 8, 0" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" IsEditable="True" IsTextSearchEnabled="False" MinWidth="80"
+                                      ItemsSource="{Binding SnapSpacingPresets}"
+                                      Text="{Binding GridSpacing, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}">
+                                <ComboBox.Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ToolTip" Value="World units: 1 gives integers, 0.1 gives tenths. Choose a preset or type a positive value using a decimal point."/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Validation.HasError" Value="True">
+                                                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
                         </Grid>
+                        <TextBlock Text="World units · grid can stay hidden" FontSize="10" Margin="0,3,0,0"/>
                     </StackPanel>
                 </GroupBox>
             </Grid>

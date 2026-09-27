@@ -1093,6 +1093,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
             if (_pointGestureStart.HasValue)
             {
+                CursorWorldPosition = _pointGestureStart.Value;
                 UpdatePointGesture(mousePos);
                 return;
             }
@@ -1967,6 +1968,8 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private Point SnapPointToGrid(
             Point point)
         {
+            if (!double.IsFinite(GridSpacing) || GridSpacing <= 0)
+                return point;
             return new Point(
                 System.Math.Round(point.X / GridSpacing) * GridSpacing,
                 System.Math.Round(point.Y / GridSpacing) * GridSpacing);

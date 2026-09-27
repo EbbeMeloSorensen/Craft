@@ -87,9 +87,9 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Trigger/preconditions:** User changes snap, spacing, grid, or coordinate-system controls.
 
-**Main flow:** Bindings update the canvas settings. Snapping rounds drawing positions to multiples of GridSpacing. Rendering uses the overlay flags.
+**Main flow:** Bindings update the canvas settings. Snapping rounds drawing positions to multiples of GridSpacing, independently of zoom. In drawing modes the X/Y readout shows PlacementWorldPosition; raw CursorWorldPosition remains available unchanged. In Select mode the readout remains unsnapped. Rendering uses the overlay flags.
 
-**Alternates/limits:** Showing the grid and enabling snapping are independent. The host accepts parseable spacing values without establishing a positive-value validation workflow. Invalid numeric text does not update the numeric setting.
+**Alternates/limits:** Showing the grid and enabling snapping are independent. The editable spacing list offers 0.01, 0.1, 1, 5, 10 and 50 world units, as well as custom positive finite values. Invalid text is marked with a validation error and leaves the last valid spacing active. The control accepts a decimal point.
 
 **Result:** Subsequent drawing positions and visual overlays follow the settings.
 

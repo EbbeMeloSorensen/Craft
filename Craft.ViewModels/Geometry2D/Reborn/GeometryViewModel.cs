@@ -119,6 +119,24 @@ namespace Craft.ViewModels.Geometry2D.Reborn
             }
         }
 
+        public System.Windows.Point? PlacementWorldPosition
+        {
+            get
+            {
+                if (!CursorWorldPosition.HasValue || !SnapToGrid || CanvasMode == CanvasMode.Select ||
+                    !double.IsFinite(GridSpacing) || GridSpacing <= 0)
+                    return CursorWorldPosition;
+                var point = CursorWorldPosition.Value;
+                return new System.Windows.Point(
+                    System.Math.Round(point.X / GridSpacing) * GridSpacing,
+                    System.Math.Round(point.Y / GridSpacing) * GridSpacing);
+            }
+        }
+
+        public string CoordinateReadoutDescription => SnapToGrid && CanvasMode != CanvasMode.Select
+            ? "Snapped placement position (world units)"
+            : "Cursor position (world units)";
+
         public System.Windows.Point? CursorWorldPosition
         {
             get => _cursorWorldPosition;
@@ -304,7 +322,15 @@ namespace Craft.ViewModels.Geometry2D.Reborn
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            if (name == nameof(CursorWorldPosition) || name == nameof(SnapToGrid) ||
+                name == nameof(GridSpacing) || name == nameof(CanvasMode))
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PlacementWorldPosition)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoordinateReadoutDescription)));
+            }
+        }
 
         public void ReplaceDynamicGeometryLayer(
             IEnumerable geometricObjects)
