@@ -359,7 +359,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                     y - bbHalfWidth,
                     y + bbHalfWidth);
 
-                var geometricObjects = _geometryDataStore.GetIntersecting(bbox);
+                var geometricObjects = GetGeometryCandidates(bbox);
 
                 var clickedPosition = new Point2D(
                     GeometryViewModel.ClickedWorldPosition.Value.X,
@@ -385,7 +385,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                             break;
 
                         case LineSegment2D lineSegment2D:
-                            var squaredDistanceToLine = lineSegment2D.SquaredDistanceTo(clickedPosition);
+                            var squaredDistanceToLine = GetSelectionShaft(lineSegment2D).SquaredDistanceTo(clickedPosition);
 
                             if (closestGeometricObject == null ||
                                 squaredDistanceToLine < squaredDistanceToClosestGeometricObject)
@@ -442,7 +442,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                     GeometryViewModel.SelectedGeometricObjects.Clear();
                 }
 
-                var geometricObjects = _geometryDataStore.GetIntersecting(GeometryViewModel.SelectionWindow);
+                var geometricObjects = GetGeometryCandidates(GeometryViewModel.SelectionWindow);
 
                 foreach (var geometricObject in geometricObjects)
                 {
@@ -462,7 +462,7 @@ namespace Craft.UIElements.Reborn.GuiTest
 
                         case LineSegment2D lineSegment2D:
 
-                            if (GeometryViewModel.SelectionWindow.Encloses(lineSegment2D.ComputeBoundingBox()))
+                            if (GeometryViewModel.SelectionWindow.Encloses(GetSelectionShaft(lineSegment2D).ComputeBoundingBox()))
                             {
                                 if (!GeometryViewModel.SelectedGeometricObjects.Contains(lineSegment2D))
                                 {
@@ -694,10 +694,20 @@ namespace Craft.UIElements.Reborn.GuiTest
             return worldFocusRequest;
         }
 
+        // Arrows have viewport-sized bounds, so their stored world bounds cannot cull them.
+        private IEnumerable<object> GetGeometryCandidates(BoundingBox window)
+            => _geometryDataStore.GetIntersecting(window).Cast<object>()
+                .Where(item => item is not Arrow2D)
+                .Concat(_geometryDataStore.GetAll().Cast<object>().OfType<Arrow2D>());
+
+        private LineSegment2D GetSelectionShaft(LineSegment2D segment)
+            => segment is Arrow2D arrow
+                ? arrow.GetWorldShaft(GeometryViewModel.ViewState.Scaling.Width,
+                    GeometryViewModel.ViewState.Scaling.Height)
+                : segment;
         private void UpdateStaticGeometryLayer()
         {
-            var geometricObjects = _geometryDataStore.GetIntersecting(
-                GeometryViewModel.WorldWindowExpanded);
+            var geometricObjects = GetGeometryCandidates(GeometryViewModel.WorldWindowExpanded);
 
             GeometryViewModel.ClearLayer(false);
 

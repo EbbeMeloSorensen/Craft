@@ -47,9 +47,9 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Trigger/preconditions:** User selects Dot and presses the left mouse button.
 
-**Main flow:** The canvas captures the mouse and previews the position. Releasing without exceeding the system drag threshold publishes a fresh one-point list. Dragging previews an arrow from the press position to the current position; release publishes DrawnArrow and the host stores an Arrow2D. Both endpoints use world coordinates and optional snapping. The static layer refreshes after creation.
+**Main flow:** The canvas captures the mouse and previews the position. Releasing without exceeding the system drag threshold publishes a fresh one-point list. Dragging previews an arrow from the press position to the current position; release publishes DrawnArrow and the host stores an Arrow2D. The tail is stored in world coordinates and optionally grid-snapped. Drag direction snaps to 5-degree polar steps (0 degrees right, 90 degrees up); a live angle label accompanies the preview. Arrows always span 100 WPF viewport units, independent of zoom and axis scaling. The static layer refreshes after creation.
 
-**Alternates/limits:** Right drag pans when no left-button gesture is active. Losing mouse capture or switching modes cancels the pending gesture. A drag whose snapped endpoints coincide creates a point. Save persists points, segments, and arrows.
+**Alternates/limits:** Right drag pans when no left-button gesture is active. Losing mouse capture or switching modes cancels the pending gesture. Save persists points, segments, and arrows.
 
 **Result:** An individual point or directed arrow is stored and displayed. Arrows can be selected by their shaft or by a rectangle enclosing both endpoints, and deleted like segments.
 

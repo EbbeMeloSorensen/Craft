@@ -27,9 +27,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
         private List<Point> _drawingStrokePoints;
         private Point? _nextPotentialDrawingStrokePoint;
         private Point? _pointGestureStart;
-        private Point _pointGestureEnd;
         private Point _pointGestureViewportStart;
         private bool _pointGestureDragged;
+        private double _pointGestureAngle;
 
         public Math.Arrow2D? DrawnArrow
         {
@@ -509,6 +509,17 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 dc.Pop();
                 dc.Pop();
+                foreach (var layer in GeometryLayers)
+                {
+                    foreach (var arrow in layer.GeometricObjects.OfType<Math.Arrow2D>())
+                    {
+                        var anchor = debugTransform.Transform(new Point(arrow.Point1.X, arrow.Point1.Y));
+                        var start = worldToViewportTransform.Transform(anchor);
+                        var offset = arrow.ViewportOffset;
+                        var pen = new Pen(SelectedGeometricObjects.Contains(arrow) ? Brushes.Blue : Brushes.IndianRed, 2);
+                        DrawArrow(dc, pen, start, start + new Vector(offset.X, offset.Y));
+                    }
+                }
             }
             else
             {
@@ -643,8 +654,11 @@ namespace Craft.UIElements.Geometry2D.Reborn
                                 ? selectedPen
                                 : drawingPen;
 
-                            if (lineSegment is Math.Arrow2D)
-                                DrawArrow(dc, pen1, p1, p2);
+                            if (lineSegment is Math.Arrow2D arrow)
+                            {
+                                var offset = arrow.ViewportOffset;
+                                DrawArrow(dc, pen1, p1, p1 + new Vector(offset.X, offset.Y));
+                            }
                             else
                                 dc.DrawLine(pen1, p1, p2);
                             break;
@@ -719,7 +733,15 @@ namespace Craft.UIElements.Geometry2D.Reborn
             {
                 var start = worldToViewportTransform.Transform(_pointGestureStart.Value);
                 if (_pointGestureDragged)
-                    DrawArrow(dc, drawingPen, start, worldToViewportTransform.Transform(_pointGestureEnd));
+                {
+                    var arrow = Math.Arrow2D.FromAngle(new Math.Point2D(0, 0), _pointGestureAngle);
+                    var offset = arrow.ViewportOffset;
+                    DrawArrow(dc, drawingPen, start, start + new Vector(offset.X, offset.Y));
+                    var label = new FormattedText($"{_pointGestureAngle:0}°",
+                        System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                        new Typeface("Segoe UI"), 14, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+                    dc.DrawText(label, start + new Vector(12, 12));
+                }
                 else
                     dc.DrawEllipse(drawingBrush, null, start, 3, 3);
             }
@@ -772,9 +794,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                     switch (geometricObject)
                     {
                         case Math.Arrow2D arrow:
-                            DrawArrow(dc, drawingPen,
-                                new Point(arrow.Point1.X, arrow.Point1.Y),
-                                new Point(arrow.Point2.X, arrow.Point2.Y));
+                            // Draw after restoring viewport coordinates to preserve its fixed length.
                             break;
 
                         case Math.LineSegment2D lineSegment:
@@ -889,9 +909,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         }
 
                         _pointGestureStart = selectedWorldPoint;
-                        _pointGestureEnd = selectedWorldPoint;
                         _pointGestureViewportStart = _mouseDownPosition;
                         _pointGestureDragged = false;
+                        _pointGestureAngle = 0;
                         CaptureMouse();
                         InvalidateVisual();
                     }
@@ -992,10 +1012,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
             _pointGestureDragged |=
                 System.Math.Abs(delta.X) >= SystemParameters.MinimumHorizontalDragDistance ||
                 System.Math.Abs(delta.Y) >= SystemParameters.MinimumVerticalDragDistance;
-            var transform = CreateViewportToWorldTransform(WorldWindow, RenderSize);
-            _pointGestureEnd = transform.Transform(viewportPosition);
-            if (SnapToGrid)
-                _pointGestureEnd = SnapPointToGrid(_pointGestureEnd);
+            var start = CreateWorldToViewportTransform(WorldWindow, RenderSize)
+                .Transform(_pointGestureStart.Value);
+            var direction = viewportPosition - start;
+            if (direction.LengthSquared > 0.000001)
+                _pointGestureAngle = Math.Arrow2D.SnapAngle(
+                    System.Math.Atan2(-direction.Y, direction.X) * 180 / System.Math.PI);
             InvalidateVisual();
         }
 
@@ -1133,13 +1155,12 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                 UpdatePointGesture(e.GetPosition(this));
                 var start = _pointGestureStart.Value;
-                var end = _pointGestureEnd;
-                var isArrow = _pointGestureDragged && NotCoinciding(start, end);
+                var isArrow = _pointGestureDragged;
                 CancelPointGesture();
                 if (isArrow)
                 {
-                    SetCurrentValue(DrawnArrowProperty, new Math.Arrow2D(
-                        new Math.Point2D(start.X, start.Y), new Math.Point2D(end.X, end.Y)));
+                    SetCurrentValue(DrawnArrowProperty, Math.Arrow2D.FromAngle(
+                        new Math.Point2D(start.X, start.Y), _pointGestureAngle));
                 }
                 else
                 {

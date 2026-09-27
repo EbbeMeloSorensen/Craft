@@ -4,7 +4,7 @@ This repository contains a geometry viewer that is being extended with drawing a
 
 ## Design intent to preserve
 
-- Dot mode creates a point on release for a click, or a permanent arrow from press to release for a drag, with a live preview. The owner confirmed that dragged arrows remain as geometry.
+- Dot mode creates a point on release for a click, or a permanent arrow anchored at the press position for a drag, with a live preview. The owner confirmed that dragged arrows remain as geometry.
 
 - Reborn drawing is click-by-click polyline drawing (double-click or Enter to finish), plus individual point creation in Dot mode. The owner confirmed that this replaced the earlier freehand workflow. Keep documentation aligned with this decision.
 - Keep world coordinates distinct from viewport coordinates. Use explicit transforms and their inverse for rendering, pointer positions, panning, and zooming.
@@ -30,3 +30,5 @@ When asked to create or update a use case model:
 5. Maintain traceability from agreed use cases to code and tests. Do not infer a user requirement solely from an implementation detail.
 
 This file records durable guidance, not a complete specification. Update it when the project owner corrects a recurring assumption or establishes a new design decision.
+
+- Arrows have a fixed length of 100 WPF viewport units. Dragging chooses a polar angle snapped to 5-degree increments; show the candidate angle while dragging. The tail may snap to the grid, but the arrow tip must not be grid-snapped.
