@@ -149,3 +149,9 @@ No dedicated Reborn interaction or transform unit tests were found in the inspec
 Manual checks still to run: repeated polyline and point creation; click/rectangle selection with modifiers; deletion; constrained pan/zoom; snapping; time intervals; save/load of mixed geometry. None was executed for this documentation update.
 
 Persistence verification (2026-09-27): a standalone check of GeometryFile passed mixed point/segment/arrow file round trips, point-only and empty scenes, and rejection of invalid entries. The GUI project builds; file dialogs were not manually exercised.
+
+## Labeled points (2026-09-27)
+
+In Dot mode, enter text in the toolbar's Label field, then click and release to place a LabeledPoint2D. Its Text property is displayed beside the marker at a fixed screen size. Blank or whitespace-only input creates an ordinary point. The field retains its text for repeated placement; changing it affects future points only. Dragging creates a labeled oriented point when text is present. The same Label field applies in Draw mode to each completed polyline segment.
+
+Labeled points use the ordinary point marker for click/rectangle selection and deletion; the text itself is not a separate hit target. Save/load stores position/endpoints, optional orientation, and Text, and restores the subtype, including its exact text. Editing a placed label is not yet exposed by the UI.

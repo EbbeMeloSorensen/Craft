@@ -33,3 +33,7 @@ The renderer also supports Circle2D, PolyLineModel, HorizontalLineModel, and Ver
 CompositionTarget.Rendering drives camera damping and host frame notifications. WPF OnRender draws the visual when scheduled. Drawing-tool state and time-tick generation are separate concerns.
 
 Arrow update (2026-09-27): OrientedPoint2D is a Point2D subtype storing AngleDegrees directly, supporting shaft selection, rectangle selection, and deletion. Arrows are included independently of the spatial index window because their visible extent varies with viewport scale. The canvas publishes DrawnOrientedPoint through GeometryView to the host. Rendering draws a 100-unit shaft and fixed-size arrowhead in viewport coordinates. Selection computes the corresponding world shaft from the current X/Y scales. Oriented-point persistence stores Point and AngleDegrees. Earlier file formats are not a compatibility requirement.
+
+LabeledPoint2D specializes Point2D with an immutable Text property. The host's PointLabel property supplies text when a click is completed. The canvas draws the marker and label; GeometryFile persists the position and text.
+
+LabeledOrientedPoint2D and LabeledLineSegment2D specialize their corresponding geometry types with immutable Text properties. The shared DrawingLabel field supplies labels for newly created geometry. Each polyline segment receives the entered label; labels render beside oriented-point anchors or segment midpoints. Selection and deletion continue to act on the geometry.

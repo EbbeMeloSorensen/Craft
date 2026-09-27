@@ -18,13 +18,20 @@ internal static class GeometryFile
                 OrientedPoint2D point => new StoredObject
                 {
                     Point = new Point2D(point.X, point.Y),
-                    AngleDegrees = point.AngleDegrees
+                    AngleDegrees = point.AngleDegrees,
+                    Text = (point as LabeledOrientedPoint2D)?.Text
+                },
+                LabeledPoint2D point => new StoredObject
+                {
+                    Point = new Point2D(point.X, point.Y),
+                    Text = point.Text
                 },
                 Point2D point => new StoredObject { Point = point },
                 LineSegment2D segment => new StoredObject
                 {
                     Point1 = segment.Point1,
-                    Point2 = segment.Point2
+                    Point2 = segment.Point2,
+                    Text = (segment as LabeledLineSegment2D)?.Text
                 },
                 _ => throw new InvalidDataException("Unsupported geometry type.")
             });
@@ -45,10 +52,16 @@ internal static class GeometryFile
 
             if (stored.Point != null && stored.Point1 == null && stored.Point2 == null)
                 result.Add(stored.AngleDegrees.HasValue
-                    ? new OrientedPoint2D(stored.Point.X, stored.Point.Y, stored.AngleDegrees.Value)
-                    : stored.Point);
+                    ? stored.Text != null
+                        ? new LabeledOrientedPoint2D(stored.Point.X, stored.Point.Y, stored.AngleDegrees.Value, stored.Text)
+                        : new OrientedPoint2D(stored.Point.X, stored.Point.Y, stored.AngleDegrees.Value)
+                    : stored.Text != null
+                        ? new LabeledPoint2D(stored.Point.X, stored.Point.Y, stored.Text)
+                        : stored.Point);
             else if (stored.Point == null && stored.Point1 != null && stored.Point2 != null && !stored.AngleDegrees.HasValue)
-                result.Add(new LineSegment2D(stored.Point1, stored.Point2));
+                result.Add(stored.Text != null
+                    ? new LabeledLineSegment2D(stored.Point1, stored.Point2, stored.Text)
+                    : new LineSegment2D(stored.Point1, stored.Point2));
             else
                 throw new InvalidDataException("Expected a point or two segment endpoints.");
         }
@@ -66,5 +79,7 @@ internal static class GeometryFile
         public Point2D? Point2 { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public double? AngleDegrees { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? Text { get; set; }
     }
 }

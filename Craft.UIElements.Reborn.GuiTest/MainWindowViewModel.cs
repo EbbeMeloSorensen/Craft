@@ -22,6 +22,17 @@ namespace Craft.UIElements.Reborn.GuiTest
     public class MainWindowViewModel : INotifyPropertyChanged, IFrameAware
     {
         private IGeometryDataStore _geometryDataStore;
+        private string _drawingLabel = string.Empty;
+
+        public string DrawingLabel
+        {
+            get => _drawingLabel;
+            set
+            {
+                _drawingLabel = value;
+                OnPropertyChanged();
+            }
+        }
 
         private string _requestedWwBoundsXMin;
         private string _requestedWwBoundsXMax;
@@ -497,6 +508,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                 var arrow = GeometryViewModel.DrawnOrientedPoint;
                 if (arrow != null)
                 {
+                    if (!string.IsNullOrWhiteSpace(DrawingLabel))
+                        arrow = new LabeledOrientedPoint2D(arrow.X, arrow.Y, arrow.AngleDegrees, DrawingLabel);
                     _geometryDataStore.AddGeometricObject(arrow, arrow.ComputeBoundingBox());
                     UpdateStaticGeometryLayer();
                 }
@@ -517,6 +530,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                             new Point2D(_.Item1.X, _.Item1.Y),
                             new Point2D(_.Item2.X, _.Item2.Y));
 
+                        if (!string.IsNullOrWhiteSpace(DrawingLabel))
+                            line = new LabeledLineSegment2D(line.Point1, line.Point2, DrawingLabel);
                         _geometryDataStore.AddGeometricObject(line, line.ComputeBoundingBox());
                     });
                 }
@@ -524,7 +539,9 @@ namespace Craft.UIElements.Reborn.GuiTest
                 {
                     // The user has finished a point
                     var temp = GeometryViewModel.DrawingStrokePoints.First();
-                    var point = new Point2D(temp.X, temp.Y);
+                    Point2D point = string.IsNullOrWhiteSpace(DrawingLabel)
+                        ? new Point2D(temp.X, temp.Y)
+                        : new LabeledPoint2D(temp.X, temp.Y, DrawingLabel);
                     _geometryDataStore.AddGeometricObject(point, point.ComputeBoundingBox());
                 }
 
