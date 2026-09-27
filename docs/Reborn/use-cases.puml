@@ -11,7 +11,7 @@ rectangle "Reborn editor harness" {
   usecase "Configure snapping\nand overlays" as Settings
   usecase "Set region or focus" as Focus
   usecase "Inspect a time interval" as Time
-  usecase "Save/load segments" as Files
+  usecase "Save/load geometry" as Files
 }
 rectangle "Reusable Reborn viewer" {
   usecase "Display host geometry" as Display

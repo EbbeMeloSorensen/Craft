@@ -30,7 +30,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 | UC6 | Configure snapping and overlays | Snap, spacing, grid, coordinate-system controls | UI; Bindings; Canvas.SnapPointToGrid/OnRender |
 | UC7 | Set region or focus | World-window, bounds, focus Apply buttons | Host commands; State requests; Canvas callbacks |
 | UC8 | Inspect a time interval | Time axis mode (x); time-interval Apply | Host.SetTimeInterval; State.TimeAxisMode; Canvas.OnRender |
-| UC9 | Save/load segments | Save and Load menus | Host.SaveGeometry/LoadGeometry |
+| UC9 | Save/load geometry | Save and Load menus | Host.SaveGeometry/LoadGeometry |
 | UC10 | Display host geometry | Host bindings, not an import dialog | State layer methods; Bindings; Canvas.DrawGeometries |
 
 ## UC1: Draw a polyline
@@ -49,7 +49,7 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Main flow:** The canvas captures the mouse and previews the position. Releasing without exceeding the system drag threshold publishes a fresh one-point list. Dragging previews an arrow from the press position to the current position; release publishes DrawnArrow and the host stores an Arrow2D. Both endpoints use world coordinates and optional snapping. The static layer refreshes after creation.
 
-**Alternates/limits:** Right drag pans when no left-button gesture is active. Losing mouse capture or switching modes cancels the pending gesture. A drag whose snapped endpoints coincide creates a point. Save persists arrows but still omits points.
+**Alternates/limits:** Right drag pans when no left-button gesture is active. Losing mouse capture or switching modes cancels the pending gesture. A drag whose snapped endpoints coincide creates a point. Save persists points, segments, and arrows.
 
 **Result:** An individual point or directed arrow is stored and displayed. Arrows can be selected by their shaft or by a rectangle enclosing both endpoints, and deleted like segments.
 
@@ -113,15 +113,15 @@ Canvas interactions assume a loaded view with usable viewport dimensions and ini
 
 **Result:** The horizontal coordinate range is presented as time.
 
-## UC9: Save/load segments
+## UC9: Save/load geometry
 
 **Trigger/preconditions:** User chooses Save or Load.
 
-**Main flow:** Save opens a file dialog and serializes stored segments and arrows to JSON; IsArrow distinguishes arrows. Load opens a dialog, deserializes segments and arrows (older files without IsArrow remain plain segments), adds them to the existing store, and refreshes the layer.
+**Main flow:** Save opens a file dialog and serializes stored points, segments, and arrows to JSON through GeometryFile. A Point record stores an ordinary point; Point1/Point2 and IsArrow describe segments and arrows. Load opens a dialog, deserializes points, segments, and arrows (older files without IsArrow remain plain segments), adds them to the existing store, and refreshes the layer.
 
-**Alternates/limits:** Cancelling the dialog leaves data unchanged. Load appends rather than replaces. Save omits points. These methods have no dedicated recovery flow for malformed JSON or file I/O failures.
+**Alternates/limits:** Cancelling the dialog leaves data unchanged. Load appends rather than replaces. These methods have no dedicated recovery flow for malformed JSON or file I/O failures.
 
-**Result:** Segments are written to a file or added to the scene. This is not full scene persistence.
+**Result:** Points, segments, and arrows are written to a file or added to the scene. This is not full scene persistence.
 
 ## UC10: Display host geometry
 
@@ -140,10 +140,12 @@ These are not implemented requirements:
 - Cancellation of an unfinished polyline and behavior when changing modes mid-drawing.
 - Editing whole polylines, independent segments, or vertices.
 - Undo/redo history and grouping for drawing, deletion, and loading.
-- Persistence of points, polyline identity, other geometry, and view state; append versus replace on load.
+- Persistence of polyline identity, other geometry, and view state; append versus replace on load.
 
 ## Verification traceability
 
 No dedicated Reborn interaction or transform unit tests were found in the inspected solution. GuiTest is a manual harness. [MxCifQuadTreeTest.cs](../../Craft.DataStructures.UnitTest/MxCifQuadTreeTest.cs) covers supporting spatial-index insertion, queries, and removal, not these workflows end to end.
 
-Manual checks still to run: repeated polyline and point creation; click/rectangle selection with modifiers; deletion; constrained pan/zoom; snapping; time intervals; save/load and point omission. None was executed for this documentation update.
+Manual checks still to run: repeated polyline and point creation; click/rectangle selection with modifiers; deletion; constrained pan/zoom; snapping; time intervals; save/load of mixed geometry. None was executed for this documentation update.
+
+Persistence verification (2026-09-27): a standalone check of GeometryFile passed mixed point/segment/arrow file round trips, point-only and empty scenes, legacy segment loading, and rejection of invalid entries. The GUI project builds; file dialogs were not manually exercised.

@@ -1,4 +1,4 @@
-﻿using Craft.DataStructures.Geometry;
+using Craft.DataStructures.Geometry;
 using Craft.IO.Utils;
 using Craft.Math;
 using Craft.UIElements.Geometry2D.Reborn;
@@ -631,24 +631,7 @@ namespace Craft.UIElements.Reborn.GuiTest
                 return;
             }
 
-            var lines = new List<StoredSegment>();
-
-            foreach (var spatialObject in _geometryDataStore.GetAll())
-            {
-                switch (spatialObject)
-                {
-                    case LineSegment2D lineSegment2D:
-                        lines.Add(new StoredSegment
-                        {
-                            Point1 = lineSegment2D.Point1,
-                            Point2 = lineSegment2D.Point2,
-                            IsArrow = lineSegment2D is Arrow2D
-                        });
-                        break;
-                }
-            }
-
-            var json = JsonConvert.SerializeObject(lines, Formatting.Indented, new DoubleJsonConverter());
+            var json = GeometryFile.Serialize(_geometryDataStore.GetAll());
 
             using (var streamWriter = new StreamWriter(dialog.FileName))
             {
@@ -671,27 +654,20 @@ namespace Craft.UIElements.Reborn.GuiTest
             using (var r = new StreamReader(dialog.FileName))
             {
                 var jsonData = r.ReadToEnd();
-                var deserializedData = JsonConvert.DeserializeObject<List<StoredSegment>>(jsonData);
+                var geometricObjects = GeometryFile.Deserialize(jsonData);
 
-                foreach (var stored in deserializedData)
+                foreach (var geometricObject in geometricObjects)
                 {
-                    LineSegment2D lineSegment2D = stored.IsArrow
-                        ? new Arrow2D(stored.Point1, stored.Point2)
-                        : new LineSegment2D(stored.Point1, stored.Point2);
-                    var bbox = lineSegment2D.ComputeBoundingBox();
-
-                    _geometryDataStore.AddGeometricObject(lineSegment2D, bbox);
+                    var bbox = geometricObject switch
+                    {
+                        Point2D point => point.ComputeBoundingBox(),
+                        LineSegment2D segment => segment.ComputeBoundingBox(),
+                        _ => throw new InvalidDataException("Unsupported geometry type.")
+                    };
+                    _geometryDataStore.AddGeometricObject(geometricObject, bbox);
                 }
-
                 UpdateStaticGeometryLayer();
             }
-        }
-
-        private sealed class StoredSegment
-        {
-            public Point2D Point1 { get; set; } = null!;
-            public Point2D Point2 { get; set; } = null!;
-            public bool IsArrow { get; set; }
         }
 
         private void ChangeCanvasMode(
