@@ -1,5 +1,4 @@
 using Craft.DataStructures.Geometry;
-using Craft.IO.Utils;
 using Craft.Math;
 using Craft.UIElements.Geometry2D.Reborn;
 using Craft.Utils.Linq;
@@ -7,14 +6,12 @@ using Craft.ViewModels.Geometry2D.Reborn;
 using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using Point = System.Windows.Point;
 
 namespace Craft.UIElements.Reborn.GuiTest
