@@ -70,6 +70,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Craft.UIElements.Reborn.Gui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Craft.Simulation.Reborn.GuiTest", "Craft.Simulation.Reborn.GuiTest\Craft.Simulation.Reborn.GuiTest.csproj", "{7BA8F6E4-D6B6-4F3F-B9A2-2DCF363C219B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Simulation.Scenarios", "Craft.Simulation.Scenarios\Craft.Simulation.Scenarios.csproj", "{7DFDAFDE-EA65-4351-A987-F59AC749DF89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Craft.Simulation.UnitTest", "Craft.Simulation.UnitTest\Craft.Simulation.UnitTest.csproj", "{6DFC8DEB-776F-44A3-9D16-418AED66BA22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -196,6 +200,14 @@ Global
 		{7BA8F6E4-D6B6-4F3F-B9A2-2DCF363C219B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BA8F6E4-D6B6-4F3F-B9A2-2DCF363C219B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BA8F6E4-D6B6-4F3F-B9A2-2DCF363C219B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DFDAFDE-EA65-4351-A987-F59AC749DF89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DFDAFDE-EA65-4351-A987-F59AC749DF89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DFDAFDE-EA65-4351-A987-F59AC749DF89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DFDAFDE-EA65-4351-A987-F59AC749DF89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DFC8DEB-776F-44A3-9D16-418AED66BA22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DFC8DEB-776F-44A3-9D16-418AED66BA22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DFC8DEB-776F-44A3-9D16-418AED66BA22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DFC8DEB-776F-44A3-9D16-418AED66BA22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

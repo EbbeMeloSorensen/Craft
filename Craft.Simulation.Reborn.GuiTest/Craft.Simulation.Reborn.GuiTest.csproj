@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Craft.Simulation.Scenarios\Craft.Simulation.Scenarios.csproj" />
     <ProjectReference Include="..\Craft.Logging\Craft.Logging.csproj" />
     <ProjectReference Include="..\Craft.UIElements\Craft.UIElements.csproj" />
     <ProjectReference Include="..\Craft.ViewModels\Craft.ViewModels.csproj" />

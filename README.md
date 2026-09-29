@@ -1,5 +1,30 @@
 # Craft
 
+## Simulation regression tests
+
+Three scenes are shared by the WPF demo and the portable
+`Craft.Simulation.Scenarios` project: bouncing ball, two-ball pool table, and
+“Interactive: Ball III” (line endpoint). Each factory creates a fresh scene.
+
+Run their headless regression tests on Linux or Windows:
+
+```sh
+dotnet test Craft.Simulation.UnitTest/Craft.Simulation.UnitTest.csproj -p:GeneratePackageOnBuild=false
+```
+
+The tests advance `Calculator.PropagateState` with explicit timesteps and check
+free fall, floor reflection, an oblique elastic collision, and a head-on endpoint
+collision. Expected positions and velocities come from analytical calculations,
+with numerical tolerances. The endpoint test supplies one initial rightward
+movement; it does not replay repeated keyboard input or establish that every
+known endpoint issue is fixed.
+
+These tests cover physics propagation, not `EngineCore` threading, interaction
+callback scheduling, post-propagation callbacks, or WPF rendering. To add a shared
+scenario, move its factory into `SimulationScenarios`, call it from the GUI, and
+add a test with explicit physical expectations. Keep scenario instances local to
+each test because simulation state is mutable.
+
 For at kunne publicere til GitHub:
 1) Lav en personal access token i GitHub, og gem den i en miljøvariabel ved navn GITHUB_TOKEN
 2) Start Powershell (ikke sikker på at det nødvendigvis skal være som administrator, men det skader ikke)
