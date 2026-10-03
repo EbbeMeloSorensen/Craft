@@ -230,7 +230,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             }
         }
 
-        public IReadOnlyList<string> SnapSpacingPresets { get; } = new[] { "0.1", "0.5", "1", "5", "10", "50" };
+        public IReadOnlyList<string> SnapSpacingPresets { get; } = new[] { "0.1", "0.25", "0.5", "1", "5", "10", "50" };
 
         public string GridSpacing
         {
