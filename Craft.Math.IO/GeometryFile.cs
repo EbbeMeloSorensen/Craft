@@ -1,12 +1,10 @@
-using Craft.IO.Utils;
-using Craft.Math;
+﻿using System.Collections;
 using Newtonsoft.Json;
-using System.Collections;
-using System.IO;
+using Craft.IO.Utils;
 
-namespace Craft.UIElements.Reborn.GuiTest;
+namespace Craft.Math.IO;
 
-internal static class GeometryFile
+public static class GeometryFile
 {
     public static string Serialize(IEnumerable geometry)
     {
