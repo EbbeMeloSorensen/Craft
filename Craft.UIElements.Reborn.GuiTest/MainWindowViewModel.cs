@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -30,6 +31,33 @@ namespace Craft.UIElements.Reborn.GuiTest
                 _drawingLabel = value;
                 OnPropertyChanged();
             }
+        }
+
+        private string _drawingLabelNumber = string.Empty;
+
+        public string DrawingLabelNumber
+        {
+            get => _drawingLabelNumber;
+            set
+            {
+                if (!IsValidLabelNumber(value))
+                    throw new ArgumentException("Enter a non-negative integer or leave the number empty.", nameof(value));
+
+                _drawingLabelNumber = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public static bool IsValidLabelNumber(string value) =>
+            value != null && value.All(character => character >= '0' && character <= '9');
+
+        private string CompletedDrawingLabel => DrawingLabel + DrawingLabelNumber;
+
+        private void IncrementDrawingLabelNumber()
+        {
+            if (DrawingLabelNumber.Length > 0)
+                DrawingLabelNumber = (BigInteger.Parse(DrawingLabelNumber, CultureInfo.InvariantCulture) + BigInteger.One)
+                    .ToString(CultureInfo.InvariantCulture);
         }
 
         private string _requestedWwBoundsXMin;
@@ -508,19 +536,22 @@ namespace Craft.UIElements.Reborn.GuiTest
                 var arrow = GeometryViewModel.DrawnOrientedPoint;
                 if (arrow != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(DrawingLabel))
-                        arrow = new LabeledOrientedPoint2D(arrow.X, arrow.Y, arrow.AngleDegrees, DrawingLabel);
+                    var label = CompletedDrawingLabel;
+                    if (!string.IsNullOrWhiteSpace(label))
+                        arrow = new LabeledOrientedPoint2D(arrow.X, arrow.Y, arrow.AngleDegrees, label);
                     _geometryDataStore.AddGeometricObject(arrow, arrow.ComputeBoundingBox());
+                    IncrementDrawingLabelNumber();
                     UpdateStaticGeometryLayer();
                 }
             }
             else if (e.PropertyName == nameof(GeometryViewModel.DrawingStrokePoints))
             {
-                if (GeometryViewModel.DrawingStrokePoints == null)
+                if (GeometryViewModel.DrawingStrokePoints == null || !GeometryViewModel.DrawingStrokePoints.Any())
                 {
                     return;
                 }
 
+                var label = CompletedDrawingLabel;
                 if (GeometryViewModel.DrawingStrokePoints.Skip(1).Any())
                 {
                     // The user has finished a poly line
@@ -530,8 +561,8 @@ namespace Craft.UIElements.Reborn.GuiTest
                             new Point2D(_.Item1.X, _.Item1.Y),
                             new Point2D(_.Item2.X, _.Item2.Y));
 
-                        if (!string.IsNullOrWhiteSpace(DrawingLabel))
-                            line = new LabeledLineSegment2D(line.Point1, line.Point2, DrawingLabel);
+                        if (!string.IsNullOrWhiteSpace(label))
+                            line = new LabeledLineSegment2D(line.Point1, line.Point2, label);
                         _geometryDataStore.AddGeometricObject(line, line.ComputeBoundingBox());
                     });
                 }
@@ -539,12 +570,13 @@ namespace Craft.UIElements.Reborn.GuiTest
                 {
                     // The user has finished a point
                     var temp = GeometryViewModel.DrawingStrokePoints.First();
-                    Point2D point = string.IsNullOrWhiteSpace(DrawingLabel)
+                    Point2D point = string.IsNullOrWhiteSpace(label)
                         ? new Point2D(temp.X, temp.Y)
-                        : new LabeledPoint2D(temp.X, temp.Y, DrawingLabel);
+                        : new LabeledPoint2D(temp.X, temp.Y, label);
                     _geometryDataStore.AddGeometricObject(point, point.ComputeBoundingBox());
                 }
 
+                IncrementDrawingLabelNumber();
                 UpdateStaticGeometryLayer();
             }
         }

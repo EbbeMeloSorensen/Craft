@@ -34,3 +34,5 @@ This file records durable guidance, not a complete specification. Update it when
 - Arrows have a fixed length of 100 WPF viewport units. Dragging chooses a polar angle snapped to 5-degree increments; show the candidate angle while dragging. The tail may snap to the grid, but the arrow tip must not be grid-snapped.
 
 - Backwards compatibility with earlier geometry file formats is not currently required. Persist oriented points as a position and angle, without legacy arrow flags or conversion paths.
+
+- Drawing labels concatenate the Label and optional Number fields. Number accepts only non-negative integers or empty text and increments once after successful point, arrow, or completed polyline creation; all segments of a polyline share one label.

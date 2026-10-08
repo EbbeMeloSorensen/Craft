@@ -51,8 +51,14 @@
             <Label Content="_Label:" Target="{Binding ElementName=DrawingLabelInput}"/>
             <TextBox x:Name="DrawingLabelInput" Width="180"
                      Text="{Binding DrawingLabel, UpdateSourceTrigger=PropertyChanged}"
-
-                     ToolTip="Labels newly drawn points, oriented points, and each polyline segment. Leave blank for unlabeled geometry."/>
+                     ToolTip="Combined with Number to label new points, arrows, and completed polylines. Leave both fields blank for unlabeled geometry."/>
+            <Label Content="_Number:" Target="{Binding ElementName=DrawingLabelNumberInput}"/>
+            <TextBox x:Name="DrawingLabelNumberInput" Width="70"
+                     Text="{Binding DrawingLabelNumber, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"
+                     PreviewTextInput="DrawingLabelNumber_PreviewTextInput"
+                     PreviewKeyDown="DrawingLabelNumber_PreviewKeyDown"
+                     DataObject.Pasting="DrawingLabelNumber_Pasting"
+                     ToolTip="Optional non-negative integer. Increments after each completed point, arrow, or polyline."/>
         </ToolBar>
 
         <Border Grid.Row="2" Grid.Column="0" BorderBrush="DarkSlateGray" BorderThickness="1" Margin="3">
