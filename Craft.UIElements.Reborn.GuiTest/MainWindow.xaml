@@ -69,13 +69,32 @@
         <DockPanel Grid.Row="2" Grid.Column="1">
             <GroupBox DockPanel.Dock="Top" Header="Selected object" Margin="0,3,3,6">
                 <StackPanel Margin="3">
-                    <TextBlock Text="Select one point, arrow, or segment to edit its label."
+                    <TextBlock Text="Select one point, arrow, or segment to edit its identifier and information."
                                TextWrapping="Wrap" Margin="0,0,0,5"/>
-                    <Label Content="_Label:" Target="{Binding ElementName=SelectedObjectLabelInput}"/>
+                    <Label Content="_Identifier:" Target="{Binding ElementName=SelectedObjectLabelInput}"/>
                     <TextBox x:Name="SelectedObjectLabelInput"
                              Text="{Binding SelectedObjectLabel, UpdateSourceTrigger=PropertyChanged}"
                              IsEnabled="{Binding CanEditSelectedLabel}"
-                             ToolTip="Complete label for the selected object. Clear it and apply to remove the label."/>
+                             ToolTip="First string, displayed on the canvas. An identifier is required while information rows exist."/>
+                    <TextBlock Text="Additional information:" Margin="0,6,0,3"/>
+                    <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding SelectedObjectInformation}" IsEnabled="{Binding CanEditSelectedLabel}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,0,0,4">
+                                        <Button DockPanel.Dock="Right" Content="Remove" Margin="4,0,0,0" VerticalAlignment="Top"
+                                                Command="{Binding DataContext.RemoveSelectedInformationCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"/>
+                                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                                                 AcceptsReturn="True" TextWrapping="Wrap" MinHeight="24" MaxHeight="80"
+                                                 VerticalScrollBarVisibility="Auto"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <Button Content="Add information" Command="{Binding AddSelectedInformationCommand}" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{Binding SelectedLabelValidationMessage}" TextWrapping="Wrap" Foreground="DarkRed"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <Button Content="Apply" Command="{Binding ApplySelectedLabelCommand}" MinWidth="55"/>
                         <Button Content="Cancel" Command="{Binding CancelSelectedLabelCommand}" MinWidth="55" Margin="5,0,0,0"/>

@@ -1,13 +1,18 @@
 namespace Craft.Math;
 
-/// <summary>An oriented point with a text label.</summary>
-public class LabeledOrientedPoint2D : OrientedPoint2D
+/// <summary>An oriented point with an identifier and ordered information strings.</summary>
+public class LabeledOrientedPoint2D : OrientedPoint2D, ILabeledGeometry
 {
-    public string Text { get; }
+    public IReadOnlyList<string> Labels { get; }
+    public string Identifier => Labels[0];
 
-    public LabeledOrientedPoint2D(double x, double y, double angleDegrees, string text)
-        : base(x, y, angleDegrees)
+    public LabeledOrientedPoint2D(double x, double y, double angleDegrees, string identifier)
+        : this(x, y, angleDegrees, new[] { identifier })
     {
-        Text = text ?? throw new System.ArgumentNullException(nameof(text));
+    }
+
+    public LabeledOrientedPoint2D(double x, double y, double angleDegrees, IEnumerable<string> labels) : base(x, y, angleDegrees)
+    {
+        Labels = GeometryLabelStrings.Copy(labels);
     }
 }

@@ -519,19 +519,19 @@ namespace Craft.UIElements.Geometry2D.Reborn
                         var pen = new Pen(SelectedGeometricObjects.Contains(arrow) ? Brushes.Blue : Brushes.IndianRed, 2);
                         DrawArrow(dc, pen, start, start + new Vector(offset.X, offset.Y));
                         if (arrow is Math.LabeledOrientedPoint2D labeledArrow)
-                            DrawLabel(dc, labeledArrow.Text, start, pen.Brush);
+                            DrawLabel(dc, labeledArrow.Identifier, start, pen.Brush);
                     }
                     foreach (var labeledPoint in layer.GeometricObjects.OfType<Math.LabeledPoint2D>())
                     {
                         var anchor = debugTransform.Transform(new Point(labeledPoint.X, labeledPoint.Y));
-                        DrawLabel(dc, labeledPoint.Text, worldToViewportTransform.Transform(anchor),
+                        DrawLabel(dc, labeledPoint.Identifier, worldToViewportTransform.Transform(anchor),
                             SelectedGeometricObjects.Contains(labeledPoint) ? Brushes.Blue : Brushes.IndianRed);
                     }
                     foreach (var segment in layer.GeometricObjects.OfType<Math.LabeledLineSegment2D>())
                     {
                         var midpoint = new Point((segment.Point1.X + segment.Point2.X) / 2,
                             (segment.Point1.Y + segment.Point2.Y) / 2);
-                        DrawLabel(dc, segment.Text, worldToViewportTransform.Transform(debugTransform.Transform(midpoint)),
+                        DrawLabel(dc, segment.Identifier, worldToViewportTransform.Transform(debugTransform.Transform(midpoint)),
                             SelectedGeometricObjects.Contains(segment) ? Brushes.Blue : Brushes.IndianRed);
                     }
                 }
@@ -671,7 +671,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                             dc.DrawLine(pen1, p1, p2);
                             if (lineSegment is Math.LabeledLineSegment2D labeledSegment)
-                                DrawLabel(dc, labeledSegment.Text, p1 + (p2 - p1) * 0.5, pen1.Brush);
+                                DrawLabel(dc, labeledSegment.Identifier, p1 + (p2 - p1) * 0.5, pen1.Brush);
                             break;
 
                         case Math.OrientedPoint2D orientedPoint:
@@ -680,7 +680,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
                             DrawArrow(dc, SelectedGeometricObjects.Contains(orientedPoint) ? selectedPen : drawingPen,
                                 origin, origin + new Vector(offset.X, offset.Y));
                             if (orientedPoint is Math.LabeledOrientedPoint2D labeledOrientedPoint)
-                                DrawLabel(dc, labeledOrientedPoint.Text, origin,
+                                DrawLabel(dc, labeledOrientedPoint.Identifier, origin,
                                     SelectedGeometricObjects.Contains(orientedPoint) ? selectedBrush : drawingBrush);
                             break;
 
@@ -693,7 +693,7 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
                             dc.DrawEllipse(brush1, null, p, 3, 3);
                             if (point is Math.LabeledPoint2D labeledPoint)
-                                DrawLabel(dc, labeledPoint.Text, p, brush1);
+                                DrawLabel(dc, labeledPoint.Identifier, p, brush1);
                             break;
 
                         case Math.Circle2D circle:
@@ -1015,6 +1015,9 @@ namespace Craft.UIElements.Geometry2D.Reborn
 
         private void DrawLabel(DrawingContext dc, string text, Point position, Brush brush)
         {
+            if (string.IsNullOrEmpty(text))
+                return;
+
             var label = new FormattedText(text,
                 System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
                 new Typeface("Segoe UI"), 14, brush, VisualTreeHelper.GetDpi(this).PixelsPerDip);

@@ -35,18 +35,18 @@ public class LabelEditingTests
         Select(editor, original);
         Assert.Equal("item1", editor.SelectedObjectLabel);
         editor.SelectedObjectLabel = "renamed point";
-        Assert.Equal("item1", original.Text);
+        Assert.Equal("item1", original.Identifier);
         editor.ApplySelectedLabelCommand.Execute(null);
 
         var renamed = Assert.IsType<LabeledPoint2D>(Assert.Single(Objects(editor)));
-        Assert.Equal("renamed point", renamed.Text);
+        Assert.Equal("renamed point", renamed.Identifier);
         Assert.Equal(12, renamed.X);
         Assert.Equal(34, renamed.Y);
         Assert.Same(renamed, Assert.Single(editor.GeometryViewModel.SelectedGeometricObjects));
         Assert.Equal("item", editor.DrawingLabel);
         Assert.Equal("2", editor.DrawingLabelNumber);
         var loaded = Assert.IsType<LabeledPoint2D>(Assert.Single(GeometryFile.Deserialize(GeometryFile.Serialize(Objects(editor)))));
-        Assert.Equal(renamed.Text, loaded.Text);
+        Assert.Equal(renamed.Identifier, loaded.Identifier);
         Assert.Equal(renamed.X, loaded.X);
         Assert.Equal(renamed.Y, loaded.Y);
 
@@ -76,10 +76,10 @@ public class LabelEditingTests
         editor.SelectedObjectLabel = "new arrow";
         editor.ApplySelectedLabelCommand.Execute(null);
         var labeled = Assert.IsType<LabeledOrientedPoint2D>(Assert.Single(Objects(editor)));
-        Assert.Equal("new arrow", labeled.Text);
+        Assert.Equal("new arrow", labeled.Identifier);
         Assert.Equal(45, labeled.AngleDegrees);
         var loaded = Assert.IsType<LabeledOrientedPoint2D>(Assert.Single(GeometryFile.Deserialize(GeometryFile.Serialize(Objects(editor)))));
-        Assert.Equal(labeled.Text, loaded.Text);
+        Assert.Equal(labeled.Identifier, loaded.Identifier);
         Assert.Equal(labeled.AngleDegrees, loaded.AngleDegrees);
     }
 
@@ -92,22 +92,22 @@ public class LabelEditingTests
         Select(editor, segments[0]);
         editor.SelectedObjectLabel = "changed";
         editor.ApplySelectedLabelCommand.Execute(null);
-        var edited = Objects(editor).OfType<LabeledLineSegment2D>().Single(s => s.Text == "changed");
+        var edited = Objects(editor).OfType<LabeledLineSegment2D>().Single(s => s.Identifier == "changed");
         Assert.Same(segments[0].Point1, edited.Point1);
         Assert.Same(segments[0].Point2, edited.Point2);
         Assert.Contains(segments[1], Objects(editor));
-        Assert.Equal("item1", segments[1].Text);
+        Assert.Equal("item1", segments[1].Identifier);
         Assert.Equal("2", editor.DrawingLabelNumber);
         Assert.Same(edited, Assert.Single(editor.GeometryViewModel.SelectedGeometricObjects));
         var loaded = GeometryFile.Deserialize(GeometryFile.Serialize(Objects(editor))).Cast<LabeledLineSegment2D>();
-        Assert.Contains(loaded, s => s.Text == "changed" && s.Point1.X == edited.Point1.X && s.Point2.Y == edited.Point2.Y);
+        Assert.Contains(loaded, s => s.Identifier == "changed" && s.Point1.X == edited.Point1.X && s.Point2.Y == edited.Point2.Y);
 
         editor.SelectedObjectLabel = "";
         editor.ApplySelectedLabelCommand.Execute(null);
         Assert.IsType<LineSegment2D>(Assert.Single(editor.GeometryViewModel.SelectedGeometricObjects));
         editor.SelectedObjectLabel = "restored";
         editor.ApplySelectedLabelCommand.Execute(null);
-        Assert.Equal("restored", Assert.IsType<LabeledLineSegment2D>(Assert.Single(editor.GeometryViewModel.SelectedGeometricObjects)).Text);
+        Assert.Equal("restored", Assert.IsType<LabeledLineSegment2D>(Assert.Single(editor.GeometryViewModel.SelectedGeometricObjects)).Identifier);
     }
 
     [Fact]
@@ -122,11 +122,11 @@ public class LabelEditingTests
         Select(editor, points[0]);
         editor.SelectedObjectLabel = "draft";
         editor.CancelSelectedLabelCommand.Execute(null);
-        Assert.Equal(points[0].Text, editor.SelectedObjectLabel);
+        Assert.Equal(points[0].Identifier, editor.SelectedObjectLabel);
         editor.SelectedObjectLabel = "other draft";
         Select(editor, points[1]);
-        Assert.Equal(points[1].Text, editor.SelectedObjectLabel);
-        Assert.Equal("item1", points.Single(p => p.Text == "item1").Text);
+        Assert.Equal(points[1].Identifier, editor.SelectedObjectLabel);
+        Assert.Equal("item1", points.Single(p => p.Identifier == "item1").Identifier);
         editor.GeometryViewModel.SelectedGeometricObjects.Add(points[0]);
         Assert.False(editor.CanEditSelectedLabel);
         Assert.Equal("", editor.SelectedObjectLabel);
@@ -134,7 +134,7 @@ public class LabelEditingTests
         editor.SelectedObjectLabel = "must not apply";
         editor.ApplySelectedLabelCommand.Execute(null);
         Assert.Equal(2, Objects(editor).Length);
-        Assert.All(Objects(editor), p => Assert.StartsWith("item", ((LabeledPoint2D)p).Text));
+        Assert.All(Objects(editor), p => Assert.StartsWith("item", ((LabeledPoint2D)p).Identifier));
         Select(editor, points[0]);
         editor.SelectedObjectLabel = "draft before mode change";
         editor.GeometryViewModel.CanvasMode = CanvasMode.Dot;
@@ -153,7 +153,7 @@ public class LabelEditingTests
         Assert.Equal("", editor.SelectedObjectLabel);
         editor.SelectedObjectLabel = "named";
         editor.ApplySelectedLabelCommand.Execute(null);
-        Assert.Equal("named", Assert.IsType<LabeledPoint2D>(Assert.Single(Objects(editor))).Text);
+        Assert.Equal("named", Assert.IsType<LabeledPoint2D>(Assert.Single(Objects(editor))).Identifier);
         editor.SelectedObjectLabel = "";
         editor.ApplySelectedLabelCommand.Execute(null);
         var point = Assert.IsType<Point2D>(Assert.Single(Objects(editor)));

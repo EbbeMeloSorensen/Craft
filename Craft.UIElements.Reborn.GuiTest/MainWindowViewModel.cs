@@ -8,6 +8,7 @@ using Craft.ViewModels.Geometry2D.Reborn.GeometryDataSources;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Numerics;
@@ -77,36 +78,101 @@ namespace Craft.UIElements.Reborn.GuiTest
             {
                 _selectedObjectLabel = value;
                 OnPropertyChanged();
+                NotifyLabelDraftChanged();
             }
+        }
+
+        public bool IsSelectedLabelDirty => CanEditSelectedLabel &&
+            (SelectedObjectLabel != GetObjectLabel(EditableSelectedObject) ||
+             !SelectedObjectInformation.Select(item => item.Text)
+                 .SequenceEqual(GetObjectLabels(EditableSelectedObject).Skip(1)));
+
+        public bool CanAddSelectedInformation => CanEditSelectedLabel && !string.IsNullOrWhiteSpace(SelectedObjectLabel);
+
+        public string SelectedLabelValidationMessage => !CanEditSelectedLabel ? string.Empty
+            : SelectedObjectInformation.Count > 0 && string.IsNullOrWhiteSpace(SelectedObjectLabel)
+                ? "Enter an identifier or remove all information rows."
+                : SelectedObjectInformation.Any(item => string.IsNullOrWhiteSpace(item.Text))
+                    ? "Fill in or remove blank information rows."
+                    : string.Empty;
+
+        public bool CanApplySelectedLabel => IsSelectedLabelDirty && SelectedLabelValidationMessage.Length == 0;
+
+        private readonly HashSet<LabelInformationViewModel> _observedInformation = new();
+
+        private void NotifyLabelDraftChanged()
+        {
+            OnPropertyChanged(nameof(IsSelectedLabelDirty));
+            OnPropertyChanged(nameof(CanAddSelectedInformation));
+            OnPropertyChanged(nameof(CanApplySelectedLabel));
+            OnPropertyChanged(nameof(SelectedLabelValidationMessage));
+            AddSelectedInformationCommand.RaiseCanExecuteChanged();
+            ApplySelectedLabelCommand.RaiseCanExecuteChanged();
+            CancelSelectedLabelCommand.RaiseCanExecuteChanged();
+        }
+
+        private void SelectedInformationChanged()
+        {
+            // Clear/reset events do not supply removed items, so track the subscribed rows.
+            foreach (var item in _observedInformation.ToArray())
+            {
+                if (!SelectedObjectInformation.Contains(item))
+                {
+                    item.PropertyChanged -= InformationTextChanged;
+                    _observedInformation.Remove(item);
+                }
+            }
+            foreach (var item in SelectedObjectInformation)
+            {
+                if (_observedInformation.Add(item))
+                    item.PropertyChanged += InformationTextChanged;
+            }
+            NotifyLabelDraftChanged();
+            RemoveSelectedInformationCommand.RaiseCanExecuteChanged();
+        }
+
+        private void InformationTextChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(LabelInformationViewModel.Text))
+                NotifyLabelDraftChanged();
         }
 
         public RelayCommand ApplySelectedLabelCommand { get; }
         public RelayCommand CancelSelectedLabelCommand { get; }
 
-        private static string GetObjectLabel(object? geometry) => geometry switch
-        {
-            LabeledOrientedPoint2D point => point.Text,
-            LabeledPoint2D point => point.Text,
-            LabeledLineSegment2D segment => segment.Text,
-            _ => string.Empty
-        };
+        public ObservableCollection<LabelInformationViewModel> SelectedObjectInformation { get; } = new();
+        public RelayCommand AddSelectedInformationCommand { get; }
+        public RelayCommand<LabelInformationViewModel> RemoveSelectedInformationCommand { get; }
+
+        private static IReadOnlyList<string> GetObjectLabels(object? geometry) =>
+            geometry is ILabeledGeometry labeled ? labeled.Labels : Array.Empty<string>();
+
+        private static string GetObjectLabel(object? geometry) =>
+            geometry is ILabeledGeometry labeled ? labeled.Identifier : string.Empty;
 
         private void RefreshSelectedLabel()
         {
             SelectedObjectLabel = GetObjectLabel(EditableSelectedObject);
+            SelectedObjectInformation.Clear();
+            foreach (var text in GetObjectLabels(EditableSelectedObject).Skip(1))
+                SelectedObjectInformation.Add(new LabelInformationViewModel(text));
             OnPropertyChanged(nameof(CanEditSelectedLabel));
-            ApplySelectedLabelCommand.RaiseCanExecuteChanged();
-            CancelSelectedLabelCommand.RaiseCanExecuteChanged();
+            NotifyLabelDraftChanged();
+            AddSelectedInformationCommand.RaiseCanExecuteChanged();
+            RemoveSelectedInformationCommand.RaiseCanExecuteChanged();
         }
 
         private void ApplySelectedLabel()
         {
-            if (!CanEditSelectedLabel)
+            if (!CanApplySelectedLabel)
                 return;
 
             var original = EditableSelectedObject!;
             var label = string.IsNullOrWhiteSpace(SelectedObjectLabel) ? string.Empty : SelectedObjectLabel;
-            if (label == GetObjectLabel(original))
+            var labels = new[] { label }.Concat(SelectedObjectInformation.Select(item => item.Text)).ToArray();
+            var hasLabels = label.Length > 0 || SelectedObjectInformation.Count > 0;
+            var originalLabels = GetObjectLabels(original);
+            if (hasLabels ? labels.SequenceEqual(originalLabels) : originalLabels.Count == 0)
             {
                 RefreshSelectedLabel();
                 return;
@@ -115,15 +181,15 @@ namespace Craft.UIElements.Reborn.GuiTest
             // Labels are immutable. Replace the stored object while preserving its geometry.
             object replacement = original switch
             {
-                OrientedPoint2D point => label.Length == 0
+                OrientedPoint2D point => !hasLabels
                     ? new OrientedPoint2D(point.X, point.Y, point.AngleDegrees)
-                    : new LabeledOrientedPoint2D(point.X, point.Y, point.AngleDegrees, label),
-                Point2D point => label.Length == 0
+                    : new LabeledOrientedPoint2D(point.X, point.Y, point.AngleDegrees, labels),
+                Point2D point => !hasLabels
                     ? new Point2D(point.X, point.Y)
-                    : new LabeledPoint2D(point.X, point.Y, label),
-                LineSegment2D segment => label.Length == 0
+                    : new LabeledPoint2D(point.X, point.Y, labels),
+                LineSegment2D segment => !hasLabels
                     ? new LineSegment2D(segment.Point1, segment.Point2)
-                    : new LabeledLineSegment2D(segment.Point1, segment.Point2, label),
+                    : new LabeledLineSegment2D(segment.Point1, segment.Point2, labels),
                 _ => throw new InvalidOperationException("Unsupported geometry type.")
             };
             var bounds = replacement switch
@@ -401,8 +467,14 @@ namespace Craft.UIElements.Reborn.GuiTest
                 GridSpacing = 50.0
             };
 
-            ApplySelectedLabelCommand = new RelayCommand(ApplySelectedLabel, () => CanEditSelectedLabel);
-            CancelSelectedLabelCommand = new RelayCommand(RefreshSelectedLabel, () => CanEditSelectedLabel);
+            ApplySelectedLabelCommand = new RelayCommand(ApplySelectedLabel, () => CanApplySelectedLabel);
+            CancelSelectedLabelCommand = new RelayCommand(RefreshSelectedLabel, () => IsSelectedLabelDirty);
+            AddSelectedInformationCommand = new RelayCommand(
+                () => { if (CanAddSelectedInformation) SelectedObjectInformation.Add(new LabelInformationViewModel()); }, () => CanAddSelectedInformation);
+            RemoveSelectedInformationCommand = new RelayCommand<LabelInformationViewModel>(
+                item => SelectedObjectInformation.Remove(item),
+                item => CanEditSelectedLabel && item != null && SelectedObjectInformation.Contains(item));
+            SelectedObjectInformation.CollectionChanged += (_, _) => SelectedInformationChanged();
             GeometryViewModel.SelectedGeometricObjects.CollectionChanged += (_, _) => RefreshSelectedLabel();
             GeometryViewModel.PropertyChanged += GeometryViewModel_PropertyChanged;
 

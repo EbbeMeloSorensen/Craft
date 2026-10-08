@@ -1,13 +1,18 @@
 namespace Craft.Math;
 
-/// <summary>A line segment with a text label.</summary>
-public class LabeledLineSegment2D : LineSegment2D
+/// <summary>A line segment with an identifier and ordered information strings.</summary>
+public class LabeledLineSegment2D : LineSegment2D, ILabeledGeometry
 {
-    public string Text { get; }
+    public IReadOnlyList<string> Labels { get; }
+    public string Identifier => Labels[0];
 
-    public LabeledLineSegment2D(Point2D point1, Point2D point2, string text)
-        : base(point1, point2)
+    public LabeledLineSegment2D(Point2D point1, Point2D point2, string identifier)
+        : this(point1, point2, new[] { identifier })
     {
-        Text = text ?? throw new System.ArgumentNullException(nameof(text));
+    }
+
+    public LabeledLineSegment2D(Point2D point1, Point2D point2, IEnumerable<string> labels) : base(point1, point2)
+    {
+        Labels = GeometryLabelStrings.Copy(labels);
     }
 }

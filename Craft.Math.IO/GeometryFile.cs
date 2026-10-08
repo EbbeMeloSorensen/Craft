@@ -17,19 +17,19 @@ public static class GeometryFile
                 {
                     Point = new Point2D(point.X, point.Y),
                     AngleDegrees = point.AngleDegrees,
-                    Text = (point as LabeledOrientedPoint2D)?.Text
+                    Labels = (point as ILabeledGeometry)?.Labels.ToArray()
                 },
                 LabeledPoint2D point => new StoredObject
                 {
                     Point = new Point2D(point.X, point.Y),
-                    Text = point.Text
+                    Labels = point.Labels.ToArray()
                 },
                 Point2D point => new StoredObject { Point = point },
                 LineSegment2D segment => new StoredObject
                 {
                     Point1 = segment.Point1,
                     Point2 = segment.Point2,
-                    Text = (segment as LabeledLineSegment2D)?.Text
+                    Labels = (segment as ILabeledGeometry)?.Labels.ToArray()
                 },
                 _ => throw new InvalidDataException("Unsupported geometry type.")
             });
@@ -40,7 +40,8 @@ public static class GeometryFile
 
     public static IReadOnlyList<object> Deserialize(string json)
     {
-        var storedObjects = JsonConvert.DeserializeObject<List<StoredObject>>(json)
+        var storedObjects = JsonConvert.DeserializeObject<List<StoredObject>>(json,
+            new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error })
             ?? throw new InvalidDataException("Expected a geometry array.");
         var result = new List<object>();
         foreach (var stored in storedObjects)
@@ -48,17 +49,20 @@ public static class GeometryFile
             if (stored == null)
                 throw new InvalidDataException("Geometry entries cannot be null.");
 
+            if (stored.Labels != null && (stored.Labels.Length == 0 || stored.Labels.Any(string.IsNullOrWhiteSpace)))
+                throw new InvalidDataException("Labels require a nonblank identifier and nonblank information strings.");
+
             if (stored.Point != null && stored.Point1 == null && stored.Point2 == null)
                 result.Add(stored.AngleDegrees.HasValue
-                    ? stored.Text != null
-                        ? new LabeledOrientedPoint2D(stored.Point.X, stored.Point.Y, stored.AngleDegrees.Value, stored.Text)
+                    ? stored.Labels != null
+                        ? new LabeledOrientedPoint2D(stored.Point.X, stored.Point.Y, stored.AngleDegrees.Value, stored.Labels)
                         : new OrientedPoint2D(stored.Point.X, stored.Point.Y, stored.AngleDegrees.Value)
-                    : stored.Text != null
-                        ? new LabeledPoint2D(stored.Point.X, stored.Point.Y, stored.Text)
+                    : stored.Labels != null
+                        ? new LabeledPoint2D(stored.Point.X, stored.Point.Y, stored.Labels)
                         : stored.Point);
             else if (stored.Point == null && stored.Point1 != null && stored.Point2 != null && !stored.AngleDegrees.HasValue)
-                result.Add(stored.Text != null
-                    ? new LabeledLineSegment2D(stored.Point1, stored.Point2, stored.Text)
+                result.Add(stored.Labels != null
+                    ? new LabeledLineSegment2D(stored.Point1, stored.Point2, stored.Labels)
                     : new LineSegment2D(stored.Point1, stored.Point2));
             else
                 throw new InvalidDataException("Expected a point or two segment endpoints.");
@@ -78,6 +82,6 @@ public static class GeometryFile
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public double? AngleDegrees { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string? Text { get; set; }
+        public string[]? Labels { get; set; }
     }
 }
