@@ -60,6 +60,85 @@ namespace Craft.UIElements.Reborn.GuiTest
                     .ToString(CultureInfo.InvariantCulture);
         }
 
+        private string _selectedObjectLabel = string.Empty;
+
+        private object? EditableSelectedObject =>
+            GeometryViewModel.CanvasMode == CanvasMode.Select &&
+            GeometryViewModel.SelectedGeometricObjects.Count == 1
+                ? GeometryViewModel.SelectedGeometricObjects[0]
+                : null;
+
+        public bool CanEditSelectedLabel => EditableSelectedObject is Point2D or LineSegment2D;
+
+        public string SelectedObjectLabel
+        {
+            get => _selectedObjectLabel;
+            set
+            {
+                _selectedObjectLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public RelayCommand ApplySelectedLabelCommand { get; }
+        public RelayCommand CancelSelectedLabelCommand { get; }
+
+        private static string GetObjectLabel(object? geometry) => geometry switch
+        {
+            LabeledOrientedPoint2D point => point.Text,
+            LabeledPoint2D point => point.Text,
+            LabeledLineSegment2D segment => segment.Text,
+            _ => string.Empty
+        };
+
+        private void RefreshSelectedLabel()
+        {
+            SelectedObjectLabel = GetObjectLabel(EditableSelectedObject);
+            OnPropertyChanged(nameof(CanEditSelectedLabel));
+            ApplySelectedLabelCommand.RaiseCanExecuteChanged();
+            CancelSelectedLabelCommand.RaiseCanExecuteChanged();
+        }
+
+        private void ApplySelectedLabel()
+        {
+            if (!CanEditSelectedLabel)
+                return;
+
+            var original = EditableSelectedObject!;
+            var label = string.IsNullOrWhiteSpace(SelectedObjectLabel) ? string.Empty : SelectedObjectLabel;
+            if (label == GetObjectLabel(original))
+            {
+                RefreshSelectedLabel();
+                return;
+            }
+
+            // Labels are immutable. Replace the stored object while preserving its geometry.
+            object replacement = original switch
+            {
+                OrientedPoint2D point => label.Length == 0
+                    ? new OrientedPoint2D(point.X, point.Y, point.AngleDegrees)
+                    : new LabeledOrientedPoint2D(point.X, point.Y, point.AngleDegrees, label),
+                Point2D point => label.Length == 0
+                    ? new Point2D(point.X, point.Y)
+                    : new LabeledPoint2D(point.X, point.Y, label),
+                LineSegment2D segment => label.Length == 0
+                    ? new LineSegment2D(segment.Point1, segment.Point2)
+                    : new LabeledLineSegment2D(segment.Point1, segment.Point2, label),
+                _ => throw new InvalidOperationException("Unsupported geometry type.")
+            };
+            var bounds = replacement switch
+            {
+                Point2D point => point.ComputeBoundingBox(),
+                LineSegment2D segment => segment.ComputeBoundingBox(),
+                _ => throw new InvalidOperationException("Unsupported geometry type.")
+            };
+
+            _geometryDataStore.AddGeometricObject(replacement, bounds);
+            _geometryDataStore.RemoveGeometricObjects(new[] { original });
+            GeometryViewModel.SelectedGeometricObjects[0] = replacement;
+            UpdateStaticGeometryLayer();
+        }
+
         private string _requestedWwBoundsXMin;
         private string _requestedWwBoundsXMax;
         private string _requestedWwBoundsYMin;
@@ -322,6 +401,9 @@ namespace Craft.UIElements.Reborn.GuiTest
                 GridSpacing = 50.0
             };
 
+            ApplySelectedLabelCommand = new RelayCommand(ApplySelectedLabel, () => CanEditSelectedLabel);
+            CancelSelectedLabelCommand = new RelayCommand(RefreshSelectedLabel, () => CanEditSelectedLabel);
+            GeometryViewModel.SelectedGeometricObjects.CollectionChanged += (_, _) => RefreshSelectedLabel();
             GeometryViewModel.PropertyChanged += GeometryViewModel_PropertyChanged;
 
             SetWorldWindowBoundsCommand = new RelayCommand(SetWorldWindowBounds);
@@ -373,7 +455,11 @@ namespace Craft.UIElements.Reborn.GuiTest
             object? sender,
             PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(GeometryViewModel.WorldWindowExpanded))
+            if (e.PropertyName == nameof(GeometryViewModel.CanvasMode))
+            {
+                RefreshSelectedLabel();
+            }
+            else if (e.PropertyName == nameof(GeometryViewModel.WorldWindowExpanded))
             {
                 UpdateStaticGeometryLayer();
             }

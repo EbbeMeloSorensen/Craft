@@ -144,7 +144,7 @@ These are not implemented requirements:
 
 ## Verification traceability
 
-No dedicated Reborn interaction or transform unit tests were found in the inspected solution. GuiTest is a manual harness. [MxCifQuadTreeTest.cs](../../Craft.DataStructures.UnitTest/MxCifQuadTreeTest.cs) covers supporting spatial-index insertion, queries, and removal, not these workflows end to end.
+Reborn label editing has view-model regression tests in `Craft.UIElements.Reborn.UnitTest`; pointer interactions and transforms remain unverified by dedicated tests. GuiTest is a manual harness. [MxCifQuadTreeTest.cs](../../Craft.DataStructures.UnitTest/MxCifQuadTreeTest.cs) covers supporting spatial-index insertion, queries, and removal, not these workflows end to end.
 
 Manual checks still to run: repeated polyline and point creation; click/rectangle selection with modifiers; deletion; constrained pan/zoom; snapping; time intervals; save/load of mixed geometry. None was executed for this documentation update.
 
@@ -154,4 +154,15 @@ Persistence verification (2026-09-27): a standalone check of GeometryFile passed
 
 In Dot mode, enter text in the toolbar's Label field, then click and release to place a LabeledPoint2D. Its Text property is displayed beside the marker at a fixed screen size. Blank or whitespace-only input creates an ordinary point. The Label field retains its text for repeated placement; changing it affects future objects only. An adjacent Number field accepts an empty string or a non-negative integer (digits only, including zero). The final label concatenates Label and Number without a separator; an empty Label permits numeric-only labels. Number starts empty. After successfully creating a point, oriented point, or completed polyline, a populated Number increments by one. Every segment of a completed polyline receives the same label, and Number increments once for the entire polyline. Cancellation and navigation do not increment it. Typing and pasting invalid numbers are rejected. Leading zeros are used as entered for the current label; incrementing displays the next integer without leading zeros. Dragging creates a labeled oriented point when text is present. The same Label field applies in Draw mode to each completed polyline segment.
 
-Labeled points use the ordinary point marker for click/rectangle selection and deletion; the text itself is not a separate hit target. Save/load stores position/endpoints, optional orientation, and Text, and restores the subtype, including its exact text. Editing a placed label is not yet exposed by the UI.
+Labeled points use the ordinary point marker for click/rectangle selection and deletion; the text itself is not a separate hit target. Save/load stores position/endpoints, optional orientation, and Text, and restores the subtype, including its exact text.
+
+### Edit an object label
+
+To edit a placed label, use Select mode and select exactly one point, oriented point, or line segment. The Selected object panel shows its complete label (empty for unlabeled objects). Edit the text and choose Apply to commit, or Cancel to restore the current label. Empty or whitespace-only text removes the label. Changing selection or drawing mode discards unapplied edits; zero or multiple selections disable editing. Apply preserves coordinates, orientation, and selection, and refreshes the canvas. A polyline segment is edited individually; other segments retain their labels. Editing does not change the drawing Label or Number fields. Save/load retains the edited label. Delete while a text input has focus edits text instead of deleting selected geometry.
+
+Label editing is implemented by the Selected object panel in `Craft.UIElements.Reborn.GuiTest/MainWindow.xaml` and the selection/draft/Apply commands in `MainWindowViewModel.cs`. Regression coverage is in `Craft.UIElements.Reborn.UnitTest/LabelEditingTests.cs`. On Windows, build the WPF test project before running tests:
+
+```powershell
+dotnet build Craft.UIElements.Reborn.UnitTest/Craft.UIElements.Reborn.UnitTest.csproj -m:1
+dotnet test Craft.UIElements.Reborn.UnitTest/Craft.UIElements.Reborn.UnitTest.csproj --no-build
+```

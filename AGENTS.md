@@ -36,3 +36,5 @@ This file records durable guidance, not a complete specification. Update it when
 - Backwards compatibility with earlier geometry file formats is not currently required. Persist oriented points as a position and angle, without legacy arrow flags or conversion paths.
 
 - Drawing labels concatenate the Label and optional Number fields. Number accepts only non-negative integers or empty text and increments once after successful point, arrow, or completed polyline creation; all segments of a polyline share one label.
+
+- Existing labels are edited as complete text through the Selected object panel in Select mode for one point, arrow, or individual segment. Apply commits, blank removes the label, Cancel or a selection change discards drafts. Editing does not advance or alter the drawing label fields.

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace Craft.UIElements.Reborn.GuiTest
@@ -52,7 +53,7 @@ namespace Craft.UIElements.Reborn.GuiTest
             object sender,
             System.Windows.Input.KeyEventArgs e)
         {
-            if (e.IsRepeat)
+            if (e.IsRepeat || Keyboard.FocusedElement is TextBoxBase || Keyboard.FocusedElement is PasswordBox)
             {
                 return;
             }
