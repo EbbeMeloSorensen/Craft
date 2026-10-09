@@ -232,7 +232,10 @@ public class MxCifQuadTree<T>
 
             T.SpatialItems.Remove(spatialItem);
 
-            if (T.SpatialItems.Any())
+            // A depth-limited quad node can hold both direct items and axis trees.
+            if (T.SpatialItems.Any() ||
+                T._axis[0] != null || T._axis[1] != null ||
+                T._child.Any(child => child != null))
             {
                 if (_logger.IsEnabled)
                 {
@@ -382,7 +385,8 @@ public class MxCifQuadTree<T>
                 {
                     T._axis[(int)V] = null;
 
-                    if (T._axis[(int)V.OTHERAXIS()] != null ||
+                    if (T.SpatialItems.Any() ||
+                        T._axis[(int)V.OTHERAXIS()] != null ||
                         T._child[0] != null ||
                         T._child[1] != null ||
                         T._child[2] != null ||
