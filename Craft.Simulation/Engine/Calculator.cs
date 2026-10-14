@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Craft.DataStructures.Geometry;
 using Craft.Logging;
 using Craft.Math;
@@ -98,6 +98,7 @@ namespace Craft.Simulation.Engine
                     IdentifyFirstCollisionBetweenTwoBodies(
                         propagatedBodyStateMap,
                         scene.CheckForCollisionBetweenBodiesCallback,
+                        scene.BodyCollisionCandidates,
                         idsOfHandledBodies,
                         handledCollisions,
                         timeLeftInCurrentIncrement,
@@ -421,9 +422,23 @@ namespace Craft.Simulation.Engine
                 _ => _.Clone());
         }
 
+        private static IEnumerable<(BodyState First, BodyState Second)> AllBodyPairs(
+            Dictionary<BodyState, BodyState> states)
+        {
+            var bodies = states.Keys.ToArray();
+            for (var i = 0; i < bodies.Length; i++)
+            {
+                for (var j = i + 1; j < bodies.Length; j++)
+                {
+                    yield return (bodies[i], bodies[j]);
+                }
+            }
+        }
+
         private static void IdentifyFirstCollisionBetweenTwoBodies(
             Dictionary<BodyState, BodyState> propagatedBodyStateMap,
             CheckForCollisionBetweenBodiesCallback checkForCollisionBetweenBodiesCallback,
+            Func<Dictionary<BodyState, BodyState>, IEnumerable<(BodyState First, BodyState Second)>>? collisionCandidates,
             HashSet<int> idsOfHandledBodies,
             HashSet<Tuple<int, int>> handledBodyCollisions,
             double timeLeftInCurrentIncrement,
@@ -439,206 +454,236 @@ namespace Craft.Simulation.Engine
             doorPointInvolvedInCollision = null;
             effectiveSurfaceNormalForDoor = null;
 
-            // Denne bruger vi til at sikre, at vi ikke håndterer b vs a efter at have håndteret a vs b
-            // som hvis det var en trace matrix, hvor vi så kun håndterede den ene trekant
-            var innerLoopSkipCount = 1;
+            var pairs = collisionCandidates?.Invoke(propagatedBodyStateMap)
+                ?? AllBodyPairs(propagatedBodyStateMap);
 
-            foreach (var kvp1 in propagatedBodyStateMap)
+            foreach (var (bs1After, bs2After) in pairs)
             {
-                var bs1Before = kvp1.Value;
-                var bs1After = kvp1.Key;
+                var bs1Before = propagatedBodyStateMap[bs1After];
+                var bs2Before = propagatedBodyStateMap[bs2After];
                 var body1 = bs1Before.Body;
+                var body2 = bs2Before.Body;
 
                 if (idsOfHandledBodies.Contains(body1.Id))
                 {
                     continue;
                 }
 
-                foreach (var kvp2 in propagatedBodyStateMap.Skip(innerLoopSkipCount++))
+                if (idsOfHandledBodies.Contains(body2.Id))
                 {
-                    var bs2Before = kvp2.Value;
-                    var bs2After = kvp2.Key;
-                    var body2 = bs2Before.Body;
+                    continue;
+                }
 
-                    if (body1 is Projectile || body2 is Projectile)
-                    {
-                        var a = 0;
-                    }
-
-                    if (body1 is BodyDoor &&
-                        body2 is BodyDoor)
-                    {
-                        // Dette burde ikke ske, men det gør det - måske fordi Skip ikke opfører sig som du tror..
-                        var a = 0;
-                    }
-
-                    if (idsOfHandledBodies.Contains(body2.Id))
+                if (checkForCollisionBetweenBodiesCallback != null)
+                {
+                    // Det er afhænger af scenens opsætning, om vi overhovedet skal checke for
+                    // kollision mellem disse 2 bodies. Sædvanligvis afhænger det af, hvilke
+                    // typer af bodies der er tale om.
+                    if (!checkForCollisionBetweenBodiesCallback.Invoke(body1, body2))
                     {
                         continue;
                     }
+                }
 
-                    if (checkForCollisionBetweenBodiesCallback != null)
+                if (handledBodyCollisions.Any())
+                {
+                    if (handledBodyCollisions.Contains(new Tuple<int, int>(
+                        System.Math.Min(body1.Id, body2.Id),
+                        System.Math.Max(body1.Id, body2.Id))))
                     {
-                        // Det er afhænger af scenens opsætning, om vi overhovedet skal checke for
-                        // kollision mellem disse 2 bodies. Sædvanligvis afhænger det af, hvilke
-                        // typer af bodies der er tale om.
-                        if (!checkForCollisionBetweenBodiesCallback.Invoke(body1, body2))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
+                }
+
+                if (body1 is CircularBody &&
+                    body2 is CircularBody)
+                {
+                    var radius1 = (body1 as CircularBody).Radius;
+                    var radius2 = (body2 as CircularBody).Radius;
+                    var radiusSum = radius1 + radius2;
+
+                    var vectorFrom1To2Before = bs2Before.Position - bs1Before.Position;
+                    var distanceBefore = vectorFrom1To2Before.Length;
+
+                    if (radiusSum >= distanceBefore)
+                    {
+                        // Trouble intersection at the start of the iteration
+                        // Det sker for Pool table, many balls, selv om den ellers virker stabil..
+                        var a = 0;
                     }
 
-                    if (handledBodyCollisions.Any())
+                    var vectorFrom1To2After = bs2After.Position - bs1After.Position;
+                    var distanceAfter = vectorFrom1To2After.Length;
+
+                    if (radiusSum < distanceAfter)
                     {
-                        if (handledBodyCollisions.Contains(new Tuple<int, int>(
-                            System.Math.Min(body1.Id, body2.Id),
-                            System.Math.Max(body1.Id, body2.Id))))
-                        {
-                            continue;
-                        }
+                        // no collision
+                        continue;
                     }
 
-                    if (body1 is CircularBody &&
-                        body2 is CircularBody)
+                    // There is a collision between the two circles
+                    var p1 = bs1Before.Position;
+                    var p2 = bs2Before.Position;
+                    var v1 = bs1Before.NaturalVelocity;
+                    var v2 = bs2Before.NaturalVelocity;
+
+                    var t = Operations.TimeOfCollisionBetweenTwoCircles(
+                        p1.X,
+                        p1.Y,
+                        p2.X,
+                        p2.Y,
+                        v1.X,
+                        v1.Y,
+                        v2.X,
+                        v2.Y,
+                        radius1 + 0.000000000001,
+                        radius2);
+
+                    if (double.IsNaN(timeUntilCollision) ||
+                        t < timeUntilCollision)
                     {
-                        var radius1 = (body1 as CircularBody).Radius;
-                        var radius2 = (body2 as CircularBody).Radius;
-                        var radiusSum = radius1 + radius2;
+                        bodyState1InvolvedInCollision = bs1After;
+                        bodyState2InvolvedInCollision = bs2After;
+                        timeUntilCollision = t;
+                    }
+                }
+                else
+                {
+                    if ((body1 is CircularBody && body2 is BodyDoor) ||
+                        (body2 is CircularBody && body1 is BodyDoor))
+                    {
+                        var bsCircularBodyAfter = body1 is CircularBody
+                            ? bs1After
+                            : bs2After;
 
-                        var vectorFrom1To2Before = bs2Before.Position - bs1Before.Position;
-                        var distanceBefore = vectorFrom1To2Before.Length;
+                        var bsDoor = body1 is BodyDoor
+                            ? bs1After as BodyStateDoor
+                            : bs2After as BodyStateDoor;
 
-                        if (radiusSum >= distanceBefore)
+                        // Lav en LineSegment boundary som repræsentant for døren, for den kan vi allerede håndtere
+
+                        var circularBody = bsCircularBodyAfter.Body as CircularBody;
+                        var door = bsDoor.Body as BodyDoor;
+
+                        Vector2D point2 = door.Point2;
+
+                        if (bsDoor.PercentageOpen > 99)
                         {
-                            // Trouble intersection at the start of the iteration
-                            // Det sker for Pool table, many balls, selv om den ellers virker stabil..
-                            var a = 0;
+                            var angle = (bsDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
+
+                            var doorAsVector = new Vector2D(
+                                door.Point2.X - door.Point1.X,
+                                door.Point2.Y - door.Point1.Y);
+
+                            var doorWidth = doorAsVector.Length;
+                            var hatted = doorAsVector.Hat();
+
+                            if (!bsDoor.OpenClockWise)
+                            {
+                                hatted = -hatted;
+                            }
+
+                            var pt2_x =
+                                door.Point1.X +
+                                System.Math.Cos(angle) * doorAsVector.X +
+                                System.Math.Sin(angle) * hatted.X;
+
+                            var pt2_y =
+                                door.Point1.Y +
+                                System.Math.Cos(angle) * doorAsVector.Y +
+                                System.Math.Sin(angle) * hatted.Y;
+
+                            point2 = new Vector2D(pt2_x, pt2_y);
                         }
 
-                        var vectorFrom1To2After = bs2After.Position - bs1After.Position;
-                        var distanceAfter = vectorFrom1To2After.Length;
+                        var lineSegment = new LineSegment(
+                            door.Point1,
+                            point2);
 
-                        if (radiusSum < distanceAfter)
+                        if (!lineSegment.Intersects(bsCircularBodyAfter))
                         {
-                            // no collision
+                            // No intersection
                             continue;
                         }
 
-                        // There is a collision between the two circles
-                        var p1 = bs1Before.Position;
-                        var p2 = bs2Before.Position;
-                        var v1 = bs1Before.NaturalVelocity;
-                        var v2 = bs2Before.NaturalVelocity;
+                        // The circular body intersects the door
 
-                        var t = Operations.TimeOfCollisionBetweenTwoCircles(
-                            p1.X,
-                            p1.Y,
-                            p2.X,
-                            p2.Y,
-                            v1.X,
-                            v1.Y,
-                            v2.X,
-                            v2.Y,
-                            radius1 + 0.000000000001,
-                            radius2);
+                        var bsCircularBodyBefore = body1 is CircularBody
+                            ? bs1Before
+                            : bs2Before;
 
-                        if (double.IsNaN(timeUntilCollision) ||
-                            t < timeUntilCollision)
+                        var effectiveVelocity = (bsCircularBodyAfter.Position - bsCircularBodyBefore.Position) / timeLeftInCurrentIncrement;
+
+                        Vector2D effectiveSurfaceNormalForCollisionWithDoor = null;
+
+                        var velocityComponentTowardsBoundary = System.Math.Abs(lineSegment.ProjectVectorOntoSurfaceNormal(effectiveVelocity));
+
+                        var tNew = double.NaN;
+                        Vector2D doorEndPointInvolvedInCollisionWithDoor = null;
+
+                        if (velocityComponentTowardsBoundary <= 0)
                         {
-                            bodyState1InvolvedInCollision = bs1After;
-                            bodyState2InvolvedInCollision = bs2After;
-                            timeUntilCollision = t;
+                            // Bodyens hastighed er parallel med væggen, hvilket er ensbetydende med at
+                            // den har ramt en af liniestykkets ender
+                            doorEndPointInvolvedInCollisionWithDoor =
+                                lineSegment.IsVectorPointingInSameDirectionAsLineSegmentVector(
+                                    effectiveVelocity)
+                                    ? lineSegment.Point1
+                                    : lineSegment.Point2;
                         }
-                    }
-                    else
-                    {
-                        if ((body1 is CircularBody && body2 is BodyDoor) ||
-                            (body2 is CircularBody && body1 is BodyDoor))
+                        else
                         {
-                            var bsCircularBodyAfter = body1 is CircularBody
-                                ? bs1After
-                                : bs2After;
+                            var vPointOnLineToBodyCenter = bsCircularBodyBefore.Position - lineSegment.Point1;
+                            var distanceFromBodyCenterToLineForLineSegment = System.Math.Abs(Vector2D.DotProduct(lineSegment.SurfaceNormal, vPointOnLineToBodyCenter));
+                            tNew = (distanceFromBodyCenterToLineForLineSegment - (circularBody.Radius + 0.000000000001)) / velocityComponentTowardsBoundary;
 
-                            var bsDoor = body1 is BodyDoor
-                                ? bs1After as BodyStateDoor
-                                : bs2After as BodyStateDoor;
-
-                            // Lav en LineSegment boundary som repræsentant for døren, for den kan vi allerede håndtere
-
-                            var circularBody = bsCircularBodyAfter.Body as CircularBody;
-                            var door = bsDoor.Body as BodyDoor;
-
-                            Vector2D point2 = door.Point2;
-
-                            if (bsDoor.PercentageOpen > 99)
+                            if (tNew < 0.0)
                             {
-                                var angle = (bsDoor.PercentageOpen) * 0.5 * System.Math.PI / 100;
-
-                                var doorAsVector = new Vector2D(
-                                    door.Point2.X - door.Point1.X,
-                                    door.Point2.Y - door.Point1.Y);
-
-                                var doorWidth = doorAsVector.Length;
-                                var hatted = doorAsVector.Hat();
-
-                                if (!bsDoor.OpenClockWise)
-                                {
-                                    hatted = -hatted;
-                                }
-
-                                var pt2_x =
-                                    door.Point1.X +
-                                    System.Math.Cos(angle) * doorAsVector.X +
-                                    System.Math.Sin(angle) * hatted.X;
-
-                                var pt2_y =
-                                    door.Point1.Y +
-                                    System.Math.Cos(angle) * doorAsVector.Y +
-                                    System.Math.Sin(angle) * hatted.Y;
-
-                                point2 = new Vector2D(pt2_x, pt2_y);
+                                // Trouble
+                                var a = 0;
                             }
 
-                            var lineSegment = new LineSegment(
-                                door.Point1,
-                                point2);
+                            var backtrackedPosition = bsCircularBodyBefore.Position + effectiveVelocity * tNew;
 
-                            if (!lineSegment.Intersects(bsCircularBodyAfter))
+                            // Nu skal vi så finde ud af, om dette punkt er tættest på liniestykket eller et af dens endepunkter
+                            //var lineSegmentPart = lineSegment.ClosestPartOfLineSegment(backtrackedPosition);
+                            var lineSegmentPart = lineSegment.ClosestPartOfLineSegment(backtrackedPosition);
+
+                            switch (lineSegmentPart)
                             {
-                                // No intersection
-                                continue;
+                                case LineSegmentPart.Point1:
+                                    doorEndPointInvolvedInCollisionWithDoor = lineSegment.Point1;
+                                    break;
+                                case LineSegmentPart.Point2:
+                                    doorEndPointInvolvedInCollisionWithDoor = lineSegment.Point2;
+                                    break;
+                                case LineSegmentPart.MiddleSection:
+                                    effectiveSurfaceNormalForCollisionWithDoor = Vector2D.DotProduct(effectiveVelocity, lineSegment.SurfaceNormal) < 0
+                                        ? lineSegment.SurfaceNormal
+                                        : -lineSegment.SurfaceNormal;
+                                    break;
                             }
 
-                            // The circular body intersects the door 
-
-                            var bsCircularBodyBefore = body1 is CircularBody
-                                ? bs1Before
-                                : bs2Before;
-
-                            var effectiveVelocity = (bsCircularBodyAfter.Position - bsCircularBodyBefore.Position) / timeLeftInCurrentIncrement;
-
-                            Vector2D effectiveSurfaceNormalForCollisionWithDoor = null;
-
-                            var velocityComponentTowardsBoundary = System.Math.Abs(lineSegment.ProjectVectorOntoSurfaceNormal(effectiveVelocity));
-
-                            var tNew = double.NaN;
-                            Vector2D doorEndPointInvolvedInCollisionWithDoor = null;
-
-                            if (velocityComponentTowardsBoundary <= 0)
+                            if (doorEndPointInvolvedInCollisionWithDoor != null)
                             {
-                                // Bodyens hastighed er parallel med væggen, hvilket er ensbetydende med at 
-                                // den har ramt en af liniestykkets ender
-                                doorEndPointInvolvedInCollisionWithDoor =
-                                    lineSegment.IsVectorPointingInSameDirectionAsLineSegmentVector(
-                                        effectiveVelocity)
-                                        ? lineSegment.Point1
-                                        : lineSegment.Point2;
-                            }
-                            else
-                            {
-                                var vPointOnLineToBodyCenter = bsCircularBodyBefore.Position - lineSegment.Point1;
-                                var distanceFromBodyCenterToLineForLineSegment = System.Math.Abs(Vector2D.DotProduct(lineSegment.SurfaceNormal, vPointOnLineToBodyCenter));
-                                tNew = (distanceFromBodyCenterToLineForLineSegment - (circularBody.Radius + 0.000000000001)) / velocityComponentTowardsBoundary;
+                                var p1 = bsCircularBodyBefore.Position;
+                                var p2 = doorEndPointInvolvedInCollisionWithDoor;
+                                var v1 = effectiveVelocity;
+                                var v2 = new Vector2D(0, 0);
+                                var radius1 = circularBody.Radius;
+                                var radius2 = 0.0;
+
+                                tNew = Operations.TimeOfCollisionBetweenTwoCircles(
+                                    p1.X,
+                                    p1.Y,
+                                    p2.X,
+                                    p2.Y,
+                                    v1.X,
+                                    v1.Y,
+                                    v2.X,
+                                    v2.Y,
+                                    radius1 + 0.000000000001,
+                                    radius2);
 
                                 if (tNew < 0.0)
                                 {
@@ -646,77 +691,28 @@ namespace Craft.Simulation.Engine
                                     var a = 0;
                                 }
 
-                                var backtrackedPosition = bsCircularBodyBefore.Position + effectiveVelocity * tNew;
+                                var circleCenterAtTimeOfCollision =
+                                    bsCircularBodyBefore.Position + tNew * effectiveVelocity;
 
-                                // Nu skal vi så finde ud af, om dette punkt er tættest på liniestykket eller et af dens endepunkter
-                                //var lineSegmentPart = lineSegment.ClosestPartOfLineSegment(backtrackedPosition);
-                                var lineSegmentPart = lineSegment.ClosestPartOfLineSegment(backtrackedPosition);
+                                effectiveSurfaceNormalForCollisionWithDoor = (circleCenterAtTimeOfCollision - doorEndPointInvolvedInCollisionWithDoor).Normalize();
+                            }
 
-                                switch (lineSegmentPart)
-                                {
-                                    case LineSegmentPart.Point1:
-                                        doorEndPointInvolvedInCollisionWithDoor = lineSegment.Point1;
-                                        break;
-                                    case LineSegmentPart.Point2:
-                                        doorEndPointInvolvedInCollisionWithDoor = lineSegment.Point2;
-                                        break;
-                                    case LineSegmentPart.MiddleSection:
-                                        effectiveSurfaceNormalForCollisionWithDoor = Vector2D.DotProduct(effectiveVelocity, lineSegment.SurfaceNormal) < 0
-                                            ? lineSegment.SurfaceNormal
-                                            : -lineSegment.SurfaceNormal;
-                                        break;
-                                }
-
-                                if (doorEndPointInvolvedInCollisionWithDoor != null)
-                                {
-                                    var p1 = bsCircularBodyBefore.Position;
-                                    var p2 = doorEndPointInvolvedInCollisionWithDoor;
-                                    var v1 = effectiveVelocity;
-                                    var v2 = new Vector2D(0, 0);
-                                    var radius1 = circularBody.Radius;
-                                    var radius2 = 0.0;
-
-                                    tNew = Operations.TimeOfCollisionBetweenTwoCircles(
-                                        p1.X,
-                                        p1.Y,
-                                        p2.X,
-                                        p2.Y,
-                                        v1.X,
-                                        v1.Y,
-                                        v2.X,
-                                        v2.Y,
-                                        radius1 + 0.000000000001,
-                                        radius2);
-
-                                    if (tNew < 0.0)
-                                    {
-                                        // Trouble
-                                        var a = 0;
-                                    }
-
-                                    var circleCenterAtTimeOfCollision =
-                                        bsCircularBodyBefore.Position + tNew * effectiveVelocity;
-
-                                    effectiveSurfaceNormalForCollisionWithDoor = (circleCenterAtTimeOfCollision - doorEndPointInvolvedInCollisionWithDoor).Normalize();
-                                }
-
-                                if (double.IsNaN(timeUntilCollision) ||
-                                    tNew < timeUntilCollision)
-                                {
-                                    // The collision happens earlier than any other collision identified so far,
-                                    // so we update the output parameters
-                                    timeUntilCollision = tNew;
-                                    bodyState1InvolvedInCollision = bsCircularBodyAfter;
-                                    bodyState2InvolvedInCollision = bsDoor;
-                                    doorPointInvolvedInCollision = doorEndPointInvolvedInCollisionWithDoor;
-                                    effectiveSurfaceNormalForDoor = effectiveSurfaceNormalForCollisionWithDoor;
-                                }
+                            if (double.IsNaN(timeUntilCollision) ||
+                                tNew < timeUntilCollision)
+                            {
+                                // The collision happens earlier than any other collision identified so far,
+                                // so we update the output parameters
+                                timeUntilCollision = tNew;
+                                bodyState1InvolvedInCollision = bsCircularBodyAfter;
+                                bodyState2InvolvedInCollision = bsDoor;
+                                doorPointInvolvedInCollision = doorEndPointInvolvedInCollisionWithDoor;
+                                effectiveSurfaceNormalForDoor = effectiveSurfaceNormalForCollisionWithDoor;
                             }
                         }
-                        else
-                        {
-                            throw new NotImplementedException("No support for detecting collisions betweeen these body types");
-                        }
+                    }
+                    else
+                    {
+                        throw new NotImplementedException("No support for detecting collisions betweeen these body types");
                     }
                 }
             }

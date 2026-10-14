@@ -1,4 +1,4 @@
-﻿using Craft.DataStructures.Geometry;
+using Craft.DataStructures.Geometry;
 using Craft.DataStructures.MxCifQuadTree;
 using Craft.Math;
 using Craft.Simulation.Bodies;
@@ -97,6 +97,14 @@ namespace Craft.Simulation
         public InitializationCallback InitializationCallback { get; set; }
 
         public CheckForCollisionBetweenBodiesCallback CheckForCollisionBetweenBodiesCallback { get; set; }
+
+        /// <summary>
+        /// Optional broad phase. Returns unique pairs of propagated states from the supplied map.
+        /// The map values are the corresponding states before propagation. Null uses all pairs.
+        /// </summary>
+        public Func<Dictionary<BodyState, BodyState>, IEnumerable<(BodyState First, BodyState Second)>>?
+            BodyCollisionCandidates { get; set; }
+
 
         public CollisionBetweenBodyAndBoundaryOccuredCallBack CollisionBetweenBodyAndBoundaryOccuredCallBack { get; set; }
 
