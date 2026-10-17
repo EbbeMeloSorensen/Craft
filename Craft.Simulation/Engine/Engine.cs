@@ -20,8 +20,6 @@ namespace Craft.Simulation.Engine
 
         public EngineCore EngineCore { get; }
         public Stopwatch Stopwatch { get; }
-        public KeyboardState KeyboardState { get; }
-        public KeyboardState KeyboardEvents { get; }
         public MouseClickPosition? MouseClickPosition { get; private set; }
         public int LastIndexRequested { get; private set; }
         public int LastIndexConsumed { get; private set; }
@@ -39,7 +37,6 @@ namespace Craft.Simulation.Engine
         public bool CanResetAnimation => AnimationLaunched;
 
         public event EventHandler<CurrentStateChangedEventArgs> CurrentStateChanged;
-        public event EventHandler<KeyEventArgs> KeyEventOccured;
         public event EventHandler AnimationCompleted;
 
         public Engine(
@@ -47,42 +44,8 @@ namespace Craft.Simulation.Engine
         {
             _logger = logger;
 
-            KeyboardState = new KeyboardState();
-            KeyboardEvents = new KeyboardState();
-
             EngineCore = new EngineCore(logger);
             Stopwatch = new Stopwatch();
-        }
-
-        public void HandleKeyEvent(
-            KeyboardKey keyboardKey,
-            KeyEventType keyEventType)
-        {
-            switch (keyboardKey)
-            {
-                case KeyboardKey.LeftArrow:
-                    KeyboardState.LeftArrowDown = keyEventType == KeyEventType.KeyPressed;
-                    KeyboardEvents.LeftArrowDown = true;
-                    break;
-                case KeyboardKey.RightArrow:
-                    KeyboardState.RightArrowDown = keyEventType == KeyEventType.KeyPressed;
-                    KeyboardEvents.RightArrowDown = true;
-                    break;
-                case KeyboardKey.UpArrow:
-                    KeyboardState.UpArrowDown = keyEventType == KeyEventType.KeyPressed;
-                    KeyboardEvents.UpArrowDown = true;
-                    break;
-                case KeyboardKey.DownArrow:
-                    KeyboardState.DownArrowDown = keyEventType == KeyEventType.KeyPressed;
-                    KeyboardEvents.DownArrowDown = true;
-                    break;
-                case KeyboardKey.Space:
-                    KeyboardState.SpaceDown = keyEventType == KeyEventType.KeyPressed;
-                    KeyboardEvents.SpaceDown = true;
-                    break;
-            }
-
-            OnKeyEventOccured(keyboardKey, keyEventType);
         }
 
         public void HandleMouseClickEvent(
@@ -112,8 +75,6 @@ namespace Craft.Simulation.Engine
 
         private void StopAnimation()
         {
-            KeyboardState.Clear();
-            KeyboardEvents.Clear();
             MouseClickPosition = null;
 
             AnimationRunning = false;
@@ -124,11 +85,15 @@ namespace Craft.Simulation.Engine
             OnAnimationCompleted();
         }
 
-        public void UpdateModel()
+        /// <summary>
+        /// Uses fresh host input without retaining it. Returns true only when a
+        /// simulation state is consumed, allowing the host to acknowledge presses.
+        /// </summary>
+        public bool UpdateModel(KeyboardState keyboardState, KeyboardState keyPresses)
         {
             if (!AnimationRunning)
             {
-                return;
+                return false;
             }
 
             if (EngineCore.Scene == null)
@@ -146,20 +111,20 @@ namespace Craft.Simulation.Engine
 
                 if (IndexDifference <= 0)
                 {
-                    return;
+                    return false;
                 }
 
                 var timeElapsedSinceLastRefresh = secondsElapsed - TimeElapsedAtLastRefresh;
 
                 if (timeElapsedSinceLastRefresh < MinTimeBetweenRefresh)
                 {
-                    return;
+                    return false;
                 }
 
                 var currentState = EngineCore.TryGetState(
                     LastIndexRequested,
-                    KeyboardState,
-                    KeyboardEvents,
+                    keyboardState,
+                    keyPresses,
                     MouseClickPosition,
                     out var idsOfDisposedBodies);
 
@@ -197,6 +162,7 @@ namespace Craft.Simulation.Engine
                             message,
                             "state_sequence");
                     }
+                    return true;
                 }
                 else
                 {
@@ -217,7 +183,7 @@ namespace Craft.Simulation.Engine
             {
                 FrameSkipCount++;
 
-                if (!EngineCore.IsLeadSufficientlyLargeForResumingAnimation(LastIndexRequested)) return;
+                if (!EngineCore.IsLeadSufficientlyLargeForResumingAnimation(LastIndexRequested)) return false;
 
                 if (_logger.IsEnabled)
                 {
@@ -228,6 +194,7 @@ namespace Craft.Simulation.Engine
 
                 Stopwatch.Start();
             }
+            return false;
         }
 
         public void ResetEngine()
@@ -266,22 +233,6 @@ namespace Craft.Simulation.Engine
             if (handler != null)
             {
                 handler(this, new CurrentStateChangedEventArgs(state));
-            }
-        }
-
-        private void OnKeyEventOccured(
-            KeyboardKey keyboardKey,
-            KeyEventType keyEventType)
-        {
-            // Make a temporary copy of the event to avoid possibility of
-            // a race condition if the last subscriber unsubscribes
-            // immediately after the null check and before the event is raised.
-            var handler = KeyEventOccured;
-
-            // Event will be null if there are no subscribers
-            if (handler != null)
-            {
-                handler(this, new KeyEventArgs(keyboardKey, keyEventType));
             }
         }
 

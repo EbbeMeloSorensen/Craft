@@ -1,32 +1,13 @@
 ﻿namespace Craft.Simulation
 {
-    public class KeyboardState
+    /// <summary>Immutable input snapshot supplied by the host for one update.</summary>
+    public sealed class KeyboardState
     {
-        public bool LeftArrowDown { get; set; }
-        public bool RightArrowDown { get; set; }
-        public bool UpArrowDown { get; set; }
-        public bool DownArrowDown { get; set; }
-        public bool SpaceDown { get; set; }
+        public bool LeftArrowDown { get; init; }
+        public bool RightArrowDown { get; init; }
+        public bool UpArrowDown { get; init; }
+        public bool DownArrowDown { get; init; }
+        public bool SpaceDown { get; init; }
 
-        public void Clear()
-        {
-            LeftArrowDown = false;
-            RightArrowDown = false;
-            UpArrowDown = false;
-            DownArrowDown = false;
-            SpaceDown = false;
-        }
-
-        public KeyboardState Clone()
-        {
-            return new KeyboardState
-            {
-                LeftArrowDown = LeftArrowDown,
-                RightArrowDown = RightArrowDown,
-                UpArrowDown = UpArrowDown,
-                DownArrowDown = DownArrowDown,
-                SpaceDown = SpaceDown
-            };
-        }
     }
 }

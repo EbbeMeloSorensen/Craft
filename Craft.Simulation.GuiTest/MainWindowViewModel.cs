@@ -54,7 +54,8 @@ namespace Craft.Simulation.GuiTest
 
             GeometryEditorViewModel = new GeometryEditorViewModel(1)
             {
-                UpdateModelCallBack = Engine.UpdateModel
+                // This bouncing-ball demo has no keyboard interaction callback.
+                UpdateModelCallBack = () => Engine.UpdateModel(new KeyboardState(), new KeyboardState())
             };
 
             _sceneViewController = new SceneViewController(Engine, GeometryEditorViewModel);

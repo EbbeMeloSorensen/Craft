@@ -1,5 +1,24 @@
 # Craft
 
+## Simulator keyboard input
+
+The WPF host samples held keys on the UI thread for each running frame and
+supplies an immutable `KeyboardState` to `Engine.UpdateModel`. The engine does
+not retain keyboard state. Keys held before starting or resuming therefore
+work immediately; an inactive window supplies neutral input.
+
+Non-repeat key presses are queued separately in the host's `KeyPressBuffer`.
+One press is supplied per successful state consumption, preserving quick taps
+and repeated presses even when the simulation temporarily cannot supply a
+state. The callback's `keyPresses` flags mean a press occurred, regardless of
+whether the key is still held. Pending presses are discarded on pause,
+completion, scene change, or window deactivation; presses while paused are
+ignored. Held Space does not synthesize a new discrete press on resume.
+
+`UpdateModel(heldKeys, keyPresses)` returns whether a state was consumed, so
+hosts acknowledge queued presses only when it returns true. WPF keyboard APIs
+remain in the window; simulation callbacks and tests receive plain values.
+
 ## Simulation regression tests
 
 Three scenes are shared by the WPF demo and the portable

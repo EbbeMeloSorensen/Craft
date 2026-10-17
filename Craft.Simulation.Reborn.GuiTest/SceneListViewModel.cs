@@ -120,7 +120,7 @@ namespace Craft.Simulation.Reborn.GuiTest
                 deltaT,
                 SceneViewMode.Stationary);
 
-            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            scene.InteractionCallBack = (keyboardState, keyPresses, mouseClickPosition, collisions, currentState) =>
             {
                 var currentStateOfDoor = currentState.BodyStates.First() as BodyStateDoor;
 
@@ -200,7 +200,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             var doorActivationCounter = 0;
             var doorIsOpen = false;
 
-            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            scene.InteractionCallBack = (keyboardState, keyPresses, mouseClickPosition, collisions, currentState) =>
             {
                 var currentStateOfDoor = currentState.BodyStates.First() as BodyStateDoor;
 
@@ -259,7 +259,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
-            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            scene.InteractionCallBack = (keyboardState, keyPresses, mouseClickPosition, collisions, currentState) =>
             {
                 var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
                 var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
@@ -343,7 +343,7 @@ namespace Craft.Simulation.Reborn.GuiTest
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
             scene.CollisionBetweenTwoBodiesOccuredCallBack = (body1, body2) => OutcomeOfCollisionBetweenTwoBodies.Block;
 
-            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            scene.InteractionCallBack = (keyboardState, keyPresses, mouseClickPosition, collisions, currentState) =>
             {
                 var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
                 var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
@@ -445,9 +445,9 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             var spaceKeyWasPressed = false;
 
-            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            scene.InteractionCallBack = (keyboardState, keyPresses, mouseClickPosition, collisions, currentState) =>
             {
-                spaceKeyWasPressed = keyboardEvents.SpaceDown && keyboardState.SpaceDown;
+                spaceKeyWasPressed = keyPresses.SpaceDown;
 
                 var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
                 var currentStateOfDoor = currentState.BodyStates.Skip(1).First() as BodyStateDoor;
@@ -646,9 +646,9 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             var spaceKeyWasPressed = false;
 
-            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            scene.InteractionCallBack = (keyboardState, keyPresses, mouseClickPosition, collisions, currentState) =>
             {
-                spaceKeyWasPressed = keyboardEvents.SpaceDown && keyboardState.SpaceDown;
+                spaceKeyWasPressed = keyPresses.SpaceDown;
 
                 var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
                 var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;
@@ -819,7 +819,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
             scene.CollisionBetweenBodyAndBoundaryOccuredCallBack = body => OutcomeOfCollisionBetweenBodyAndBoundary.Block;
 
-            scene.InteractionCallBack = (keyboardState, keyboardEvents, mouseClickPosition, collisions, currentState) =>
+            scene.InteractionCallBack = (keyboardState, keyPresses, mouseClickPosition, collisions, currentState) =>
             {
                 var currentStateOfMainBody = currentState.BodyStates.First() as BodyStateClassic;
                 var currentRotationalSpeed = currentStateOfMainBody.RotationalSpeed;

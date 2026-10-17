@@ -87,7 +87,7 @@ namespace Craft.Simulation.Engine
         public State TryGetState(
             int stateIndex,
             KeyboardState keyBoardState,
-            KeyboardState keyBoardEvents,
+            KeyboardState keyPresses,
             MouseClickPosition? mouseClickPosition,
             out List<int> idsOfDisposedBodies)
         {
@@ -169,9 +169,7 @@ namespace Craft.Simulation.Engine
 
                 if (Scene.InteractionCallBack != null)
                 {
-                    var somethingWasChanged = Scene.InteractionCallBack.Invoke(keyBoardState, keyBoardEvents, mouseClickPosition, collisions, result);
-
-                    keyBoardEvents.Clear();
+                    var somethingWasChanged = Scene.InteractionCallBack.Invoke(keyBoardState, keyPresses, mouseClickPosition, collisions, result);
 
                     if (somethingWasChanged)
                     {

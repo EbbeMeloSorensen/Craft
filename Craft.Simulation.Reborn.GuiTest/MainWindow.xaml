@@ -10,8 +10,7 @@
         mc:Ignorable="d"
         Title="Simulator and Reborn" Height="450" Width="800"
         Closing="MainWindow_OnClosing"
-        KeyDown="MainWindow_KeyDown"
-        KeyUp="MainWindow_KeyUp">
+        PreviewKeyDown="MainWindow_KeyDown">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type local:SimulationLaboratoryViewModel}">

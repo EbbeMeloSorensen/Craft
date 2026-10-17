@@ -16,6 +16,8 @@ namespace Craft.Simulation.Reborn.GuiTest
             InitializeComponent();
 
             DataContext = new MainWindowViewModel();
+            ViewModel.SimulationLaboratoryViewModel.CaptureKeyboard = CaptureKeyboard;
+            Deactivated += (_, _) => ViewModel.SimulationLaboratoryViewModel.KeyPresses.Clear();
         }
 
         private void MainWindow_OnClosing(
@@ -25,79 +27,33 @@ namespace Craft.Simulation.Reborn.GuiTest
             ViewModel.SimulationLaboratoryViewModel.HandleClosing();
         }
 
-        private void MainWindow_KeyDown(
-            object sender,
-            System.Windows.Input.KeyEventArgs e)
+        private KeyboardState CaptureKeyboard()
         {
-            if (e.IsRepeat)
+            if (!IsActive) return new KeyboardState();
+            return new KeyboardState
             {
-                return;
-            }
-
-            switch (e.Key)
-            {
-                case System.Windows.Input.Key.Up:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyPressed);
-                    break;
-                case System.Windows.Input.Key.Down:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyPressed);
-                    break;
-                case System.Windows.Input.Key.Left:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyPressed);
-                    break;
-                case System.Windows.Input.Key.Right:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyPressed);
-                    break;
-                case System.Windows.Input.Key.Space:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyPressed);
-                    break;
-            }
+                LeftArrowDown = System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Left),
+                RightArrowDown = System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Right),
+                UpArrowDown = System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Up),
+                DownArrowDown = System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Down),
+                SpaceDown = System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Space)
+            };
         }
 
-        private void MainWindow_KeyUp(
-            object sender,
-            System.Windows.Input.KeyEventArgs e)
+        private void MainWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            switch (e.Key)
+            var simulation = ViewModel.SimulationLaboratoryViewModel;
+            if (e.IsRepeat || !IsActive || !simulation.Engine.AnimationRunning) return;
+            KeyboardKey? key = e.Key switch
             {
-                case System.Windows.Input.Key.Up:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyReleased);
-                    break;
-                case System.Windows.Input.Key.Down:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyReleased);
-                    break;
-                case System.Windows.Input.Key.Left:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyReleased);
-                    break;
-                case System.Windows.Input.Key.Right:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyReleased);
-                    break;
-                case System.Windows.Input.Key.Space:
-                    ViewModel.SimulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyReleased);
-                    break;
-            }
-
-            //if (ViewModel.CurrentViewModel is SimulationLaboratoryViewModel simulationLaboratoryViewModel)
-            //{
-            //    switch (e.Key)
-            //    {
-            //        case System.Windows.Input.Key.Up:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.UpArrow, KeyEventType.KeyReleased);
-            //            break;
-            //        case System.Windows.Input.Key.Down:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.DownArrow, KeyEventType.KeyReleased);
-            //            break;
-            //        case System.Windows.Input.Key.Left:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.LeftArrow, KeyEventType.KeyReleased);
-            //            break;
-            //        case System.Windows.Input.Key.Right:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.RightArrow, KeyEventType.KeyReleased);
-            //            break;
-            //        case System.Windows.Input.Key.Space:
-            //            simulationLaboratoryViewModel.Engine.HandleKeyEvent(KeyboardKey.Space, KeyEventType.KeyReleased);
-            //            break;
-            //    }
-            //}
+                System.Windows.Input.Key.Left => KeyboardKey.LeftArrow,
+                System.Windows.Input.Key.Right => KeyboardKey.RightArrow,
+                System.Windows.Input.Key.Up => KeyboardKey.UpArrow,
+                System.Windows.Input.Key.Down => KeyboardKey.DownArrow,
+                System.Windows.Input.Key.Space => KeyboardKey.Space,
+                _ => null
+            };
+            if (key.HasValue) simulation.KeyPresses.Enqueue(key.Value);
         }
     }
 }

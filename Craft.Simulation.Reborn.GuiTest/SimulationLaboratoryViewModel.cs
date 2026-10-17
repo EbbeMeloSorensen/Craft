@@ -20,6 +20,9 @@ namespace Craft.Simulation.Reborn.GuiTest
         private string _startOrResumeButtonText = "Start";
         private GeometryDataStore _geometryDataStore;
 
+        public Func<KeyboardState> CaptureKeyboard { get; set; } = () => new KeyboardState();
+        public KeyPressBuffer KeyPresses { get; } = new KeyPressBuffer();
+
         public Engine.Engine Engine { get; }
 
         public SceneListViewModel SceneListViewModel { get; }
@@ -75,7 +78,17 @@ namespace Craft.Simulation.Reborn.GuiTest
             double dt)
         {
             // Bemærk, at man ikke bruger parametrene her
-            Engine.UpdateModel();
+            if (!Engine.AnimationRunning)
+            {
+                KeyPresses.Clear();
+                return;
+            }
+
+            if (Engine.UpdateModel(CaptureKeyboard(), KeyPresses.Peek()))
+            {
+                KeyPresses.Consume();
+                if (!Engine.AnimationRunning) KeyPresses.Clear();
+            }
         }
 
         public void HandleClosing()
@@ -103,6 +116,7 @@ namespace Craft.Simulation.Reborn.GuiTest
 
         private void PauseAnimation()
         {
+            KeyPresses.Clear();
             Engine.PauseAnimation();
             StartOrResumeButtonText = "Resume";
             RefreshButtons();
@@ -120,6 +134,7 @@ namespace Craft.Simulation.Reborn.GuiTest
         {
             if (e.PropertyName == nameof(SceneListViewModel.ActiveScene))
             {
+                KeyPresses.Clear();
                 if (Engine.EngineCore.Scene != null)
                 {
                     Engine.ResetEngine();
