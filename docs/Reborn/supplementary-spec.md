@@ -17,7 +17,7 @@ Independent X/Y scales are supported. Axis locks and bounds constrain navigation
 
 ## Platform and separation of responsibilities
 
-[Craft.UIElements](../../Craft.UIElements/Craft.UIElements.csproj) and [Craft.ViewModels](../../Craft.ViewModels/Craft.ViewModels.csproj) target net8.0-windows7.0 with WPF. [The editor harness](../../Craft.UIElements.Reborn.GuiTest/Craft.UIElements.Reborn.GuiTest.csproj) targets net8.0-windows. These declarations are not a tested OS compatibility matrix.
+[Craft.UIElements](../../Craft.UIElements/Craft.UIElements.csproj) and [Craft.ViewModels](../../Craft.ViewModels/Craft.ViewModels.csproj) target net10.0-windows7.0 with WPF. [The editor harness](../../Craft.UIElements.Reborn.GuiTest/Craft.UIElements.Reborn.GuiTest.csproj) targets net10.0-windows. These declarations are not a tested OS compatibility matrix.
 
 Preserve the separation of presentation/input, exposed state, and geometry/storage described in [architecture](class-diagram.md), acknowledging existing WPF dependencies.
 
